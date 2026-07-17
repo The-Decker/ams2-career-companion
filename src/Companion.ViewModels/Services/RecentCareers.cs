@@ -65,10 +65,12 @@ public interface IRecentCareersStore
     /// rename, re-open — never wipes the card image); set it with <see cref="SetCustomImage"/>.</summary>
     void Touch(string path, string careerName, int seasonYear = 0, string? careerStyle = null);
 
-    /// <summary>The badge-aware overload: also records a finished career's terminal state
-    /// ("deceased" / "careerOver"; null carries an existing entry's stored state forward — a plain
-    /// Continue must not un-badge a memorial card). Default drops the badge so lightweight test
-    /// doubles need not implement it; the real store overrides it.</summary>
+    /// <summary>The badge-aware overload (called by open/create with the terminal state OBSERVED
+    /// from the live session): authoritative — a null observed state CLEARS the badge, so a
+    /// bankruptcy or death undone via save-restore un-badges the revived card. The unobserved
+    /// overloads (rename / copy / plain Continue) carry the existing badge forward instead. Default
+    /// drops the badge so lightweight test doubles need not implement it; the real store overrides
+    /// it.</summary>
     void Touch(string path, string careerName, int seasonYear, string? careerStyle,
         string? terminalState) => Touch(path, careerName, seasonYear, careerStyle);
 
@@ -119,10 +121,14 @@ public sealed class RecentCareersStore : IRecentCareersStore
         ReadFile().Where(entry => _careerFileExists(entry.Path)).ToList();
 
     public void Touch(string path, string careerName, int seasonYear = 0, string? careerStyle = null) =>
-        Touch(path, careerName, seasonYear, careerStyle, terminalState: null);
+        TouchInternal(path, careerName, seasonYear, careerStyle, observed: false, terminalState: null);
 
     public void Touch(string path, string careerName, int seasonYear, string? careerStyle,
-        string? terminalState)
+        string? terminalState) =>
+        TouchInternal(path, careerName, seasonYear, careerStyle, observed: true, terminalState);
+
+    private void TouchInternal(string path, string careerName, int seasonYear, string? careerStyle,
+        bool observed, string? terminalState)
     {
         var all = ReadFile();
         // Carry the user's chosen card image (and the pack careerStyle) forward across a re-touch
@@ -140,7 +146,12 @@ public sealed class RecentCareersStore : IRecentCareersStore
             SeasonYear = seasonYear,
             CustomImagePath = existing?.CustomImagePath,
             CareerStyle = careerStyle ?? existing?.CareerStyle,
-            TerminalState = terminalState ?? existing?.TerminalState,
+            // An OBSERVED touch (open/create — the shell computed the badge from the live session)
+            // is AUTHORITATIVE: a session found alive clears a stale badge, so a bankruptcy or death
+            // undone via save-restore un-badges the revived, fully playable card. An UNOBSERVED
+            // touch (rename / copy / plain Continue) never knows the terminal state, so it carries
+            // the existing badge forward — a memorial card must survive a re-touch.
+            TerminalState = observed ? terminalState : existing?.TerminalState,
         });
         WriteFile(entries.Take(Capacity).ToList());
     }

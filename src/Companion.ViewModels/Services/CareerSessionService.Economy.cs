@@ -25,7 +25,11 @@ public sealed partial class CareerSessionService
         var player = CurrentPlayerState();
         if (player?.Economy is not { } economy)
             return null;
-        var rules = _environment.Rules.DynastyEconomy;
+        // A career carrying economy state but no tables on this install (a stale-data install) has
+        // no dashboard to project — the ledger figures cannot be resolved. The career is not lost;
+        // it simply cannot render its economy until the data folder is restored.
+        if (_environment.Rules.DynastyEconomy is not { } rules)
+            return null;
         int year = _seasonYear;
 
         var pending = PendingEconomyDecisions();
@@ -167,9 +171,10 @@ public sealed partial class CareerSessionService
         if (SeasonComplete)
             throw new InvalidOperationException(
                 "The season is complete — decisions reopen with the next season's first round.");
-        if (_environment.RulesDirectory is null)
-            throw new InvalidOperationException("The economy rules are unavailable on this install.");
-        var rules = _environment.Rules.DynastyEconomy;
+        if (_environment.RulesDirectory is null || _environment.Rules.DynastyEconomy is not { } rules)
+            throw new InvalidOperationException(
+                "The Dynasty economy tables are unavailable on this install — restore the app's " +
+                "data\\rules\\dynasty folder to make decisions.");
         int year = _seasonYear;
 
         var pending = PendingEconomyDecisions().Select(p => p.Decision).ToList();
@@ -432,6 +437,10 @@ public sealed partial class CareerSessionService
     private static string SignedMoney(string rationalText)
     {
         string formatted = FormatMoney(rationalText);
-        return formatted.Length == 0 || formatted.StartsWith('-') ? formatted : "+" + formatted;
+        // A zero movement (a free lever — drop a sponsor, set staff/second-seat) shows blank, not
+        // "+0", matching the pending-decision display so the ledger reads consistently.
+        if (formatted.Length == 0 || formatted == "0")
+            return "";
+        return formatted.StartsWith('-') ? formatted : "+" + formatted;
     }
 }

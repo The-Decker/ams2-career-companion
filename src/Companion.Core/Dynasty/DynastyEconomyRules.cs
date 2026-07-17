@@ -192,16 +192,16 @@ public sealed record DynastyEconomyRules
         return rules;
     }
 
-    /// <summary>Loads <c>data\rules\dynasty\economy.json</c> — a REQUIRED fold input for economy
-    /// careers, so a missing file throws (the perks.json failure mode, not the SMGP Empty one).</summary>
-    public static DynastyEconomyRules Load(string rulesDirectory)
+    /// <summary>Loads <c>data\rules\dynasty\economy.json</c>, or null when the file is absent.
+    /// The economy is an OPTIONAL-MODE fold input: required for an economy career (the creation
+    /// seed and every economy fold/decision path refuse when this is null, with a clear message),
+    /// but ABSENT for every other career — so a legacy/SMGP/Passport career on a stale-data install
+    /// that ships no dynasty subfolder is completely unaffected (the dormancy contract). The eager
+    /// <c>CareerRulesData.Load</c> must therefore never make this a hard requirement.</summary>
+    public static DynastyEconomyRules? Load(string rulesDirectory)
     {
         string path = Path.Combine(rulesDirectory, "dynasty", "economy.json");
-        if (!File.Exists(path))
-            throw new FileNotFoundException(
-                $"Dynasty economy rules file '{path}' is missing — the data\\rules folder must sit beside the exe.",
-                path);
-        return Parse(File.ReadAllText(path));
+        return File.Exists(path) ? Parse(File.ReadAllText(path)) : null;
     }
 
     private static readonly JsonSerializerOptions ParseOptions = new(CoreJson.Options)

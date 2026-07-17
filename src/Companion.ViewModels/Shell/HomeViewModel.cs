@@ -919,7 +919,20 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         }
 
         ClearRoundEntryState();
-        Summary = _session.Summary; // an auto-sim never kills, so the DB is always live here
+
+        // An auto-sim never kills the DRIVER (the DB is always live here), but the sat-out round
+        // still settles the books, so it CAN fold the team (economy §7). Hand off to the bankruptcy
+        // takeover exactly as the confirm path does — otherwise a sit-out bankruptcy would advance
+        // into the season review instead of the ending. The file survives, so this is an ordinary
+        // DB-backed read.
+        if (_session.BankruptcyScreen() is { } bankrupt)
+        {
+            BankruptcyScreen = bankrupt;
+            RefreshRoundCommands();
+            return;
+        }
+
+        Summary = _session.Summary;
         Briefing.Refresh();
         AdvanceAfterRound();
         RefreshRoundCommands();

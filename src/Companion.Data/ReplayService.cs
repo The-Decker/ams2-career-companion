@@ -702,16 +702,35 @@ public static class ReplayService
                     };
                     break;
                 }
-                var outcome = ComputeRoundFold(
-                    pack, masterSeed, inputs, current.StartTeams, soFar,
-                    envelope, stored.Round, playerAgeThisSeason, previousState,
-                    playerCarConditions,
-                    swapDecision: current.SmgpSwaps.TryGetValue(stored.Round, out var decided)
-                        ? decided
-                        : null,
-                    economyDecisions: current.EconomyDecisions.TryGetValue(stored.Round, out var declared)
-                        ? declared
-                        : null);
+                bool hasEconomyDecisions = current.EconomyDecisions.TryGetValue(stored.Round, out var declared);
+                RoundFoldOutcome outcome;
+                try
+                {
+                    outcome = ComputeRoundFold(
+                        pack, masterSeed, inputs, current.StartTeams, soFar,
+                        envelope, stored.Round, playerAgeThisSeason, previousState,
+                        playerCarConditions,
+                        swapDecision: current.SmgpSwaps.TryGetValue(stored.Round, out var decided)
+                            ? decided
+                            : null,
+                        economyDecisions: hasEconomyDecisions ? declared : null);
+                }
+                catch (InvalidOperationException ex) when (hasEconomyDecisions)
+                {
+                    // A tampered economy.decision row that PARSES but is semantically impossible (an
+                    // unknown sponsor, a buy past the cap) makes the economy fold throw. Resimulate
+                    // is report-only and never crashes: surface it as a divergence, exactly like the
+                    // round-conditions / skill-plan validation paths, and roll the transaction back.
+                    divergence = new ReplayDivergence
+                    {
+                        SeasonId = season.Id,
+                        Index = regenerated.Count,
+                        Reason = "economy-decision-validation",
+                        StoredDeltaJson = DataJson.Serialize(declared),
+                        RegeneratedDeltaJson = ex.Message,
+                    };
+                    break;
+                }
                 foreach (var journalEvent in outcome.Events)
                     regenerated.Add((stored.Round, journalEvent));
                 StateStore.InsertRoundPlayerState(db, season.Id, stored.Round, outcome.State, transaction);

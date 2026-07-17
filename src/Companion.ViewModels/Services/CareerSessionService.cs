@@ -382,9 +382,15 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                     campaign?.Plan,
                     // The Dynasty owner economy: both halves of the gate — the pinned campaign mode
                     // AND the creation opt-in. The rules are resolved only for an opted-in Dynasty
-                    // career, so a rules-directory-free caller (most tests) never touches them.
+                    // career, so a rules-directory-free caller (most tests) never touches them; an
+                    // economy career on an install missing the tables fails HERE with a clear
+                    // message rather than seeding an economy it cannot fold.
                     request.DynastyEconomy && campaign?.Plan.Mode == CareerExperienceModes.GrandPrixDynasty
                         ? environment.Rules.DynastyEconomy
+                            ?? throw new InvalidOperationException(
+                                "The Dynasty owner economy is unavailable — data\\rules\\dynasty\\economy.json " +
+                                "is missing from this install. Reinstall the app's data folder to run an " +
+                                "economy career.")
                         : null,
                     transaction);
 
@@ -4487,6 +4493,11 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             ?? throw new InvalidOperationException($"Season {_seasonId} vanished from the career file.");
         if (string.Equals(season.Status, SeasonStatus.Complete, StringComparison.Ordinal))
             return;
+        // A bankrupt team banks no title and rolls no offers (economy §7) — the single chokepoint
+        // that keeps every caller (Apply, AutoSimulateRound, SeasonReview) from resurrecting the
+        // season end the fatal settlement suppressed. The bankruptcy takeover owns the ending.
+        if (CurrentPlayerState()?.Economy?.Bankrupt == true)
+            return;
         // Two-phase (3c-2): a promotion offer deferred by the final round MUST be resolved on the
         // screen BEFORE season end folds — replay resolves it inline (inside the round fold, ahead of
         // season end), so running season end now (old seat, wrong journal order) would diverge on
@@ -6305,6 +6316,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         if (player is null || (player.RaceSuspensionRemaining == 0 && !player.SeasonEndingInjury))
             throw new InvalidOperationException("The driver is fit — enter this round's result manually.");
 
+        var beforeEconomy = player?.Economy;
         int roundNumber = CurrentRoundNumber;
         var packRound = RoundByNumber(roundNumber);
         // The AI field races the round the injured player sits out — a deterministic classification with
@@ -6351,7 +6363,13 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                 nowUtc,
                 transaction));
 
-        if (SeasonComplete)
+        // The sat-out round still settles the books (SettleEconomy runs on the DNS path), so it CAN
+        // fold the team — a Dynasty owner earning nothing while injured marches into the deficit
+        // floor. Suppress the season end on that fatal settlement exactly as Apply does (a folded
+        // team banks no title and rolls no offers); the bankruptcy takeover then owns the ending.
+        bool justWentBankrupt = beforeEconomy?.Bankrupt != true
+            && CurrentPlayerState()?.Economy?.Bankrupt == true;
+        if (SeasonComplete && !justWentBankrupt)
             EnsureSeasonEnd();
     }
 

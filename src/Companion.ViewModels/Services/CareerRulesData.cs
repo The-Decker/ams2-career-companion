@@ -90,11 +90,12 @@ public sealed record CareerRulesData
     public required CarSpecCatalog CarSpecs { get; init; }
 
     /// <summary>The Grand Prix Dynasty owner-economy balance tables
-    /// (<c>data\rules\dynasty\economy.json</c>) — a REQUIRED fold input for economy careers
-    /// (prize/cost/sponsor/development/bankruptcy tables, all exact-rational money). Loaded
-    /// eagerly like perks.json so the live and replay paths see the identical instance; a
+    /// (<c>data\rules\dynasty\economy.json</c>) — an OPTIONAL-MODE fold input: required for an
+    /// economy career (the creation seed and every economy fold/decision path refuse when it is
+    /// null) but null when the file is absent, so a legacy/SMGP career on a stale-data install that
+    /// ships no dynasty subfolder still loads and folds untouched (the dormancy contract). A
     /// non-economy career never reads it.</summary>
-    public required Companion.Core.Dynasty.DynastyEconomyRules DynastyEconomy { get; init; }
+    public required Companion.Core.Dynasty.DynastyEconomyRules? DynastyEconomy { get; init; }
 
     /// <summary>The living-newsroom template library (<c>data\rules\newsroom\*.json</c>): multi-
     /// section article templates + era pools voicing the mode-agnostic event spine. DISPLAY-ONLY —
