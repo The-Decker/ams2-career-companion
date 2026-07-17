@@ -54,6 +54,12 @@ public sealed record ReplaySimInputs
     /// character-free, and mastery-effects-v0 replay remains byte-identical; required when an
     /// active profile owns mastery skills or a stored development INPUT applies at a boundary.</summary>
     public MasterySkillCatalog? MasterySkills { get; init; }
+
+    /// <summary>The Dynasty owner-economy balance tables (data/rules/dynasty/economy.json), or
+    /// null for a build without them. The economy fold requires BOTH this and a career carrying
+    /// <see cref="Companion.Core.Dynasty.DynastyEconomyState"/>; a null value (or a non-economy
+    /// career) folds byte-identically — the CharacterRules threading pattern.</summary>
+    public Companion.Core.Dynasty.DynastyEconomyRules? DynastyEconomy { get; init; }
 }
 
 public sealed record ReplayReport
@@ -237,10 +243,19 @@ public static class ReplayService
             round,
             envelope,
             roundConditions);
+        // The round's journaled Dynasty economy decisions (economy.decision INPUT rows) — read
+        // ONLY for a career carrying the economy state, so every other career costs no query and
+        // folds exactly as before. Replay reads the identical rows in its preread.
+        IReadOnlyList<Companion.Core.Dynasty.DynastyEconomyDecision>? economyDecisions = null;
+        if (previous.Player.Economy is not null)
+        {
+            ReadEconomyDecisions(db, seasonId, tx).TryGetValue(round, out economyDecisions);
+        }
         var outcome = ComputeRoundFold(
             pack, masterSeed, inputs, startTeams,
             ChampionshipResults(pack, upTo),
-            envelope, round, playerAge, previous, playerCarConditions: roundConditions);
+            envelope, round, playerAge, previous, playerCarConditions: roundConditions,
+            economyDecisions: economyDecisions);
 
         JournalStore.AppendMany(db, seasonId, round, outcome.Events, utc, tx);
         StateStore.InsertRoundPlayerState(db, seasonId, round, outcome.State, tx);
@@ -485,6 +500,27 @@ public static class ReplayService
         foreach (var season in seasons)
         {
             IReadOnlyList<CharacterSkillDevelopmentAction> skillDevelopment;
+            IReadOnlyDictionary<int, IReadOnlyList<Companion.Core.Dynasty.DynastyEconomyDecision>> economyDecisions;
+            try
+            {
+                economyDecisions = ReadEconomyDecisions(db, season.Id);
+            }
+            catch (Exception ex) when (ex is InvalidOperationException or JsonException or NotSupportedException)
+            {
+                return new ReplayReport
+                {
+                    Identical = false,
+                    ComparedRows = 0,
+                    FirstDivergence = new ReplayDivergence
+                    {
+                        SeasonId = season.Id,
+                        Index = 0,
+                        Reason = "economy-decision-validation",
+                        StoredDeltaJson = ex.Message,
+                        RegeneratedDeltaJson = null,
+                    },
+                };
+            }
             try
             {
                 skillDevelopment = ReadCharacterSkillDevelopment(db, season.Id);
@@ -521,7 +557,8 @@ public static class ReplayService
                 ReadCharacterSpends(db, season.Id),
                 ReadCharacterRespecs(db, season.Id),
                 skillDevelopment,
-                ReadSmgpSwaps(db, season.Id)));
+                ReadSmgpSwaps(db, season.Id),
+                economyDecisions));
         }
 
         int comparedRows = 0;
@@ -671,6 +708,9 @@ public static class ReplayService
                     playerCarConditions,
                     swapDecision: current.SmgpSwaps.TryGetValue(stored.Round, out var decided)
                         ? decided
+                        : null,
+                    economyDecisions: current.EconomyDecisions.TryGetValue(stored.Round, out var declared)
+                        ? declared
                         : null);
                 foreach (var journalEvent in outcome.Events)
                     regenerated.Add((stored.Round, journalEvent));
@@ -837,9 +877,34 @@ public static class ReplayService
         // The player's post-race promotion decision for a two-phase smgp career (3c-2), or null.
         // Replay supplies the stored smgp.swap input so the pending offer resolves inline; the live
         // result-entry fold passes null (the offer stays pending for the promotion screen to answer).
-        bool? swapDecision = null)
+        bool? swapDecision = null,
+        // The round's journaled Dynasty economy decisions in seq order (economy.decision INPUT
+        // rows), or null. Live (FoldRound) and replay (the preread) both supply the same stored
+        // rows, so the fold applies them identically on both paths.
+        IReadOnlyList<Companion.Core.Dynasty.DynastyEconomyDecision>? economyDecisions = null)
     {
         var events = new List<JournalEvent>(RoundStandingsEvents(pack, roundsSoFar));
+
+        // Dynasty owner economy: journaled decisions apply FIRST, before the grid/expectation is
+        // shaped — a development increment bought over the break is felt in THIS round's expected
+        // finish. Triple gate (economy state carried + not bankrupt + rules present); every other
+        // career skips with zero rows. The economy.applied rows are DERIVED and byte-compared.
+        if (previous.Player.Economy is { Bankrupt: false } economyBefore
+            && inputs.DynastyEconomy is { } decisionRules
+            && economyDecisions is { Count: > 0 })
+        {
+            var applied = Companion.Core.Dynasty.DynastyEconomyFold.ApplyDecisions(
+                new Companion.Core.Dynasty.DynastyDecisionFoldContext
+                {
+                    State = economyBefore,
+                    Rules = decisionRules,
+                    Year = pack.Season.Year,
+                    Round = round,
+                    Decisions = economyDecisions,
+                });
+            events.AddRange(applied.Events);
+            previous = previous with { Player = previous.Player with { Economy = applied.State } };
+        }
 
         // The player's character (folded into the carried state) resolves — once — into the perk
         // modifier the round update reads and the grid patch that shapes the player seat. Null on
@@ -949,6 +1014,44 @@ public static class ReplayService
         var raceSessions = envelope.Result.Sessions.Where(s => s.Kind == SessionKind.Race).ToList();
         bool isChampionshipRound = ChampionshipCalendar.IsChampionshipRound(pack, round);
 
+        // Dynasty owner economy: the round settlement — prize/sponsor income vs fees, accruals and
+        // repairs — runs LAST on every path that reached a resolved grid (a sat-out round still
+        // pays the bills). Same gate as the decision block above; emits the economy.round
+        // statement row plus the bankruptcy row at the terminal transition. Returns the carried
+        // player unchanged for every non-economy career (zero rows, byte-identical).
+        PlayerCareerState SettleEconomy(
+            PlayerCareerState current,
+            bool playerStarted,
+            IReadOnlyList<int?> playerFinishes,
+            DnfCause? primaryDnf)
+        {
+            if (current.Economy is not { Bankrupt: false } economyState
+                || inputs.DynastyEconomy is not { } settleRules)
+            {
+                return current;
+            }
+            var settle = Companion.Core.Dynasty.DynastyEconomyFold.SettleRound(
+                new Companion.Core.Dynasty.DynastyRoundSettleContext
+                {
+                    State = economyState,
+                    Rules = settleRules,
+                    Year = grid.Year,
+                    Round = round,
+                    RoundsInSeason = pack.Season.Rounds.Count,
+                    PlayerTeamTier = playerTeamTier,
+                    PlayerStarted = playerStarted,
+                    PlayerSessionFinishes = playerFinishes,
+                    TeammateSessionFinishes = raceSessions
+                        .Select(s => BestTeammateFinishIn(s, teammateIds))
+                        .ToList(),
+                    HasSecondCar = teammateIds.Count > 0,
+                    PlayerDnf = primaryDnf,
+                    PlayerAccidentSeverity = envelope.PlayerAccidentSeverity,
+                });
+            events.AddRange(settle.Events);
+            return current with { Economy = settle.State };
+        }
+
         // Score the player under the driver id of the SEAT they occupy THIS season, resolved from
         // their livery above — not a single career-global id. The two are identical in the first
         // season (the player's livery IS that driver's seat), so every single-pack career and the
@@ -988,6 +1091,9 @@ public static class ReplayService
                 }),
                 Cause = "did-not-start",
             });
+            // The sat-out round still settles the books: no prize/appearance for the player car,
+            // but the second car raced and every fee/accrual is due.
+            healed = SettleEconomy(healed, playerStarted: false, [], null);
             return new RoundFoldOutcome(
                 events,
                 new RoundPlayerState { Player = healed, RecommendedSlider = previous.RecommendedSlider },
@@ -996,13 +1102,21 @@ public static class ReplayService
                 null);
         }
 
+        var playerSessionFinishes = new List<int?>(raceSessions.Count);
+        DnfCause? primaryPlayerDnf = null;
         for (int i = 0; i < raceSessions.Count; i++)
         {
             var outcome = PlayerOutcomeIn(raceSessions[i], envelope, playerDriverId);
             if (outcome is null)
+            {
+                playerSessionFinishes.Add(null);
                 continue; // the player is not in this race's classification
+            }
 
             var (finish, dnf) = outcome.Value;
+            playerSessionFinishes.Add(finish);
+            if (i == 0)
+                primaryPlayerDnf = dnf;
             // The SMGP rival battle resolves against the round's PRIMARY race, like the called
             // shot and the qualifying anchor (smgp packs author single-race rounds anyway).
             if (i == 0)
@@ -1068,7 +1182,17 @@ public static class ReplayService
         }
 
         if (!playerRaced)
-            return new RoundFoldOutcome(events, previous, PlayerRaced: false, null, null);
+        {
+            // The player was absent from every classification (no DNS marker — a legacy edge):
+            // the team still raced its second car and the bills still ran.
+            var absent = SettleEconomy(previous.Player, playerStarted: false, [], null);
+            return new RoundFoldOutcome(
+                events,
+                previous with { Player = absent },
+                PlayerRaced: false,
+                null,
+                null);
+        }
 
         // The accident injury/death roll (character death & injury §3.2/§3.3): a DERIVED per-round
         // outcome. QUADRUPLE gate — the career opted into mortality, is not already deceased, has a
@@ -1133,6 +1257,10 @@ public static class ReplayService
                 player = player with { CurrentTeamId = newTeamId };
             }
         }
+
+        // The round settlement closes the books after every on-track consequence (accident repair
+        // bills key off the same envelope facts the accident fold consumed).
+        player = SettleEconomy(player, playerStarted: true, playerSessionFinishes, primaryPlayerDnf);
 
         return new RoundFoldOutcome(
             events,
@@ -1367,7 +1495,8 @@ public static class ReplayService
         IReadOnlyList<CharacterSpend> Spends,
         IReadOnlyList<CharacterRespec> Respecs,
         IReadOnlyList<CharacterSkillDevelopmentAction> SkillDevelopment,
-        IReadOnlyDictionary<int, bool> SmgpSwaps);
+        IReadOnlyDictionary<int, bool> SmgpSwaps,
+        IReadOnlyDictionary<int, IReadOnlyList<Companion.Core.Dynasty.DynastyEconomyDecision>> EconomyDecisions);
 
     private static bool IsComplete(SeasonRecord season) =>
         string.Equals(season.Status, SeasonStatus.Complete, StringComparison.Ordinal);
@@ -1405,6 +1534,7 @@ public static class ReplayService
         PlayerName = string.IsNullOrEmpty(player.Character?.Name) ? inputs.PlayerName : player.Character!.Name,
         CharacterRules = inputs.CharacterRules,
         MasterySkills = inputs.MasterySkills,
+        EconomyRules = inputs.DynastyEconomy,
     };
 
     /// <summary>Re-derives a follow-on season's start states from the previous season's
@@ -1751,6 +1881,72 @@ public static class ReplayService
             swaps[round] = DataJson.Deserialize<SmgpSwapInput>(row.DeltaJson).Accepted;
         }
         return swaps;
+    }
+
+    /// <summary>All journaled Dynasty economy decisions of a season (the provenance-excluded
+    /// <c>economy.decision</c> INPUT rows), keyed by their declared round, in journal seq order —
+    /// the exact order the round fold applies them. A malformed row throws (the career file is
+    /// tampered); ResimulateCore catches and reports it as an 'economy-decision-validation'
+    /// divergence.</summary>
+    public static IReadOnlyDictionary<int, IReadOnlyList<Companion.Core.Dynasty.DynastyEconomyDecision>>
+        ReadEconomyDecisions(CareerDatabase db, long seasonId, SqliteTransaction? transaction = null)
+    {
+        var decisions = new Dictionary<int, List<Companion.Core.Dynasty.DynastyEconomyDecision>>();
+        foreach (var row in JournalStore.ReadSeason(db, seasonId, transaction))
+        {
+            if (!string.Equals(row.Phase, JournalPhases.EconomyDecision, StringComparison.Ordinal))
+                continue;
+            if (row.Round is not { } round)
+                throw new InvalidOperationException(
+                    $"economy.decision journal row {row.Seq} carries no round — the career file is damaged.");
+            var decision = DataJson.Deserialize<Companion.Core.Dynasty.DynastyEconomyDecision>(row.DeltaJson);
+            if (!decisions.TryGetValue(round, out var list))
+                decisions[round] = list = [];
+            list.Add(decision);
+        }
+        return decisions.ToDictionary(
+            pair => pair.Key,
+            pair => (IReadOnlyList<Companion.Core.Dynasty.DynastyEconomyDecision>)pair.Value);
+    }
+
+    /// <summary>
+    /// Journals one Dynasty economy decision for a NOT-YET-FOLDED round — the between-rounds
+    /// decision window (docs/dev/dynasty-tycoon-economy.md §5). The INPUT row is provenance-
+    /// excluded; the round's fold (live and replay) reads it back and applies it in seq order, so
+    /// its DERIVED effects are byte-compared. Refuses a round that already has a raw result (the
+    /// <see cref="PlayerRoundConditionsStore.Declare"/> immutability shape) — a declared decision
+    /// is locked the moment the race it precedes is imported. Business validation (affordability,
+    /// sponsor availability, the level cap) belongs to the session service BEFORE this call.
+    /// </summary>
+    public static long DeclareEconomyDecision(
+        CareerDatabase db,
+        long seasonId,
+        int round,
+        Companion.Core.Dynasty.DynastyEconomyDecision decision,
+        string utc)
+    {
+        if (round < 1)
+            throw new ArgumentOutOfRangeException(nameof(round), round, "Rounds are 1-based.");
+
+        using var transaction = db.Connection.BeginTransaction();
+        bool roundImported = ResultStore.ReadSeasonResults(db, seasonId, transaction)
+            .Any(result => result.Round == round);
+        if (roundImported)
+        {
+            throw new InvalidOperationException(
+                $"Round {round} of season {seasonId} already has an imported result — economy " +
+                "decisions are declared for the NEXT unfolded round, never rewritten under one.");
+        }
+
+        long seq = JournalStore.Append(db, seasonId, round, new JournalEvent
+        {
+            Phase = JournalPhases.EconomyDecision,
+            Entity = "player",
+            DeltaJson = DataJson.Serialize(decision),
+            Cause = Companion.Core.Dynasty.DynastyEconomyFold.CauseOf(decision.Kind),
+        }, utc, transaction);
+        transaction.Commit();
+        return seq;
     }
 
     private static List<(long SeasonId, string TeamId)> ReadAcceptedOffers(CareerDatabase db)

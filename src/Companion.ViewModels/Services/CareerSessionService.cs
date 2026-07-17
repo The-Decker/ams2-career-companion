@@ -4424,6 +4424,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             PlayerAge = _playerFirstSeasonAge,
             CharacterRules = rules.Character,
             MasterySkills = rules.MasterySkills,
+            DynastyEconomy = rules.DynastyEconomy,
         };
     }
 

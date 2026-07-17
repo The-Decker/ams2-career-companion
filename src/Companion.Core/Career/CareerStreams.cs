@@ -163,4 +163,33 @@ public static class JournalPhases
     /// <summary>The Budget-Unit rescale note across an era boundary (v1: identity — the
     /// seam for the Phase-2 economy).</summary>
     public const string EraEconomy = "era.economy";
+
+    // ---- Grand Prix Dynasty owner economy (docs/dev/dynasty-tycoon-economy.md) ----
+    // All emitted ONLY for a career carrying DynastyEconomyState, so every other career's journal
+    // sequence is unchanged. economy.decision is the one INPUT; the rest are DERIVED and
+    // byte-compared.
+
+    /// <summary>A player economic decision (sign/drop sponsor, buy development, staff, the second
+    /// seat's deal) declared for the next UNFOLDED round — a raw player-choice INPUT the fold
+    /// cannot re-derive. Journaled once and PROVENANCE-EXCLUDED, then read back by that round's
+    /// fold (live and replay) and applied in seq order, exactly like the smgp.swap decision. Its
+    /// DERIVED <see cref="EconomyApplied"/> effects ARE byte-compared.</summary>
+    public const string EconomyDecision = "economy.decision";
+
+    /// <summary>One journaled decision APPLIED by the round fold (a DERIVED row): the kind, the
+    /// exact money moved, and the balance from → to. Emitted at the top of the round fold so a
+    /// development buy shapes the same round's expectation.</summary>
+    public const string EconomyApplied = "economy.applied";
+
+    /// <summary>The round's cash-flow settlement (a DERIVED row): the full income/costs statement,
+    /// net, balance from → to and the deficit-grace counter. Cause "surplus"/"deficit".</summary>
+    public const string EconomyRound = "economy.round";
+
+    /// <summary>The season settlement at season end (a DERIVED row): constructors' prize money,
+    /// sponsor season/title bonuses, contract expiries and the development carryover.</summary>
+    public const string EconomySeason = "economy.season";
+
+    /// <summary>The team went bankrupt (a DERIVED row) — TERMINAL, the economy's CareerOver.
+    /// Emitted once by the round settlement that crossed the line.</summary>
+    public const string EconomyBankruptcy = "economy.bankruptcy";
 }
