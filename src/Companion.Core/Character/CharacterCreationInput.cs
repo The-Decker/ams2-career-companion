@@ -48,7 +48,7 @@ public sealed record CharacterCreationInput
         }
         else if (CampaignProgressionPlan is not null)
         {
-            throw new InvalidOperationException("Racing Passport uses portfolio state, not a bounded campaign plan.");
+            throw new InvalidOperationException("Racing Passport is pure racing and takes no bounded campaign plan.");
         }
 
         if (string.IsNullOrWhiteSpace(Profile.RacingDnaId) || Profile.RacingDnaVersion <= 0)

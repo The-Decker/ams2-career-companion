@@ -46,11 +46,14 @@ internal sealed record PreparedCampaignPack
     }
 }
 
-/// <summary>The authoritative v2 creation input plus every distinct pack blob it references.</summary>
+/// <summary>The authoritative v2 creation input plus every distinct pack blob it references.
+/// For a pure-racing Racing Passport creation both <see cref="Plan"/> and
+/// <see cref="CharacterInput"/> are NULL: one faithful season, no bounded horizon, no
+/// progression character.</summary>
 internal sealed record CampaignCreationPreparation
 {
-    public required CampaignProgressionPlan Plan { get; init; }
-    public required CharacterCreationInput CharacterInput { get; init; }
+    public required CampaignProgressionPlan? Plan { get; init; }
+    public required CharacterCreationInput? CharacterInput { get; init; }
     public required IReadOnlyList<PreparedCampaignPack> DistinctPacks { get; init; }
 }
 
@@ -88,8 +91,7 @@ internal static class CampaignCreationPlanner
         if (!CareerExperienceModes.IsKnown(mode))
             throw new InvalidOperationException($"Unknown career experience mode '{mode}'.");
         if (mode == CareerExperienceModes.RacingPassport)
-            throw new InvalidOperationException(
-                "Racing Passport requires its portfolio activity ledger and cannot be created as a single career file yet.");
+            return PrepareRacingPassport(request, selected);
         if (request.Character is not { ProgressionVersion: CharacterLevelProgression.Level300Version } character)
             throw new InvalidOperationException("An explicit Alpha experience mode requires a progression-v2 character.");
 
@@ -168,6 +170,43 @@ internal static class CampaignCreationPlanner
         };
     }
 
+    /// <summary>The pure-racing creation branch (the 2026-07-18 product decision,
+    /// docs/dev/racing-passport-pure-racing.md): one faithful historical season, no progression
+    /// character, no campaign plan, no owner economy. Contradictory input is REJECTED rather
+    /// than silently downgraded, a mixed mode must never exist.</summary>
+    private static CampaignCreationPreparation PrepareRacingPassport(
+        CareerCreationRequest request, PreparedCampaignPack selected)
+    {
+        ValidateModeCompatibility(CareerExperienceModes.RacingPassport, selected);
+        if (request.Character is not null)
+            throw new InvalidOperationException(
+                "Racing Passport is pure racing and takes no character progression profile.");
+        if (request.DynastyEconomy)
+            throw new InvalidOperationException(
+                "Racing Passport is pure racing and takes no Dynasty owner economy.");
+        if (request.SmgpMode)
+            throw new InvalidOperationException(
+                "Racing Passport races faithful historical seasons; SMGP is its own campaign.");
+
+        var selectedReport = PackStructuralValidator.Validate(selected.Pack);
+        if (selectedReport.HasErrors)
+        {
+            throw new InvalidOperationException(
+                "The selected pack is not structurally playable: " +
+                string.Join(" | ", selectedReport.Issues
+                    .Where(i => i.Severity == PackIssueSeverity.Error)
+                    .Select(i => i.Message)));
+        }
+
+        // Exactly one pinned season: the selected pack's exact bytes/version/hash, nothing else.
+        return new CampaignCreationPreparation
+        {
+            Plan = null,
+            CharacterInput = null,
+            DistinctPacks = [selected],
+        };
+    }
+
     private static void ValidateModeCompatibility(string mode, PreparedCampaignPack selected)
     {
         bool selectedIsSmgp = string.Equals(
@@ -178,6 +217,9 @@ internal static class CampaignCreationPlanner
             throw new InvalidOperationException("SMGP mode requires an SMGP-styled season pack.");
         if (mode == CareerExperienceModes.GrandPrixDynasty && selectedIsSmgp)
             throw new InvalidOperationException("Grand Prix Dynasty cannot start from an SMGP pack.");
+        if (mode == CareerExperienceModes.RacingPassport && selectedIsSmgp)
+            throw new InvalidOperationException(
+                "Racing Passport races faithful historical seasons; SMGP is its own campaign.");
     }
 
     /// <summary>Closes the creation boundary around Racing DNA choices whose valid values come
