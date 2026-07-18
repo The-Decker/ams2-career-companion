@@ -85,6 +85,15 @@ public sealed class SmgpMultiSeasonDnqTests : IDisposable
             Assert.Equal(authoredDriverByLivery[movedSeat.Ams2LiveryName], fixedCarArtKey);
             Assert.NotEqual(movedSeat.DriverId, fixedCarArtKey);
 
+            // The Paddock tells the same story: a driver the winter reshuffle moved shows the car
+            // they actually race this season (the physical livery's art), never their season-1
+            // mount, while the card's team follows the new seat.
+            var movedCard = Assert.Single(
+                s2.SmgpPaddock()!.Drivers.Where(card =>
+                    string.Equals(card.DriverId, movedSeat.DriverId, StringComparison.Ordinal)));
+            Assert.Equal(fixedCarArtKey, movedCard.CarKey);
+            Assert.Equal(movedSeat.TeamId, movedCard.TeamId);
+
             foreach (var round in s2.Pack.Season.Rounds)
             {
                 var expectedStarters = expected.Season.Rounds.Single(r => r.Round == round.Round)

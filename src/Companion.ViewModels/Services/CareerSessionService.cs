@@ -2296,10 +2296,17 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             entryByDriver.TryGetValue(d.Id, out var entry);
             PackTeam? team = entry is not null ? teamsById.GetValueOrDefault(entry.TeamId) : null;
             var profile = profiles.ForDriver(d.Id);
+            // Car art follows the physical livery, not the driver: the winter standings reshuffle
+            // moves drivers between cars, so the card shows the car the driver actually races this
+            // season (the same display-only mapping the starting grid uses), falling back to the
+            // driver's own season-1 art for an unmapped/custom livery.
+            string carArtKey = entry?.Ams2LiveryName is { Length: > 0 } livery
+                ? GridCarArtKeyForLivery(livery) ?? d.Id
+                : d.Id;
             drivers.Add(BuildCard(
                 d.Id, profile?.Name is { Length: > 0 } n ? n : d.Name,
                 team?.Id ?? entry?.TeamId ?? "", team?.Name ?? "", entry?.Number,
-                d.Id, d.Id, isPlayer: false, profile, team?.Prestige ?? 0));
+                d.Id, carArtKey, isPlayer: false, profile, team?.Prestige ?? 0));
         }
 
         // Most-storied first: top houses lead, then the biggest career.
@@ -2314,8 +2321,12 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         string playerTeamId = playerSeat?.TeamId ?? CurrentSmgpTeamId() ?? "";
         var playerTeam = teamsById.GetValueOrDefault(playerTeamId);
         string? playerLivery = playerSeat?.Ams2LiveryName ?? CurrentSmgpState()?.CurrentSeatLivery;
+        // Same physical-car rule as the AI cards: the art is the car the player actually races
+        // (post-promotion livery), resolved through the pre-reshuffle livery map; the reshuffled
+        // entry lookup and the player's own id are only the legacy fallbacks.
         string? playerCarArtId = playerLivery is null ? null
-            : Pack.Entries.FirstOrDefault(e => string.Equals(e.Ams2LiveryName, playerLivery, StringComparison.Ordinal))?.DriverId;
+            : GridCarArtKeyForLivery(playerLivery)
+              ?? Pack.Entries.FirstOrDefault(e => string.Equals(e.Ams2LiveryName, playerLivery, StringComparison.Ordinal))?.DriverId;
         var playerCard = BuildCard(
             _playerDriverId, PlayerDisplayName() ?? PlayerDefaultName, playerTeamId, playerTeam?.Name ?? "",
             null, Companion.ViewModels.Wizard.GridSeatChoice.PlayerImageKey(playerTeamId),
