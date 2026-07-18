@@ -1,5 +1,5 @@
 {
-  "$comment": "Generative news-article corpus for the 1960s (telegram / trackside wire-report voice), parsed by Companion.Core.News.NewsArticleBank. Keys under 'bodies' are 'journalPhase|cause'; each holds era-keyed body templates selected deterministically via the 'headlines' PCG32 stream (a pure function of masterSeed + round). Bodies compose literal prose, fact tokens, and {pool:name} references into 'pools' — so a handful of templates and pools yield thousands of distinct dispatches. Fact tokens: {player} {team} {race} {year} {round} {position} {expected} {winner} {fieldSize} {champPosition} {champMove} {champLeader}. Add new eras/events by adding JSON only — no code. 1960s copy is uppercase-leaning wire-report prose, STOP-punctuated where a telegram would break.",
+  "$comment": "Generative news-article corpus for the 1960s (telegram / trackside wire-report voice), parsed by Companion.Core.News.NewsArticleBank. Keys under 'bodies' are 'journalPhase|cause'; each holds era-keyed body templates selected deterministically via the 'headlines' PCG32 stream (a pure function of masterSeed + round). Bodies compose literal prose, fact tokens, and {pool:name} references into 'pools', so a handful of templates and pools yield thousands of distinct dispatches. Fact tokens: {player} {team} {race} {year} {round} {position} {expected} {winner} {fieldSize} {champPosition} {champMove} {champLeader}. Add new eras/events by adding JSON only, no code. 1960s copy is uppercase-leaning wire-report prose, STOP-punctuated where a telegram would break.",
   "eras": [
     { "key": "1960s", "fromYear": 1946, "toYear": 1969 }
   ],
@@ -7,7 +7,7 @@
     "dateline": {
       "1960s": [
         "FROM THE CIRCUIT, WIRE REPORT.",
-        "TRACKSIDE DISPATCH — {race}, {year}.",
+        "TRACKSIDE DISPATCH, {race}, {year}.",
         "BY TELEGRAPH FROM THE PADDOCK.",
         "OUR CORRESPONDENT CABLES FROM {race}.",
         "WIRE FILED AT THE FALL OF THE FLAG.",
@@ -73,11 +73,11 @@
     "champLine": {
       "1960s": [
         "In the championship {player} sits {champPosition}, {champMove}.",
-        "The title table now reads {player} {champPosition} — {champMove} on the season.",
+        "The title table now reads {player} {champPosition}, {champMove} on the season.",
         "{player} stands {champPosition} in the running for the crown, {champMove}.",
         "In the run for the crown {player} lies {champPosition}, {champMove}.",
         "The championship reckoning: {player} {champPosition}, {champMove} on the year.",
-        "As for the title, {player} holds {champPosition} — {champMove}.",
+        "As for the title, {player} holds {champPosition}, {champMove}.",
         "The points table places {player} {champPosition}, {champMove} since last we wired.",
         "For the championship, read {player} at {champPosition}, {champMove}."
       ],
@@ -334,12 +334,12 @@
     },
     "season.digest|player-champion": {
       "1960s": [
-        "THE {year} SEASON IS RUN. STOP. And it is {player} who stands above all — champion of the world, the {team} name struck into the record book. {pool:seasonClose}",
+        "THE {year} SEASON IS RUN. STOP. And it is {player} who stands above all, champion of the world, the {team} name struck into the record book. {pool:seasonClose}",
         "Champions are forged across a long season, and in {year} the crown is {player}'s. STOP. A campaign {team} will toast for years to come. {pool:seasonClose}",
         "IT IS DONE. STOP. {player} is champion of {year}, and the {team} name is graven into the record book for all time. {pool:seasonClose}",
         "The long {year} campaign is run, and the crown rests with {player}. STOP. {team} scale the summit of the sport. {pool:seasonClose}",
         "A CHAMPION IS MADE. STOP. Across a full season {player} bested all comers; {year} belongs to {player} and to {team}. {pool:seasonClose}",
-        "When the final flag fell on {year}, one name stood above the rest — {player}, world champion, {team} triumphant. {pool:seasonClose}",
+        "When the final flag fell on {year}, one name stood above the rest, {player}, world champion, {team} triumphant. {pool:seasonClose}",
         "The {year} title is settled, and settled in {player}'s favour. A season of which {team} will speak for a generation. {pool:seasonClose}",
         "THE CROWN IS {player}'S. STOP. The {year} championship falls to {team} at the last, a season's toil rewarded in full. {pool:seasonClose}",
         "Across a long and hard-fought {year}, one driver would not be beaten: {player}, world champion, with {team} at the summit. {pool:seasonClose}",

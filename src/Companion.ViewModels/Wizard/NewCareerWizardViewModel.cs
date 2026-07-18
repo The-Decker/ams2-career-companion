@@ -22,13 +22,13 @@ public sealed class CareerCreatedEventArgs(ICareerSession session, string career
 
 /// <summary>
 /// The new-career wizard (app-shell contract):
-///  a. Season pick — packs from the exe-adjacent packs\ folder + Documents\AMS2CareerCompanion\Packs.
-///  b. Content verification — PackStructuralValidator + PackContentValidator + installed-livery
+///  a. Season pick, packs from the exe-adjacent packs\ folder + Documents\AMS2CareerCompanion\Packs.
+///  b. Content verification, PackStructuralValidator + PackContentValidator + installed-livery
 ///     scan. ERRORS BLOCK; warnings allow an explicit proceed-anyway.
-///  c. Create driver — establish the player's identity before choosing a car.
-///  d. Seat pick — the pack's entries with driver ratings and team tier/reliability.
-///  e. Season grid — the field carried into the career.
-///  f. Confirm — career name, master seed (random default, editable), rules-summary chip;
+///  c. Create driver, establish the player's identity before choosing a car.
+///  d. Seat pick, the pack's entries with driver ratings and team tier/reliability.
+///  e. Season grid, the field carried into the career.
+///  f. Confirm, career name, master seed (random default, editable), rules-summary chip;
 ///     Create pins the pack and creates the career DB.
 /// </summary>
 public sealed partial class NewCareerWizardViewModel : ObservableObject
@@ -187,7 +187,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             : WizardStep.SeasonPick;
 
     /// <summary>The character step exists only when character rules are available (the app always
-    /// ships perks.json; a rules-less environment — some tests — skips from verification to seat pick).</summary>
+    /// ships perks.json; a rules-less environment, some tests, skips from verification to seat pick).</summary>
     public bool HasCharacterStep => _environment.RulesDirectory is not null;
 
     [RelayCommand(CanExecute = nameof(CanGoNext))]
@@ -430,14 +430,14 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         OnPropertyChanged(nameof(CampaignPacingSummary));
     }
 
-    /// <summary>True when the selected pack is the SMGP replica: the wizard reshapes — seats
+    /// <summary>True when the selected pack is the SMGP replica: the wizard reshapes, seats
     /// restrict to the lower divisions (the game starts rookies there), the season field is the
     /// whole pack (the ladder needs every car), and own-entrant is unavailable (a custom livery
     /// holds no ladder seat).</summary>
     public bool IsSmgpPack => string.Equals(
         Pack?.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal);
 
-    /// <summary>The grid step's checkboxes lock for the SMGP replica — the field is fixed.</summary>
+    /// <summary>The grid step's checkboxes lock for the SMGP replica, the field is fixed.</summary>
     public bool GridPickEnabled => !IsSmgpPack;
 
     // ---------- step b: verification ----------
@@ -455,7 +455,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     public bool HasWarnings => VerificationItems.Any(i => i is { IsError: false, IsInfo: false });
 
     /// <summary>Per-file livery-scan detail lines (the unreadable files) behind the ONE
-    /// aggregate summary item — rendered in a collapsed-by-default details section instead
+    /// aggregate summary item, rendered in a collapsed-by-default details section instead
     /// of a wall of per-file rows.</summary>
     public IReadOnlyList<string> LiveryScanDetails { get; private set; } = [];
 
@@ -482,7 +482,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
 
         // The livery scan reports as ONE aggregate line: an info item when every override
         // file yielded its liveries (lenient recovery included), a single warning when some
-        // files stayed unreadable — with the per-file list behind the collapsed details.
+        // files stayed unreadable, with the per-file list behind the collapsed details.
         var installation = _environment.LocateInstall();
         var scan = _environment.ScanInstalledLiveries(installation);
         if (scan.FilesScanned > 0)
@@ -491,13 +491,13 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             VerificationItems.Add(new VerificationItem(
                 IsError: false,
                 scan.UnreadableFiles.Count > 0
-                    ? $"{scan.Summary} — the unreadable files are listed under details."
+                    ? $"{scan.Summary}, the unreadable files are listed under details."
                     : scan.Summary,
                 IsInfo: scan.UnreadableFiles.Count == 0));
         }
 
         // PRIMARY name authority: the user's installed CustomAIDrivers class file. A name it
-        // defines is valid whatever the skin state — the briefing/verification screens must not
+        // defines is valid whatever the skin state, the briefing/verification screens must not
         // show a false "won't bind" warning for a name the installed AI file already defines.
         var installedAiNames = _environment.ScanInstalledAiNames(installation, pack.Season.Ams2Class);
 
@@ -549,9 +549,9 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
                 return $"{total} alternate mod {tracks} available for this season.";
             if (missing == 0)
                 return total == 1
-                    ? "✔ The alternate mod track is installed — this season will use it."
-                    : $"✔ All {total} alternate mod tracks installed — this season will use them.";
-            return $"⚠ {missing} of {total} required mod {tracks} not installed — alternates won't be applied; " +
+                    ? "✔ The alternate mod track is installed, this season will use it."
+                    : $"✔ All {total} alternate mod tracks installed, this season will use them.";
+            return $"⚠ {missing} of {total} required mod {tracks} not installed, alternates won't be applied; " +
                    "the season stays on its default AMS2 tracks. Install the missing mods and re-tick, or race the defaults.";
         }
     }
@@ -568,7 +568,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         OnPropertyChanged(nameof(AlternateTrackStatus));
     }
 
-    /// <summary>The "check installed" action — re-probe the install for the required mod tracks
+    /// <summary>The "check installed" action, re-probe the install for the required mod tracks
     /// (e.g. after installing a missing one). Mirrors the tick's own re-check.</summary>
     [RelayCommand]
     private void CheckAlternateMods() =>
@@ -586,7 +586,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     [ObservableProperty]
     private bool _useModdedField;
 
-    /// <summary>The car mod this pack's modded field needs, flagged installed or not — null when the
+    /// <summary>The car mod this pack's modded field needs, flagged installed or not, null when the
     /// pack offers none. Refreshed from the install on verification + on toggling.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(PackHasModdedField), nameof(ModdedFieldStatus))]
@@ -602,10 +602,10 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             if (ModdedVehicle is not { } mod)
                 return "";
             if (!UseModdedField)
-                return $"Adds the {mod.ModName} cars to round out the grid — if the mod is installed.";
+                return $"Adds the {mod.ModName} cars to round out the grid, if the mod is installed.";
             return mod.Installed
-                ? $"✔ {mod.ModName} is installed — its cars will join the grid."
-                : $"⚠ {mod.ModName} not found — its cars won't be added; the season fields its base grid. " +
+                ? $"✔ {mod.ModName} is installed, its cars will join the grid."
+                : $"⚠ {mod.ModName} not found, its cars won't be added; the season fields its base grid. " +
                   "Install the mod and re-tick, or race without it.";
         }
     }
@@ -618,7 +618,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             : null;
     }
 
-    /// <summary>The "check installed" action — re-probe the install for the required car mod.</summary>
+    /// <summary>The "check installed" action, re-probe the install for the required car mod.</summary>
     [RelayCommand]
     private void CheckModdedField() =>
         RefreshModdedFieldStatus(_environment.LocateInstall()?.InstallDirectory);
@@ -642,18 +642,18 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         NextCommand.NotifyCanExecuteChanged();
     }
 
-    /// <summary>The team-coloured PLAYER image for the character screen — the team the player is
+    /// <summary>The team-coloured PLAYER image for the character screen, the team the player is
     /// joining (<c>data/ams2/portraits/player.&lt;team&gt;.jpg</c>, a team helmet), or a plain
     /// "player" key for an own entrant. Updates when the chosen seat changes.</summary>
     public string PlayerImageKey => GridSeatChoice.PlayerImageKey(SelectedSeat?.TeamId ?? "");
 
-    /// <summary>The car the player will drive — its preview image key (the seat's driver id keys
+    /// <summary>The car the player will drive, its preview image key (the seat's driver id keys
     /// <c>data/ams2/cars/&lt;driverId&gt;.png</c>). Null for an own entrant (no pack car).</summary>
     public string? PlayerCarKey => SelectedSeat?.DriverId;
 
     /// <summary>The arcade car-spec card for the car the player will drive (machine/engine/power +
     /// ENG-TM-SUS-TIRE-BRA bars), resolved from the chosen seat's team/vehicle. Null when there is no
-    /// character system, no seat, or no authored spec — the character screen then hides the card.</summary>
+    /// character system, no seat, or no authored spec, the character screen then hides the card.</summary>
     public CarSpecCardViewModel? PlayerCarSpec
     {
         get
@@ -669,13 +669,13 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     }
 
     /// <summary>The player's chosen driver name (the character step, defaulting to the seat driver
-    /// until edited) — replaces the AI driver's name on the player's own Season's-Grid card. Null
+    /// until edited), replaces the AI driver's name on the player's own Season's-Grid card. Null
     /// (character-less / empty) leaves the card on the seat driver's name.</summary>
     private string? PlayerDisplayName =>
         Character?.Name?.Trim() is { Length: > 0 } n ? n : null;
 
     /// <summary>Optional escape hatch from the pack seats: type the exact name of a custom AMS2 livery
-    /// you have installed and race as your OWN independent entrant (the player-as-own-entrant path — a
+    /// you have installed and race as your OWN independent entrant (the player-as-own-entrant path, a
     /// stable synthetic driver, a neutral car, character-shaped ratings), added to the grid rather than
     /// replacing a historical driver. When set it takes precedence over the seat selection; empty = the
     /// ordinary "pick a pack seat" flow (byte-identical to a career created before this field).</summary>
@@ -685,9 +685,9 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(NextCommand))]
     private string _customLiveryName = "";
 
-    /// <summary>True when the player typed a custom livery — they race as their own entrant instead of
+    /// <summary>True when the player typed a custom livery, they race as their own entrant instead of
     /// taking a pack seat.</summary>
-    /// <summary>Own-entrant never applies to the SMGP replica — a custom livery holds no seat on
+    /// <summary>Own-entrant never applies to the SMGP replica, a custom livery holds no seat on
     /// the ladder, so the mode's swaps and the title defense could never reach it.</summary>
     public bool IsOwnEntrant => !IsSmgpPack && !string.IsNullOrWhiteSpace(CustomLiveryName);
 
@@ -708,12 +708,12 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
 
         // The player picks a SEAT (a livery) and drives it the WHOLE season. When a historical seat
         // changed drivers mid-year (e.g. Watson subbing for Lauda), the pack has two entries with the
-        // SAME livery — so group by livery and show ONE seat, represented by the driver who held it
+        // SAME livery, so group by livery and show ONE seat, represented by the driver who held it
         // for the most rounds. Packs whose livery names embed the driver (e.g. "1988 Williams #5 -
         // N. Mansell") never collide, so they are unaffected; team-only livery names (1985) no longer
         // list the same seat twice. (Dangling team/driver refs are validation findings, skipped.)
         // The SMGP replica starts rookies at the BOTTOM (Mike's rule): only LEVEL D cars are
-        // offered — you earn everything above through the rival ladder.
+        // offered, you earn everything above through the rival ladder.
         bool smgp = IsSmgpPack;
 
         foreach (var group in pack.Entries
@@ -747,7 +747,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         // silently chooses the first one before the player clicks a card.
     }
 
-    /// <summary>How many of the season's rounds an entry's rounds-range covers — used to pick the
+    /// <summary>How many of the season's rounds an entry's rounds-range covers, used to pick the
     /// primary driver of a seat that changed hands mid-season.</summary>
     private static int RoundsCovered(Companion.Core.Packs.SeasonPack pack, string rounds) =>
         Companion.Core.Packs.RoundsRange.TryParse(rounds, out var range, out _)
@@ -761,24 +761,24 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     /// locked in.</summary>
     public ObservableCollection<GridSeatChoice> GridChoices { get; } = [];
 
-    /// <summary>Total cars on the grid — every included seat, the player's own car included.</summary>
+    /// <summary>Total cars on the grid, every included seat, the player's own car included.</summary>
     /// <summary>The largest per-round grid size in the pack (26 for 1988, where only 26 of ~30 qualify
     /// each round). Cached when the choices are built. Zero for a pack with no grid blocks.</summary>
     private int _maxRoundGridSize;
 
-    /// <summary>The season roster the player picked — every included seat (their own car included).
+    /// <summary>The season roster the player picked, every included seat (their own car included).
     /// This is the pool of cars that CAN race; the per-race grid draws from it (see MaxRaceCars).</summary>
     public int IncludedCount => GridChoices.Count(c => c.IsIncluded);
 
     /// <summary>The most cars actually on track in a single round given the selection: the per-race
     /// grid size, capped by how many seats are included. For a pre-qualifying season this is smaller
-    /// than the roster (1988: 30-car roster, 26 on the grid) — so it, not IncludedCount, is what the
+    /// than the roster (1988: 30-car roster, 26 on the grid), so it, not IncludedCount, is what the
     /// player sees racing.</summary>
     public int MaxRaceCars => _maxRoundGridSize <= 0
         ? IncludedCount
         : Math.Min(IncludedCount, _maxRoundGridSize);
 
-    /// <summary>The exact number to type into AMS2's "AI Opponents" — the on-track grid minus the
+    /// <summary>The exact number to type into AMS2's "AI Opponents", the on-track grid minus the
     /// player's own car. Derived from MaxRaceCars, NOT the roster: a pre-qualifying season fields
     /// fewer cars per round than the full field, so roster-minus-one would be too high.</summary>
     public int AiOpponentCount => Math.Max(0, MaxRaceCars - 1);
@@ -792,7 +792,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         var pack = Pack!;
         var teamsById = pack.Teams.ToDictionary(t => t.Id, StringComparer.Ordinal);
         var driversById = pack.Drivers.ToDictionary(d => d.Id, StringComparer.Ordinal);
-        // An own entrant is no pack seat, so no pack row is locked as "You" — a synthetic locked row
+        // An own entrant is no pack seat, so no pack row is locked as "You", a synthetic locked row
         // is added after the pack seats below.
         string? playerLivery = IsOwnEntrant ? null : SelectedSeat?.LiveryName;
 
@@ -817,7 +817,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             {
                 LiveryName = entry.Ams2LiveryName,
                 Liveries = liveries,
-                // The player REPLACES this seat's driver — their own (locked) card shows the PLAYER's
+                // The player REPLACES this seat's driver, their own (locked) card shows the PLAYER's
                 // chosen name, not the AI driver whose car they took. Every other card keeps its
                 // driver. (In-career the resolver does the same swap by IsPlayer; this is the wizard.)
                 DriverName = locked && PlayerDisplayName is { } playerName
@@ -842,7 +842,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             {
                 LiveryName = PlayerLivery!,
                 Liveries = [],
-                DriverName = "You — own entrant",
+                DriverName = "You, own entrant",
                 TeamName = "Independent",
                 IsLocked = true,
             };
@@ -868,7 +868,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         NextCommand.NotifyCanExecuteChanged();
     }
 
-    /// <summary>The chosen field, or null when every seat is included (the whole pack — the identity
+    /// <summary>The chosen field, or null when every seat is included (the whole pack, the identity
     /// that keeps the career byte-identical to one made before this feature). The player's own seat is
     /// always included.</summary>
     private GridSelection? BuildGridSelection()
@@ -1061,7 +1061,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
 
     // ---------- step f: NAMeS-first baseline import (locked decision #7a) ----------
 
-    /// <summary>"Use your installed AI file as the season baseline" — defaults ON whenever
+    /// <summary>"Use your installed AI file as the season baseline", defaults ON whenever
     /// the install has a parseable class XML for the pack's ams2Class.</summary>
     [ObservableProperty]
     private bool _useInstalledAiBaseline;
@@ -1082,7 +1082,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
 
     public string? BaselineImportSummary { get; private set; }
 
-    /// <summary>The exact bytes previewed at the confirm step — the same text is handed to
+    /// <summary>The exact bytes previewed at the confirm step, the same text is handed to
     /// career creation so what was previewed is what gets pinned.</summary>
     private string? _installedAiFileXml;
 
@@ -1125,7 +1125,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             }
         }
 
-        // Default ON when parseable — unless the settings screen turned the NAMeS-first
+        // Default ON when parseable, unless the settings screen turned the NAMeS-first
         // default off (the checkbox stays available either way).
         UseInstalledAiBaseline = BaselineImportAvailable
             && (_settings?.Current.PreferInstalledBaseline ?? true);
@@ -1140,7 +1140,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
 
     // ---------- character death & injury: the mortality choice (Slice 1) ----------
 
-    /// <summary>The career's mortality mode (character death &amp; injury — docs/dev/character-death-injury.md
+    /// <summary>The career's mortality mode (character death &amp; injury, docs/dev/character-death-injury.md
     /// §2). Off (default) = no injury/death, the classic experience. Normal = injury/death ON with a full
     /// save &amp; reload safety net. Hardcore = injury/death ON with NO saves, and death physically deletes
     /// the career file. VM-only here; the view binds a radio group / picker to this. Default Off (opt-in).</summary>
@@ -1156,18 +1156,18 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         Companion.Core.Career.MortalityMode.Hardcore,
     ];
 
-    /// <summary>One honest line on what the current mortality choice means — with the destructive
+    /// <summary>One honest line on what the current mortality choice means, with the destructive
     /// Hardcore reality spelled out, since it must be unmistakable at creation (plan §2).</summary>
     public string MortalityModeSummary => MortalityMode switch
     {
         Companion.Core.Career.MortalityMode.Normal =>
-            "Normal — accidents can injure or kill your driver, but you can save and reload " +
+            "Normal, accidents can injure or kill your driver, but you can save and reload " +
             "(manual slots + an autosave each season), including to un-do a death.",
         Companion.Core.Career.MortalityMode.Hardcore =>
-            "⚠ Hardcore — accidents can injure or kill your driver. There are NO saves and no restore, " +
+            "⚠ Hardcore, accidents can injure or kill your driver. There are NO saves and no restore, " +
             "ever, and DEATH PERMANENTLY DELETES this career file. There is no way back.",
         _ =>
-            "Off — no injury and no death. The classic experience.",
+            "Off, no injury and no death. The classic experience.",
     };
 
     private void Create()
@@ -1201,21 +1201,21 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             CommunityBaselineSourcePath = importBaseline ? InstalledAiFilePath : null,
             ExperienceMode = ExperienceMode,
             Character = character,
-            // The SMGP ladder needs the WHOLE authored field — its seat chains reference every
+            // The SMGP ladder needs the WHOLE authored field, its seat chains reference every
             // team's car, and a narrowed grid would make demotion/introduction targets unresolvable
             // (the resolver would then refuse the moves round after round). Mode on → whole pack.
             GridSelection = smgpMode ? null : BuildGridSelection(),
-            // Ratings Phase 3: every new career is form-reactive — the sim's field reacts to who is
+            // Ratings Phase 3: every new career is form-reactive, the sim's field reacts to who is
             // hot each weekend (the pinned pack's per-race form). Existing careers stay form-inert.
             FormAware = true,
             // The SMGP replica mode: every new career on an smgp-styled pack plays the mode (rival
             // battles, seat swaps, the title defense). Normal packs never set it; existing smgp-pack
             // careers created before the mode stay inert (their start state has no SmgpState).
             SmgpMode = smgpMode,
-            // Opt-in alternate mod tracks — the service applies them only if every required mod is
+            // Opt-in alternate mod tracks, the service applies them only if every required mod is
             // installed (else it silently keeps the default AMS2 tracks). Default OFF.
             UseAlternateTracks = UseAlternateTracks,
-            // Opt-in modded field (the SMGP McLaren teams) — the service adds them only if the
+            // Opt-in modded field (the SMGP McLaren teams), the service adds them only if the
             // required car mod is installed (else the base field). Default OFF.
             UseModdedField = UseModdedField,
             // Character death & injury (Slice 1): the explicit Off/Normal/Hardcore creation choice.

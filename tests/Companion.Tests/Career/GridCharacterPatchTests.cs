@@ -5,7 +5,7 @@ using Companion.Core.Packs;
 
 namespace Companion.Tests.Career;
 
-/// <summary>The player seat's character patch at grid resolve — the last step of the merge chain.
+/// <summary>The player seat's character patch at grid resolve, the last step of the merge chain.
 /// A null character (every pre-character career) resolves a byte-identical grid; a character patches
 /// only the player seat's ratings + scalars, never an AI seat.</summary>
 public sealed class GridCharacterPatchTests
@@ -98,7 +98,7 @@ public sealed class GridCharacterPatchTests
             new PlayerSeat { Ams2LiveryName = CareerTestData.PlayerLivery, Character = null });
 
         // Seat-by-seat value equality (GridPlan.Seats is a List, so GridPlan.Equals would compare
-        // the list by reference — the meaningful comparison is per-seat, where GridSeat is a record).
+        // the list by reference, the meaningful comparison is per-seat, where GridSeat is a record).
         Assert.Equal(plain.Seats, nullChar.Seats);
     }
 

@@ -5,21 +5,21 @@ namespace Companion.Core.Character;
 /// <summary>What an accident did to the driver (character death &amp; injury §3.2/§3.3).</summary>
 public enum AccidentOutcomeKind
 {
-    /// <summary>No injury — the driver walks away.</summary>
+    /// <summary>No injury, the driver walks away.</summary>
     None,
 
-    /// <summary>A minor injury — sit out <see cref="AccidentOutcome.MissRaces"/> race(s).</summary>
+    /// <summary>A minor injury, sit out <see cref="AccidentOutcome.MissRaces"/> race(s).</summary>
     MinorInjury,
 
     /// <summary>Out for the rest of the season; returns next year.</summary>
     SeasonEnding,
 
-    /// <summary>Fatal — terminal.</summary>
+    /// <summary>Fatal, terminal.</summary>
     Death,
 }
 
 /// <summary>The resolved accident: the outcome kind, how many races a minor injury sits out, and the
-/// effective (safety-adjusted) d500 roll that produced it — journaled for the Why? inspector.</summary>
+/// effective (safety-adjusted) d500 roll that produced it, journaled for the Why? inspector.</summary>
 public sealed record AccidentOutcome(AccidentOutcomeKind Kind, int MissRaces, int EffectiveRoll);
 
 /// <summary>One band of the d500 outcome table: outcomes for effective rolls up to (and including)
@@ -62,7 +62,7 @@ public sealed record AccidentRules
 
 /// <summary>
 /// PURE resolution of an accident into an outcome (character death &amp; injury §3.2–§3.4). The d500 roll is
-/// modified by the driver's safety profile via a deterministic INTEGER offset (never a second draw — the
+/// modified by the driver's safety profile via a deterministic INTEGER offset (never a second draw, the
 /// draw count stays fixed): high durability + protective injury perks shift the effective roll DOWN toward
 /// the safe bands, reckless ones shift it UP toward death. The effective roll is then bucketed against the
 /// severity's bands. Everything here is a pure function of its inputs, so the fold re-derives it identically.
@@ -76,7 +76,7 @@ public static class AccidentModel
         SafetyDurabilityScale = 80.0,
         SafetyBaseAddScale = 200.0,
         // Light crashes are MOSTLY HARMLESS (Mike, decision B, 2026-07-12): a light shunt NEVER kills and
-        // never ends a season — worst case is a single missed race. No death band, so the safety-offset clamp
+        // never ends a season, worst case is a single missed race. No death band, so the safety-offset clamp
         // (which piles a reckless driver's top rolls onto the last band) can only ever cost a fragile driver
         // one race, not their life.
         Light =

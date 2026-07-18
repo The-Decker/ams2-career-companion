@@ -54,7 +54,7 @@ public sealed class CareerFileStoreTests : IDisposable
         Assert.False(File.Exists(source));
         Assert.True(File.Exists(destination));
         Assert.Equal("Glory Years", StoredName(destination));
-        // The renamed file is immediately deletable — no pooled handle survives.
+        // The renamed file is immediately deletable, no pooled handle survives.
         File.Delete(destination);
     }
 
@@ -90,7 +90,7 @@ public sealed class CareerFileStoreTests : IDisposable
     public void Duplicate_WhileTheSourceIsOpen_StillProducesAConsistentCopy()
     {
         // The backup API reads a consistent snapshot even while a session holds the source open
-        // (the reason Duplicate is not a raw File.Copy — a WAL-mode copy mid-write can tear).
+        // (the reason Duplicate is not a raw File.Copy, a WAL-mode copy mid-write can tear).
         string source = PathFor("open.ams2career");
         string copy = PathFor("open (copy).ams2career");
         CreateCareerFile(source, "Open career");

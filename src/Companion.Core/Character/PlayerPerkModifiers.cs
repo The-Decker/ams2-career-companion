@@ -6,7 +6,7 @@ namespace Companion.Core.Character;
 /// The small, identity-defaulting bundle of coefficients a character's perks patch onto the
 /// deterministic sim (docs/dev/character-system.md §6.1). Every field defaults to the exact
 /// current behaviour, so a career with NO character (or the resolver over an empty perk list)
-/// yields <see cref="Identity"/> and the sim is byte-identical — this is what lets the modifier be
+/// yields <see cref="Identity"/> and the sim is byte-identical, this is what lets the modifier be
 /// threaded into the pure functions as an optional parameter without perturbing existing careers or
 /// the f1db oracle. Unconditional perk effects are pre-aggregated into the scalar fields;
 /// round-conditional effects (wet/long-race/etc.) are carried in <see cref="Conditional"/> for the
@@ -107,7 +107,7 @@ public sealed record PlayerPerkModifiers
 
     /// <summary>One-Trick Pony's <c>lockToOne</c>: the single rating field the driver's chosen
     /// specialism owns. When set, in-career level points may raise ONLY the talent stat that writes
-    /// this rating — every other talent stat is frozen at its creation value. Null = no lock (the
+    /// this rating, every other talent stat is frozen at its creation value. Null = no lock (the
     /// normal free-development model). Bound at creation to the profile's chosen flavor.</summary>
     public string? LockedFlavorRating { get; init; }
 
@@ -129,7 +129,7 @@ public sealed record PlayerPerkModifiers
     public double XpMult(string cause) => XpMults.TryGetValue(cause, out double m) ? m : 1.0;
 }
 
-/// <summary>A perk effect whose application waits on a round condition — carried verbatim from the
+/// <summary>A perk effect whose application waits on a round condition, carried verbatim from the
 /// perk so the fold can evaluate the condition against the round (weather, distance, DNF cause) and
 /// then apply the same <c>lever/target/magnitude</c> mapping the unconditional effects use.</summary>
 public readonly record struct ConditionalPerkEffect(

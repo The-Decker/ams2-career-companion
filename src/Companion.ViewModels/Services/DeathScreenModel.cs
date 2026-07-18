@@ -5,10 +5,10 @@ namespace Companion.ViewModels.Services;
 
 /// <summary>The rich "career over" projection behind the death screen (docs/dev/character-death-injury.md
 /// §6): an in-world obituary, the driver's whole career record, the cause of death (the fatal accident's
-/// severity + venue), and — in Normal — the restorable save slots that can UN-DO the death. A pure read
+/// severity + venue), and, in Normal, the restorable save slots that can UN-DO the death. A pure read
 /// over the folded journal/state (no new persistence), so it never perturbs replay. On a Hardcore death it
 /// is captured BEFORE the career file is deleted, so it renders with no DB (mirroring the DB-free
-/// <see cref="PlayerMortalityStatus"/> path — the shell must never touch the DB after a permadeath).</summary>
+/// <see cref="PlayerMortalityStatus"/> path, the shell must never touch the DB after a permadeath).</summary>
 public sealed record DeathScreenModel
 {
     public required MortalityMode Mode { get; init; }
@@ -30,7 +30,7 @@ public sealed record DeathScreenModel
     /// <summary>The one-line cause-of-death headline, e.g. "Killed in a heavy accident at Monaco (round 6)."</summary>
     public required string CauseOfDeath { get; init; }
 
-    /// <summary>A short in-world obituary — the driver's name, the accident, and the record left behind.</summary>
+    /// <summary>A short in-world obituary, the driver's name, the accident, and the record left behind.</summary>
     public required string Obituary { get; init; }
 
     /// <summary>The driver's whole career record (seasons, wins, podiums, titles, best finish).</summary>
@@ -43,11 +43,11 @@ public sealed record DeathScreenModel
     /// means the death can be undone by restoring a slot.</summary>
     public required IReadOnlyList<SaveSlotInfo> RestoreSlots { get; init; }
 
-    /// <summary>Hardcore permadeath — the career file is (or is about to be) physically deleted; there is
+    /// <summary>Hardcore permadeath, the career file is (or is about to be) physically deleted; there is
     /// no restore, ever.</summary>
     public bool IsPermadeath => Mode == MortalityMode.Hardcore;
 
-    /// <summary>A Normal death with at least one save to fall back to — the death can be reversed.</summary>
+    /// <summary>A Normal death with at least one save to fall back to, the death can be reversed.</summary>
     public bool CanRestore => Mode == MortalityMode.Normal && RestoreSlots.Count > 0;
 
     /// <summary>Compose the model from the raw pieces the session gathers. Pure (no DB, no I/O) so the

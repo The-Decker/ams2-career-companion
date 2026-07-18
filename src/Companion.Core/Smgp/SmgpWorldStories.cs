@@ -1,6 +1,6 @@
 namespace Companion.Core.Smgp;
 
-/// <summary>One driver's line in the championship order after a round — the minimum the world-story detector
+/// <summary>One driver's line in the championship order after a round, the minimum the world-story detector
 /// needs. Shaped by the ViewModels from the folded standings; the detector is pure.</summary>
 public sealed record SmgpWorldStanding
 {
@@ -13,11 +13,11 @@ public sealed record SmgpWorldStanding
 }
 
 /// <summary>One round's grid-level facts for <see cref="SmgpWorldStories"/>: the race winner and the
-/// championship order after the round. Ordered by (season, round). A pure DATA carrier — the ViewModels
+/// championship order after the round. Ordered by (season, round). A pure DATA carrier, the ViewModels
 /// build it from the folded results + standings snapshots.</summary>
 public sealed record SmgpWorldRound
 {
-    /// <summary>1-based campaign season ordinal — a change marks a season boundary (streaks/leader reset).</summary>
+    /// <summary>1-based campaign season ordinal, a change marks a season boundary (streaks/leader reset).</summary>
     public required int Season { get; init; }
 
     /// <summary>The pack round number (fills the dispatch's round sort key + venue label).</summary>
@@ -25,7 +25,7 @@ public sealed record SmgpWorldRound
 
     public required string Venue { get; init; }
 
-    /// <summary>1-based index of this round WITHIN its season, and the season's total scored rounds — used
+    /// <summary>1-based index of this round WITHIN its season, and the season's total scored rounds, used
     /// to gate "title tightens" to the latter half of a campaign. When 0/0 the gate treats the round as
     /// eligible (a thin fixture still exercises the rule).</summary>
     public int RoundIndex { get; init; }
@@ -47,7 +47,7 @@ public enum SmgpWorldStoryKind
     /// <summary>A driver on a run of consecutive race wins (2, 3, 4, 5 in a row).</summary>
     RivalStreak,
 
-    /// <summary>The benchmark (A. Senna / the Madonna #1) reasserting dominance — a season's second win.</summary>
+    /// <summary>The benchmark (A. Senna / the Madonna #1) reasserting dominance, a season's second win.</summary>
     Benchmark,
 
     /// <summary>The championship lead changing hands.</summary>
@@ -82,18 +82,18 @@ public sealed record SmgpWorldStory
 }
 
 /// <summary>
-/// Detects the reactive AI-WORLD stories from the folded per-round grid facts — a rival's win streak, the
+/// Detects the reactive AI-WORLD stories from the folded per-round grid facts, a rival's win streak, the
 /// benchmark reasserting itself, the championship lead changing, the title race tightening, and the
 /// second-place battle turning over. Pure and deterministic: it walks the rounds in order, resetting its
 /// per-season memory at each season boundary, and emits each story once at the round it occurs. The
 /// PLAYER's own results are told through the milestone/race dispatches, so the player is excluded here as a
-/// story subject (win streaks, benchmark) but still appears as the "other" party of a leader/P2 change — the
+/// story subject (win streaks, benchmark) but still appears as the "other" party of a leader/P2 change, the
 /// grid reacting TO the player is exactly the point. A pure projection over immutable results: never a fold
 /// input.
 /// </summary>
 public static class SmgpWorldStories
 {
-    /// <summary>The consecutive-win streak lengths worth a story — a dominant run gets a few escalating
+    /// <summary>The consecutive-win streak lengths worth a story, a dominant run gets a few escalating
     /// dispatches (2 → 3 → 4 → 5), then goes quiet.</summary>
     private static readonly int[] StreakMilestones = [2, 3, 4, 5];
 
@@ -118,7 +118,7 @@ public static class SmgpWorldStories
         {
             if (r.Season != curSeason)
             {
-                // New season — the ladder, the standings and every streak start fresh.
+                // New season, the ladder, the standings and every streak start fresh.
                 curSeason = r.Season;
                 prevWinner = null;
                 winStreak = 0;
@@ -149,7 +149,7 @@ public static class SmgpWorldStories
                     && string.Equals(winnerId, benchmarkId, StringComparison.Ordinal))
                 {
                     benchmarkWins++;
-                    // The benchmark reasserting itself — the second win of a season, once (the first win
+                    // The benchmark reasserting itself, the second win of a season, once (the first win
                     // reads as a normal result; two says "still untouchable").
                     if (benchmarkWins == 2 && !benchmarkTold)
                     {
@@ -216,7 +216,7 @@ public static class SmgpWorldStories
                 prevSecond = second.DriverId;
             }
 
-            // Title tightening — latter half of the season, a small gap, once per season.
+            // Title tightening, latter half of the season, a small gap, once per season.
             bool latterHalf = r.SeasonRounds <= 0 || r.RoundIndex * 2 >= r.SeasonRounds;
             if (!titleTold && latterHalf && leader is not null && second is not null)
             {

@@ -135,7 +135,7 @@ public sealed class CharacterModifierThreadingTests
         Assert.True(withMoney > without);
         Assert.Equal(without + 20 * 2.0 / 100.0, withMoney, 6); // PayDriverWeight · payBudget / 100
 
-        // A team that does not value pay drivers (weight 0) is unaffected — no free score.
+        // A team that does not value pay drivers (weight 0) is unaffected, no free score.
         var noPay = payTeam with { PayDriverWeight = 0 };
         Assert.Equal(
             TeamArchetypeCatalog.OfferScore(noPay, 50, 1.2, 3, 5, 2),

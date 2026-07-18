@@ -5,13 +5,13 @@ namespace Companion.ViewModels.Debug;
 
 /// <summary>
 /// TIER-1 inspect: renders the live career's <see cref="DynastyEconomyDashboard"/> as plain text
-/// for the debug menu's inspector. READ-ONLY — the dashboard is already display-formatted at the
+/// for the debug menu's inspector. READ-ONLY, the dashboard is already display-formatted at the
 /// session boundary, so this never touches the fold.
 ///
-/// THE MONEY SEAM (build brief §2 — "stub hooks only"): force-money / force-sponsor levers are
+/// THE MONEY SEAM (build brief §2, "stub hooks only"): force-money / force-sponsor levers are
 /// deliberately NOT here. When the tycoon-economy workstream wants debug levers, they belong in
-/// the menu as commands over <see cref="ICareerSession.DeclareEconomyDecision"/> — the validated,
-/// journaled INPUT seam the fold re-derives — so a debug-driven economy still resimulates
+/// the menu as commands over <see cref="ICareerSession.DeclareEconomyDecision"/>, the validated,
+/// journaled INPUT seam the fold re-derives, so a debug-driven economy still resimulates
 /// byte-identical. Never poke balance / sponsor / bankruptcy state directly.
 /// </summary>
 public static class DebugEconomyDump
@@ -19,7 +19,7 @@ public static class DebugEconomyDump
     /// <summary>Renders the whole dashboard: balance + deficit state, development, staff, the
     /// second seat, active sponsors, the sponsor board with eligibility, the season statement,
     /// and the pending decision plan. Money strings arrive display-formatted and pass through
-    /// verbatim (exact <c>Rational</c> never leaves the fold — the session already formatted).</summary>
+    /// verbatim (exact <c>Rational</c> never leaves the fold, the session already formatted).</summary>
     public static string Format(DynastyEconomyDashboard dashboard)
     {
         ArgumentNullException.ThrowIfNull(dashboard);
@@ -42,12 +42,12 @@ public static class DebugEconomyDump
 
         sb.AppendLine().AppendLine($"Active sponsors ({dashboard.ActiveSponsors.Count}):");
         foreach (var sponsor in dashboard.ActiveSponsors)
-            sb.AppendLine($"  [{sponsor.TierSlot}] {sponsor.Name} — {sponsor.PerRace}/race," +
+            sb.AppendLine($"  [{sponsor.TierSlot}] {sponsor.Name}, {sponsor.PerRace}/race," +
                           $" {sponsor.PerSeason}/season, {sponsor.SeasonsRemaining} season(s) left");
 
         sb.AppendLine().AppendLine($"Sponsor board ({dashboard.SponsorBoard.Count}):");
         foreach (var offer in dashboard.SponsorBoard)
-            sb.AppendLine($"  [{offer.TierSlot}] {offer.Name} — sign {offer.SigningBonus}," +
+            sb.AppendLine($"  [{offer.TierSlot}] {offer.Name}, sign {offer.SigningBonus}," +
                           $" {offer.PerRace}/race, {offer.PerSeason}/season x{offer.ContractSeasons}" +
                           (offer.Eligible ? "  ELIGIBLE" : $"  ({offer.IneligibleReason})"));
 

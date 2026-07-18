@@ -13,9 +13,9 @@ namespace Companion.Data;
 
 /// <summary>
 /// The sim inputs that live OUTSIDE the career file: rules data (aging curves, archetypes,
-/// headline bank — app-shipped JSON) and the career-setup facts the wizard fixed (player
+/// headline bank, app-shipped JSON) and the career-setup facts the wizard fixed (player
 /// identity, canon retirements, free-agent pool). Replay must receive exactly what the
-/// original run received — same inputs + same master seed = byte-identical journal.
+/// original run received, same inputs + same master seed = byte-identical journal.
 /// </summary>
 public sealed record ReplaySimInputs
 {
@@ -58,14 +58,14 @@ public sealed record ReplaySimInputs
     /// <summary>The Dynasty owner-economy balance tables (data/rules/dynasty/economy.json), or
     /// null for a build without them. The economy fold requires BOTH this and a career carrying
     /// <see cref="Companion.Core.Dynasty.DynastyEconomyState"/>; a null value (or a non-economy
-    /// career) folds byte-identically — the CharacterRules threading pattern.</summary>
+    /// career) folds byte-identically, the CharacterRules threading pattern.</summary>
     public Companion.Core.Dynasty.DynastyEconomyRules? DynastyEconomy { get; init; }
 }
 
 public sealed record ReplayReport
 {
     /// <summary>True when every regenerated journal row matched the stored journal
-    /// (phase, entity, deltaJson, cause, round — seq and utc excluded by contract) AND the
+    /// (phase, entity, deltaJson, cause, round, seq and utc excluded by contract) AND the
     /// stored player choices (accepted offers, follow-on season start states) were
     /// consistent with the regenerated world.</summary>
     public required bool Identical { get; init; }
@@ -107,8 +107,8 @@ public sealed record RoundFoldResult
     /// <summary>The post-round folded player state, as persisted to round_player_state.</summary>
     public required RoundPlayerState State { get; init; }
 
-    /// <summary>The journal events the fold appended: round standings, then — when the
-    /// player raced — race.result, player.opi, player.reputation, player.paceAnchor, and
+    /// <summary>The journal events the fold appended: round standings, then, when the
+    /// player raced, race.result, player.opi, player.reputation, player.paceAnchor, and
     /// news.headline when a bank is present.</summary>
     public required IReadOnlyList<JournalEvent> Events { get; init; }
 
@@ -125,7 +125,7 @@ public sealed record RoundFoldResult
 /// Deterministic re-simulation (docs/dev/career-sim.md, Replay contract): sim state =
 /// fold(journal); re-simulate = wipe derived state, replay raw results through the same
 /// code + seed. <see cref="FoldRound"/> (per-round standings + player update) and
-/// <see cref="RunSeasonEnd"/> are the ONE fold implementation — the live app path calls
+/// <see cref="RunSeasonEnd"/> are the ONE fold implementation, the live app path calls
 /// exactly these, and <see cref="Resimulate"/> re-executes the identical code, so replay
 /// regenerates the stored journal by construction and any divergence means the file was
 /// tampered with, the payloads changed, or the engine changed. Divergence is report-only:
@@ -140,10 +140,10 @@ public static class ReplayService
 
     /// <summary>The derived journal rows for the latest of <paramref name="roundsSoFar"/>:
     /// the championship standings as they stand after that round (drivers, then constructors
-    /// when the season has that championship) — same delta shape as the season-end
+    /// when the season has that championship), same delta shape as the season-end
     /// championship rows. <paramref name="roundsSoFar"/> must contain CHAMPIONSHIP-round
     /// results only (engine round numbers = championship ordinals), and scoring resolves
-    /// over the championship round count via <see cref="ChampionshipCalendar"/> — exactly
+    /// over the championship round count via <see cref="ChampionshipCalendar"/>, exactly
     /// the resolution the app's session service scores the standings screen with, so the
     /// journal and the screen can never disagree.</summary>
     public static IReadOnlyList<JournalEvent> RoundStandingsEvents(
@@ -191,10 +191,10 @@ public static class ReplayService
     /// THE per-round fold (docs/dev/m5-fix-integration.md, "unified fold" step 2): recomputes
     /// the round's standings events AND runs the player round update with state folded from
     /// the previous round, journals everything under the round, and persists the post-round
-    /// player state as the round's round_player_state row — all in one transaction. Grid,
+    /// player state as the round's round_player_state row, all in one transaction. Grid,
     /// teammate finish, and expected finish are re-derived from pack + seed + round; the
     /// stored envelope contributes only what is unre-derivable (sliderUsed, DNF cause).
-    /// Refuses to fold a round twice — corrections re-import and <see cref="Resimulate"/>.
+    /// Refuses to fold a round twice, corrections re-import and <see cref="Resimulate"/>.
     /// </summary>
     public static RoundFoldResult FoldRound(
         CareerDatabase db,
@@ -211,7 +211,7 @@ public static class ReplayService
 
         if (StateStore.ReadRoundPlayerState(db, seasonId, round, tx) is not null)
             throw new InvalidOperationException(
-                $"Round {round} of season {seasonId} is already folded — corrected results " +
+                $"Round {round} of season {seasonId} is already folded, corrected results " +
                 "go through a re-import plus Resimulate, never a second fold.");
 
         var upTo = ResultStore.ReadSeasonResults(db, seasonId, tx)
@@ -219,7 +219,7 @@ public static class ReplayService
             .ToList();
         if (upTo.Count == 0 || upTo[^1].Round != round)
             throw new InvalidOperationException(
-                $"Season {seasonId} has no stored raw result for round {round} — " +
+                $"Season {seasonId} has no stored raw result for round {round}, " +
                 "ImportAndFoldRound stores and folds atomically.");
 
         var previous = PreviousRoundState(db, seasonId, upTo, tx);
@@ -243,7 +243,7 @@ public static class ReplayService
             round,
             envelope,
             roundConditions);
-        // The round's journaled Dynasty economy decisions (economy.decision INPUT rows) — read
+        // The round's journaled Dynasty economy decisions (economy.decision INPUT rows), read
         // ONLY for a career carrying the economy state, so every other career costs no query and
         // folds exactly as before. Replay reads the identical rows in its preread.
         IReadOnlyList<Companion.Core.Dynasty.DynastyEconomyDecision>? economyDecisions = null;
@@ -273,7 +273,7 @@ public static class ReplayService
 
     /// <summary>
     /// The live path's single entry point for a NEW round result: stores the envelope as the
-    /// round's raw payload and runs <see cref="FoldRound"/>, atomically — the raw result and
+    /// round's raw payload and runs <see cref="FoldRound"/>, atomically, the raw result and
     /// its fold cannot come apart, so the live path cannot bypass the fold. Re-importing an
     /// already-folded round throws (and rolls back the import): corrections use
     /// <see cref="ResultStore.Append"/> plus <see cref="Resimulate"/>.
@@ -294,7 +294,7 @@ public static class ReplayService
         ResultStore.Append(
             db, seasonId, round, DataJson.Serialize(envelope), utc, source, transaction);
         var fold = FoldRound(db, seasonId, pack, masterSeed, inputs, round, utc, transaction);
-        // The caller's app-level rows (result provenance) join the SAME atomic commit — a crash can
+        // The caller's app-level rows (result provenance) join the SAME atomic commit, a crash can
         // never leave a folded round missing its provenance row (which Resimulate, rebuilding
         // derived rows only, would never repair).
         withTransaction?.Invoke(transaction);
@@ -308,7 +308,7 @@ public static class ReplayService
     /// provenance-excluded <c>smgp.swap</c> INPUT, runs the shared
     /// <see cref="Companion.Core.Smgp.SmgpBattleFold.ResolvePendingOffer"/> (moving the seat +
     /// emitting the derived <c>smgp.seat</c> row on accept), and re-persists the round's player
-    /// state — atomically. Re-fold reads the same input back and re-derives this exact state + row,
+    /// state, atomically. Re-fold reads the same input back and re-derives this exact state + row,
     /// so replay stays byte-identical. Throws if the round carries no pending offer (the UI only
     /// shows the screen when one exists).
     /// </summary>
@@ -324,7 +324,7 @@ public static class ReplayService
 
         var roundState = StateStore.ReadRoundPlayerState(db, seasonId, round, transaction)
             ?? throw new InvalidOperationException(
-                $"Round {round} of season {seasonId} is not folded — cannot resolve a promotion offer.");
+                $"Round {round} of season {seasonId} is not folded, cannot resolve a promotion offer.");
         var player = roundState.Player;
         if (player.Smgp is not { PendingSwap: { } pending } smgpState)
             throw new InvalidOperationException(
@@ -335,7 +335,7 @@ public static class ReplayService
             pack, smgpState, pending, accept, seatEvents);
         player = player with { Smgp = resolved };
 
-        // A seat movement is a TEAM movement too — mirror the fold's CurrentTeamId derivation so the
+        // A seat movement is a TEAM movement too, mirror the fold's CurrentTeamId derivation so the
         // live state matches what re-fold produces (the season-end reputation tier reads it).
         if (!string.Equals(resolved.CurrentSeatLivery, smgpState.CurrentSeatLivery, StringComparison.Ordinal) &&
             pack.Entries.FirstOrDefault(e => string.Equals(
@@ -345,7 +345,7 @@ public static class ReplayService
         }
 
         // The INPUT first (provenance-excluded), then its DERIVED effect (the smgp.seat row, which
-        // the byte-compare DOES cover) — the same order and content re-fold regenerates.
+        // the byte-compare DOES cover), the same order and content re-fold regenerates.
         JournalStore.Append(db, seasonId, round, new JournalEvent
         {
             Phase = JournalPhases.SmgpSwap,
@@ -371,7 +371,7 @@ public static class ReplayService
     /// Runs the season-end pipeline against the season's stored start states and raw results,
     /// consuming the FINAL ROUND'S FOLDED player state (per-round rep/OPI accrual drives the
     /// offers), journals its events (round = NULL), persists the derived 'end' states +
-    /// offers, and marks the season complete — atomically. The live app path calls this once
+    /// offers, and marks the season complete, atomically. The live app path calls this once
     /// per season; replay re-executes the identical code.
     /// </summary>
     public static SeasonEndResult RunSeasonEnd(
@@ -387,7 +387,7 @@ public static class ReplayService
             ?? throw new InvalidOperationException($"Season {seasonId} does not exist in this career.");
         if (string.Equals(season.Status, SeasonStatus.Complete, StringComparison.Ordinal))
             throw new InvalidOperationException(
-                $"Season {seasonId} is already complete — re-simulate instead of re-running season end.");
+                $"Season {seasonId} is already complete, re-simulate instead of re-running season end.");
 
         var stored = ResultStore.ReadSeasonResults(db, seasonId);
         var rounds = ChampionshipResults(pack, stored);
@@ -397,14 +397,14 @@ public static class ReplayService
         {
             player = (StateStore.ReadRoundPlayerState(db, seasonId, stored[^1].Round)
                 ?? throw new InvalidOperationException(
-                    $"Season {seasonId} has imported rounds without folded player state — every " +
+                    $"Season {seasonId} has imported rounds without folded player state, every " +
                     "round must be applied through FoldRound/ImportAndFoldRound (re-simulate to " +
                     "rebuild round_player_state on refolded careers).")).Player;
         }
 
         int playerAge = inputs.PlayerAge + (season.Year - seasons[0].Year);
         // The live season-end runs for the CURRENT season only, whose player driver id the caller
-        // already resolved into inputs — pass it straight through (the multi-season Resimulate path
+        // already resolved into inputs, pass it straight through (the multi-season Resimulate path
         // is the one that must re-resolve per season from the start-state livery).
         var context = BuildSeasonEndContext(
             season.Year, playerAge, pack, masterSeed, inputs, inputs.PlayerDriverId, rounds, player,
@@ -422,14 +422,14 @@ public static class ReplayService
 
     /// <summary>
     /// Re-simulates the whole career from its raw results: verifies the supplied pack against
-    /// the pinned (hash-checked) bytes, then — inside ONE transaction — wipes derived state
-    /// (NOT raw results, NOT pinned packs, NOT the stored journal, NOT 'start' states — those
+    /// the pinned (hash-checked) bytes, then, inside ONE transaction, wipes derived state
+    /// (NOT raw results, NOT pinned packs, NOT the stored journal, NOT 'start' states, those
     /// are inputs), refolds every season round by round, re-runs season ends, re-derives
     /// follow-on season start states through <see cref="SeasonRollover"/> and compares them
     /// against the stored rows, and byte-compares the regenerated journal sequence against
     /// the stored one (seq/utc excluded; provenance rows excluded). COMMITS only when the
     /// career is byte-identical; ANY divergence rolls the transaction back, so a divergence
-    /// report never costs data. Accepted-offer flags — a player choice, not derived state —
+    /// report never costs data. Accepted-offer flags, a player choice, not derived state —
     /// are re-applied when identical; an accepted team missing from the regenerated offer
     /// set is a divergence, never a silent drop.
     ///
@@ -455,11 +455,11 @@ public static class ReplayService
 
     /// <summary>
     /// Multi-pack re-simulation (M6, era transitions): every season resolves its own pinned
-    /// pack by (pack_id, version) — sha256-verified reads straight from the career file, so
+    /// pack by (pack_id, version), sha256-verified reads straight from the career file, so
     /// there is no supplied-pack argument to get wrong. Season boundaries within one pack
     /// verify through <see cref="SeasonRollover"/> exactly as before; boundaries that change
     /// pack re-derive the transition start states AND the era.transition/era.* journal rows
-    /// through <see cref="EraTransition"/> and compare both — divergence rules identical to
+    /// through <see cref="EraTransition"/> and compare both, divergence rules identical to
     /// the rollover path (report-only, one transaction, commit only when byte-identical).
     /// </summary>
     public static ReplayReport Resimulate(CareerDatabase db, ulong masterSeed, ReplaySimInputs inputs)
@@ -479,7 +479,7 @@ public static class ReplayService
             catch (Exception ex) when (ex is JsonException or InvalidDataException)
             {
                 throw new InvalidDataException(
-                    $"The pinned copy of {key.PackId} {key.PackVersion} could not be parsed — " +
+                    $"The pinned copy of {key.PackId} {key.PackVersion} could not be parsed, " +
                     $"the career file is damaged. ({ex.Message})", ex);
             }
         }
@@ -571,7 +571,7 @@ public static class ReplayService
         SeasonEndResult? previousEnd = null;
         StoredSeason? previousSeason = null;
 
-        // 1-based season ordinal in id-order — the SAME derivation the live session uses
+        // 1-based season ordinal in id-order, the SAME derivation the live session uses
         // (CareerSessionService ctor: index of the season in CareerStore.ReadSeasons + 1), so a
         // per-season pack transform keyed by ordinal matches live and replay exactly.
         int seasonOrdinal = 0;
@@ -650,7 +650,7 @@ public static class ReplayService
                         previousSeason.Spends, previousSeason.Respecs,
                         previousSeason.SkillDevelopment);
                     // The transition's journal rows were stored under this season before any
-                    // round — regenerate them at the head of the sequence for the byte-compare.
+                    // round, regenerate them at the head of the sequence for the byte-compare.
                     foreach (var row in transitionRows)
                         regenerated.Add((null, row));
                 }
@@ -667,7 +667,7 @@ public static class ReplayService
                 RecommendedSlider = 0,
             };
             // The fold and season end score CHAMPIONSHIP results only, exactly like the
-            // live path (non-championship rounds are folded — player update, carried state —
+            // live path (non-championship rounds are folded, player update, carried state —
             // but their classifications never enter the standings engine).
             var soFar = new List<RoundResult>();
             int playerAgeThisSeason = inputs.PlayerAge + (season.Year - firstYear);
@@ -877,8 +877,8 @@ public static class ReplayService
         }
     }
 
-    /// <summary>Pure fold of one round: standings events, then — when the player's seat is
-    /// on the grid and the player appears in the result — the RoundUpdate events. Grid,
+    /// <summary>Pure fold of one round: standings events, then, when the player's seat is
+    /// on the grid and the player appears in the result, the RoundUpdate events. Grid,
     /// teammate finish, expected finish, and the points cutoff are re-derived from
     /// pack + seed + round; only sliderUsed and the DNF cause come from the envelope
     /// (defaults: last recommendation / no blame).</summary>
@@ -905,7 +905,7 @@ public static class ReplayService
         var events = new List<JournalEvent>(RoundStandingsEvents(pack, roundsSoFar));
 
         // Dynasty owner economy: journaled decisions apply FIRST, before the grid/expectation is
-        // shaped — a development increment bought over the break is felt in THIS round's expected
+        // shaped, a development increment bought over the break is felt in THIS round's expected
         // finish. Triple gate (economy state carried + not bankrupt + rules present); every other
         // career skips with zero rows. The economy.applied rows are DERIVED and byte-compared.
         if (previous.Player.Economy is { Bankrupt: false } economyBefore
@@ -925,7 +925,7 @@ public static class ReplayService
             previous = previous with { Player = previous.Player with { Economy = applied.State } };
         }
 
-        // The player's character (folded into the carried state) resolves — once — into the perk
+        // The player's character (folded into the carried state) resolves, once, into the perk
         // modifier the round update reads and the grid patch that shapes the player seat. Null on
         // both sides (a pre-character career, or a build with no character rules) → the fold is the
         // exact shipped path, byte-identical. (Increment 4a.)
@@ -954,7 +954,7 @@ public static class ReplayService
                 gridConditions.Add(wet ? "wetRound" : "dryRound");
             // Age window (prodigy/wonderkid/late_bloomer): the player's age this season vs the era's
             // peak-age start. Exactly one of the two fires per round, so a pre-peak youth and a
-            // past-peak veteran fold the front-/back-loaded halves of those perks — deterministic
+            // past-peak veteran fold the front-/back-loaded halves of those perks, deterministic
             // (age is a pure function of the season year offset), byte-identical without the perks.
             if (inputs.AgingCurves.TryForYear(pack.Season.Year) is { } curve)
             {
@@ -1033,8 +1033,8 @@ public static class ReplayService
         var raceSessions = envelope.Result.Sessions.Where(s => s.Kind == SessionKind.Race).ToList();
         bool isChampionshipRound = ChampionshipCalendar.IsChampionshipRound(pack, round);
 
-        // Dynasty owner economy: the round settlement — prize/sponsor income vs fees, accruals and
-        // repairs — runs LAST on every path that reached a resolved grid (a sat-out round still
+        // Dynasty owner economy: the round settlement, prize/sponsor income vs fees, accruals and
+        // repairs, runs LAST on every path that reached a resolved grid (a sat-out round still
         // pays the bills). Same gate as the decision block above; emits the economy.round
         // statement row plus the bankruptcy row at the terminal transition. Returns the carried
         // player unchanged for every non-economy career (zero rows, byte-identical).
@@ -1072,7 +1072,7 @@ public static class ReplayService
         }
 
         // Score the player under the driver id of the SEAT they occupy THIS season, resolved from
-        // their livery above — not a single career-global id. The two are identical in the first
+        // their livery above, not a single career-global id. The two are identical in the first
         // season (the player's livery IS that driver's seat), so every single-pack career and the
         // oracle stay byte-identical; but after an era transition into a new team the player's seat
         // driver id changes, and the global id would fail to find them in the new pack's results
@@ -1089,7 +1089,7 @@ public static class ReplayService
 
         // Auto-simulated skipped round (character death & injury §5): the injured player sat this round
         // out, so the AI field raced without them (the stored Result carries the auto-simulated field —
-        // its standings already advanced via RoundStandingsEvents above). NO player fold — carry the
+        // its standings already advanced via RoundStandingsEvents above). NO player fold, carry the
         // state forward VERBATIM (OPI-neutral: no player.opi/reputation/pace rows), but heal one race of
         // a minor suspension. Emit a DERIVED DNS row. Gated on the stored PlayerDidNotStart flag, so an
         // ordinary player-driven round never enters here and stays byte-identical.
@@ -1154,7 +1154,7 @@ public static class ReplayService
 
             // A driver-error DNF banks the perErrorAdd injury contribution toward the season injury
             // load (glass_cannon / hot_head). Isolate JUST the driverErrorDnf-gated add by subtracting
-            // the grid modifier's injury base — no injury effect is tier/length/weather/age gated, so
+            // the grid modifier's injury base, no injury effect is tier/length/weather/age gated, so
             // gridMods.InjuryBaseAdd is exactly the unconditional injury base. 0 without such a perk.
             double injuryLoadDelta = 0.0;
             if (dnf == DnfCause.DriverError && raceMods is not null && gridMods is not null)
@@ -1180,14 +1180,14 @@ public static class ReplayService
                 // The character's chosen name is the identity the news uses; a character-free career
                 // (or an unnamed character) keeps the input name → byte-identical.
                 PlayerName = string.IsNullOrEmpty(character?.Name) ? inputs.PlayerName : character.Name,
-                // Qualifying calibrates ONCE per weekend (it sets the grid) — only the first race carries it.
+                // Qualifying calibrates ONCE per weekend (it sets the grid), only the first race carries it.
                 PlayerQualifyingPosition = i == 0 ? qualifyingPosition : null,
                 Modifiers = raceMods,
                 CharacterRules = character is not null ? inputs.CharacterRules : null,
                 InjuryLoadDelta = injuryLoadDelta,
                 IsChampionshipRound = isChampionshipRound,
                 IsPrimaryRace = i == 0,
-                // The Setup Gamble is a per-round commitment resolved against the race — like the
+                // The Setup Gamble is a per-round commitment resolved against the race, like the
                 // qualifying anchor, only the first race of a weekend carries it.
                 CalledShot = i == 0 ? envelope.CalledShot : null,
                 // Dynasty economy §6: bought development makes the car genuinely quicker in the
@@ -1211,7 +1211,7 @@ public static class ReplayService
 
         if (!playerRaced)
         {
-            // The player was absent from every classification (no DNS marker — a legacy edge):
+            // The player was absent from every classification (no DNS marker, a legacy edge):
             // the team still raced its second car and the bills still ran.
             var absent = SettleEconomy(previous.Player, playerStarted: false, [], null);
             return new RoundFoldOutcome(
@@ -1223,7 +1223,7 @@ public static class ReplayService
         }
 
         // The accident injury/death roll (character death & injury §3.2/§3.3): a DERIVED per-round
-        // outcome. QUADRUPLE gate — the career opted into mortality, is not already deceased, has a
+        // outcome. QUADRUPLE gate, the career opted into mortality, is not already deceased, has a
         // character (so durability + injury perks exist), AND this round captured an accident severity
         // (Slice 2). An Off / no-character / non-accident round draws ZERO from the accident stream and
         // emits no row, so it stays byte-identical to a pre-feature save. The severity is a raw envelope
@@ -1252,7 +1252,7 @@ public static class ReplayService
             player = accident.State;
         }
 
-        // The SMGP rival battle (M3 slice 2): BOTH gates — the round's raw envelope stored a
+        // The SMGP rival battle (M3 slice 2): BOTH gates, the round's raw envelope stored a
         // rival call AND the career carries the mode's folded state (never over). No call / no
         // state / a finished career → no event, no state change → byte-identical, which is every
         // existing career and every non-smgp pack. The outcome derives from the stored result;
@@ -1268,7 +1268,7 @@ public static class ReplayService
                 RivalDriverId = rivalCall.RivalDriverId,
                 Forced = rivalCall.Forced,
                 SeatSwapAccepted = rivalCall.SeatSwapAccepted,
-                // Two-phase (3c-2): the stored post-race decision (replay) or null (live entry — the
+                // Two-phase (3c-2): the stored post-race decision (replay) or null (live entry, the
                 // offer stays pending). Resolving inline here re-derives the live outcome exactly.
                 SwapDecision = swapDecision,
                 PlayerFinish = battlePlayerFinish,
@@ -1276,7 +1276,7 @@ public static class ReplayService
             });
             events.AddRange(battle.Events);
             player = player with { Smgp = battle.State };
-            // A seat movement is a TEAM movement too — the season-end reputation tier and the
+            // A seat movement is a TEAM movement too, the season-end reputation tier and the
             // displayed team read CurrentTeamId, which must follow the ladder, not the wizard seat.
             if (!string.Equals(battle.State.CurrentSeatLivery, smgpState.CurrentSeatLivery, StringComparison.Ordinal) &&
                 pack.Entries.FirstOrDefault(e => string.Equals(
@@ -1299,7 +1299,7 @@ public static class ReplayService
     }
 
     /// <summary>A driver's 1-based CLASSIFIED finishing position in a race, or null when he
-    /// retired, was excluded, or does not appear — the SMGP battle's "a finish beats a DNF".</summary>
+    /// retired, was excluded, or does not appear, the SMGP battle's "a finish beats a DNF".</summary>
     private static int? ClassifiedPositionIn(SessionResult race, string driverId) =>
         race.Entries.FirstOrDefault(e => string.Equals(e.DriverId, driverId, StringComparison.Ordinal)) is
             { Status: FinishStatus.Classified, Position: { } position }
@@ -1308,7 +1308,7 @@ public static class ReplayService
 
     /// <summary>The player's 1-based qualifying position from the round's stored qualifying order
     /// (Increment 2), or null when the round ran no qualifying (single-race) or the player is not
-    /// listed in it — either way no qualifying anchor is calibrated and no event is emitted.</summary>
+    /// listed in it, either way no qualifying anchor is calibrated and no event is emitted.</summary>
     private static int? PlayerQualifyingPosition(RoundResultEnvelope envelope, string playerDriverId)
     {
         if (envelope.QualifyingOrder is not { } order)
@@ -1332,7 +1332,7 @@ public static class ReplayService
 
         // The player takes a REAL seat even when the driver they replace did not start this round
         // historically (a per-round grid excludes non-starters). Resolve directly with the player
-        // seat — the resolver adds the player's covering entry back to the grid — and treat an
+        // seat, the resolver adds the player's covering entry back to the grid, and treat an
         // absent or malformed non-null seat as a contract failure.
         // Ratings Phase 3: applyWeekendForm (a FormAware career) makes the scored grid react to the
         // round's per-race form; false ⇒ byte-identical (existing careers + form-less packs).
@@ -1360,7 +1360,7 @@ public static class ReplayService
     }
 
     /// <summary>Whether this round is a longer- or shorter-than-median race for the season (by lap
-    /// count) — "longRace" / "shortRace" — or null at the median or when laps are unknown. The split
+    /// count), "longRace" / "shortRace", or null at the median or when laps are unknown. The split
     /// is RELATIVE to this season's races, so it is deterministic and means the same across eras (an
     /// 80-lap 1967 race and a 55-lap 2010s race can both be "long" for their own calendars).</summary>
     private static string? RaceLengthToken(SeasonPack pack, int round)
@@ -1378,7 +1378,7 @@ public static class ReplayService
     }
 
     /// <summary>The player's driver id THIS season, resolved from their start-state livery the same
-    /// way the round fold resolves the seat — so a career that changed teams at an era transition
+    /// way the round fold resolves the seat, so a career that changed teams at an era transition
     /// scores its season end (reputation, champion headline) under the seat it actually occupies,
     /// not a stale career-global id. Falls back to the input id when there is no livery (a legacy
     /// start state) or no seat resolves.</summary>
@@ -1386,7 +1386,7 @@ public static class ReplayService
     {
         // SMGP clean-swap model: the player races as their OWN distinct driver on whatever car they
         // currently hold, so they score under the synthetic id for the WHOLE season regardless of the
-        // start livery. Return it straight — walking the grid below would resolve the livery's AUTHORED
+        // start livery. Return it straight, walking the grid below would resolve the livery's AUTHORED
         // AI (the default resolve path takes no driver id), and the standings never carry that AI, so the
         // mismatch dropped the player's championship position on replay (rep season-final diverged). Only
         // a clean-swap career carries this fallback; every other career keeps the historical walk.
@@ -1454,7 +1454,7 @@ public static class ReplayService
     }
 
     /// <summary>How many positions score points this round, from the round's resolved
-    /// scoring definition — the alternate (shortened-race) table when the result names one,
+    /// scoring definition, the alternate (shortened-race) table when the result names one,
     /// else the season's race table.</summary>
     private static int PointsPositionsFor(SeasonPack pack, SessionResult session, RoundResult result)
     {
@@ -1475,7 +1475,7 @@ public static class ReplayService
     }
 
     /// <summary>The engine-facing results among the stored rounds: CHAMPIONSHIP rounds only,
-    /// in round order — the same filter the app session applies before computing the
+    /// in round order, the same filter the app session applies before computing the
     /// standings screen, so journaled and displayed standings share one input.</summary>
     private static List<RoundResult> ChampionshipResults(
         SeasonPack pack, IEnumerable<StoredRoundResult> stored) =>
@@ -1492,7 +1492,7 @@ public static class ReplayService
             int previousRound = upTo[^2].Round;
             return StateStore.ReadRoundPlayerState(db, seasonId, previousRound, tx)
                 ?? throw new InvalidOperationException(
-                    $"Round {previousRound} of season {seasonId} was imported without the fold — " +
+                    $"Round {previousRound} of season {seasonId} was imported without the fold, " +
                     "re-simulate to rebuild the per-round player states before folding further rounds.");
         }
 
@@ -1509,7 +1509,7 @@ public static class ReplayService
         ?? throw MissingStartState(seasonId);
 
     private static InvalidOperationException MissingStartState(long seasonId) =>
-        new($"Season {seasonId} has no start-of-season player state — it was never set up.");
+        new($"Season {seasonId} has no start-of-season player state, it was never set up.");
 
     // ---------- season end + rollover helpers ----------
 
@@ -1558,7 +1558,7 @@ public static class ReplayService
         FreeAgents = inputs.FreeAgents,
         PlayerSalaryAskBu = inputs.PlayerSalaryAskBu,
         // Prefer the character's chosen name (the identity the digest/injury news use) over the input
-        // id, exactly as the round fold does — so "champion" reads the driver's name, not their id.
+        // id, exactly as the round fold does, so "champion" reads the driver's name, not their id.
         PlayerName = string.IsNullOrEmpty(player.Character?.Name) ? inputs.PlayerName : player.Character!.Name,
         CharacterRules = inputs.CharacterRules,
         MasterySkills = inputs.MasterySkills,
@@ -1569,7 +1569,7 @@ public static class ReplayService
     /// REGENERATED end states via <see cref="SeasonRollover.Derive"/> (the same function the
     /// live path uses) and compares them against the stored rows. The accepted team is a
     /// player choice read from the stored offers; the livery is a player choice read from
-    /// the stored start row. Everything derived must match — a mismatch is a divergence.</summary>
+    /// the stored start row. Everything derived must match, a mismatch is a divergence.</summary>
     private static ReplayDivergence? VerifyRolloverStartStates(
         SeasonRecord previousSeason,
         SeasonEndResult? previousEnd,
@@ -1584,7 +1584,7 @@ public static class ReplayService
         long seasonId = current.Season.Id;
         if (previousEnd is null)
             throw new InvalidOperationException(
-                $"Season {seasonId} follows season {previousSeason.Id}, which never completed — " +
+                $"Season {seasonId} follows season {previousSeason.Id}, which never completed, " +
                 "the career file is structurally inconsistent.");
 
         string? acceptedTeam = acceptedOffers
@@ -1644,7 +1644,7 @@ public static class ReplayService
     /// The pack-changeover analogue of <see cref="VerifyRolloverStartStates"/> (M6): re-derives
     /// the follow-on season's start states through <see cref="EraTransition.Build(SeasonPack, SeasonPack, SeasonEndResult, PlayerCareerState, PlayerOffer, StreamFactory, AgingCurveSet, IReadOnlyDictionary{string, int}?)"/>
     /// from the previous season's REGENERATED end result plus the stored accepted offer, and
-    /// compares player/driver/team rows against the stored ones — divergence rules identical
+    /// compares player/driver/team rows against the stored ones, divergence rules identical
     /// to the rollover. On success it returns the transition's regenerated journal rows
     /// (era.transition + era.bridge/era.departed/era.economy) so the byte-compare covers the
     /// rows <see cref="CareerStore.StartNextSeason"/> stored under the new season.
@@ -1666,7 +1666,7 @@ public static class ReplayService
         long seasonId = current.Season.Id;
         if (previousEnd is null)
             throw new InvalidOperationException(
-                $"Season {seasonId} follows season {previousSeason.Id}, which never completed — " +
+                $"Season {seasonId} follows season {previousSeason.Id}, which never completed, " +
                 "the career file is structurally inconsistent.");
 
         string? acceptedTeam = acceptedOffers
@@ -1725,7 +1725,7 @@ public static class ReplayService
         }
         if (plan.ValidationErrors.Count > 0)
         {
-            // A stored career started a season the plan would refuse today — the file was
+            // A stored career started a season the plan would refuse today, the file was
             // tampered with or the packs changed. Report, never crash, never lose data.
             return (new ReplayDivergence
             {
@@ -1817,7 +1817,7 @@ public static class ReplayService
             catch (Exception ex) when (ex is JsonException or InvalidDataException)
             {
                 throw new InvalidDataException(
-                    $"The pinned copy of {packId} {version} could not be parsed — " +
+                    $"The pinned copy of {packId} {version} could not be parsed, " +
                     $"the career file is damaged. ({ex.Message})", ex);
             }
 
@@ -1825,14 +1825,14 @@ public static class ReplayService
             byte[] pinnedCanonical = JsonSerializer.SerializeToUtf8Bytes(pinnedPack, CoreJson.Options);
             if (!supplied.AsSpan().SequenceEqual(pinnedCanonical))
                 throw new InvalidOperationException(
-                    $"The supplied pack differs from the pinned copy of {packId} {version} — " +
+                    $"The supplied pack differs from the pinned copy of {packId} {version}, " +
                     "replay must run against the exact pinned pack (load it via " +
                     "PinnedPackEnvelope.LoadSeasonPack / ReadPinnedPack).");
         }
     }
 
     /// <summary>The between-season character-development spends journaled under a season (character
-    /// depth 4), in order — the round fold never regenerates them (they are provenance-excluded), so
+    /// depth 4), in order, the round fold never regenerates them (they are provenance-excluded), so
     /// they are read here and re-applied at the season's transition, live and on replay alike.</summary>
     public static IReadOnlyList<CharacterSpend> ReadCharacterSpends(
         CareerDatabase db,
@@ -1894,7 +1894,7 @@ public static class ReplayService
             .ToList();
 
     /// <summary>The player's post-race promotion decisions (3c-2, two-phase smgp careers) keyed by
-    /// round — the journaled <c>smgp.swap</c> INPUT rows, read from the FULL journal (they are
+    /// round, the journaled <c>smgp.swap</c> INPUT rows, read from the FULL journal (they are
     /// provenance-excluded from the byte-compare, so they never reach the compared sequence) and
     /// supplied to the round fold so the pending offer resolves identically live and on replay. A
     /// round with no row = the offer was left unresolved (or a legacy/non-swap round).</summary>
@@ -1926,7 +1926,7 @@ public static class ReplayService
                 continue;
             if (row.Round is not { } round)
                 throw new InvalidOperationException(
-                    $"economy.decision journal row {row.Seq} carries no round — the career file is damaged.");
+                    $"economy.decision journal row {row.Seq} carries no round, the career file is damaged.");
             var decision = DataJson.Deserialize<Companion.Core.Dynasty.DynastyEconomyDecision>(row.DeltaJson);
             if (!decisions.TryGetValue(round, out var list))
                 decisions[round] = list = [];
@@ -1938,11 +1938,11 @@ public static class ReplayService
     }
 
     /// <summary>
-    /// Journals one Dynasty economy decision for a NOT-YET-FOLDED round — the between-rounds
+    /// Journals one Dynasty economy decision for a NOT-YET-FOLDED round, the between-rounds
     /// decision window (docs/dev/dynasty-tycoon-economy.md §5). The INPUT row is provenance-
     /// excluded; the round's fold (live and replay) reads it back and applies it in seq order, so
     /// its DERIVED effects are byte-compared. Refuses a round that already has a raw result (the
-    /// <see cref="PlayerRoundConditionsStore.Declare"/> immutability shape) — a declared decision
+    /// <see cref="PlayerRoundConditionsStore.Declare"/> immutability shape), a declared decision
     /// is locked the moment the race it precedes is imported. Business validation (affordability,
     /// sponsor availability, the level cap) belongs to the session service BEFORE this call.
     /// </summary>
@@ -1962,7 +1962,7 @@ public static class ReplayService
         if (roundImported)
         {
             throw new InvalidOperationException(
-                $"Round {round} of season {seasonId} already has an imported result — economy " +
+                $"Round {round} of season {seasonId} already has an imported result, economy " +
                 "decisions are declared for the NEXT unfolded round, never rewritten under one.");
         }
 

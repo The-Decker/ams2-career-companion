@@ -14,7 +14,7 @@ public sealed class PlayerImageKeyTests
     [InlineData("team.minarae", "player.minarae")]
     [InlineData("team.madonna", "player.madonna")]
     [InlineData("bullets", "player.bullets")]     // already prefix-less
-    [InlineData("", "player")]                    // own entrant — no team
+    [InlineData("", "player")]                    // own entrant, no team
     public void PlayerImageKey_IsPlayerDotTeam(string teamId, string expected)
     {
         Assert.Equal(expected, GridSeatChoice.PlayerImageKey(teamId));

@@ -3,29 +3,29 @@ using Companion.Core.Career;
 namespace Companion.ViewModels.Services;
 
 /// <summary>
-/// Resolves the "drop-in" era-art image for a career (career-hub-design.md §11 — the picture-rich
+/// Resolves the "drop-in" era-art image for a career (career-hub-design.md §11, the picture-rich
 /// gallery's per-era image slot). Images live in <c>data/ams2/era-art/</c>; a season's card shows
 /// the most specific one that exists on disk, falling back to a coloured era placeholder when none
 /// does. The ordering is pure and deterministic; the only I/O is a <see cref="File.Exists"/> probe,
 /// which is why this lives in the ViewModels layer and not in <c>Companion.Core</c> ("no I/O").
 ///
-/// <para>Precedence (most specific first): a year-specific file — <c>1967.jpg</c> / <c>1967.png</c>
-/// — beats the era-medium file — <c>telegram.jpg</c> / <c>fax.jpg</c> / <c>email.jpg</c> (and their
+/// <para>Precedence (most specific first): a year-specific file, <c>1967.jpg</c> / <c>1967.png</c>
+///, beats the era-medium file, <c>telegram.jpg</c> / <c>fax.jpg</c> / <c>email.jpg</c> (and their
 /// <c>.png</c> variants). So a hand-picked 1967 photo wins over the generic telegram-era image.</para>
 /// </summary>
 public static class EraArtResolver
 {
     /// <summary>Accepted image extensions, in preference order (JPEG before PNG at the same
-    /// specificity — real historical photos are usually JPEGs).</summary>
+    /// specificity, real historical photos are usually JPEGs).</summary>
     private static readonly string[] Extensions = [".jpg", ".png"];
 
-    /// <summary>Era-art key for a career keyed by IDENTITY rather than year — the SMGP replica
+    /// <summary>Era-art key for a career keyed by IDENTITY rather than year, the SMGP replica
     /// mode's fictional world shares the 1990 career year with the f1-1990 pack, so it resolves its
     /// own <c>smgp.jpg</c> (the SEGA Grand Prix art) instead of colliding on <c>1990.jpg</c>.</summary>
     public const string SmgpArtKey = Companion.Core.Smgp.SmgpRules.CareerStyle;
 
     /// <summary>The candidate file names for a bare identity KEY (e.g. <c>smgp.jpg</c>,
-    /// <c>smgp.png</c>) — the pack-identity path that beats the year for a career whose year is
+    /// <c>smgp.png</c>), the pack-identity path that beats the year for a career whose year is
     /// not unique to it. Pure.</summary>
     public static IReadOnlyList<string> CandidateFileNamesForKey(string key)
     {
@@ -41,7 +41,7 @@ public static class EraArtResolver
 
     /// <summary>The ordered candidate file names (relative to the era-art directory) for a season
     /// year, most-specific first: the year file (<c>1967.jpg</c>, <c>1967.png</c>) then the
-    /// era-medium file (<c>telegram.jpg</c>, <c>telegram.png</c>). Pure — no filesystem access —
+    /// era-medium file (<c>telegram.jpg</c>, <c>telegram.png</c>). Pure, no filesystem access —
     /// so it unit-tests without any files on disk.</summary>
     public static IReadOnlyList<string> CandidateFileNames(int year)
     {
@@ -84,7 +84,7 @@ public static class EraArtResolver
 
     /// <summary>The season year the gallery should skin an MRU entry by. The robust path is the
     /// entry's STORED <see cref="RecentCareer.SeasonYear"/> (populated when the career is created or
-    /// opened). A legacy entry persisted before that field existed has a <c>0</c> stored year — for
+    /// opened). A legacy entry persisted before that field existed has a <c>0</c> stored year, for
     /// those the resolver falls back to reading a 4-digit year out of the career NAME (the old, fragile
     /// behaviour), and finally to <c>null</c> (a neutral placeholder card) when the name carries none.
     /// <c>0</c> is treated as "missing" because it is the JSON read-with-default AND never a real

@@ -6,7 +6,7 @@ namespace Companion.ViewModels.ResultEntry;
 /// <summary>
 /// Mouse-oriented primitives for the result-entry screen (ux-round contract, locked decision
 /// #8): drag-and-drop and context-menu operations as first-class viewmodel methods. The
-/// keyboard grammar in <c>ResultEntryViewModel.cs</c> is untouched — these methods are peers
+/// keyboard grammar in <c>ResultEntryViewModel.cs</c> is untouched, these methods are peers
 /// over the same state, push the SAME undo snapshots (<see cref="Undo"/> unwinds keyboard and
 /// mouse mutations interchangeably), share the progress counter, the timer, and the
 /// <see cref="IsComplete"/> rule. The WPF drag/adorner layer stays thin: every drop resolves
@@ -14,15 +14,15 @@ namespace Companion.ViewModels.ResultEntry;
 ///
 /// Semantics:
 /// <list type="bullet">
-/// <item><see cref="InsertAt"/> — insert-BEFORE the given index (never replaces); followers
+/// <item><see cref="InsertAt"/>, insert-BEFORE the given index (never replaces); followers
 ///   shift down; also pulls a DNF/DSQ driver back into the order in one undoable step;</item>
-/// <item><see cref="MoveTo"/> — reorder within the classification == the grammar's penalty
+/// <item><see cref="MoveTo"/>, reorder within the classification == the grammar's penalty
 ///   re-position (index is the driver's FINAL 0-based position);</item>
-/// <item><see cref="MarkDnf"/>/<see cref="MarkDsq"/> — mark from anywhere (a placed driver is
+/// <item><see cref="MarkDnf"/>/<see cref="MarkDsq"/>, mark from anywhere (a placed driver is
 ///   pulled out of the classification, like the grammar's trailing-'q' rule);</item>
-/// <item><see cref="Unmark"/> — back to Remaining from any resolved state (drag out of a
+/// <item><see cref="Unmark"/>, back to Remaining from any resolved state (drag out of a
 ///   zone, or the context menu's Remove);</item>
-/// <item><see cref="MarkDnfBulk"/> — one drag gesture, ONE undo snapshot;</item>
+/// <item><see cref="MarkDnfBulk"/>, one drag gesture, ONE undo snapshot;</item>
 /// <item>multi-select (<see cref="ToggleSelected"/>/<see cref="ClearSelection"/>) is UI
 ///   state: never part of the draft, never undone.</item>
 /// </list>
@@ -60,7 +60,7 @@ public sealed partial class ResultEntryViewModel
     // ---------- inline reason editor state (view state; the single "row being edited") ----------
 
     /// <summary>The one resolved driver (DNF or DSQ) whose row currently shows its inline reason
-    /// editor — the DNF Mechanical/Accident/Other picker (+ custom-cause box) or the DSQ reason
+    /// editor, the DNF Mechanical/Accident/Other picker (+ custom-cause box) or the DSQ reason
     /// box. Exactly one row edits at a time; null means every row is in its compact DISPLAY state
     /// (name + team + reason label, no editor). Set on a fresh DNF drop (so a reason can be picked
     /// immediately) and by <see cref="BeginEditingReason"/> when a done row is clicked to edit;
@@ -81,7 +81,7 @@ public sealed partial class ResultEntryViewModel
     partial void OnEditingReasonDriverIdChanged(string? value) =>
         OnPropertyChanged(nameof(ReasonPickerDriverId));
 
-    /// <summary>Open the inline reason editor on a resolved (DNF or DSQ) driver's row — the
+    /// <summary>Open the inline reason editor on a resolved (DNF or DSQ) driver's row, the
     /// click-to-edit gesture. Only one row edits at a time, so this replaces any currently-open
     /// editor. No-op (leaves the editor closed) when the driver is not currently DNF'd or DSQ'd —
     /// Remaining/classified rows have no reason to edit. Pure view state: nothing is pushed to
@@ -120,7 +120,7 @@ public sealed partial class ResultEntryViewModel
         return true;
     }
 
-    /// <summary>Reorder a placed driver to a FINAL 0-based index (clamped) — the drag-within-
+    /// <summary>Reorder a placed driver to a FINAL 0-based index (clamped), the drag-within-
     /// order gesture, identical in effect to the grammar's penalty re-position. Dropping a
     /// driver back on its own slot is a successful no-op that pushes nothing to undo.</summary>
     public bool MoveTo(string driverId, int newIndex)
@@ -162,7 +162,7 @@ public sealed partial class ResultEntryViewModel
         return true;
     }
 
-    /// <summary>Change an existing DNF's reason ("m"/"a"/"o") — the inline picker and the
+    /// <summary>Change an existing DNF's reason ("m"/"a"/"o"), the inline picker and the
     /// context menu's reason submenu. Undoable; picking the current reason is a no-op that
     /// still dismisses the picker. Switching AWAY from "o" drops any custom detail (mechanical
     /// and accident have fixed meanings); the picker stays open on "o" so the user can type a
@@ -189,7 +189,7 @@ public sealed partial class ResultEntryViewModel
             ? _dnfs[i] with { Reason = "o" }
             : _dnfs[i] with { Reason = reason, Detail = null, DriverAttributed = false };
         // Selecting a concrete cause (mechanical/accident) closes the picker; "o" leaves it
-        // open so free text can follow — never blocking either way.
+        // open so free text can follow, never blocking either way.
         if (reason != "o")
             ReasonPickerDriverId = null;
         CompleteMouseMutation(clearPickerFor: null);
@@ -197,7 +197,7 @@ public sealed partial class ResultEntryViewModel
     }
 
     /// <summary>Set (or clear) the free-text detail on an "other" DNF and whether the cause is
-    /// the driver's fault — the inline "Other" text box + a "driver's fault" toggle. Forces the
+    /// the driver's fault, the inline "Other" text box + a "driver's fault" toggle. Forces the
     /// reason to "o" (custom text only ever qualifies Other). Undoable and fully independent of
     /// marking the DNF, so a mistaken DNF is always removable whether or not a detail was ever
     /// typed. False when the driver is not currently DNF'd.</summary>
@@ -228,7 +228,7 @@ public sealed partial class ResultEntryViewModel
     }
 
     /// <summary>Disqualify a driver from anywhere (a placed driver is pulled out of the
-    /// classification — the grammar's trailing-'q' semantics). False when already DSQ.</summary>
+    /// classification, the grammar's trailing-'q' semantics). False when already DSQ.</summary>
     public bool MarkDsq(string driverId)
     {
         var seat = FindSeat(driverId);
@@ -266,7 +266,7 @@ public sealed partial class ResultEntryViewModel
         return true;
     }
 
-    /// <summary>Return a resolved driver (classified, DNF, or DSQ) to Remaining — drag out of
+    /// <summary>Return a resolved driver (classified, DNF, or DSQ) to Remaining, drag out of
     /// a zone, or the context menu's Remove. False when the driver is already unresolved.</summary>
     public bool Unmark(string driverId)
     {
@@ -282,7 +282,7 @@ public sealed partial class ResultEntryViewModel
         return true;
     }
 
-    /// <summary>Bulk retirement — multi-select dragged to the DNF zone, mirroring the DNF
+    /// <summary>Bulk retirement, multi-select dragged to the DNF zone, mirroring the DNF
     /// phase's ↵↵↵. One gesture pushes ONE undo snapshot (a single Ctrl+Z restores the whole
     /// bulk). Drivers are marked in the order given; ids already DNF'd are skipped; the
     /// multi-selection is cleared afterwards. False when nothing was markable.</summary>
@@ -320,7 +320,7 @@ public sealed partial class ResultEntryViewModel
         _grid.FirstOrDefault(s => string.Equals(s.DriverId, driverId, StringComparison.Ordinal));
 
     /// <summary>Every mouse mutation counts as an interaction (starts the entry timer) and
-    /// pushes the same snapshot type the grammar pushes — one shared undo stack.</summary>
+    /// pushes the same snapshot type the grammar pushes, one shared undo stack.</summary>
     private void BeginMouseMutation()
     {
         StartTimerIfNeeded();

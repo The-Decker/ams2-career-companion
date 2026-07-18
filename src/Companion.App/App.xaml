@@ -88,7 +88,7 @@
             <DataTemplate DataType="{x:Type settings:SettingsViewModel}">
                 <views:SettingsView />
             </DataTemplate>
-            <!-- developer debug menu (dynasty-passport-roadmap Piece 2) — dev-only, gated at runtime -->
+            <!-- developer debug menu (dynasty-passport-roadmap Piece 2), dev-only, gated at runtime -->
             <DataTemplate DataType="{x:Type debug:DebugMenuViewModel}">
                 <views:DebugMenuView />
             </DataTemplate>

@@ -4,7 +4,7 @@ namespace Companion.Core.Character;
 
 /// <summary>
 /// Writes a character's talent stats and perk deltas onto the player seat's
-/// <see cref="PackDriverRatings"/> — the pure last step of the grid-resolve merge chain
+/// <see cref="PackDriverRatings"/>, the pure last step of the grid-resolve merge chain
 /// (pack baseline → track form → round overrides → <b>+ character</b>). Each of the five talent
 /// stats OVERWRITES its mapped rating field(s) with <c>writeBase + writeSpan·stat</c>; then the
 /// perks' unconditional <see cref="PlayerPerkModifiers.TalentDeltas"/> are ADDED (to a written
@@ -12,7 +12,7 @@ namespace Companion.Core.Character;
 /// on the seat, not the ratings, so they are applied separately at the seat level.
 ///
 /// This helper is pure and, until the grid resolver invokes it for a career that HAS a character,
-/// nothing calls it — so existing careers and the f1db oracle are byte-identical.
+/// nothing calls it, so existing careers and the f1db oracle are byte-identical.
 /// </summary>
 public static class CharacterRatingWriter
 {

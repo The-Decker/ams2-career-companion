@@ -87,7 +87,7 @@ public class PaceAnchorTests
         Assert.Equal(0.70, PaceAnchorMath.MedianAiRaceSkill(grid), 12);
     }
 
-    // ---------- qualifying (one-lap) anchor — Increment 2 ----------
+    // ---------- qualifying (one-lap) anchor, Increment 2 ----------
 
     [Fact]
     public void QualifyingAnchorReadsTheOneLapAxis_NotRaceSkill()
@@ -109,7 +109,7 @@ public class PaceAnchorTests
         Assert.Equal(DifficultyModel.AiPacePercent(0.30, 95.0),
             PaceAnchorMath.ImpliedPlayerQualiPace(grid, 9, 95.0), 12);
 
-        // The qualifying median (0.50) is distinct from the race median (0.60) — proof of axis.
+        // The qualifying median (0.50) is distinct from the race median (0.60), proof of axis.
         Assert.Equal(0.50, PaceAnchorMath.MedianAiQualifyingSkill(grid), 12);
         Assert.Equal(0.60, PaceAnchorMath.MedianAiRaceSkill(grid), 12);
     }

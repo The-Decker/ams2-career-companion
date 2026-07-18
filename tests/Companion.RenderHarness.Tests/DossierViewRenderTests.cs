@@ -16,12 +16,12 @@ using Companion.ViewModels.Services;
 
 namespace Companion.RenderHarness.Tests;
 
-/// <summary>Off-screen render of the Driver dossier over a real <see cref="CharacterDossier"/> — the
+/// <summary>Off-screen render of the Driver dossier over a real <see cref="CharacterDossier"/>, the
 /// view binds to a host's <c>Dossier</c> property, so a lightweight stand-in exercises the view layer
 /// (stat bars, perk cards, the level progress bar) without a full session. Self-skips off Windows.</summary>
 public sealed class DossierViewRenderTests
 {
-    /// <summary>The dossier view binds <c>{Binding Dossier}</c> on its DataContext — this stands in
+    /// <summary>The dossier view binds <c>{Binding Dossier}</c> on its DataContext, this stands in
     /// for the DossierViewModel.</summary>
     private sealed class DossierHost : INotifyPropertyChanged
     {
@@ -243,8 +243,8 @@ public sealed class DossierViewRenderTests
             {
                 Id = "rain_man", Name = "Rain Man", Category = "weather",
                 Description = "Untouchable in the wet, ordinary in the dry.", Cost = 1,
-                Benefits = ["Stronger wet-weather pace — in the wet"],
-                Drawbacks = ["Weaker one-lap pace — in the dry"],
+                Benefits = ["Stronger wet-weather pace, in the wet"],
+                Drawbacks = ["Weaker one-lap pace, in the dry"],
             },
         ],
         RacingDna = new DossierRacingDna
@@ -284,7 +284,7 @@ public sealed class DossierViewRenderTests
             new DossierModifierLine("+0.020 car power", null),
         ],
         Availability = AvailabilityStatus.Injured,
-        AvailabilityLabel = "Injured — out 2 races",
+        AvailabilityLabel = "Injured, out 2 races",
     };
 
     private static SkillNodeViewModel Node(

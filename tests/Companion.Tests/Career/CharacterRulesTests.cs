@@ -96,7 +96,7 @@ public sealed class CharacterRulesTests
     {
         var curve = Shipped().Levels.XpCurve;
 
-        Assert.Equal(0, curve.XpForLevel(1));            // level 1 is the start — no cost
+        Assert.Equal(0, curve.XpForLevel(1));            // level 1 is the start, no cost
         Assert.Equal(100, curve.XpForLevel(2));          // baseXpToLevel2
         Assert.Equal(135, curve.XpForLevel(3));          // round(100 * 1.35)
         Assert.True(curve.XpForLevel(4) > curve.XpForLevel(3));

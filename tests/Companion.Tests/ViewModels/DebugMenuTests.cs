@@ -288,7 +288,7 @@ public sealed class DebugMenuTests : IDisposable
     [Fact]
     public void Tier1_TakesARealSeatFromThePack_NotThePreviewLivery()
     {
-        // A pack whose grid liveries do NOT include the in-memory preview livery — the debug player
+        // A pack whose grid liveries do NOT include the in-memory preview livery, the debug player
         // must take a REAL seat from the pack, else its seat is a malformed synthetic own-entrant.
         var basePack = TestPackBuilder.TwoRoundPack();
         var pack = basePack with

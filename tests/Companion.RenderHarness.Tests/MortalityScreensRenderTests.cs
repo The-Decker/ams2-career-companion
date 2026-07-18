@@ -12,8 +12,8 @@ namespace Companion.RenderHarness.Tests;
 public sealed class MortalityScreensRenderTests
 {
     [Theory]
-    [InlineData(false, 2, "INJURED — auto-simulating round (2 remaining)")]
-    [InlineData(true, 0, "SEASON OVER — recovering")]
+    [InlineData(false, 2, "INJURED, auto-simulating round (2 remaining)")]
+    [InlineData(true, 0, "SEASON OVER, recovering")]
     public void SitOutView_RendersBothRecoveryStates(bool seasonEnding, int remaining, string headline)
     {
         if (!WpfRenderHarness.IsSupported)

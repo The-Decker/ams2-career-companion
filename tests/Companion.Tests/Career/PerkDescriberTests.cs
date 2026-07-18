@@ -33,10 +33,10 @@ public sealed class PerkDescriberTests
             Kind = "benefit", Lever = "statDelta", Target = "wetSkill", Magnitude = 0.3, Condition = "wetRound",
         };
 
-        Assert.Equal("Stronger wet-weather pace — in the wet", PerkDescriber.Describe(effect));
+        Assert.Equal("Stronger wet-weather pace, in the wet", PerkDescriber.Describe(effect));
 
         var line = PerkDescriber.DescribeLine(effect);
-        Assert.Equal("Stronger wet-weather pace — in the wet", line.Text);
+        Assert.Equal("Stronger wet-weather pace, in the wet", line.Text);
         Assert.Equal("wetRound", line.Condition);
         Assert.True(line.IsConditional);
     }

@@ -86,7 +86,7 @@ public sealed record HeadlineEra
 }
 
 /// <summary>Deterministic headline selection: one variant picked with the `headlines`
-/// stream, then a SINGLE-PASS {token} substitution — the template is scanned once with a
+/// stream, then a SINGLE-PASS {token} substitution, the template is scanned once with a
 /// regex, each token resolves by ordinal lookup, and substituted values are never re-scanned
 /// (a player named "{team} Kid" stays "{team} Kid" in print). Unknown tokens throw at
 /// selection time so template bugs surface in tests, not journals.</summary>
@@ -95,7 +95,7 @@ public static class HeadlineSelector
     private static readonly Regex TokenPattern = new(@"\{([^{}]+)\}", RegexOptions.Compiled);
 
     /// <summary>Selects a headline, or null when the bank has no variants for the key
-    /// (missing keys must not break the sim — the journal row still stands on its own).</summary>
+    /// (missing keys must not break the sim, the journal row still stands on its own).</summary>
     /// <exception cref="InvalidOperationException">A selected template uses a token the
     /// caller did not supply.</exception>
     public static string? Select(

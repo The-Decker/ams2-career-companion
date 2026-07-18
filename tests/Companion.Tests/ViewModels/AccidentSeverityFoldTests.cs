@@ -8,7 +8,7 @@ namespace Companion.Tests.ViewModels;
 /// <summary>
 /// Character death &amp; injury, Slice 2 (accident severity input): the player's Light/Medium/Heavy accident
 /// severity is CAPTURED on the round envelope (v7) but NOTHING consumes it yet, so a career that records an
-/// accident-with-severity round re-simulates BYTE-IDENTICALLY — the legacy gate holds until Slice 3 folds it.
+/// accident-with-severity round re-simulates BYTE-IDENTICALLY, the legacy gate holds until Slice 3 folds it.
 /// </summary>
 public sealed class AccidentSeverityFoldTests : IDisposable
 {

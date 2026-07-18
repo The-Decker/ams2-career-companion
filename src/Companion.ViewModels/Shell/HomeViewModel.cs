@@ -16,8 +16,8 @@ namespace Companion.ViewModels.Shell;
 
 /// <summary>
 /// The Home screen conductor (app-shell contract screen 3): a persistent career header
-/// (season, round, player standing) over a two-state content area — Race Day briefing ⇄
-/// Enter result for the current round — plus the Confirm interstitial and the Standings
+/// (season, round, player standing) over a two-state content area, Race Day briefing ⇄
+/// Enter result for the current round, plus the Confirm interstitial and the Standings
 /// screen. When the season is complete the content pins to the season review (final
 /// standings). Owns the career session's lifetime: disposing the home disposes the session.
 /// </summary>
@@ -32,19 +32,19 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
 
     /// <summary>The weekend qualifying-order entry (Increment 2b.3): shown before the race result
     /// when the round's weekend declares a qualifying session. Reuses the result-entry grammar to
-    /// capture the grid order pole-first. Null on single-race rounds — the loop stays byte-identical.</summary>
+    /// capture the grid order pole-first. Null on single-race rounds, the loop stays byte-identical.</summary>
     private ResultEntryViewModel? _qualifyingEntry;
 
     /// <summary>The captured qualifying order (pole first) for the current round, held in memory
-    /// until the race result is applied — then written verbatim into the round's raw envelope via
+    /// until the race result is applied, then written verbatim into the round's raw envelope via
     /// <see cref="ResultDraft.QualifyingOrder"/>. Null when the round ran no qualifying session.</summary>
     private IReadOnlyList<string>? _capturedQualifyingOrder;
 
-    /// <summary>The starting-grid look shown AFTER qualifying and BEFORE the race — display-only, so
+    /// <summary>The starting-grid look shown AFTER qualifying and BEFORE the race, display-only, so
     /// the player sees the grid pole-first before racing. Null except while on that step.</summary>
     private StartingGridViewModel? _startingGrid;
 
-    /// <summary>The SMGP rival screen — its own step AFTER race setup and BEFORE qualifying (a wrapper
+    /// <summary>The SMGP rival screen, its own step AFTER race setup and BEFORE qualifying (a wrapper
     /// over the shared Briefing so the naming persists). Null except while on that step.</summary>
     private RivalScreenViewModel? _rivalScreen;
 
@@ -53,13 +53,13 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     /// once its editor exists, re-entry goes straight to that editor and never replays the gate.</summary>
     private SessionIntroViewModel? _sessionIntro;
 
-    /// <summary>The SMGP promotion / demotion screen (3c-3) — its own full-immersion step AFTER the
+    /// <summary>The SMGP promotion / demotion screen (3c-3), its own full-immersion step AFTER the
     /// confirm, when the round produced a seat change (a two-wins offer to accept/decline, or a forced
     /// relegation to acknowledge). Null except while on that step; the round does not advance until it
-    /// is answered (season end is held too — see CareerSessionService.EnsureSeasonEnd).</summary>
+    /// is answered (season end is held too, see CareerSessionService.EnsureSeasonEnd).</summary>
     private PromotionViewModel? _promotion;
 
-    /// <summary>The 17-season SMGP campaign FINALE (Mike's "final final screen") — its own full-immersion
+    /// <summary>The 17-season SMGP campaign FINALE (Mike's "final final screen"), its own full-immersion
     /// step shown ONCE at the fold that completes the campaign, before the final season review. Null
     /// except while on that step; its Continue command advances into the review. Display-only.</summary>
     private SmgpFinaleViewModel? _finale;
@@ -113,7 +113,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             _currentContent = Briefing;
         else if (_summary.SeasonComplete)
         {
-            // A beaten campaign summit leads with the FINALE on reopen too — closing the app right
+            // A beaten campaign summit leads with the FINALE on reopen too, closing the app right
             // after the final fold must not be the only chance to ever see the celebration. Its
             // Continue advances into the review exactly like the live handoff in AdvanceAfterRound.
             if (_session.SmgpFinale() is { } finale)
@@ -123,7 +123,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         }
         else if (_session.CurrentSitOut() is { } sitOut)
             // Opened onto an injured round (e.g. reopened mid-suspension): the player sits out, so the
-            // auto-sim screen leads — never manual result entry. (Character death & injury §5.)
+            // auto-sim screen leads, never manual result entry. (Character death & injury §5.)
             _currentContent = MakeSitOut(sitOut);
         else if (_settings?.Current.AutoOpenBriefing ?? true)
             _currentContent = Briefing;
@@ -152,7 +152,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     private CareerSummary _summary;
 
     /// <summary>What the LAST applied round did to the player's progression (XP applied, level
-    /// movement, banked Skill Points) — announced where it happens instead of waiting to be found
+    /// movement, banked Skill Points), announced where it happens instead of waiting to be found
     /// on the Driver tab. Null before any apply this session or for a character-free career.</summary>
     [ObservableProperty]
     private RoundProgressionSummary? _lastProgression;
@@ -162,7 +162,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     public string? DriverLevelText =>
         _session.CharacterDossier() is { } dossier ? $"LV {dossier.Level}" : null;
 
-    /// <summary>Header chip: the driver's availability ("Fit", "Injured — out 2 races", …), or null
+    /// <summary>Header chip: the driver's availability ("Fit", "Injured, out 2 races", …), or null
     /// for a character-free career. An injury is visible at a glance, not two tabs deep.</summary>
     public string? DriverAvailabilityLabel => _session.CharacterDossier()?.AvailabilityLabel;
 
@@ -195,7 +195,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     {
         get
         {
-            // The wizard defaults the career name to "<series> <year>" — don't echo it twice.
+            // The wizard defaults the career name to "<series> <year>", don't echo it twice.
             string season = $"{Summary.SeriesName} {Summary.SeasonYear}";
             return string.Equals(Summary.CareerName, season, StringComparison.OrdinalIgnoreCase)
                 ? season
@@ -203,7 +203,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         }
     }
 
-    /// <summary>The season year, rendered big in the career header — multi-season careers
+    /// <summary>The season year, rendered big in the career header, multi-season careers
     /// (M6) make "which year am I in?" the header's first question.</summary>
     public string SeasonYearText => Summary.SeasonYear.ToString();
 
@@ -215,7 +215,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         ? $"P{position} in the championship"
         : "No standings yet";
 
-    /// <summary>True once at least one round has folded — the header shows the form line.</summary>
+    /// <summary>True once at least one round has folded, the header shows the form line.</summary>
     public bool HasForm => Summary.Reputation is not null;
 
     /// <summary>Reputation + OPI with trend glyphs, from the FOLDED player state
@@ -233,7 +233,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         _ => "",
     };
 
-    /// <summary>True once every round has an applied result — the content area pins to the
+    /// <summary>True once every round has an applied result, the content area pins to the
     /// season review (final standings).</summary>
     public bool IsSeasonReview => Summary.SeasonComplete;
 
@@ -252,15 +252,15 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     private string? _contentError;
 
     /// <summary>Non-null once a fatal accident ENDS the career (character death &amp; injury §3.3): the driver
-    /// died (Normal — the death screen offers a restore) or a Hardcore death just deleted the save. The
-    /// shell routes to the death / permadeath screen from this (Slice 5 renders it). DB-FREE — for a
+    /// died (Normal, the death screen offers a restore) or a Hardcore death just deleted the save. The
+    /// shell routes to the death / permadeath screen from this (Slice 5 renders it). DB-FREE, for a
     /// Hardcore death the session's DB is already disposed, so nothing may query it once this is set.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsCareerTerminal))]
     [NotifyCanExecuteChangedFor(nameof(ShowBriefingCommand), nameof(EnterResultCommand))]
     private PlayerMortalityStatus? _careerOver;
 
-    /// <summary>The RICH death-screen projection (Slice 5) — an in-world obituary, the career record, the
+    /// <summary>The RICH death-screen projection (Slice 5), an in-world obituary, the career record, the
     /// fatal accident's cause/venue, and (Normal) the restorable save slots. Set alongside
     /// <see cref="CareerOver"/>; the death screen binds this for the obituary + record and falls back to
     /// <see cref="CareerOver"/> for the bare status. Also DB-free on the Hardcore path (captured before
@@ -268,7 +268,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private DeathScreenModel? _deathScreen;
 
-    /// <summary>The Dynasty bankruptcy game-over projection (economy §7) — the collapse facts, the
+    /// <summary>The Dynasty bankruptcy game-over projection (economy §7), the collapse facts, the
     /// career record, and (when saves exist) the restore slots. Set on the fatal settlement's
     /// handoff and on reopening a bankrupt career; the App-owned bankruptcy takeover binds this.
     /// Bankruptcy never deletes the file, so its reads are ordinary DB-backed ones.</summary>
@@ -322,7 +322,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     private bool HasSmgpRivalStep => Briefing.SmgpActive;
 
     /// <summary>True while the CURRENT content is the weekend qualifying-order step (not the race
-    /// result) — both reuse the result-entry grammar, so this drives the primary action's label
+    /// result), both reuse the result-entry grammar, so this drives the primary action's label
     /// and the "which step am I on" cues. Always false on single-race rounds.</summary>
     public bool IsQualifyingStep => _qualifyingEntry is not null
         && ReferenceEquals(CurrentContent, _qualifyingEntry);
@@ -339,13 +339,13 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     /// <summary>The scoring races the current round declares (Increment 2e.3); null on single-race.</summary>
     private IReadOnlyList<PackWeekendRace>? WeekendRaces => _session.CurrentWeekend()?.Races;
 
-    /// <summary>How many races this round scores — 2 for an authored two-race weekend, else 1.</summary>
+    /// <summary>How many races this round scores, 2 for an authored two-race weekend, else 1.</summary>
     private int WeekendRaceCount => WeekendRaces?.Count ?? 1;
 
     /// <summary>The 0-based index of the race being entered (confirmed races are captured + locked).</summary>
     private int CurrentRaceIndex => _capturedRaces.Count;
 
-    /// <summary>True when the current race is the round's last — its confirm scores the whole round.</summary>
+    /// <summary>True when the current race is the round's last, its confirm scores the whole round.</summary>
     private bool IsLastRace => CurrentRaceIndex >= WeekendRaceCount - 1;
 
     partial void OnCurrentContentChanged(ObservableObject? value) =>
@@ -367,7 +367,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         ContentError = null;
 
         // Injured: the player sits this round out (AMS2 cannot spectate a single-player race), so it is
-        // auto-simulated — never a manual result. Show the sit-out screen instead. (Character death &
+        // auto-simulated, never a manual result. Show the sit-out screen instead. (Character death &
         // injury §5; this is the guard the normal advance path also routes through.)
         if (_session.CurrentSitOut() is { } sitOut)
         {
@@ -385,7 +385,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         }
 
         // Weekend qualifying step (Increment 2b.3): on a round whose weekend declares a qualifying
-        // session, capture the grid order (pole first) BEFORE the race — once per round. A round
+        // session, capture the grid order (pole first) BEFORE the race, once per round. A round
         // with no weekend / no qualifying skips straight to the race, so the shipped single-race
         // loop is byte-identical.
         if (QualifyingSession is not null && _capturedQualifyingOrder is null)
@@ -397,7 +397,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         ShowRaceIntroOrEntry();
     }
 
-    /// <summary>Show the SMGP rival screen — a wrapper over the shared Briefing so the pick / dossier
+    /// <summary>Show the SMGP rival screen, a wrapper over the shared Briefing so the pick / dossier
     /// / "name him" state (consumed at Apply via BuildSmgpRival) is preserved. Its "Continue" advances
     /// to qualifying.</summary>
     private void ShowRival()
@@ -408,7 +408,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>The current round's qualifying session when its weekend declares one present; null
-    /// on a single-race round (the byte-identical default — every bundled pack).</summary>
+    /// on a single-race round (the byte-identical default, every bundled pack).</summary>
     private PackWeekendSession? QualifyingSession =>
         _session.CurrentWeekend()?.Qualifying is { Present: true } qualifying ? qualifying : null;
 
@@ -428,7 +428,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             ShowQualifyingEntry);
     }
 
-    /// <summary>Show the qualifying-order entry — the same result-entry grammar, reused to capture
+    /// <summary>Show the qualifying-order entry, the same result-entry grammar, reused to capture
     /// the grid pole-first. Built lazily so a half-entered order survives a toggle to the briefing.</summary>
     private void ShowQualifyingEntry()
     {
@@ -455,7 +455,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         CurrentContent = _qualifyingEntry;
     }
 
-    /// <summary>Show the starting grid — the qualifying result laid out pole-first as driver + car
+    /// <summary>Show the starting grid, the qualifying result laid out pole-first as driver + car
     /// cards, a display-only look before the race (Increment 2 GUI: "see the starting grid"). Built
     /// fresh each time from the captured order; never a fold input.</summary>
     private void ShowStartingGrid()
@@ -521,7 +521,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         ConfirmResultCommand.NotifyCanExecuteChanged();
     }
 
-    /// <summary>The starting-grid bars' race conditions — lap distance + weather read from the current
+    /// <summary>The starting-grid bars' race conditions, lap distance + weather read from the current
     /// briefing; the atmospheric readouts (track/air temp, wind, humidity) are synthesised
     /// deterministically from the weather for flavour (display-only, never folded).</summary>
     private GridConditions BuildGridConditions()
@@ -602,7 +602,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             : $"{venue}  ·  {sessionLabel}  ·  {round}";
     }
 
-    /// <summary>Show the race result entry — the shipped flow, now seeded pole-first from any
+    /// <summary>Show the race result entry, the shipped flow, now seeded pole-first from any
     /// captured qualifying order (a single-race round leaves the grid untouched).</summary>
     private void ShowRaceEntry()
     {
@@ -673,7 +673,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     [RelayCommand(CanExecute = nameof(CanConfirmResult))]
     private void ConfirmResult()
     {
-        // Rival step: the player has named (or declined) their rival — continue to qualifying/race.
+        // Rival step: the player has named (or declined) their rival, continue to qualifying/race.
         if (IsRivalStep)
         {
             _rivalStepDone = true;
@@ -681,7 +681,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             return;
         }
 
-        // Starting-grid step: the player has looked at the grid — go racing.
+        // Starting-grid step: the player has looked at the grid, go racing.
         if (IsStartingGridState)
         {
             ShowRaceIntroOrEntry();
@@ -761,7 +761,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             // The Setup Gamble called at the briefing (pre-race) rides the round's raw envelope.
             CalledShot = Briefing.CalledShot,
             // The SMGP rival named at the briefing (null outside the mode / no rival) rides the
-            // same way — the fold derives the battle from the stored result.
+            // same way, the fold derives the battle from the stored result.
             SmgpRival = Briefing.BuildSmgpRival(),
             AdditionalRaces = races.Count > 1
                 ? races.Skip(1).Select(r => new ExtraRaceResult
@@ -795,14 +795,14 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
 
         // Character death & injury (Slice 3): a fatal accident ENDS the career. For a Hardcore death the
         // session's DB is already disposed and the file deleted, so we must NOT touch Summary/Briefing/
-        // commands (they query the DB) — hand off to the death screen from the DB-FREE mortality status
+        // commands (they query the DB), hand off to the death screen from the DB-FREE mortality status
         // instead. Normal death keeps the file (the death screen offers a restore). Reads the guarded
         // PlayerMortality(), never the DB, so it is safe even after the file is gone.
         var mortality = _session.PlayerMortality();
         if (mortality.Deceased || mortality.CareerFileDeleted)
         {
             CareerOver = mortality;
-            // The richer obituary/record model rides alongside — also DB-free after a Hardcore death
+            // The richer obituary/record model rides alongside, also DB-free after a Hardcore death
             // (captured pre-deletion), so this is safe even once the file is gone.
             DeathScreen = _session.DeathScreen();
             return;
@@ -817,7 +817,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         }
 
         // Progression feedback where it happens: what THIS round did to XP/level/Skill Points, read
-        // from the fold's own journaled audit row. Placed AFTER the mortality hand-off above — a
+        // from the fold's own journaled audit row. Placed AFTER the mortality hand-off above, a
         // Hardcore death has already disposed the DB, and this read queries it. Null for a
         // character-free career.
         LastProgression = _session.RoundProgression(appliedRound);
@@ -829,7 +829,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(IsCareerTerminal));
 
         // SMGP promotion / demotion (3c-3): a seat change this round gets its own full-immersion
-        // screen BEFORE the round advances — a pending two-wins offer to accept/decline, or a forced
+        // screen BEFORE the round advances, a pending two-wins offer to accept/decline, or a forced
         // relegation to acknowledge. Season end is held too until an offer resolves (3c-2). A
         // non-SMGP / character-free career yields null for both, so the shipped loop is unchanged.
         var promotion = _session.CurrentSmgpPromotion() ?? _session.CurrentSmgpDemotion(smgpTeamBefore);
@@ -845,7 +845,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>Tears down the round's entry state (result / qualifying / grid / rival) once its
-    /// result is applied — the qualifying order + captured races were consumed by the fold.</summary>
+    /// result is applied, the qualifying order + captured races were consumed by the fold.</summary>
     private void ClearRoundEntryState()
     {
         if (_resultEntry is not null)
@@ -866,7 +866,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         _rivalStepDone = false;
     }
 
-    /// <summary>Move on from a finished round — the final standings review when the season is done,
+    /// <summary>Move on from a finished round, the final standings review when the season is done,
     /// else the next round's briefing.</summary>
     private void AdvanceAfterRound()
     {
@@ -875,7 +875,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         {
             // The 17-season SMGP campaign FINALE (Mike's "final final screen"): when the season that
             // just completed is a beaten campaign summit, show the locked special.jpg / ultimate.jpg
-            // celebration ONCE before the review. Display-only (SmgpFinale() is a pure read — no fold,
+            // celebration ONCE before the review. Display-only (SmgpFinale() is a pure read, no fold,
             // no journal). Its Continue callback goes straight to the review, so it never re-enters
             // here. Null for every non-summit season, so the shipped end-of-season flow is unchanged.
             if (_finale is null && _session.SmgpFinale() is { } finale)
@@ -886,7 +886,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             ShowSeasonReview();
         }
         else if (_session.CurrentSitOut() is { } sitOut)
-            // The next round is one the injured player must sit out — go straight to the auto-sim screen
+            // The next round is one the injured player must sit out, go straight to the auto-sim screen
             // (its Continue folds it and re-advances), never the briefing/manual entry. (§5.)
             ShowSitOut(sitOut);
         else
@@ -905,7 +905,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>Fold the round the injured player sat out (the AI field is auto-simulated, the player is
-    /// DNS — OPI-neutral), heal one race of a minor suspension, and advance. No manual result is entered.</summary>
+    /// DNS, OPI-neutral), heal one race of a minor suspension, and advance. No manual result is entered.</summary>
     private void AutoSimulateInjuredRound()
     {
         try
@@ -922,7 +922,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
 
         // An auto-sim never kills the DRIVER (the DB is always live here), but the sat-out round
         // still settles the books, so it CAN fold the team (economy §7). Hand off to the bankruptcy
-        // takeover exactly as the confirm path does — otherwise a sit-out bankruptcy would advance
+        // takeover exactly as the confirm path does, otherwise a sit-out bankruptcy would advance
         // into the season review instead of the ending. The file survives, so this is an ordinary
         // DB-backed read.
         if (_session.BankruptcyScreen() is { } bankrupt)
@@ -938,7 +938,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         RefreshRoundCommands();
     }
 
-    /// <summary>Show the 17-season campaign finale (Mike's "final final screen") — its own step before
+    /// <summary>Show the 17-season campaign finale (Mike's "final final screen"), its own step before
     /// the final season review. Continue acknowledges it and advances into the review. The finale is
     /// a pure display projection, so no <c>ICareerSession</c> write happens here (unlike the promotion
     /// screen, which journals the offer decision).</summary>
@@ -963,7 +963,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         ConfirmResultCommand.NotifyCanExecuteChanged();
     }
 
-    /// <summary>Show the SMGP promotion / demotion screen (3c-3) — its own step after the confirm. Its
+    /// <summary>Show the SMGP promotion / demotion screen (3c-3), its own step after the confirm. Its
     /// buttons resolve the offer (or acknowledge the drop) and then advance the round.</summary>
     private void ShowPromotion(SmgpPromotionModel model)
     {
@@ -976,7 +976,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>Answer the promotion screen: a two-wins offer commits the accept/decline to the fold
-    /// (holding season end until now — 3c-2); a demotion is acknowledge-only. Then advance the round.</summary>
+    /// (holding season end until now, 3c-2); a demotion is acknowledge-only. Then advance the round.</summary>
     private void ResolvePromotion(SmgpPromotionModel model, bool accept)
     {
         if (model.Kind == SmgpPromotionKind.PromotionOffer)
@@ -1054,7 +1054,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
 
     /// <summary>Raised after the review's sign-and-continue persisted the next season: the
     /// session (and this Home) now point at the FINISHED season, so the shell must reopen
-    /// the career file — it lands in the new season's round 1 briefing.</summary>
+    /// the career file, it lands in the new season's round 1 briefing.</summary>
     public event EventHandler? NextSeasonStarted;
 
     /// <summary>Season completion navigates HERE: the review + offers screen (final
@@ -1069,7 +1069,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     /// <summary>Home's share of the shell-level Esc (non-destructive back only): standings →
     /// back to the round in progress; confirm → back to the result entry (the draft
     /// survives). Briefing, result entry (the grammar owns the keyboard there) and the
-    /// season review have no "back" — Esc does nothing.</summary>
+    /// season review have no "back", Esc does nothing.</summary>
     public bool TryEscapeBack()
     {
         switch (CurrentContent)

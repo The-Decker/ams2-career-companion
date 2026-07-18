@@ -7,7 +7,7 @@ using Companion.ViewModels.Services;
 namespace Companion.Tests.Data;
 
 /// <summary>
-/// The POST-DEATH ARCHIVE: a NORMAL-mode death is terminal but never destructive — the career file
+/// The POST-DEATH ARCHIVE: a NORMAL-mode death is terminal but never destructive, the career file
 /// reopens as a read-only memorial (mortality status, the newsroom's stories including the PlayerDied
 /// event, and the career timeline all stay viewable), Apply stays refused, and an entirely NEW career
 /// remains creatable afterward. The death is forced deterministically with an out-of-range durability
@@ -106,7 +106,7 @@ public sealed class PostDeathArchiveTests : IDisposable
             Assert.True(status.Deceased);
             Assert.Equal(MortalityMode.Normal, status.Mode);
 
-            // The newsroom still tells the career's whole story — including the death itself.
+            // The newsroom still tells the career's whole story, including the death itself.
             var events = reopened.NewsroomEvents();
             Assert.NotEmpty(events);
             Assert.Contains(events, e => e.Kind == NewsEventKind.PlayerDied);
@@ -120,7 +120,7 @@ public sealed class PostDeathArchiveTests : IDisposable
             Assert.NotEmpty(timeline.Seasons);
             Assert.Equal(1967, timeline.Seasons[0].SeasonYear);
 
-            // ---- (b) but the career takes no more rounds — terminal, not resumable ----
+            // ---- (b) but the career takes no more rounds, terminal, not resumable ----
             var draft = NormalRoundDraft(reopened);
             var ex = Assert.Throws<InvalidOperationException>(() => reopened.Apply(draft));
             Assert.Contains("died", ex.Message);
@@ -129,7 +129,7 @@ public sealed class PostDeathArchiveTests : IDisposable
         Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
 
         // ---- (c) a death never poisons the well: a brand-new career creates fit and playable ----
-        using var fresh = Create("secondlife", durability: 50.0); // hugely durable — always survives
+        using var fresh = Create("secondlife", durability: 50.0); // hugely durable, always survives
         Assert.False(fresh.PlayerMortality().Deceased);
         Assert.Equal(0, fresh.PlayerMortality().RaceSuspensionRemaining);
         Assert.NotNull(fresh.CurrentBriefing());

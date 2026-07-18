@@ -4,7 +4,7 @@ using Companion.ViewModels.Shell;
 
 namespace Companion.Tests.ViewModels;
 
-/// <summary>The starting-grid card projection — in particular the fix for the player's car preview: the
+/// <summary>The starting-grid card projection, in particular the fix for the player's car preview: the
 /// SMGP clean-swap player seat is stamped with the synthetic <c>driver.player-entrant</c> id, which has
 /// no car art, so the card rendered a blank car. The VM now keys the player's car to the driver whose
 /// car they actually took over (passed in), while every other card keys off its own seat driver.</summary>

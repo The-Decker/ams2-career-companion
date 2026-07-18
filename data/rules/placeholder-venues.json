@@ -4,12 +4,12 @@
     "zandvoort": {
       "name": "Circuit Park Zandvoort",
       "suggestions": ["spielberg_vintage", "spielberg_historic", "silverstone_1975", "brandshatch_gp"],
-      "rationale": "Fast, flowing, old-school sweepers; Osterreichring 1974 (spielberg_vintage, pre-chicane) is the closest period-correct rhythm — the 1977 layout (spielberg_historic) adds the Hella-Licht chicane and ranks second. Silverstone 1975 was dropped to third: it usually doubles as the same season's British GP venue."
+      "rationale": "Fast, flowing, old-school sweepers; Osterreichring 1974 (spielberg_vintage, pre-chicane) is the closest period-correct rhythm, the 1977 layout (spielberg_historic) adds the Hella-Licht chicane and ranks second. Silverstone 1975 was dropped to third: it usually doubles as the same season's British GP venue."
     },
     "bugatti": {
       "name": "Circuit Bugatti, Le Mans",
       "suggestions": ["le_mans_bugatti", "rouen", "rouen_short"],
-      "rationale": "The venue EXISTS in AMS2 as le_mans_bugatti (modern layout of the same venue) — from format v1.1 that binding is NOT a placeholder; this entry stays for id lookup and for authors preferring era-correct French road racing (Rouen-les-Essarts hosted the French GP in 1968)."
+      "rationale": "The venue EXISTS in AMS2 as le_mans_bugatti (modern layout of the same venue), from format v1.1 that binding is NOT a placeholder; this entry stays for id lookup and for authors preferring era-correct French road racing (Rouen-les-Essarts hosted the French GP in 1968)."
     },
     "mexico-city": {
       "name": "Autódromo Hermanos Rodríguez",
@@ -24,14 +24,14 @@
         {
           "fromYear": 1990,
           "suggestions": ["jacarepagua_historic", "interlagos_1991", "interlagos_historic"],
-          "rationale": "From 1990 the Brazilian GP itself runs at Interlagos (the 1991 layout in AMS2), so the 1981+ Interlagos suggestion doubles as the same season's Brazilian GP venue. Jacarepaguá — the era's other flat, long-straight Latin American GP venue (Brazilian GP host 1981-1989) — takes first rank, with Interlagos kept as the fallback."
+          "rationale": "From 1990 the Brazilian GP itself runs at Interlagos (the 1991 layout in AMS2), so the 1981+ Interlagos suggestion doubles as the same season's Brazilian GP venue. Jacarepaguá, the era's other flat, long-straight Latin American GP venue (Brazilian GP host 1981-1989), takes first rank, with Interlagos kept as the fallback."
         }
       ]
     },
     "montjuic": {
       "name": "Circuito de Montjuïc",
       "suggestions": ["brandshatch_gp", "adelaide_historic"],
-      "rationale": "Fast parkland street circuit plunging over Barcelona's Montjuïc hill — huge elevation swings and a sweeping, committed rhythm (Spanish GP 1969/71/73/75). Brands Hatch GP's natural-terrain dips and cambered sweepers are the closest rhythm match in AMS2; Adelaide 1988 keeps the street-circuit walls but is flat and right-angled by comparison. Caveat: Brands Hatch hosted the real British GP in even years 1964-1970 — even-year pack authors should re-rank."
+      "rationale": "Fast parkland street circuit plunging over Barcelona's Montjuïc hill, huge elevation swings and a sweeping, committed rhythm (Spanish GP 1969/71/73/75). Brands Hatch GP's natural-terrain dips and cambered sweepers are the closest rhythm match in AMS2; Adelaide 1988 keeps the street-circuit walls but is flat and right-angled by comparison. Caveat: Brands Hatch hosted the real British GP in even years 1964-1970, even-year pack authors should re-rank."
     },
     "nivelles": {
       "name": "Nivelles-Baulers",
@@ -41,12 +41,12 @@
     "clermont-ferrand": {
       "name": "Charade Circuit",
       "suggestions": ["rouen", "rouen_short", "le_mans_bugatti"],
-      "rationale": "Charade's 8 km of volcanic mountain switchbacks (French GP 1965/69/70/72) is often called a faster mini-Nordschleife, but the Nordschleife itself usually doubles as the same season's German GP venue. Rouen-les-Essarts — the era's other French GP road course, with plunging downhill sweepers and cobbled hairpin — keeps the country, era, and public-road character; Le Mans Bugatti stays as the French-venue fallback."
+      "rationale": "Charade's 8 km of volcanic mountain switchbacks (French GP 1965/69/70/72) is often called a faster mini-Nordschleife, but the Nordschleife itself usually doubles as the same season's German GP venue. Rouen-les-Essarts, the era's other French GP road course, with plunging downhill sweepers and cobbled hairpin, keeps the country, era, and public-road character; Le Mans Bugatti stays as the French-venue fallback."
     },
     "detroit": {
       "name": "Detroit Street Circuit",
       "suggestions": ["long_beach", "adelaide_historic"],
-      "rationale": "Long Beach hosted the United States GP West 1976-1983: a concrete-lined US street circuit of the same era and country — the better character match already proven in the f1-1988 reference pack. Adelaide 1988 remains a street-circuit alternative but usually doubles as the same season's Australian GP venue."
+      "rationale": "Long Beach hosted the United States GP West 1976-1983: a concrete-lined US street circuit of the same era and country, the better character match already proven in the f1-1988 reference pack. Adelaide 1988 remains a street-circuit alternative but usually doubles as the same season's Australian GP venue."
     },
     "paul-ricard": {
       "name": "Circuit Paul Ricard",
@@ -61,14 +61,14 @@
         {
           "fromYear": 1977,
           "suggestions": ["silverstone_1975", "hockenheim_1977"],
-          "rationale": "From 1977 the German GP itself runs at Hockenheim, so old Hockenheim usually doubles as the same season's German GP venue; Silverstone 1975 — equally flat and aerodrome-straight dominated — takes first rank, and is free in even years when the British GP runs at Brands Hatch (as in 1978)."
+          "rationale": "From 1977 the German GP itself runs at Hockenheim, so old Hockenheim usually doubles as the same season's German GP venue; Silverstone 1975, equally flat and aerodrome-straight dominated, takes first rank, and is free in even years when the British GP runs at Brands Hatch (as in 1978)."
         }
       ]
     },
     "zolder": {
       "name": "Circuit Zolder",
       "suggestions": ["spa-francorchamps_1993", "brandshatch_gp"],
-      "rationale": "Zolder's sandy-forest chicane rhythm (Belgian GP 1973, 1975-1982) has no direct AMS2 counterpart; Spa-Francorchamps 1993 keeps the Belgian GP in Belgium on an era-adjacent layout of the country's other grand prix venue. Brands Hatch GP is the natural-terrain rhythm alternative but hosted the real British GP in even years (incl. 1978) — even-year pack authors should keep the Belgian stand-in."
+      "rationale": "Zolder's sandy-forest chicane rhythm (Belgian GP 1973, 1975-1982) has no direct AMS2 counterpart; Spa-Francorchamps 1993 keeps the Belgian GP in Belgium on an era-adjacent layout of the country's other grand prix venue. Brands Hatch GP is the natural-terrain rhythm alternative but hosted the real British GP in even years (incl. 1978), even-year pack authors should keep the Belgian stand-in."
     },
     "jarama": {
       "name": "Circuito del Jarama",
@@ -88,7 +88,7 @@
         {
           "fromYear": 1989,
           "suggestions": ["long_beach", "adelaide_historic"],
-          "rationale": "Phoenix only hosted F1 1989-1991, seasons whose Australian GP always runs at Adelaide — the base stand-in would double-book the venue. Long Beach (United States GP West 1976-1983) keeps the country and the concrete-lined US street-circuit character; Adelaide stays as the fallback."
+          "rationale": "Phoenix only hosted F1 1989-1991, seasons whose Australian GP always runs at Adelaide, the base stand-in would double-book the venue. Long Beach (United States GP West 1976-1983) keeps the country and the concrete-lined US street-circuit character; Adelaide stays as the fallback."
         }
       ]
     },

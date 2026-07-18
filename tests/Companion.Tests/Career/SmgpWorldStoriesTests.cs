@@ -4,10 +4,10 @@ namespace Companion.Tests.Career;
 
 /// <summary>
 /// The pure AI-world story detector (Task 4): given per-round grid facts (the race winner + the championship
-/// order after the round), it emits the reactive grid stories — a rival's win streak, the benchmark
+/// order after the round), it emits the reactive grid stories, a rival's win streak, the benchmark
 /// reasserting itself, the championship lead changing, the second-place battle turning over, and the title
 /// race tightening. These pin the detection + dedup + season-reset + player-exclusion rules the ViewModels
-/// feed real folded state into. Pure and deterministic — never a fold input.
+/// feed real folded state into. Pure and deterministic, never a fold input.
 /// </summary>
 public sealed class SmgpWorldStoriesTests
 {
@@ -105,7 +105,7 @@ public sealed class SmgpWorldStoriesTests
     public void The_player_is_never_the_active_subject_of_a_leader_or_standings_story()
     {
         // The player rising is told through the milestone feed, not a third-person "YOU takes X" world story
-        // (their name is a pronoun) — but they still appear as the OTHER party the grid reacts to.
+        // (their name is a pronoun), but they still appear as the OTHER party the grid reacts to.
         var stories = Detect(
             Round(1, 1, "R1", "driver.a", [S(1, "driver.a", 9), S(2, "driver.b", 6), S(3, Player, 4)]),
             Round(1, 2, "R2", Player, [S(1, Player, 18), S(2, "driver.a", 12), S(3, "driver.b", 10)]));   // player seizes P1

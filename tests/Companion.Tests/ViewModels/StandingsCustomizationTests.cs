@@ -230,7 +230,7 @@ public sealed class StandingsCustomizationTests
         Assert.False(columns.ShowDropped);
         Assert.True(columns.ShowCounted); // untouched
 
-        // A NEW screen (same seam) reopens with the chosen columns — persistence.
+        // A NEW screen (same seam) reopens with the chosen columns, persistence.
         var reopened = new StandingsViewModel(Snapshots(), Pack(), settings);
         Assert.False(reopened.ShowGrossColumn);
         Assert.True(reopened.ShowPerRoundColumn);
@@ -300,7 +300,7 @@ public sealed class StandingsCustomizationTests
     [Fact]
     public void RememberedRoundMatrixTab_SurvivesInAConstructorsSeason()
     {
-        // Index 2 (round matrix) is a real tab here — it must be restored, not clamped away.
+        // Index 2 (round matrix) is a real tab here, it must be restored, not clamped away.
         var settings = new SettingsService(new InMemorySettingsStore(
             new AppSettings { StandingsTabIndex = 2 }));
 

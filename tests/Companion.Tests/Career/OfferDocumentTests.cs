@@ -54,6 +54,6 @@ public sealed class OfferDocumentTests
     {
         var a = OfferDocument.Compose(1972, "BRM", 2, 3.5, "Mike");
         var b = OfferDocument.Compose(1972, "BRM", 2, 3.5, "Mike");
-        Assert.Equal(a, b); // record equality — no clock, no RNG
+        Assert.Equal(a, b); // record equality, no clock, no RNG
     }
 }

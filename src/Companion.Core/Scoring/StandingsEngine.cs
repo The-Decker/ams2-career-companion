@@ -139,7 +139,7 @@ public static class StandingsEngine
     {
         if (round.PerSessionScoring)
         {
-            // Independent per-race scoring (Increment 2c.2) — an authored two-race weekend:
+            // Independent per-race scoring (Increment 2c.2), an authored two-race weekend:
             // each scoring session becomes its OWN RoundScore, sub-keyed by session index, so
             // best-N can keep/drop the two races independently. NEVER set on a historical
             // fixture, so the merged path below is what every oracle season and the 13 packs run.
@@ -219,7 +219,7 @@ public static class StandingsEngine
             // always awarded in full.
             Rational sessionFactor = session.Kind == SessionKind.Race ? round.PointsFactor : Rational.One;
 
-            // Points each car earned this session, keyed by (constructor, position) — one
+            // Points each car earned this session, keyed by (constructor, position), one
             // finishing position is one car. Needed for best-car-only constructor scoring.
             var carPoints = new Dictionary<(string ConstructorId, int Position), Rational>();
 

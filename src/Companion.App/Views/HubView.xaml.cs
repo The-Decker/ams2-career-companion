@@ -12,7 +12,7 @@ namespace Companion.App.Views;
 
 /// <summary>
 /// The Career Hub shell: a left tab rail around the re-homed loop. Pure bindings to
-/// <c>HubViewModel</c> — tab selection is command-bound and the number-key tab accelerators
+/// <c>HubViewModel</c>, tab selection is command-bound and the number-key tab accelerators
 /// live at the window level (MainWindow), the reliable top of the key tunnel, so they fire
 /// whatever child currently holds focus.
 ///
@@ -132,7 +132,7 @@ public partial class HubView : UserControl
                 existing.Activate();
                 return;
             }
-            _popOuts.Remove(tab); // a window that closed without us hearing — replace it
+            _popOuts.Remove(tab); // a window that closed without us hearing, replace it
         }
 
         var window = new TabWindow

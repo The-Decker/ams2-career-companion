@@ -97,7 +97,7 @@
                         <TextBlock Text="{Binding Era.Label}" Style="{StaticResource Faint}" FontSize="10"
                                    Margin="2,-3,0,0"
                                    Visibility="{Binding EraThemingEnabled, Converter={StaticResource BoolVisible}}"
-                                   ToolTip="The period your career is skinned as — it ages telegram → fax → email across the decades" />
+                                   ToolTip="The period your career is skinned as, it ages telegram → fax → email across the decades" />
                     </StackPanel>
 
                     <StackPanel VerticalAlignment="Center">
@@ -440,25 +440,25 @@
                                                Margin="0,3,0,0" TextWrapping="Wrap" />
                                     <WrapPanel Margin="0,10,0,0">
                                         <Border Style="{StaticResource CompactChip}" Margin="0,0,7,7">
-                                            <TextBlock Text="{Binding Tier, FallbackValue='TIER —'}" Style="{StaticResource Eyebrow}" />
+                                            <TextBlock Text="{Binding Tier, FallbackValue='TIER'}" Style="{StaticResource Eyebrow}" />
                                         </Border>
                                         <Border Style="{StaticResource CompactChip}" Margin="0,0,7,7">
                                             <TextBlock Style="{StaticResource Eyebrow}" FontWeight="Bold">
                                                 <TextBlock.Text>
                                                     <MultiBinding StringFormat="{}{0}  ·  {1} PTS">
                                                         <Binding Path="ChampionshipPosition" StringFormat="STANDING P{0}"
-                                                                 TargetNullValue="STANDING —" FallbackValue="STANDING —" />
-                                                        <Binding Path="ChampionshipPoints" FallbackValue="—" />
+                                                                 TargetNullValue="STANDING" FallbackValue="STANDING" />
+                                                        <Binding Path="ChampionshipPoints" FallbackValue="-" />
                                                     </MultiBinding>
                                                 </TextBlock.Text>
                                             </TextBlock>
                                         </Border>
                                         <Border Style="{StaticResource CompactChip}" Margin="0,0,7,7">
-                                            <TextBlock Text="{Binding BudgetTier, StringFormat=BUDGET  {0}, FallbackValue='BUDGET  —'}"
+                                            <TextBlock Text="{Binding BudgetTier, StringFormat=BUDGET  {0}, FallbackValue='BUDGET'}"
                                                        Style="{StaticResource Eyebrow}" FontWeight="Bold" />
                                         </Border>
                                     </WrapPanel>
-                                    <TextBlock Text="{Binding History[0], FallbackValue='The economy is not active yet—this is the read-only data spine for the future management mode.'}"
+                                    <TextBlock Text="{Binding History[0], FallbackValue='The economy is not active yet. This is the read-only data spine for the future management mode.'}"
                                                Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,4,0,0" />
                                 </StackPanel>
                             </Grid>

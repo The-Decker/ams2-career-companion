@@ -12,12 +12,12 @@ public sealed record ScenarioSwap(string SourceRelativePath, string TargetRelati
 /// Reads a community "scenario selector" batch file (e.g. <c>[F1-1988]Scenarios_FClassicGen2.bat</c>)
 /// and extracts, per race round, the livery-override files it activates. Those packs rotate which
 /// liveries are on the grid PER RACE (a pre-qualifying season fields a different 26 each round) by
-/// copying a round-specific variant onto the active <c>&lt;model&gt;.xml</c> — the menu is just a
+/// copying a round-specific variant onto the active <c>&lt;model&gt;.xml</c>, the menu is just a
 /// front-end for those copies. This reader lets the app do the same swap itself so the player never
 /// has to run the .bat.
 ///
 /// Only the livery-OVERRIDE copies are returned; the batch's copy of its own custom-AI file
-/// (<c>CustomAIDrivers\...</c>) is deliberately excluded — the app writes that file itself (with the
+/// (<c>CustomAIDrivers\...</c>) is deliberately excluded, the app writes that file itself (with the
 /// career's per-race grid + character), and it must not be clobbered by the pack's static roster.
 /// </summary>
 public static class BatScenarioReader
@@ -34,13 +34,13 @@ public static class BatScenarioReader
     // `goto INSTALL_1996_SANMARINO` (some packs `call :INSTALL_...`). The newer selector packs
     // (1995 F-Edge, 1996-1997 F-V10 G1, 2010 F-V8 G3, 2016 F-Hybrid G1) split the COPY block into a
     // separate INSTALL_ section this way; the 1988 pack copies inline with no such hop. Only
-    // INSTALL_-prefixed jumps are followed — never the section's own `goto main_menu` / `goto 1996`
+    // INSTALL_-prefixed jumps are followed, never the section's own `goto main_menu` / `goto 1996`
     // (the cancel / back-to-menu paths), which would wander into unrelated sections.
     private static readonly Regex InstallJump =
         new("""^\s*(?:goto|call)\s+:?(INSTALL_\S+)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     /// <param name="seasonLabel">The batch label whose sub-menu lists the real-season rounds (default
-    /// <c>:1988</c>; production passes <c>:&lt;pack year&gt;</c> — a class's selector can serve several
+    /// <c>:1988</c>; production passes <c>:&lt;pack year&gt;</c>, a class's selector can serve several
     /// years, e.g. <c>[F1_1996-1997]…</c> has both <c>:1996</c> and <c>:1997</c> menus). Rounds are read
     /// from that label's section up to the next top-level label (e.g. <c>:1997</c> / <c>:WHAT_IF</c>), so
     /// the other season's menu and the "what-if" fictional scenarios are ignored.</param>
@@ -79,7 +79,7 @@ public static class BatScenarioReader
     /// <c>INSTALL_*</c> block it dispatches to (the confirm-then-install packs). Depth-first and
     /// visited-guarded so a section reached twice, or an INSTALL block that jumps onward, cannot loop.
     /// Only livery OVERRIDE copies are kept; the pack's own <c>CustomAIDrivers\</c> copy (including the
-    /// PERF_MODE-conditional variants) is excluded — the app writes that file itself.</summary>
+    /// PERF_MODE-conditional variants) is excluded, the app writes that file itself.</summary>
     private static void CollectSwaps(string[] lines, string label, List<ScenarioSwap> swaps, HashSet<string> visited)
     {
         if (!visited.Add(label))

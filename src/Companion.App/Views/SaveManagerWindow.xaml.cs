@@ -98,7 +98,7 @@ public partial class SaveManagerWindow : Window, INotifyPropertyChanged
         }
         catch (Exception ex) when (IsExpectedFileFailure(ex))
         {
-            ErrorMessage = $"Could not read this career's save points — {ex.Message}";
+            ErrorMessage = $"Could not read this career's save points, {ex.Message}";
         }
     }
 
@@ -116,7 +116,7 @@ public partial class SaveManagerWindow : Window, INotifyPropertyChanged
         }
         catch (Exception ex) when (IsExpectedFileFailure(ex))
         {
-            ErrorMessage = $"Could not create the save point — {ex.Message}";
+            ErrorMessage = $"Could not create the save point, {ex.Message}";
         }
     }
 
@@ -209,7 +209,7 @@ public partial class SaveManagerWindow : Window, INotifyPropertyChanged
         }
         catch (Exception ex) when (IsExpectedFileFailure(ex))
         {
-            ErrorMessage = $"Could not delete the save point — {ex.Message}";
+            ErrorMessage = $"Could not delete the save point, {ex.Message}";
         }
     }
 

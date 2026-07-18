@@ -6,11 +6,11 @@ using Companion.ViewModels.Services;
 namespace Companion.Tests.Data;
 
 /// <summary>
-/// Increment 2 (slice A) — the data/scoring layer for an authored TWO-race weekend, end-to-end
+/// Increment 2 (slice A), the data/scoring layer for an authored TWO-race weekend, end-to-end
 /// through the real session service. A <see cref="ResultDraft"/> with an additional race maps onto
 /// a two-session <c>RoundResult</c> with <c>PerSessionScoring</c> set and the per-session points
 /// tables bound from the pack's <c>weekend.races</c>, so each race scores on its own table and both
-/// count toward the standings. (The per-session FOLD — independent OPI/rep per race — is a later
+/// count toward the standings. (The per-session FOLD, independent OPI/rep per race, is a later
 /// slice; this pins the scoring + persistence.)
 /// </summary>
 public sealed class TwoRaceWeekendScoringTests : IDisposable

@@ -10,7 +10,7 @@ namespace Companion.Ams2.CustomAi;
 /// <c>&lt;install&gt;\UserData\CustomAIDrivers\&lt;VehicleClass&gt;.xml</c>: root
 /// <c>&lt;custom_ai_drivers&gt;</c>, one <c>&lt;driver livery_name="..."&gt;</c> element per
 /// entry with stats as child elements. UTF-8, XML-escaped (community packs break on raw
-/// '&amp;' and accented characters — we never will).
+/// '&amp;' and accented characters, we never will).
 /// </summary>
 public static class CustomAiXmlWriter
 {
@@ -24,7 +24,7 @@ public static class CustomAiXmlWriter
         };
 
         // A plain StringBuilder writer would make XmlWriter declare encoding="utf-16" (strings
-        // are UTF-16) while WriteToDirectory saves UTF-8 bytes — a lying declaration that
+        // are UTF-16) while WriteToDirectory saves UTF-8 bytes, a lying declaration that
         // strict parsers reject ("no Unicode byte order mark"). Utf8StringWriter keeps the
         // declaration truthful: the file IS UTF-8.
         var stringWriter = new Utf8StringWriter();

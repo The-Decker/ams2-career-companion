@@ -19,7 +19,7 @@ public class CareerNewsEventsTests
         Assert.True(won.Facts.IsFirstEver);
         Assert.Contains(events, e => e.Kind == NewsEventKind.FirstWin);
         Assert.Contains(events, e => e.Kind == NewsEventKind.FirstPoints);
-        // A debut WIN is the story — the lesser first-podium/top5 angles are folded into it.
+        // A debut WIN is the story, the lesser first-podium/top5 angles are folded into it.
         Assert.DoesNotContain(events, e => e.Kind == NewsEventKind.FirstPodium);
         Assert.DoesNotContain(events, e => e.Kind == NewsEventKind.FirstTop5);
     }
@@ -121,13 +121,13 @@ public class CareerNewsEventsTests
     {
         var rounds = new[]
         {
-            // 20 points still available, gap 15 — not clinched.
+            // 20 points still available, gap 15, not clinched.
             Round(1, finish: 1, scored: true, winnerIsPlayer: true,
                 leaderId: "player", leaderPoints: 45, secondPoints: 30, maxRemaining: 20, maxPerRound: 10),
-            // 10 points left, gap 12 — clinched by the player.
+            // 10 points left, gap 12, clinched by the player.
             Round(2, finish: 2, scored: true,
                 leaderId: "player", leaderPoints: 51, secondPoints: 39, maxRemaining: 10, maxPerRound: 10),
-            // Still clinched — must not fire again.
+            // Still clinched, must not fire again.
             Round(3, finish: 3, scored: true,
                 leaderId: "player", leaderPoints: 55, secondPoints: 40, maxRemaining: 0, maxPerRound: 10, final: true),
         };

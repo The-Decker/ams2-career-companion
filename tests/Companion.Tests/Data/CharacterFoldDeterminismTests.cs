@@ -10,7 +10,7 @@ namespace Companion.Tests.Data;
 /// <summary>
 /// Increment 4a determinism gate for the character system (CI matrix row 4): a career that carries a
 /// character folds WITH it (the player seat is patched, the perk modifier shapes OPI/rep/anchor) and
-/// re-simulates byte-identically — the <c>player.character</c> creation row is provenance-excluded
+/// re-simulates byte-identically, the <c>player.character</c> creation row is provenance-excluded
 /// while its data rides in the start player state. A character-free career is unaffected (proven by
 /// the rest of the suite staying byte-identical).
 /// </summary>
@@ -39,7 +39,7 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
             ["racecraft"] = 0.50, ["adaptability"] = 0.50,
             ["marketability"] = 0.70, ["durability"] = 0.50,
         },
-        PerkIds = ["engineers_favorite"], // power +0.010, drag -0.008 — a real on-track car edge
+        PerkIds = ["engineers_favorite"], // power +0.010, drag -0.008, a real on-track car edge
         CpUnspent = 2,
     };
 
@@ -63,7 +63,7 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
             ["pace"] = 0.55, ["oneLap"] = 0.50, ["craft"] = 0.55, ["racecraft"] = 0.50,
             ["adaptability"] = 0.50, ["marketability"] = 0.55, ["durability"] = 0.55,
         },
-        PerkIds = ["journeyman"], // offerWeight/repFloorRelax — relaxes the season-end offer gate
+        PerkIds = ["journeyman"], // offerWeight/repFloorRelax, relaxes the season-end offer gate
         CpUnspent = 0,
     };
 
@@ -113,7 +113,7 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
         var rules = CareerRulesData.Load(ViewModelTestData.RulesDirectory);
 
         // The relaxed offer gate is a pure function of the folded (journaled) perk, so replay
-        // reproduces the exact same offer set — the new path stays byte-replayable.
+        // reproduces the exact same offer set, the new path stays byte-replayable.
         var inputs = new ReplaySimInputs
         {
             AgingCurves = rules.AgingCurves,
@@ -138,7 +138,7 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
             ["pace"] = 0.55, ["oneLap"] = 0.50, ["craft"] = 0.50, ["racecraft"] = 0.50,
             ["adaptability"] = 0.50, ["marketability"] = 0.55, ["durability"] = 0.55,
         },
-        PerkIds = ["underdog_hero"], // underdogMultiplier gated on team tier — a conditional that fires per round
+        PerkIds = ["underdog_hero"], // underdogMultiplier gated on team tier, a conditional that fires per round
         CpUnspent = 0,
     };
 
@@ -450,7 +450,7 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
 
         // At age 30 in 1967 (sixties peak plateau 28–32) the player is AT/past the peak start, so the
         // ageGtePeak halves fire: prodigy's −0.02 raceSkill patches the player seat (grid → expectedFinish
-        // → OPI/rep) and wonderkid's −0.25 blanket XP scales the player.xp rows — two DIFFERENT wiring
+        // → OPI/rep) and wonderkid's −0.25 blanket XP scales the player.xp rows, two DIFFERENT wiring
         // paths (grid statDelta + XP) exercised by one folded career.
         var character = new CharacterProfile
         {
@@ -494,7 +494,7 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
         var rules = CareerRulesData.Load(ViewModelTestData.RulesDirectory);
 
         // The age window is a pure function of the season year offset, so the ageGtePeak XP scaling
-        // folds identically on replay — the whole career re-simulates byte-for-byte.
+        // folds identically on replay, the whole career re-simulates byte-for-byte.
         var inputs = new ReplaySimInputs
         {
             AgingCurves = rules.AgingCurves,
@@ -563,7 +563,7 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
         using var db = CareerDatabase.Open(careerPath);
         long seasonId = CareerStore.ReadSeasons(db).Single().Id;
 
-        // The injury roll is a deterministic draw on the injury stream — recompute it and assert the
+        // The injury roll is a deterministic draw on the injury stream, recompute it and assert the
         // player.injury row's presence matches (proving the roll fires and is provenance-correct).
         var rules = CareerRulesData.Load(ViewModelTestData.RulesDirectory);
         var mods = PerkResolver.Resolve(["glass_cannon"], rules.Character);
@@ -629,7 +629,7 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
                 DidNotFinish = new Dictionary<string, string> { [playerId] = "a" },
                 Disqualified = [],
             });
-            // Round 2: a clean finish — no further injury load.
+            // Round 2: a clean finish, no further injury load.
             var grid2 = session.CurrentGrid();
             session.Apply(new ResultDraft
             {
@@ -650,7 +650,7 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
         Assert.Equal(0.15, round1Load, 6);
 
         // The season-end injury roll reads that banked load ON TOP of the base hazard, so binning it
-        // during the year raised the off-season risk — recompute the roll WITH the load and assert the
+        // during the year raised the off-season risk, recompute the roll WITH the load and assert the
         // journalled outcome matches (proving the cross-stage wiring fires, not just re-derives).
         var mods = PerkResolver.Resolve(["glass_cannon"], rules.Character);
         double hazardWithLoad = InjuryModel.Hazard(0.25, mods, round1Load);
@@ -862,7 +862,7 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
 
         // One-Trick Pony bound to wetSkill (owned by the adaptability stat, which maps wetSkill +
         // tyreManagement). lockToOne must let ONLY that owning stat be developed; every other talent
-        // stat is frozen. (Before the fix lockToOne was a dead lever — nothing was rejected.)
+        // stat is frozen. (Before the fix lockToOne was a dead lever, nothing was rejected.)
         var character = new CharacterProfile
         {
             Name = "One Trick",
@@ -891,7 +891,7 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
         // The single specialism stat (adaptability owns wetSkill) develops fine.
         session.SpendCharacterPoint(CharacterSpend.Stat("adaptability", 1));
 
-        // Every other talent stat is frozen — the spend is rejected.
+        // Every other talent stat is frozen, the spend is rejected.
         Assert.Throws<InvalidOperationException>(
             () => session.SpendCharacterPoint(CharacterSpend.Stat("pace", 1)));
         Assert.Throws<InvalidOperationException>(
@@ -913,7 +913,7 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
         const long seed = 778899;
         Companion.Core.Packs.SeasonPack pack;
 
-        // No character — the Setup Gamble is a universal mechanic, so this also proves it stays
+        // No character, the Setup Gamble is a universal mechanic, so this also proves it stays
         // byte-replayable on an ordinary (character-free) career.
         using (var session = CareerSessionService.CreateCareer(
                    new CareerCreationRequest
@@ -937,7 +937,7 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
                 Disqualified = [],
                 CalledShot = 1,
             });
-            // Round 2: no gamble — an ordinary round, so no player.call row.
+            // Round 2: no gamble, an ordinary round, so no player.call row.
             var grid2 = session.CurrentGrid();
             session.Apply(new ResultDraft
             {

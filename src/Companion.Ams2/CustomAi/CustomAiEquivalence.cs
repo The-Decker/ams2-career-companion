@@ -4,7 +4,7 @@ namespace Companion.Ams2.CustomAi;
 public sealed record CustomAiEquivalenceResult
 {
     /// <summary>True when every generated seat has an installed base entry whose effective
-    /// fields match — staging would change nothing the game reads for this grid.</summary>
+    /// fields match, staging would change nothing the game reads for this grid.</summary>
     public required bool Matches { get; init; }
 
     /// <summary>Human-readable field-level differences (empty when <see cref="Matches"/>).</summary>
@@ -15,9 +15,9 @@ public sealed record CustomAiEquivalenceResult
 /// Decides whether an installed class XML already satisfies a generated grid (NAMeS-first
 /// diff-aware staging, locked decision #7). The comparison is per generated seat against the
 /// installed file's BASE entry for that livery: names/countries ordinal-equal, skill floats
-/// within <see cref="FloatTolerance"/> (both-absent also counts as equal — an absent skill
+/// within <see cref="FloatTolerance"/> (both-absent also counts as equal, an absent skill
 /// means "stock driver default"), and physics scalars equivalent treating an omitted scalar
-/// as the neutral 1.0. Extra installed entries — other liveries, per-track overrides — never
+/// as the neutral 1.0. Extra installed entries, other liveries, per-track overrides, never
 /// break equivalence: they are the community author's own refinements and staying out of
 /// their way is the point.
 /// </summary>
@@ -85,7 +85,7 @@ public static class CustomAiEquivalence
     }
 
     /// <summary>Skill-like floats have no known default: equal means both absent, or both
-    /// present within tolerance. Present-vs-absent changes what the game does — a difference.</summary>
+    /// present within tolerance. Present-vs-absent changes what the game does, a difference.</summary>
     private static void Skill(string livery, string field, double? generated, double? installed, List<string> differences)
     {
         if (generated is null && installed is null)

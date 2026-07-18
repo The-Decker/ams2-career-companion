@@ -130,7 +130,7 @@ public class ReplayServiceTests
         string storedPayload = ResultStore.ReadSeasonResults(db, seasonId)[0].PayloadJson;
 
         // A second ImportAndFold for the same round must throw AND leave the stored raw
-        // payload untouched — the import and the fold are one atomic unit.
+        // payload untouched, the import and the fold are one atomic unit.
         Assert.Throws<InvalidOperationException>(() => ReplayService.ImportAndFoldRound(
             db, seasonId, pack, DataCareerFixture.MasterSeed, DataCareerFixture.Inputs(),
             1, DataCareerFixture.Envelope(rounds[1] with { Round = 1 }), DataCareerFixture.Utc));
@@ -183,7 +183,7 @@ public class ReplayServiceTests
         Assert.Equal("accepted-offer", report.FirstDivergence.Reason);
         Assert.Equal("team.ghost", report.FirstDivergence.StoredDeltaJson);
 
-        // Report-only: the transaction rolled back — the stored rows (ghost included)
+        // Report-only: the transaction rolled back, the stored rows (ghost included)
         // survived byte-for-byte. Zero data loss on divergence.
         Assert.Equal(offersBefore, StateStore.ReadOffers(db, seasonId));
         Assert.Equal(3, StateStore.ReadRoundPlayerStates(db, seasonId).Count);
@@ -225,8 +225,8 @@ public class ReplayServiceTests
         // The regenerated side carries the truth the raw results refold to.
         Assert.Equal(victim.DeltaJson, divergence.RegeneratedDeltaJson);
 
-        // Divergence is report-only: everything stored — journal, offers, end states,
-        // per-round folds — survived the rolled-back transaction untouched.
+        // Divergence is report-only: everything stored, journal, offers, end states,
+        // per-round folds, survived the rolled-back transaction untouched.
         Assert.Equal(journalBefore, JournalStore.ReadSeason(db, seasonId));
         Assert.Equal(offersBefore, StateStore.ReadOffers(db, seasonId));
         Assert.Equal(endStatesBefore, StateStore.ReadDriverStates(db, seasonId, StateStore.StageEnd));
@@ -274,7 +274,7 @@ public class ReplayServiceTests
         var reimport = ResultStore.Append(db, seasonId, 3, payload, "2026-07-04T00:00:00Z");
         Assert.True(reimport.PayloadChanged);
 
-        // The stored journal was folded from the OLD payload — replay must flag it.
+        // The stored journal was folded from the OLD payload, replay must flag it.
         var report = ReplayService.Resimulate(
             db, pack, DataCareerFixture.MasterSeed, DataCareerFixture.Inputs());
         Assert.False(report.Identical);
@@ -328,7 +328,7 @@ public class ReplayServiceTests
         using var db = CareerDatabase.Open(tmp.Path);
         var (seasonId, pack) = DataCareerFixture.SetupCareer(db);
 
-        // Import two of three rounds, no season end yet — mid-season replay must hold.
+        // Import two of three rounds, no season end yet, mid-season replay must hold.
         foreach (var round in DataCareerFixture.Rounds().Take(2))
         {
             ReplayService.ImportAndFoldRound(
@@ -415,7 +415,7 @@ public class ReplayServiceTests
             playerLiveryName: DataCareerFixture.PlayerLivery);
 
         // A CARRYOVER: reuse the SAME 1967 pack for the next calendar year (1968) via the new
-        // store method — the live path when no dedicated 1968 pack exists.
+        // store method, the live path when no dedicated 1968 pack exists.
         long season2 = CareerStore.StartCarryoverSeason(
             db, derived, 1968, pack.Manifest.PackId, pack.Manifest.Version, DataCareerFixture.Utc);
 

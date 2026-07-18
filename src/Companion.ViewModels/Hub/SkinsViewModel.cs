@@ -84,7 +84,7 @@ public sealed partial class SkinsViewModel : ObservableObject
 
     /// <summary>Legacy grid-editor overrides (renamed drivers / rebound liveries) this career still
     /// carries from before the read-only Grid Preview. Staging still applies them, so they must be
-    /// visible and clearable — never a silent hidden edit to the staged AI file.</summary>
+    /// visible and clearable, never a silent hidden edit to the staged AI file.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasStagingOverrides), nameof(StagingOverridesNote))]
     private int _stagingOverrideCount;

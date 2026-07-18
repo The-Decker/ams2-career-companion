@@ -131,7 +131,7 @@ public class RoundUpdateTests
         Assert.Equal(expected, withQuali.Player.QualifyingAnchor, 12);
         Assert.Contains(JournalPhases.PlayerQualiAnchor, withQuali.Events.Select(e => e.Phase));
 
-        // The qualiAnchor row sits in a fixed position — right after the pace anchor.
+        // The qualiAnchor row sits in a fixed position, right after the pace anchor.
         var phases = withQuali.Events.Select(e => e.Phase).ToList();
         Assert.Equal(
             phases.IndexOf(JournalPhases.PlayerPaceAnchor) + 1,
@@ -204,7 +204,7 @@ public class RoundUpdateTests
     public void PointsCauseFollowsTheRoundsResolvedScoringNotATopSix()
     {
         // Expected finish on this grid is 2; P4 is within |delta| < 3 of it, so the cause
-        // falls through to the points cutoff — which comes from the round's resolved scoring
+        // falls through to the points cutoff, which comes from the round's resolved scoring
         // definition, not a hard-coded top-6.
         var sixScorers = RoundUpdate.Apply(Context(finish: 4, teammateFinish: null, pointsPositions: 6));
         Assert.Equal("points", sixScorers.Events[0].Cause);

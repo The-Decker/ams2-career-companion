@@ -2,7 +2,7 @@ using Microsoft.Data.Sqlite;
 
 namespace Companion.Data;
 
-/// <summary>Thin command plumbing for the explicit-SQL repositories — no ORM, just less
+/// <summary>Thin command plumbing for the explicit-SQL repositories, no ORM, just less
 /// parameter boilerplate. Null argument values are bound as SQL NULL.</summary>
 internal static class SqliteExtensions
 {
@@ -32,7 +32,7 @@ internal static class SqliteExtensions
 }
 
 /// <summary>Owned-or-ambient transaction scope for multi-statement store methods: with an
-/// ambient (caller) transaction the scope is a pass-through — the caller owns commit and
+/// ambient (caller) transaction the scope is a pass-through, the caller owns commit and
 /// rollback; without one the scope owns a fresh transaction, <see cref="Complete"/> commits
 /// it, and disposing without completing rolls it back.</summary>
 internal readonly struct TransactionScope : IDisposable

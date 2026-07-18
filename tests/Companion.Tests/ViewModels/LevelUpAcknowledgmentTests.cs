@@ -14,7 +14,7 @@ namespace Companion.Tests.ViewModels;
 /// (schema v6), so an unacknowledged level-up survives closing the app instead of silently vanishing
 /// on the next open. Driven through <see cref="DossierViewModel"/> over a LOCAL fake session (the
 /// shared <c>FakeCareerSession</c> is intentionally not extended) implementing just the dossier +
-/// reading-state seams — every other member is the interface's additive default.
+/// reading-state seams, every other member is the interface's additive default.
 /// </summary>
 public sealed class LevelUpAcknowledgmentTests
 {
@@ -27,7 +27,7 @@ public sealed class LevelUpAcknowledgmentTests
 
         var vm = new DossierViewModel(session); // the constructor runs the first Refresh
 
-        // History already lived is seeded silently — a marker at the current level, no banner.
+        // History already lived is seeded silently, a marker at the current level, no banner.
         Assert.False(vm.LevelUpPending);
         Assert.Equal(0, vm.LevelsGained);
         var marker = Assert.Single(session.Reading.Keys, k => k.StartsWith(AckKeyPrefix, StringComparison.Ordinal));
@@ -46,7 +46,7 @@ public sealed class LevelUpAcknowledgmentTests
 
         Assert.True(vm.LevelUpPending);
         Assert.Equal(3, vm.LevelsGained);
-        // Deriving the banner never writes a new marker — only an acknowledgment does.
+        // Deriving the banner never writes a new marker, only an acknowledgment does.
         Assert.DoesNotContain(AckKeyPrefix + "8", session.Reading.Keys);
     }
 

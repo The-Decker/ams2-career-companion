@@ -4,7 +4,7 @@ namespace Companion.Ams2.ContentLibrary;
 
 public sealed record Ams2Vehicle
 {
-    /// <summary>The .crd filename base — unique per car variant (engine/track-config variants
+    /// <summary>The .crd filename base, unique per car variant (engine/track-config variants
     /// are distinct vehicles).</summary>
     public required string Id { get; init; }
     public required string Dir { get; init; }
@@ -40,14 +40,14 @@ public sealed record Ams2Track
     public int Year { get; init; }
     public int LengthMeters { get; init; }
     /// <summary>The grid cap preflight checks generated grids against. As low as 5 on
-    /// rallycross/dirt layouts — never assume a floor.</summary>
+    /// rallycross/dirt layouts, never assume a floor.</summary>
     public int MaxAiParticipants { get; init; }
     public string? TrackType { get; init; }
     public string? TrackGrade { get; init; }
     public string? EventTypes { get; init; }
     public int? OvalType { get; init; }
 
-    /// <summary>True for a community MOD track — one that ships as a LOOSE folder under the install's
+    /// <summary>True for a community MOD track, one that ships as a LOOSE folder under the install's
     /// <c>Tracks\&lt;id&gt;\</c> (base/DLC tracks are packed, so they have no loose folder). The
     /// pre-season track preflight uses this to tell "must be downloaded/installed" mod tracks apart
     /// from always-present base tracks. Populated by <c>tools/extract_tracks.cs</c>; absent = false
@@ -76,7 +76,7 @@ public sealed record OfficialLivery
 
 /// <summary>
 /// The machine-extracted AMS2 content library (data/ams2/*.json): classes, vehicles, tracks,
-/// and known livery names. Refreshable data extracted from a local install — never compiled
+/// and known livery names. Refreshable data extracted from a local install, never compiled
 /// in, so game updates only require re-extraction.
 /// </summary>
 public sealed class Ams2ContentLibrary
@@ -93,16 +93,16 @@ public sealed class Ams2ContentLibrary
     public required IReadOnlyDictionary<string, Ams2LiveryClassEntry> Liveries { get; init; }
 
     /// <summary>Per-class livery-slot CAP (xmlName → max distinct liveries), from
-    /// <c>livery-caps.json</c> — how many liveries the game can show for a class, so custom slots
+    /// <c>livery-caps.json</c>, how many liveries the game can show for a class, so custom slots
     /// run 51..(50+cap). A class absent from the map has an UNKNOWN cap (not unlimited); callers
-    /// degrade gracefully. Optional data file — empty when it is not present.</summary>
+    /// degrade gracefully. Optional data file, empty when it is not present.</summary>
     public IReadOnlyDictionary<string, int> LiveryCaps { get; init; } =
         new Dictionary<string, int>(StringComparer.Ordinal);
 
     /// <summary>Per-class BASE-GAME liveries (class → the liveries the game ships, in dump order),
     /// from <c>official-liveries.json</c> (the enum.gg dump). These are the EXACT names a custom-AI
-    /// <c>livery_name</c> must match to bind in-game — the ground truth for a guaranteed-loading
-    /// grid. Optional data file — empty when it is not present.</summary>
+    /// <c>livery_name</c> must match to bind in-game, the ground truth for a guaranteed-loading
+    /// grid. Optional data file, empty when it is not present.</summary>
     public IReadOnlyDictionary<string, IReadOnlyList<OfficialLivery>> OfficialLiveries { get; init; } =
         new Dictionary<string, IReadOnlyList<OfficialLivery>>(StringComparer.Ordinal);
 
@@ -114,7 +114,7 @@ public sealed class Ams2ContentLibrary
         var vehicles = ReadFile<VehiclesFile>(Path.Combine(dataDirectory, "vehicles.json"));
         var tracks = ReadFile<TracksFile>(Path.Combine(dataDirectory, "tracks.json"));
         var liveries = ReadFile<LiveriesFile>(Path.Combine(dataDirectory, "liveries.json"));
-        // Optional: absent on older data dirs / test fixtures — an empty cap map, not a failure.
+        // Optional: absent on older data dirs / test fixtures, an empty cap map, not a failure.
         var caps = ReadOptional<LiveryCapsFile>(Path.Combine(dataDirectory, "livery-caps.json"));
         var official = ReadOptional<OfficialLiveriesFile>(Path.Combine(dataDirectory, "official-liveries.json"));
 
@@ -138,7 +138,7 @@ public sealed class Ams2ContentLibrary
     /// The install genuinely ships duplicate .crd basenames (stock_corolla_23.crd exists in both
     /// Vehicles\stock_corolla\ and Vehicles\stock_corolla_23\), so an extracted vehicles.json may
     /// carry duplicate ids. Resolve deterministically instead of throwing: the entry whose dir
-    /// matches its id wins (the canonical copy — same rule as Companion.ContentExtract); with no
+    /// matches its id wins (the canonical copy, same rule as Companion.ContentExtract); with no
     /// dir-named entry, the first occurrence wins.
     /// </summary>
     private static Dictionary<string, Ams2Vehicle> DeduplicateVehicles(IReadOnlyList<Ams2Vehicle> vehicles)
@@ -169,7 +169,7 @@ public sealed class Ams2ContentLibrary
                ?? throw new JsonException($"{path} deserialized to null.");
     }
 
-    /// <summary>Reads an OPTIONAL data file — returns null (not a throw) when the file is absent,
+    /// <summary>Reads an OPTIONAL data file, returns null (not a throw) when the file is absent,
     /// so a missing refreshable file degrades gracefully.</summary>
     private static T? ReadOptional<T>(string path) where T : class =>
         File.Exists(path) ? ReadFile<T>(path) : null;

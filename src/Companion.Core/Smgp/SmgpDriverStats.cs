@@ -4,9 +4,9 @@ using Companion.Core.Json;
 namespace Companion.Core.Smgp;
 
 /// <summary>
-/// The SMGP world's PREDETERMINED driver career stats — the history as it stood the moment the player
+/// The SMGP world's PREDETERMINED driver career stats, the history as it stood the moment the player
 /// arrived (a whole number of prior seasons). Keyed by DRIVER id, loaded from
-/// <c>data/rules/smgp/driver-stats.json</c>. DISPLAY-ONLY — never a fold input (like
+/// <c>data/rules/smgp/driver-stats.json</c>. DISPLAY-ONLY, never a fold input (like
 /// <see cref="SmgpDriverProfiles"/>): shown on the Paddock tab and (as the player's own running total)
 /// the rival readout. An absent file resolves to <see cref="Empty"/>, so a non-SMGP install is
 /// unaffected. The player's LIVE season / career stats accrue on top of these baselines from actual

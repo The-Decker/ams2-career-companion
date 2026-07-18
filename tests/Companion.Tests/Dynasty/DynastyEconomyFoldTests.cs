@@ -147,7 +147,7 @@ public sealed class DynastyEconomyFoldTests
     [Fact]
     public void SettleRound_HardFloorIsImmediateBankruptcy()
     {
-        // −22000 balance, first-ever deficit round — but the settlement lands below −25000.
+        // −22000 balance, first-ever deficit round, but the settlement lands below −25000.
         var result = DynastyEconomyFold.SettleRound(Settle(
             Fresh("-22000"), [], [], playerStarted: false, hasSecondCar: false));
 
@@ -201,7 +201,7 @@ public sealed class DynastyEconomyFoldTests
             Decisions = [new() { Kind = DynastyEconomyDecisionKind.BuyDevelopment }],
         });
 
-        // 8000 × (1 − 2/12) = 20000/3 — exact, no rounding anywhere in the ledger.
+        // 8000 × (1 − 2/12) = 20000/3, exact, no rounding anywhere in the ledger.
         Assert.Equal(Rational.Parse("100000") - new Rational(20000, 3), result.State.Balance);
     }
 

@@ -8,7 +8,7 @@ namespace Companion.Tests.ViewModels;
 
 /// <summary>
 /// The briefing banner always states which of the THREE staging outcomes happened
-/// (m5-fix-integration contract): no-op (installed file already matches — nothing written) /
+/// (m5-fix-integration contract): no-op (installed file already matches, nothing written) /
 /// staged (with backup path) / aborted. Uses a local fake session so the three flavors are
 /// exercised without touching shared test fixtures.
 /// </summary>
@@ -57,7 +57,7 @@ public class BriefingNoOpBannerTests
                 NoOpAlreadyMatches = true,
                 WrittenPath = InstalledPath,
                 BackupPath = null,
-                Messages = ["Installed F-Vintage_Gen1.xml already matches this round's grid (2 drivers) — nothing written, your file stays in place."],
+                Messages = ["Installed F-Vintage_Gen1.xml already matches this round's grid (2 drivers), nothing written, your file stays in place."],
             },
         };
         var watcher = new FakeFileWatcher();
@@ -106,7 +106,7 @@ public class BriefingNoOpBannerTests
             NextOutcome = new StageOutcome
             {
                 Success = false,
-                Messages = ["Error: livery 'X' not installed", "Staging aborted — fix the preflight errors above and stage again."],
+                Messages = ["Error: livery 'X' not installed", "Staging aborted, fix the preflight errors above and stage again."],
             },
         };
         var watcher = new FakeFileWatcher();

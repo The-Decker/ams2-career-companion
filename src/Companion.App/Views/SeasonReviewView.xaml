@@ -230,7 +230,7 @@
                 <StackPanel>
                     <TextBlock Text="Your AI file" FontWeight="SemiBold" Margin="0,0,0,4" />
                     <TextBlock Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,0,0,10"
-                               Text="Put your own community NAMeS file back exactly as it was before the season — the current file is re-backed-up first, so nothing is ever lost." />
+                               Text="Put your own community NAMeS file back exactly as it was before the season, the current file is re-backed-up first, so nothing is ever lost." />
                     <Button Content="Restore my original AI file" HorizontalAlignment="Left" MinWidth="230"
                             Command="{Binding RestoreAiFileCommand}"
                             audio:SoundAssist.Cue="Warning" />

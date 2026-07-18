@@ -10,7 +10,7 @@ namespace Companion.Core.Determinism;
 ///
 /// Every call creates a FRESH generator positioned at the start of its stream: consuming
 /// numbers from one stream never shifts any other stream's sequence, and re-creating a
-/// stream replays it from the beginning — this is what makes "re-simulate from round 1"
+/// stream replays it from the beginning, this is what makes "re-simulate from round 1"
 /// byte-identical.
 ///
 /// API guarantee: for a given (masterSeed, subsystem, year, round, entityId) the stream's
@@ -18,12 +18,12 @@ namespace Companion.Core.Determinism;
 /// key derivation, the hash, the mixer, or the generator is a breaking save-format change.
 ///
 /// Conventions: season-level streams (not tied to a round or entity) use round 0 and
-/// entityId "" — <see cref="CreateSeasonStream"/> encodes that convention.
+/// entityId "", <see cref="CreateSeasonStream"/> encodes that convention.
 ///
 /// Key hygiene: entityIds are caller data (pack team/driver ids, composite discriminators),
 /// so '|' and '\' inside them are backslash-escaped before key composition. Subsystems are
 /// fixed sim constants and year/round are numeric, so escaping the entity alone makes the
-/// four-part key composition injective — no two distinct (subsystem, year, round, entityId)
+/// four-part key composition injective, no two distinct (subsystem, year, round, entityId)
 /// tuples can ever share a stream. Ids without '|' or '\' derive exactly the seeds they
 /// always did (byte-stability preserved).
 /// </summary>

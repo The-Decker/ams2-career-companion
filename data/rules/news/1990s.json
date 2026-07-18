@@ -1,28 +1,28 @@
 {
-  "$comment": "Generative news-article corpus for the 1990s (sleek, analytical broadsheet-sports voice — telemetry, carbon brakes, semi-automatic gearboxes, the fully professional era and its rivalries; measured and data-literate, cooler than the 80s), parsed by Companion.Core.News.NewsArticleBank. Keys under 'bodies' are 'journalPhase|cause'; each holds era-keyed body templates selected deterministically via the 'headlines' PCG32 stream. Bodies compose literal prose, fact tokens, and {pool:name} references into 'pools'. Fact tokens: {player} {team} {race} {year} {round} {position} {expected} {winner} {fieldSize} {champPosition} {champMove} {champLeader}. Add new eras/events by adding JSON only — no code.",
+  "$comment": "Generative news-article corpus for the 1990s (sleek, analytical broadsheet-sports voice, telemetry, carbon brakes, semi-automatic gearboxes, the fully professional era and its rivalries; measured and data-literate, cooler than the 80s), parsed by Companion.Core.News.NewsArticleBank. Keys under 'bodies' are 'journalPhase|cause'; each holds era-keyed body templates selected deterministically via the 'headlines' PCG32 stream. Bodies compose literal prose, fact tokens, and {pool:name} references into 'pools'. Fact tokens: {player} {team} {race} {year} {round} {position} {expected} {winner} {fieldSize} {champPosition} {champMove} {champLeader}. Add new eras/events by adding JSON only, no code.",
   "eras": [
     { "key": "1990s", "fromYear": 1990, "toYear": 1999 }
   ],
   "pools": {
     "dateline": {
       "1990s": [
-        "PADDOCK REPORT — {race}, {year}.",
+        "PADDOCK REPORT, {race}, {year}.",
         "From the pit lane at {race}.",
         "Telemetry filed from {race}, round {round} of the {year} season.",
         "Grand Prix report: {race}, {year}.",
         "Our motorsport correspondent, {race}, round {round}.",
-        "Trackside dispatch — {race}, round {round}, {year}.",
+        "Trackside dispatch, {race}, round {round}, {year}.",
         "Filed from the {race} paddock, {year}.",
         "Race analysis: {race}, round {round} of the {year} campaign.",
         "From the timing stands at {race}, {year}.",
-        "Grand Prix dispatch — {race}, round {round}.",
+        "Grand Prix dispatch, {race}, round {round}.",
         "Our correspondent reports from {race}, {year}."
       ],
       "default": [
         "Race report, {race}.",
         "From {race}, {year}.",
         "Report from {race}, round {round}.",
-        "{race}, {year} — the race report."
+        "{race}, {year}, the race report."
       ]
     },
     "closeGood": {
@@ -70,12 +70,12 @@
     "champLine": {
       "1990s": [
         "In the championship {player} holds {champPosition}, {champMove}.",
-        "The title table reads {player} {champPosition} — {champMove} — with {champLeader} setting the pace.",
+        "The title table reads {player} {champPosition}, {champMove}, with {champLeader} setting the pace.",
         "{player} sits {champPosition} in the standings, {champMove} on the season.",
         "That leaves {player} {champPosition} in the title race, {champMove}, chasing {champLeader}.",
         "The standings now show {player} {champPosition}, {champMove}, with {champLeader} out in front.",
         "{player} is classified {champPosition} in the title fight, {champMove} across the year so far.",
-        "On the championship ledger {player} holds {champPosition} — {champMove} — while {champLeader} leads.",
+        "On the championship ledger {player} holds {champPosition}, {champMove}, while {champLeader} leads.",
         "That reads {player} {champPosition} in the points table, {champMove}, {champLeader} the benchmark.",
         "The title picture: {player} {champPosition}, {champMove}, chasing {champLeader}."
       ],
@@ -170,10 +170,10 @@
         "{pool:dateline} {player} takes {race}. A measured, telemetry-perfect drive delivered {team} the win over {fieldSize} rivals, {pool:techNote}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} converted pace into a win at {race}, leading {team} home ahead of {fieldSize} cars. {pool:techNote} through every phase, the result was never in question. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} A commanding win for {player} at {race}. {team} had the fastest package in the field and the data proved it, {pool:techNote}. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} wins round {round}, the {race}, for {team}. The telemetry reads like a textbook — {pool:techNote} — as a field of {fieldSize} was left to race for the minor places. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} wins round {round}, the {race}, for {team}. The telemetry reads like a textbook, {pool:techNote}, as a field of {fieldSize} was left to race for the minor places. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} No answer to {player} at {race}: pole to flag for {team}, {pool:techNote}, and a win banked {pool:expectationBeat}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} Victory ticked off at {race} as {player} managed the race to perfection for {team}, the closest of {fieldSize} runners never within striking range. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} wins {race}. STOP being modest — {team} had the measure of the field all weekend, {pool:techNote}, and turned a pole into a controlled win. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} wins {race}. STOP being modest, {team} had the measure of the field all weekend, {pool:techNote}, and turned a pole into a controlled win. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} A win by the numbers for {player} at {race}: every stint on plan, every lap accounted for, {team} first of {fieldSize} home. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} delivers at {race}, the {team} car quick where it mattered and {pool:rivalLine} settled early. Round {round} of {year} banked. {pool:champLine} {pool:closeGood}"
       ],
@@ -186,13 +186,13 @@
       "1990s": [
         "{pool:dateline} A podium for {player}, home {position} at {race}. {team} ran with the front-runners in a field of {fieldSize}, though {pool:rivalLine}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} climbed the rostrum at {race}, {position} at the flag {pool:expectationBeat}. The {team} car had genuine pace, {pool:techNote}. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Rostrum composure from {player} — {position} at {race}, kept honest to the flag by {winner}. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Rostrum composure from {player}, {position} at {race}, kept honest to the flag by {winner}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} on the podium at {race}, {position} at the flag for {team}. The pace was there in a field of {fieldSize}, even if {pool:rivalLine}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} A rostrum for {team} as {player} brought it home {position} at {race}, {pool:techNote}. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} banks a podium at {race} — {position} {pool:expectationBeat}. The data shows a car extracted for everything it had. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} banks a podium at {race}, {position} {pool:expectationBeat}. The data shows a car extracted for everything it had. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} claimed a podium at {race}, {position} across the line, {winner} ahead but the rest behind. {team} will take that. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} Composed from lights to flag, {player} secured {position} at {race} for {team} in a field of {fieldSize}, {pool:techNote}. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} onto the rostrum at {race}, {position} at the line — {pool:rivalLine}, but a strategy read to the lap kept {team} in the champagne. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} onto the rostrum at {race}, {position} at the line, {pool:rivalLine}, but a strategy read to the lap kept {team} in the champagne. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} A data-perfect podium for {player} at {race}: {position} of {fieldSize}, {winner} ahead, the {team} trace clean from green to chequered. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} converts pace to a rostrum at {race}, {position} {pool:expectationBeat}, and the pit wall calls it a job well managed. {pool:champLine} {pool:closeGood}"
       ],
@@ -205,13 +205,13 @@
       "1990s": [
         "{pool:dateline} {player} banked points at {race}, {position} at the flag from a field of {fieldSize}. No podium, but the championship account grows and {winner} won the day. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} A clean, efficient afternoon for {player}: {position} at {race} and useful points for {team}. The telemetry shows a car managed, not thrown away. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} came away from {race} with points, {position} in a field of {fieldSize}. The podium stayed out of reach — {pool:rivalLine} — but the account for {team} still grows. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} came away from {race} with points, {position} in a field of {fieldSize}. The podium stayed out of reach, {pool:rivalLine}, but the account for {team} still grows. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} A points finish for {player} at {race}, {position} at the flag. Not spectacular, but the telemetry shows a race managed with discipline for {team}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} converted a workmanlike run into points at {race}, {position} of {fieldSize}. {winner} took the win; {team} took the returns. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} Points in the bag for {player} at {race}, home {position}. The data reads steady rather than spectacular, exactly as {team} planned it. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} A patient {position} for {player} at {race} keeps the {team} points tally moving in a field of {fieldSize}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} scores at {race}, {position} at the line, the kind of unglamorous return that wins championships over a season. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Points banked at {race} for {player}, {position} of {fieldSize} — {pool:rivalLine}, but the {team} tally moves and the data stays clean. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Points banked at {race} for {player}, {position} of {fieldSize}, {pool:rivalLine}, but the {team} tally moves and the data stays clean. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} nurses the {team} car to {position} at {race}, a disciplined points run when the podium was never on. {pool:champLine} {pool:closeGood}"
       ],
       "default": [
@@ -229,7 +229,7 @@
         "{pool:dateline} Against every projection, {player} dragged {team} to {position} at {race}, {pool:techNote}. One for the highlight reel. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} rewrote the form guide at {race}, {position} from a car pegged at {expected}. {team} could scarcely have asked for more. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} A standout {position} for {player} at {race}, {pool:expectationBeat}, in a field of {fieldSize}. The debrief will be a happy post-mortem. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} makes the timing screen lie at {race}, {position} {pool:expectationBeat} — {pool:techNote}, and every engineer in the {team} garage double-checking the trace. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} makes the timing screen lie at {race}, {position} {pool:expectationBeat}, {pool:techNote}, and every engineer in the {team} garage double-checking the trace. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} The drive of the weekend goes to {player}: {position} at {race} from a car pegged at {expected}, and not a soul in the paddock saw it coming. {pool:champLine} {pool:closeGood}"
       ],
       "default": [
@@ -265,7 +265,7 @@
         "{pool:dateline} An engineering post-mortem awaits at {team} after {player} retired from {race} with a mechanical issue, the data offering the only clues. {pool:closeBad}",
         "{pool:dateline} Cruel luck for {player} at {race}, out with a car fault when the numbers said {expected} was within reach. {pool:closeBad}",
         "{pool:dateline} {player} coasted to a halt at {race}, the {team} car defeated by its own hardware in a field of {fieldSize}. {pool:closeBad}",
-        "{pool:dateline} A sensor spike, a plume of smoke, and {player} is out of {race} — the {team} car healthy on the timing screen one lap, silent the next. {pool:closeBad}",
+        "{pool:dateline} A sensor spike, a plume of smoke, and {player} is out of {race}, the {team} car healthy on the timing screen one lap, silent the next. {pool:closeBad}",
         "{pool:dateline} Reliability robs {player} at {race}: running the numbers said {expected} was on when the engine cried enough. No blame to the driver. {pool:closeBad}"
       ],
       "default": [
@@ -283,7 +283,7 @@
         "{pool:dateline} {player} overstepped the mark at {race}, into the barriers and out for {team}, the trace showing a braking point missed. {pool:closeBad}",
         "{pool:dateline} Self-inflicted at {race}: {player} lost the {team} car and with it a shot at {expected} among {fieldSize} runners. {pool:closeBad}",
         "{pool:dateline} One misjudgement undid {player}'s {race}, the car parked and the data pointing squarely at the driver. {winner} took the win. {pool:closeBad}",
-        "{pool:dateline} {player} asks too much of cold tyres at {race} and finds the barrier — {expected} thrown away, the {team} trace laying the error bare. {pool:closeBad}",
+        "{pool:dateline} {player} asks too much of cold tyres at {race} and finds the barrier, {expected} thrown away, the {team} trace laying the error bare. {pool:closeBad}",
         "{pool:dateline} A brake-late gamble that did not pay: {player} into the gravel and out of {race}, the telemetry with nowhere to hide. {pool:closeBad}"
       ],
       "default": [
@@ -312,14 +312,14 @@
     "season.digest|player-champion": {
       "1990s": [
         "The {year} season is complete, and the title table settles on a single name: {player}. A methodical, season-long campaign hands {team} the championship, earned round by round and written into the numbers. {pool:seasonClose}",
-        "Champions are made across a full season, and the {year} data leaves no argument — {player} is world champion. {team} turned pace into points with a consistency the paddock will study for years. {pool:seasonClose}",
+        "Champions are made across a full season, and the {year} data leaves no argument, {player} is world champion. {team} turned pace into points with a consistency the paddock will study for years. {pool:seasonClose}",
         "The {year} title is settled, and it belongs to {player}. A campaign built on data and consistency hands {team} the championship, the numbers vindicating every call. {pool:seasonClose}",
         "{player}, champion of {year}. The season's telemetry tells a story of relentless accumulation, {team} turning pace into an unassailable points lead. {pool:seasonClose}",
         "It is done: {player} takes the {year} crown for {team}. A methodical march through the calendar, each round a data point in an inevitable title. {pool:seasonClose}",
         "The record will show {player} as {year} world champion, and {team} as the outfit that mastered the era's science. Earned over a full season, not a single afternoon. {pool:seasonClose}",
         "A season-long project reaches its conclusion with {player} crowned in {year}. {team} out-thought and out-paced the field, and the standings prove it. {pool:seasonClose}",
         "Title settled, and the data does not argue: {player} is champion of {year}. {team} banked the points weekend after weekend until the maths was done. {pool:seasonClose}",
-        "{player} takes the {year} crown for {team} — a campaign of relentless consistency, every result a line in a season-long ledger that never once slipped. {pool:seasonClose}"
+        "{player} takes the {year} crown for {team}, a campaign of relentless consistency, every result a line in a season-long ledger that never once slipped. {pool:seasonClose}"
       ],
       "default": [
         "{player} is the {year} champion, a title season for {team}. {pool:seasonClose}",

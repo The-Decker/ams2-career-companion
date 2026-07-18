@@ -9,11 +9,11 @@ namespace Companion.ViewModels.Debug;
 /// TIER-2 preview builders (dynasty-passport-roadmap.md Piece 2, §6 of the build brief): each returns
 /// a <see cref="PreviewCareerSession"/> seeded with the canned projections that route the real shell
 /// wiring (<see cref="Shell.HomeViewModel"/>'s constructor) to a target screen. Every one is
-/// display-only and DB-free — a preview never creates or writes a <c>.ams2career</c>.
+/// display-only and DB-free, a preview never creates or writes a <c>.ams2career</c>.
 /// </summary>
 public static class DebugPreviews
 {
-    /// <summary>Racing Passport — <see cref="CareerExperienceModes.RacingPassport"/> is
+    /// <summary>Racing Passport, <see cref="CareerExperienceModes.RacingPassport"/> is
     /// <c>IsAvailable=false</c> in the menu AND throws at creation, so it is genuinely unbuildable.
     /// This is the ONLY way to look at it: a preview hub labelled as a Passport preview.</summary>
     public static PreviewCareerSession RacingPassport(SeasonPack pack)
@@ -31,11 +31,11 @@ public static class DebugPreviews
         return session;
     }
 
-    /// <summary>An arbitrary character level (1–300) on the Driver tab — the classic "preview a
+    /// <summary>An arbitrary character level (1–300) on the Driver tab, the classic "preview a
     /// progression screen I cannot grind to". Builds a real <see cref="CharacterDossier"/> at the
     /// requested level from the character rules, so the projection is authentic even though no fold
     /// ever produced it. <paramref name="racingDnaId"/> swaps the preview character's Racing DNA to
-    /// any catalog identity (a contextual DNA would fail REAL creation validation — a preview never
+    /// any catalog identity (a contextual DNA would fail REAL creation validation, a preview never
     /// creates, and the dossier renders the authored identity straight from the catalog);
     /// <paramref name="completedSeasons"/> sets the mastery-track position (&lt; 0 = fully mastered).</summary>
     public static PreviewCareerSession Level(
@@ -114,7 +114,7 @@ public static class DebugPreviews
         }.WithGridFromPack();
     }
 
-    /// <summary>A death screen without dying — the fatal terminal surface (character death &amp; injury
+    /// <summary>A death screen without dying, the fatal terminal surface (character death &amp; injury
     /// §6). Seeds a deceased mortality status + a rich <see cref="DeathScreenModel"/> so
     /// <see cref="Shell.HomeViewModel"/> routes to the death screen exactly as a live fatal round does.</summary>
     public static PreviewCareerSession Death(SeasonPack pack, MortalityMode mode = MortalityMode.Hardcore)
@@ -196,8 +196,8 @@ public static class DebugPreviews
                 RaceSuspensionRemaining = seasonEnding ? 0 : 2,
                 SeasonEnding = seasonEnding,
                 Headline = seasonEnding
-                    ? "SEASON OVER — recovering"
-                    : "INJURED — auto-simulating round (2 remaining)",
+                    ? "SEASON OVER, recovering"
+                    : "INJURED, auto-simulating round (2 remaining)",
             },
         }.WithGridFromPack();
     }
@@ -254,7 +254,7 @@ public static class DebugPreviews
         PlayerImageKey = demotion ? "player.zeroforce" : "player.madonna",
         Motto = demotion ? "Every empire ends." : "Only the summit remains.",
         History = demotion
-            ? ["Zeroforce runs the back of the grid — where careers go to be forgotten."]
+            ? ["Zeroforce runs the back of the grid, where careers go to be forgotten."]
             : ["Madonna is the summit of the grid, and they have come for you."],
         Quotes = demotion ? ["\"Prove yourself again.\""] : ["\"You have earned this.\""],
         RivalName = demotion ? null : "A. Senna",

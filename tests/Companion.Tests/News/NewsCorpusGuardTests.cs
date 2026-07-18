@@ -6,7 +6,7 @@ namespace Companion.Tests.News;
 /// <summary>
 /// Static guards over the SHIPPED news corpora (data/rules/news/*.json), so the grind of
 /// deepening them decade by decade can never drift the contract:
-/// era voice stays era-CAPPED (no anachronistic vocabulary — a 1960s dispatch must not mention
+/// era voice stays era-CAPPED (no anachronistic vocabulary, a 1960s dispatch must not mention
 /// telemetry, a 1970s one DRS), every template's tokens resolve (fact token or declared pool —
 /// a typo here otherwise surfaces as a render-time throw in whatever career happens to roll
 /// that variant), and every era keeps a minimum variety floor per article cause.
@@ -27,7 +27,7 @@ public sealed class NewsCorpusGuardTests
         "fieldSize", "champPosition", "champMove", "champLeader",
     };
 
-    /// <summary>Vocabulary that must not appear in an era's strings — technology, regulation or
+    /// <summary>Vocabulary that must not appear in an era's strings, technology, regulation or
     /// media culture that did not exist yet (word-boundary, case-insensitive: "backers" must
     /// never trip "KERS"). Kept deliberately unambiguous; era-legitimate borderline terms
     /// (1970s ground-effect, 1980s turbo, 1990s telemetry, early-2010s KERS) are NOT banned.</summary>

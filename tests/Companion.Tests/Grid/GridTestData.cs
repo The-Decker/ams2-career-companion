@@ -5,7 +5,7 @@ namespace Companion.Tests.Grid;
 
 /// <summary>
 /// Test data for the grid pipeline: loads the shipped reference packs from the test output
-/// (machine-independent — packs\ and Fixtures\ams2 are copied by the csproj) and builds small
+/// (machine-independent, packs\ and Fixtures\ams2 are copied by the csproj) and builds small
 /// synthetic packs for the cases the reference data does not exercise (guest entries,
 /// trackForm clamping, duplicate liveries).
 /// </summary>
@@ -19,7 +19,7 @@ internal static class GridTestData
     {
         string dir = Path.Combine(PacksDirectory, packId);
         Assert.True(Directory.Exists(dir),
-            $"Reference pack folder '{dir}' was not copied to the test output — rebuild tests/Companion.Tests.");
+            $"Reference pack folder '{dir}' was not copied to the test output, rebuild tests/Companion.Tests.");
 
         return PackLoader.Parse(
             Read(dir, "pack.json"),

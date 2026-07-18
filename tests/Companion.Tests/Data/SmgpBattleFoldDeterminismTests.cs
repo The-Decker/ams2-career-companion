@@ -8,7 +8,7 @@ using Companion.ViewModels.Services;
 namespace Companion.Tests.Data;
 
 /// <summary>
-/// M3 slice 2 — the rival battle folds from stored envelope inputs (the load-bearing
+/// M3 slice 2, the rival battle folds from stored envelope inputs (the load-bearing
 /// determinism gate). A four-tier one-driver-per-team ladder (the SMGP shape): the player
 /// starts at LEVEL C. Proves the two-wins swap moves exactly the three chained seats, the
 /// forfeit demotes (and hard-fails at the floor team), the journal carries a Why?-inspectable
@@ -37,7 +37,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
     {
         // TWO-PHASE (3c-2): player (Seat C) beats the LEVEL A rival twice → the offer is DEFERRED to
         // the promotion screen (recorded as a pending offer, the seat NOT moved, no seat row yet).
-        // Accepting on the screen MOVES the player into the rival's car (Seat A) — the clean swap.
+        // Accepting on the screen MOVES the player into the rival's car (Seat A), the clean swap.
         var (careerPath, seasonId) = FoldTwoBattleRounds(
             "swap.ams2career",
             playerWins: true,
@@ -55,13 +55,13 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
         // The pending offer replays byte-identically even BEFORE it is answered (skip-everything).
         AssertResimulatesByteIdentically(db);
 
-        // The promotion screen ACCEPTS — the deferred move now happens.
+        // The promotion screen ACCEPTS, the deferred move now happens.
         ReplayService.ResolveSmgpOffer(db, seasonId, LadderPack(), round: 2, accept: true, Utc);
 
         var smgp = StateStore.ReadRoundPlayerState(db, seasonId, 2)!.Player.Smgp!;
         Assert.Equal(SeatA, smgp.CurrentSeatLivery);
         Assert.Null(smgp.PendingSwap);
-        Assert.Empty(smgp.AiSeatOverrides); // no cascade — the seat state IS just the player's car
+        Assert.Empty(smgp.AiSeatOverrides); // no cascade, the seat state IS just the player's car
         Assert.False(smgp.CareerOver);
         Assert.Equal(0, smgp.TallyFor("driver.a").PlayerStreak);
 
@@ -78,7 +78,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
     public void TwoWins_TwoPhase_Decline_KeepsTheSeat_AndReplaysByteIdentically()
     {
         // TWO-PHASE decline OVERRIDES the up-front "accept" default: the offer arises (pending), but
-        // the player DECLINES on the promotion screen — the seat holds, the pending clears, no seat
+        // the player DECLINES on the promotion screen, the seat holds, the pending clears, no seat
         // row is ever emitted, and replay honours the SCREEN decision (not the standing answer).
         var (careerPath, seasonId) = FoldTwoBattleRounds(
             "decline.ams2career",
@@ -89,7 +89,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
         ReplayService.ResolveSmgpOffer(db, seasonId, LadderPack(), round: 2, accept: false, Utc);
 
         var smgp = StateStore.ReadRoundPlayerState(db, seasonId, 2)!.Player.Smgp!;
-        Assert.Equal(SeatC, smgp.CurrentSeatLivery); // held — no promotion
+        Assert.Equal(SeatC, smgp.CurrentSeatLivery); // held, no promotion
         Assert.Null(smgp.PendingSwap);
         Assert.Empty(smgp.AiSeatOverrides);
         Assert.DoesNotContain(JournalStore.ReadSeason(db, seasonId), r => r.Phase == JournalPhases.SmgpSeat);
@@ -101,7 +101,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
     public void TwoPhase_OfferOnTheFinalRound_HoldsSeasonEndUntilResolved_AndReplaysByteIdentically()
     {
         // THE FINAL-ROUND HOLE: a two-wins offer on the season's LAST round must be resolved on the
-        // promotion screen BEFORE season end folds — otherwise the live journal (seat row appended
+        // promotion screen BEFORE season end folds, otherwise the live journal (seat row appended
         // AFTER the season-end rows) would diverge from replay (seat row emitted INLINE, before
         // season end) and season end would score the wrong (un-moved) seat. Season end is held until
         // ResolveSmgpOffer clears the pending offer, then folds on the resolved seat.
@@ -124,7 +124,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
                    },
                    environment))
         {
-            // Rounds 1-3 race clean; rounds 4 + 5 beat driver.a, so the 2nd win — on the FINAL round —
+            // Rounds 1-3 race clean; rounds 4 + 5 beat driver.a, so the 2nd win, on the FINAL round —
             // triggers the offer. Season end must NOT fold while it is pending.
             for (int round = 1; round <= 5; round++)
                 ApplyPlayerFirst(session, round >= 4 ? new SmgpRivalCall { RivalDriverId = "driver.a" } : null);
@@ -147,7 +147,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
     [Fact]
     public void Legacy_NonTwoPhase_AppliesTheSwapInline_NotDeferred()
     {
-        // THE GATE: a pre-3c-2 career (TwoPhasePromotion=false) keeps the INLINE apply — the up-front
+        // THE GATE: a pre-3c-2 career (TwoPhasePromotion=false) keeps the INLINE apply, the up-front
         // SeatSwapAccepted moves the seat this same round, with no pending offer. This is exactly what
         // every existing career replays against, so it must not change.
         var pack = LadderPack();
@@ -180,7 +180,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
         Assert.Null(accepted.State.PendingSwap);
         Assert.Contains(accepted.Events, e => e.Phase == JournalPhases.SmgpSeat && e.Cause == "seat-swap");
 
-        // Decline resolves to holding the seat regardless of the standing "accept" — the override.
+        // Decline resolves to holding the seat regardless of the standing "accept", the override.
         var declined = SmgpBattleFold.Apply(BattleCtx(pack, state, decision: false, standing: true));
         Assert.Equal(SeatC, declined.State.CurrentSeatLivery);
         Assert.Null(declined.State.PendingSwap);
@@ -190,7 +190,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
     [Fact]
     public void LegacyStateCell_WithoutTheNewFields_ParsesToTheInlinePath()
     {
-        // A pre-3c-2 round_player_state SmgpState blob carries neither new field — it MUST parse to
+        // A pre-3c-2 round_player_state SmgpState blob carries neither new field, it MUST parse to
         // TwoPhasePromotion=false (inline) + no pending offer, or every existing career would flip
         // behaviour on the next load. The JsonIgnore defaults are serializer-agnostic.
         var legacy = System.Text.Json.JsonSerializer.Deserialize<SmgpState>(
@@ -252,7 +252,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
     public void FourLosses_AtTheFloor_EndTheCareer_ButNotBefore()
     {
         // At the LEVEL D floor there is nowhere to be relegated: losses accumulate, and the FOURTH
-        // (SmgpRules.FloorLossLimit) ends the career — kicked out. No seat ever moves.
+        // (SmgpRules.FloorLossLimit) ends the career, kicked out. No seat ever moves.
         string packDirectory = Path.Combine(_root, "packs", "floor-4");
         TestPackBuilder.Write(LadderPack(), packDirectory);
         var environment = ViewModelTestData.Environment(
@@ -302,7 +302,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
     public void AfterTheFloorKnockOut_TheCareerRefusesFurtherRounds()
     {
         // The LEVEL-D floor knock-out is TERMINAL: once the career is over, no further weekend can be folded
-        // — manual entry OR auto-sim — mirroring a fatal-accident Deceased career. (Roadmap #1 hard-stop.)
+        //, manual entry OR auto-sim, mirroring a fatal-accident Deceased career. (Roadmap #1 hard-stop.)
         // LadderPack has 5 rounds, so round 5 exists; only the CareerOver guard stops it.
         string packDirectory = Path.Combine(_root, "packs", "floor-stop");
         TestPackBuilder.Write(LadderPack(), packDirectory);
@@ -384,7 +384,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
         // CLEAN swap, the round AFTER: the session grid (display + staging), the fold, and replay all
         // seat the player (their OWN distinct driver) on the rival's old car; the beaten rival is
         // BENCHED; and everyone else keeps their home car (the player's old car reverts to its authored
-        // driver). No cascade — the whole grid is a fresh function of the player's current car.
+        // driver). No cascade, the whole grid is a fresh function of the player's current car.
         string packDirectory = Path.Combine(_root, "packs", "post-swap");
         TestPackBuilder.Write(LadderPack(), packDirectory);
         var environment = ViewModelTestData.Environment(
@@ -411,7 +411,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
                     : new SmgpRivalCall { RivalDriverId = "driver.a" });
             }
 
-            // Two-phase (3c-2): round 2's win-swap is DEFERRED — accept it on the promotion screen
+            // Two-phase (3c-2): round 2's win-swap is DEFERRED, accept it on the promotion screen
             // so the move takes effect for round 3's grid.
             Assert.NotNull(session.CurrentSmgpPendingOffer());
             session.ResolveSmgpOffer(accept: true);
@@ -495,14 +495,14 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
         var smgp = StateStore.ReadRoundPlayerState(db, seasonId, 4)!.Player.Smgp!;
         Assert.True(smgp.CareerOver);
         Assert.Equal(4, smgp.FloorLosses);
-        Assert.Equal(SeatE, smgp.CurrentSeatLivery); // nothing moved — the game-over screen
+        Assert.Equal(SeatE, smgp.CurrentSeatLivery); // nothing moved, the game-over screen
     }
 
     [Fact]
     public void Forfeit_RelegatesToA_RANDOM_TeamBelow_Deterministically()
     {
         // Two teams in the class below (C1, C2): a LEVEL-B player who loses twice is relegated to
-        // ONE of them, picked from the master seed — the same one every time (replay-identical),
+        // ONE of them, picked from the master seed, the same one every time (replay-identical),
         // and the other C team is untouched.
         const string SeatC2 = "Stock Livery #5";
         var basePack = LadderPack();
@@ -550,7 +550,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
         Assert.False(smgp.CareerOver);
 
         // Deterministic: the whole thing re-simulates byte-identically (the random pick re-derives)
-        // — against the DB's PINNED pack (this test's pack differs from LadderPack()).
+        //, against the DB's PINNED pack (this test's pack differs from LadderPack()).
         var rules = CareerRulesData.Load(ViewModelTestData.RulesDirectory);
         var report = ReplayService.Resimulate(db, unchecked((ulong)Seed), new ReplaySimInputs
         {
@@ -610,7 +610,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
     public void RoundsWithoutARivalCall_FoldNoBattleRows()
     {
         // The off path: an smgp career whose envelopes never stored a rival call folds exactly
-        // like slice 1 left it — no battle rows, no seat rows, untouched state.
+        // like slice 1 left it, no battle rows, no seat rows, untouched state.
         var (careerPath, seasonId) = FoldTwoBattleRounds(
             "no-calls.ams2career", playerWins: true, round2Call: null, round1Call: false);
 
@@ -713,7 +713,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
     }
 
     /// <summary>Creates an smgp-mode career on the ladder pack and folds two rounds carrying
-    /// rival calls against driver.a — the player finishing first (or last) of the four.</summary>
+    /// rival calls against driver.a, the player finishing first (or last) of the four.</summary>
     private (string CareerPath, long SeasonId) FoldTwoBattleRounds(
         string fileName, bool playerWins, SmgpRivalCall? round2Call,
         bool round1Call = true, string playerSeat = SeatC)
@@ -765,7 +765,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
     }
 
     // The SMGP clean-swap player is their OWN distinct driver (not the seat's authored AI), so replay
-    // scores them under the synthetic id — the same one creation assigned.
+    // scores them under the synthetic id, the same one creation assigned.
     private const string PlayerId = Companion.Core.Grid.RoundGridResolver.SyntheticPlayerDriverId;
 
     private static void AssertResimulatesByteIdentically(CareerDatabase db, string playerDriverId = PlayerId)

@@ -4,7 +4,7 @@ namespace Companion.Core.Smgp;
 /// The SUPER MONACO GP replica mode's pure rules (docs/dev/smgp-design.md, manual-verified) —
 /// rival battles, the two-wins seat swap with its one-tier displacement chain, the Zeroforce
 /// career-over state, the Ceara title defense and two-titles completion. PURE data + math: no
-/// I/O, no fold wiring — the envelope/fold slices consume these exactly like CalledShotMath.
+/// I/O, no fold wiring, the envelope/fold slices consume these exactly like CalledShotMath.
 /// Team tiers ride the pack's authored prestige (5=LEVEL A · 4=B · 3=C · 2=D).
 /// </summary>
 public static class SmgpRules
@@ -39,32 +39,32 @@ public static class SmgpRules
         _ => null,
     };
 
-    /// <summary>Ladder rank, D=0 … A=3 (higher = better team) — for tier comparisons.</summary>
+    /// <summary>Ladder rank, D=0 … A=3 (higher = better team), for tier comparisons.</summary>
     public static int Rank(char tier) => tier switch { 'A' => 3, 'B' => 2, 'C' => 1, _ => 0 };
 
     /// <summary>Whether the player (in <paramref name="playerTier"/>) may CHALLENGE a rival in
     /// <paramref name="rivalTier"/> (Mike's rule, 2026-07-12): your OWN tier, the ONE tier directly above
     /// (the seat you climb toward), and ANY tier below. So D→{D,C}; C→{B,C,D}; B→{A,B,C,D}; A→everyone.
-    /// Never two tiers up. (Your own TEAMMATE is still excluded separately by the briefing — same-tier means
+    /// Never two tiers up. (Your own TEAMMATE is still excluded separately by the briefing, same-tier means
     /// other teams at your level, not your sister seat.) DISPLAY-ONLY: this gates the namable-rivals picker,
     /// never the battle fold, so changing it never affects a folded/replayed career.</summary>
     public static bool CanChallenge(char playerTier, char rivalTier) =>
         Rank(rivalTier) <= Rank(playerTier) + 1;
 
     /// <summary>The floor (LEVEL D) tolerance: lose this many rival battles while in a D team and
-    /// the SMGP career is over — kicked out of F1 SMGP. (Mike's rule; the one hard-fail state now
+    /// the SMGP career is over, kicked out of F1 SMGP. (Mike's rule; the one hard-fail state now
     /// that D has nowhere to be relegated to.)</summary>
     public const int FloorLossLimit = 4;
 
     /// <summary>The grand campaign length: SEVENTEEN full seasons (Mike's "17 seasons total before it
     /// gives you a final final screen"). Reaching the end of season 17 unlocks the locked finale and its
     /// secret <c>special.jpg</c>; being champion in all 17 unlocks the deeper secret <c>ultimate.jpg</c>.
-    /// This is the true summit — a milestone BEYOND <see cref="IsComplete"/>'s 2-title replica marker.</summary>
+    /// This is the true summit, a milestone BEYOND <see cref="IsComplete"/>'s 2-title replica marker.</summary>
     public const int CampaignSeasons = 17;
 
     /// <summary>
     /// The round's rival-battle outcome. The game decides by finishing ahead: a classified
-    /// finish beats a DNF; both out = the battle is VOID (no count moves — the manual's rule
+    /// finish beats a DNF; both out = the battle is VOID (no count moves, the manual's rule
     /// is "beat him", and neither beat anyone). Positions are 1-based finishing positions,
     /// null = did not finish/classify.
     /// </summary>
@@ -84,7 +84,7 @@ public static class SmgpRules
     /// <summary>
     /// Folds one battle outcome into the per-rival tally and reports what it triggers. The
     /// two-wins rule is "beat the same rival TWICE WITHOUT LOSING TO HIM": a loss resets the
-    /// player's streak against that rival (and vice versa — streaks are tracked per side).
+    /// player's streak against that rival (and vice versa, streaks are tracked per side).
     /// </summary>
     public static SmgpBattleUpdate ApplyBattle(SmgpBattleTally tally, SmgpBattleOutcome outcome)
     {
@@ -114,7 +114,7 @@ public static class SmgpRules
     /// The verified seat-swap displacement chain, player side: the player takes the RIVAL's
     /// seat; the rival drops to the team ONE TIER BELOW the player's OLD tier; that team's
     /// displaced driver takes the player's old seat. When the player's old tier is the floor
-    /// (D), the rival simply takes the player's old seat (a straight swap — nothing below D).
+    /// (D), the rival simply takes the player's old seat (a straight swap, nothing below D).
     /// Seats are identified by livery (the pack's binding key).
     /// </summary>
     public static SmgpSeatSwap PlayerSeatSwap(
@@ -157,19 +157,19 @@ public static class SmgpRules
     }
 
     /// <summary>Two championships won = the game is beaten (the mode keeps running like normal
-    /// carryover afterward; this only marks completion). A MILESTONE, not the summit — the
+    /// carryover afterward; this only marks completion). A MILESTONE, not the summit, the
     /// 17-season campaign (<see cref="CampaignSeasons"/>) is the real end.</summary>
     public static bool IsComplete(int titles) => titles >= 2;
 
-    /// <summary>The campaign is COMPLETED — the player went the distance through all
+    /// <summary>The campaign is COMPLETED, the player went the distance through all
     /// <see cref="CampaignSeasons"/> seasons without the career ending. "Beat all 17" = play through
-    /// seventeen (Mike, 2026-07-12); losing titles along the way does not fail it — only
+    /// seventeen (Mike, 2026-07-12); losing titles along the way does not fail it, only
     /// <paramref name="careerOver"/> (the Level-D floor kicking you out) does. Unlocks the locked
     /// finale + <c>special.jpg</c>. A pure read over folded state (season count + CareerOver).</summary>
     public static bool CampaignComplete(int seasonOrdinal, bool careerOver) =>
         seasonOrdinal >= CampaignSeasons && !careerOver;
 
-    /// <summary>The FLAWLESS campaign — champion in EVERY one of the <see cref="CampaignSeasons"/>
+    /// <summary>The FLAWLESS campaign, champion in EVERY one of the <see cref="CampaignSeasons"/>
     /// seasons (the emperor run). Unlocks the deeper secret <c>ultimate.jpg</c>. At the 17-season
     /// summit a title count of 17 can only mean 17-from-17 (you can never hold more titles than
     /// seasons raced), so this is the flawless-record predicate.</summary>
@@ -188,11 +188,11 @@ public enum SmgpTrigger
 {
     None,
 
-    /// <summary>Two wins without a loss over this rival — "you may get an offer to join his
+    /// <summary>Two wins without a loss over this rival, "you may get an offer to join his
     /// team!" (the player chooses to accept or decline).</summary>
     SeatSwapOfferToPlayer,
 
-    /// <summary>The rival beat the player twice without losing — he is offered YOUR seat; the
+    /// <summary>The rival beat the player twice without losing, he is offered YOUR seat; the
     /// player is demoted one tier (or, at Zeroforce, the career ends).</summary>
     PlayerSeatForfeit,
 }

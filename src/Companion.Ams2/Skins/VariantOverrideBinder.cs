@@ -19,13 +19,13 @@ public sealed record VariantBindResult
 /// Race-by-race livery binding for packs WITHOUT a scenario .bat: the big season skin packs ship
 /// per-race override variants beside the active pointer (<c>formula_classic_g4m1_03Imola.xml</c>,
 /// <c>formula_v10_g1_1997_08FRA.xml</c>, <c>formula_classic_g3m4_01_USA.xml</c>,
-/// <c>formula_ultimate_2016_2016_01AUS.xml</c>…) for MANUAL copying — the game only reads
+/// <c>formula_ultimate_2016_2016_01AUS.xml</c>…) for MANUAL copying, the game only reads
 /// <c>&lt;model&gt;.xml</c>. When staging round N this binder finds each model's variant whose
 /// file-name token matches the round (round number and/or venue/country) and copies it over the
-/// active pointer, backup-first — exactly what the community selector .bats automate for their own
+/// active pointer, backup-first, exactly what the community selector .bats automate for their own
 /// packs. Rounds with no variant restore the model's BASE pointer (season library content when the
 /// pack declares a skin season, else the base snapshot taken before the first swap). Purely a
-/// skin-file operation — never the career DB / sim / oracle.
+/// skin-file operation, never the career DB / sim / oracle.
 /// </summary>
 public static class VariantOverrideBinder
 {
@@ -35,11 +35,11 @@ public static class VariantOverrideBinder
     private static readonly Regex RoundToken =
         new(@"^(?<round>\d{1,2})[_ -]*(?<tail>[A-Za-z][A-Za-z -]*)?$", RegexOptions.Compiled);
 
-    /// <summary>Token vocabulary observed across the installed community packs — ISO-ish country
+    /// <summary>Token vocabulary observed across the installed community packs, ISO-ish country
     /// codes, country names AND circuit nicknames (the formal pack venue "Autódromo José Carlos
     /// Pace" never contains the pack author's "Interlagos") → the Grand-Prix-name keywords the
     /// round must contain. A token OUTSIDE this vocabulary that also fails the venue-word match
-    /// neither confirms nor vetoes — the round number decides.</summary>
+    /// neither confirms nor vetoes, the round number decides.</summary>
     private static readonly Dictionary<string, string[]> KnownTokens = new(StringComparer.OrdinalIgnoreCase)
     {
         // country/GP codes + names
@@ -72,7 +72,7 @@ public static class VariantOverrideBinder
         ["pac"] = ["pacific"], ["mys"] = ["malaysian"], ["mal"] = ["malaysian"],
         ["emi"] = ["emilia"], ["tus"] = ["tuscan"], ["eif"] = ["eifel"],
         ["detroit"] = ["detroit", "united states"],
-        // circuit nicknames (community tails) — the GP they imply
+        // circuit nicknames (community tails), the GP they imply
         ["interlagos"] = ["brazilian"], ["int"] = ["brazilian"],
         ["imola"] = ["san marino", "emilia"], ["imo"] = ["san marino", "emilia"],
         ["spa"] = ["belgian"],
@@ -110,12 +110,12 @@ public static class VariantOverrideBinder
     public readonly record struct CalendarRound(int Number, string Name, string? RealVenue);
 
     /// <summary>
-    /// The round a variant file is ANCHORED to — the round it names, from which it applies
+    /// The round a variant file is ANCHORED to, the round it names, from which it applies
     /// ONWARD (community packs ship change-point sets: 1986's <c>02Canada</c> is "the grid from
     /// the Canadian GP on", 1990's <c>15_JPN</c> carries Herbert-replaces-Donnelly through the
     /// end of the season). Anchor resolution, in order:
     /// venue/country tail when the vocabulary can place it on a round (the file NUMBER is often a
-    /// change-set index, not the round — 1986's Canada is set 02 but round 6); else the file
+    /// change-set index, not the round, 1986's Canada is set 02 but round 6); else the file
     /// number when it is a plausible round. A year-prefixed file from ANOTHER season (the 1998
     /// skinpack shares its class folder with our 2000 pack) never anchors, nor do what-if /
     /// special files (<c>WhatIf_*</c>, <c>54WIF</c>, <c>Sen</c>, <c>00Alesi</c>, <c>_dist</c>).
@@ -175,7 +175,7 @@ public static class VariantOverrideBinder
     /// <summary>True/false when the tail positively confirms/contradicts the round; null when the
     /// token is outside the vocabulary AND fails the venue-word match (unknown). A known token
     /// still confirms via the venue words (2020's "05Silverstone" names the 70th Anniversary
-    /// round, whose NAME has no "british" — but its venue is Silverstone).</summary>
+    /// round, whose NAME has no "british", but its venue is Silverstone).</summary>
     private static bool? TailAgrees(string tail, string roundName, string? realVenue)
     {
         string token = Regex.Replace(RemoveDiacritics(tail), "[^A-Za-z]", "");
@@ -226,7 +226,7 @@ public static class VariantOverrideBinder
     }
 
     /// <summary>Whether <paramref name="variantXml"/> shares at least one active
-    /// <c>LIVERY_OVERRIDE NAME</c> with <paramref name="seasonBaseXml"/> — the test for a variant
+    /// <c>LIVERY_OVERRIDE NAME</c> with <paramref name="seasonBaseXml"/>, the test for a variant
     /// BELONGING to the active season (a change-point off its base) versus a foreign season's file
     /// squatting in a shared car-model folder. Comment-stripped so placeholder examples never
     /// count; an unreadable variant (empty text) shares nothing → treated as not-ours.</summary>
@@ -293,16 +293,16 @@ public static class VariantOverrideBinder
                         .EndsWith("_dist", StringComparison.OrdinalIgnoreCase))
                     .ToList();
                 if (variants.Count == 0)
-                    continue; // this model ships no per-race variants — nothing to manage
+                    continue; // this model ships no per-race variants, nothing to manage
 
                 // Ownership guard: when the ACTIVE season's base for this model is known, a variant
                 // that shares NONE of the base's livery NAMEs belongs to a DIFFERENT season that
                 // happens to share the same car-model folder. smgp and F1-1990 both skin
                 // formula_classic_g3m*, and the smgp round names (San Marino, Japan, Australia…)
-                // alias 1990's own calendar tokens — so 1990's change-point variants would otherwise
+                // alias 1990's own calendar tokens, so 1990's change-point variants would otherwise
                 // anchor onto, and hijack, the smgp grid. A legitimate change-point only renames a
                 // handful of the ~26 cars, so it always shares the unchanged names; a foreign
-                // season's file shares none. Only the forward MATCH is filtered — the restore
+                // season's file shares none. Only the forward MATCH is filtered, the restore
                 // recognition below still sees every variant, so a stray foreign file that somehow
                 // went active is still recognized and restored off.
                 var ownedVariants = seasonBaseByModel is not null &&
@@ -328,7 +328,7 @@ public static class VariantOverrideBinder
                         continue; // the round's set is already active
 
                     // First swap for this model? Snapshot the BASE pointer so an earlier-round
-                    // restage can restore it (only when current is not itself a variant — never
+                    // restage can restore it (only when current is not itself a variant, never
                     // snapshot one round's variant as "the base").
                     if (current is not null &&
                         !variants.Any(v => SkinSeasonManager.SameContent(current, File.ReadAllText(v))))
@@ -349,7 +349,7 @@ public static class VariantOverrideBinder
                 // round after racing a later one), restore the base pointer.
                 if (current is null ||
                     !variants.Any(v => SkinSeasonManager.SameContent(current, File.ReadAllText(v))))
-                    continue; // base (or something else) is active — leave it alone
+                    continue; // base (or something else) is active, leave it alone
 
                 string? baseContent = null;
                 if (seasonBaseByModel is not null && seasonBaseByModel.TryGetValue(model, out var lib))

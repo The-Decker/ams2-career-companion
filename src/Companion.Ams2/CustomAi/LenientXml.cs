@@ -8,19 +8,19 @@ namespace Companion.Ams2.CustomAi;
 /// NAMeS files, skin-pack livery overrides). Community files are routinely not well-formed:
 /// header comments contain '--' runs (tables drawn with dashes), attribute values carry raw
 /// ampersands ("Bang &amp; Olufsen" written as "Bang &amp;"), and attribute spacing is
-/// nonstandard (<c>tracks ="..."</c> — which XML itself tolerates). The game reads these
-/// files anyway — so must we: <see cref="Clean"/> repairs what a real XML parse can survive,
+/// nonstandard (<c>tracks ="..."</c>, which XML itself tolerates). The game reads these
+/// files anyway, so must we: <see cref="Clean"/> repairs what a real XML parse can survive,
 /// and <see cref="ExtractAttributeValues"/> is the last-resort scrape for files whose markup
 /// is broken beyond parsing (mismatched tags, multiple roots, misplaced declarations).
 /// </summary>
 public static class LenientXml
 {
-    /// <summary>Comment-strips then ampersand-repairs <paramref name="text"/> — the standard
+    /// <summary>Comment-strips then ampersand-repairs <paramref name="text"/>, the standard
     /// cleaning pass to run before handing community XML to a real parser.</summary>
     public static string Clean(string text) => RepairBareAmpersands(StripComments(text));
 
     /// <summary>Removes every <c>&lt;!-- ... --&gt;</c> block by literal scan. Community
-    /// headers draw tables with '-' runs, which is illegal inside XML comments — the whole
+    /// headers draw tables with '-' runs, which is illegal inside XML comments, the whole
     /// comment goes, so the parser never sees it. An unterminated comment swallows the rest
     /// of the file (matching how browsers treat it).</summary>
     public static string StripComments(string text)
@@ -52,7 +52,7 @@ public static class LenientXml
         BareAmpersand.Replace(text, "&amp;");
 
     /// <summary>The <c>&lt;!-- --&gt;</c> spans in <paramref name="text"/> (start inclusive, end
-    /// exclusive), by the same literal scan as <see cref="StripComments"/> — for callers that must
+    /// exclusive), by the same literal scan as <see cref="StripComments"/>, for callers that must
     /// KEEP the text intact (in-place editors) but still know which regions AMS2 never parses
     /// (e.g. the 1985 pack keeps ~20 alternate LIVERY_OVERRIDE blocks inside one giant comment).
     /// An unterminated comment runs to end-of-text.</summary>
@@ -90,7 +90,7 @@ public static class LenientXml
     /// Last-resort extraction for markup no XML parser survives: scrapes the values of
     /// <paramref name="attributeName"/> from every <paramref name="elementName"/> start tag
     /// by regex, element and attribute names case-insensitive, in document order. Empty
-    /// values are skipped. Returns an empty list when nothing matches — the caller decides
+    /// values are skipped. Returns an empty list when nothing matches, the caller decides
     /// whether that makes the file a warning.
     /// </summary>
     public static IReadOnlyList<string> ExtractAttributeValues(
@@ -112,7 +112,7 @@ public static class LenientXml
     /// of <paramref name="requiredAttribute"/> must be present and non-empty (else the element is
     /// skipped); <paramref name="optionalAttribute"/> is captured when present, else "". Attribute
     /// order within the tag does not matter. In document order. Used to read
-    /// <c>LIVERY_OVERRIDE</c>'s NAME (required) + LIVERY slot (optional — a "##" placeholder or
+    /// <c>LIVERY_OVERRIDE</c>'s NAME (required) + LIVERY slot (optional, a "##" placeholder or
     /// missing slot is not active) together, so a livery's active/inactive state survives even a
     /// broken skin-pack file.
     /// </summary>

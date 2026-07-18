@@ -2,7 +2,7 @@ using System.Text.Json;
 
 namespace Companion.ViewModels.Services;
 
-/// <summary>The real historical results of one F1 season — "what really happened" reference content
+/// <summary>The real historical results of one F1 season, "what really happened" reference content
 /// the History tab shows ALONGSIDE the player's own (diverged) career. f1db-derived (CC BY 4.0), baked
 /// into <c>data/history/&lt;year&gt;.json</c> by <c>scratchpad/derive_history.cs</c>. Read-only: the
 /// sim/fold never scores it, so it can never affect determinism.</summary>
@@ -10,12 +10,12 @@ public sealed record HistoricalSeason
 {
     public required int Year { get; init; }
 
-    /// <summary>Attribution line (CC BY 4.0) — shown in the History panel.</summary>
+    /// <summary>Attribution line (CC BY 4.0), shown in the History panel.</summary>
     public string? Source { get; init; }
 
     public HistoricalChampion? DriversChampion { get; init; }
 
-    /// <summary>The championship runner-up (driver + points; no team) — used to compose the season's
+    /// <summary>The championship runner-up (driver + points; no team), used to compose the season's
     /// title-margin summary. Null when unknown.</summary>
     public HistoricalChampion? RunnerUp { get; init; }
 
@@ -29,7 +29,7 @@ public sealed record HistoricalChampion
 {
     public required string Driver { get; init; }
     public string? Team { get; init; }
-    /// <summary>Championship points as text (e.g. "51", "51.5") — display only.</summary>
+    /// <summary>Championship points as text (e.g. "51", "51.5"), display only.</summary>
     public string? Points { get; init; }
 }
 
@@ -53,7 +53,7 @@ public sealed record HistoricalRound
     /// circuit map + preview detail (name/place/length/turns). Null when unknown.</summary>
     public HistoricalCircuit? Circuit { get; init; }
     /// <summary>The full classified result, in finishing order (retirements last, in their
-    /// retirement order — exactly as f1db lists them).</summary>
+    /// retirement order, exactly as f1db lists them).</summary>
     public IReadOnlyList<HistoricalResult> Results { get; init; } = [];
 }
 
@@ -61,7 +61,7 @@ public sealed record HistoricalRound
 /// map geometry (<c>data/ams2/circuits/&lt;layoutId&gt;.json</c>); the rest is race-preview detail.</summary>
 public sealed record HistoricalCircuit
 {
-    /// <summary>f1db circuit-layout id (e.g. "monaco-5") — the circuit-map asset key.</summary>
+    /// <summary>f1db circuit-layout id (e.g. "monaco-5"), the circuit-map asset key.</summary>
     public string? LayoutId { get; init; }
     /// <summary>Official circuit name ("Enzo e Dino Ferrari").</summary>
     public string? Name { get; init; }
@@ -88,7 +88,7 @@ public sealed record HistoricalCircuit
 /// <summary>One driver's line in a historical race result.</summary>
 public sealed record HistoricalResult
 {
-    /// <summary>Finishing position text — "1".."26", or "DNF"/"NC"/"DSQ"/"DNQ".</summary>
+    /// <summary>Finishing position text, "1".."26", or "DNF"/"NC"/"DSQ"/"DNQ".</summary>
     public required string Pos { get; init; }
     public required string Driver { get; init; }
     public required string Team { get; init; }
@@ -103,7 +103,7 @@ public static class CircuitCaptions
 {
     /// <param name="includeName">When true (default) the caption leads with the circuit name + place
     /// ("Nelson Piquet · Rio de Janeiro · …"). Set false where the name is already the heading (the
-    /// briefing shows the venue above the caption), so the caption leads with the place instead — no
+    /// briefing shows the venue above the caption), so the caption leads with the place instead, no
     /// duplicated name.</param>
     public static string Compose(HistoricalCircuit? circuit, bool includeName = true)
     {
@@ -168,7 +168,7 @@ public interface IHistoricalSeasonStore
 /// <summary>
 /// Reads <c>&lt;historyDirectory&gt;/&lt;year&gt;.json</c> on first request and caches the result
 /// (including a null "not present" so a missing year is probed only once). A missing directory,
-/// missing file, or corrupt JSON resolves to null — the History tab must never crash on reference
+/// missing file, or corrupt JSON resolves to null, the History tab must never crash on reference
 /// data, it simply omits the "what really happened" panel for that year.
 /// </summary>
 public sealed class HistoricalSeasonStore : IHistoricalSeasonStore

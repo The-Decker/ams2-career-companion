@@ -13,7 +13,7 @@ public enum WizardStep
     /// <summary>Create the player's driver before choosing a car.</summary>
     Character = 2,
     SeatPick = 3,
-    /// <summary>Choose the season's field — which seats are on the grid (v0.6.0). Always present;
+    /// <summary>Choose the season's field, which seats are on the grid (v0.6.0). Always present;
     /// defaults to the whole pack, so leaving it untouched is byte-identical to before.</summary>
     Grid = 4,
     Confirm = 5,
@@ -26,7 +26,7 @@ public sealed partial class GridSeatChoice : CommunityToolkit.Mvvm.ComponentMode
     /// <summary>The seat's primary (longest-tenure) livery, shown on the row.</summary>
     public required string LiveryName { get; init; }
 
-    /// <summary>Every livery this seat uses across the season — one per driver when the seat changed
+    /// <summary>Every livery this seat uses across the season, one per driver when the seat changed
     /// hands mid-year (e.g. Williams #5 = Mansell / Brundle / Schlesser). Excluding the seat drops all
     /// of them from the field; the grid selection is built from these, not the single primary livery.</summary>
     public required IReadOnlyList<string> Liveries { get; init; }
@@ -39,20 +39,20 @@ public sealed partial class GridSeatChoice : CommunityToolkit.Mvvm.ComponentMode
     public string DriverNameUpper => DriverName.ToUpperInvariant();
     public string TeamNameUpper => TeamName.ToUpperInvariant();
 
-    /// <summary>The seat's primary driver id — keys the optional drop-in portrait
+    /// <summary>The seat's primary driver id, keys the optional drop-in portrait
     /// (<c>data/ams2/portraits/&lt;driverId&gt;.jpg</c>) on the grid card. Empty (the own-entrant
     /// row) = no portrait slot.</summary>
     public string DriverId { get; init; } = "";
 
-    /// <summary>The seat's team id — keys the per-team PLAYER portrait on the locked "You" card.</summary>
+    /// <summary>The seat's team id, keys the per-team PLAYER portrait on the locked "You" card.</summary>
     public string TeamId { get; init; } = "";
 
-    /// <summary>The player's own seat — always on the grid, its checkbox disabled.</summary>
+    /// <summary>The player's own seat, always on the grid, its checkbox disabled.</summary>
     public bool IsLocked { get; init; }
 
     /// <summary>The portrait key for this card's hero image. The player's own (locked) card shows
-    /// the TEAM's player image — <c>data/ams2/portraits/player.&lt;team&gt;.jpg</c>, the team-coloured
-    /// helmet (Mike: a different player image per team; "player.minarae") — instead of the AI driver's
+    /// the TEAM's player image, <c>data/ams2/portraits/player.&lt;team&gt;.jpg</c>, the team-coloured
+    /// helmet (Mike: a different player image per team; "player.minarae"), instead of the AI driver's
     /// face; every other card shows the seat driver's own portrait. Falls back to a plain "player" key
     /// for the team-less own-entrant row.</summary>
     public string PortraitKey => IsLocked ? PlayerImageKey(TeamId) : DriverId;
@@ -65,7 +65,7 @@ public sealed partial class GridSeatChoice : CommunityToolkit.Mvvm.ComponentMode
         return t.Length > 0 ? "player." + t : "player";
     }
 
-    /// <summary>True when the seat can be toggled (i.e. NOT the locked player seat) — the checkbox's
+    /// <summary>True when the seat can be toggled (i.e. NOT the locked player seat), the checkbox's
     /// enabled state.</summary>
     public bool IsUnlocked => !IsLocked;
 
@@ -75,14 +75,14 @@ public sealed partial class GridSeatChoice : CommunityToolkit.Mvvm.ComponentMode
 
 /// <summary>One line of the verification step: a structural/content/scan finding. Info
 /// items (e.g. the livery-scan summary when every file was readable) are purely
-/// informational — they never trigger the proceed-anyway gate.</summary>
+/// informational, they never trigger the proceed-anyway gate.</summary>
 public sealed record VerificationItem(bool IsError, string Message, bool IsInfo = false)
 {
     public string Severity => IsError ? "Error" : IsInfo ? "Info" : "Warning";
 }
 
 /// <summary>One selectable seat: a pack entry with the ratings and team context that make
-/// the choice informed (the player REPLACES this driver — v1 locked decision).</summary>
+/// the choice informed (the player REPLACES this driver, v1 locked decision).</summary>
 public sealed record SeatOption
 {
     public required string LiveryName { get; init; }
@@ -98,7 +98,7 @@ public sealed record SeatOption
     public required double RaceSkill { get; init; }
     public required double QualifyingSkill { get; init; }
 
-    /// <summary>Team budget tier — the "team tier" shown at seat pick.</summary>
+    /// <summary>Team budget tier, the "team tier" shown at seat pick.</summary>
     public required int TeamTier { get; init; }
 
     public required int Prestige { get; init; }
@@ -106,7 +106,7 @@ public sealed record SeatOption
 }
 
 /// <summary>Composes the confirm step's rules-summary chip strings from the pack's
-/// <see cref="CatalogSeason"/> — points table, best-N drops, shared-drive policy,
+/// <see cref="CatalogSeason"/>, points table, best-N drops, shared-drive policy,
 /// constructors rule, fastest lap.</summary>
 public static class RulesSummaryComposer
 {

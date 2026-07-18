@@ -1,7 +1,7 @@
 namespace Companion.Core.Packs;
 
 /// <summary>
-/// pack.json — identity, version, requirements, licensing/attribution. Packs REFERENCE
+/// pack.json, identity, version, requirements, licensing/attribution. Packs REFERENCE
 /// OverTake skin packs by name/URL; they never ship textures.
 /// </summary>
 public sealed record PackManifest
@@ -36,12 +36,12 @@ public sealed record PackManifest
     /// Two season skin packs for the same car model collide on the model's active override XML
     /// (1983↔1985, 1990↔SMGP, 1996↔1997…); when set, career load/staging asks the Skin Season
     /// Manager to make this season's pointers active (backup-first). Null = no managed season
-    /// (the pack's skins own their models outright). Staging-side only — the sim never reads it.</summary>
+    /// (the pack's skins own their models outright). Staging-side only, the sim never reads it.</summary>
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public string? SkinSeason { get; init; }
 
     /// <summary>Career style (v1.3, optional, additive): a replica-mode key gating special career
-    /// mechanics — <c>"smgp"</c> = the Super Monaco GP mode (rival battles, two-wins seat swaps,
+    /// mechanics, <c>"smgp"</c> = the Super Monaco GP mode (rival battles, two-wins seat swaps,
     /// the Ceara title defense). Null/unknown = a normal historical season; a pack with a style
     /// the app does not implement still plays as a normal season (the mode machinery is additive
     /// and determinism-gated per career).</summary>
@@ -49,7 +49,7 @@ public sealed record PackManifest
     public string? CareerStyle { get; init; }
 
     /// <summary>OPT-IN modded field (v1.4, optional, additive): extra grid entries a COMMUNITY CAR
-    /// MOD adds to round the season out — the SMGP pack's two McLaren MP4/5B teams (Iris, Azalea)
+    /// MOD adds to round the season out, the SMGP pack's two McLaren MP4/5B teams (Iris, Azalea)
     /// by Kobra Fleetworks. Gated exactly like <c>track.alternate</c>: the entries + a per-round
     /// grid-size bump apply at CAREER CREATION only when the player ticks it on AND the required
     /// vehicle mod is installed; off/absent = the base field only (no mod dependency). Null = a
@@ -64,7 +64,7 @@ public sealed record PackManifest
 /// transform appends the entries and bumps each round's grid size when the mod is present.</summary>
 public sealed record PackModdedField
 {
-    /// <summary>The AMS2 vehicle id the mod adds (e.g. <c>mclaren_mp45b</c>) — the install check
+    /// <summary>The AMS2 vehicle id the mod adds (e.g. <c>mclaren_mp45b</c>), the install check
     /// verifies it is present in the extracted content library.</summary>
     public required string VehicleId { get; init; }
 
@@ -78,7 +78,7 @@ public sealed record PackModdedField
     public required IReadOnlyList<PackModdedEntry> Entries { get; init; }
 }
 
-/// <summary>One modded grid entry (<see cref="PackModdedField.Entries"/>) — the same shape as a
+/// <summary>One modded grid entry (<see cref="PackModdedField.Entries"/>), the same shape as a
 /// normal <c>entries.json</c> row; the transform appends it verbatim when the mod applies.</summary>
 public sealed record PackModdedEntry
 {

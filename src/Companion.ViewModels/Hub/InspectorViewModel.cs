@@ -6,11 +6,11 @@ namespace Companion.ViewModels.Hub;
 
 /// <summary>
 /// The reusable "Why?" inspector panel (career-hub-design.md §5, decisions 4 + 5): renders a
-/// <see cref="JournalChain"/> — a title, an ordered list of labelled contribution rows, and a
-/// plain-language summary sentence — for binding. Pure, WPF-free, unit-testable: it holds no
+/// <see cref="JournalChain"/>, a title, an ordered list of labelled contribution rows, and a
+/// plain-language summary sentence, for binding. Pure, WPF-free, unit-testable: it holds no
 /// session and does no I/O, it only shapes a value the seam's <see cref="ICareerSession.JournalFor"/>
 /// already produced. The ordered <see cref="Rows"/> are the contribution-breakdown format designed
-/// now to accept perk/stat rows later (decision 5) with no view-model change — a perk row is just
+/// now to accept perk/stat rows later (decision 5) with no view-model change, a perk row is just
 /// another <see cref="InspectorRowViewModel"/>.
 /// </summary>
 public sealed partial class InspectorViewModel : ObservableObject
@@ -27,10 +27,10 @@ public sealed partial class InspectorViewModel : ObservableObject
     /// <summary>The chain this inspector renders (kept for provenance / re-projection).</summary>
     public JournalChain Chain { get; }
 
-    /// <summary>The panel header (e.g. "Why P2 — You, Round 3").</summary>
+    /// <summary>The panel header (e.g. "Why P2, You, Round 3").</summary>
     public string Title { get; }
 
-    /// <summary>The ordered contribution rows, oldest journal row first — the walk-back top to
+    /// <summary>The ordered contribution rows, oldest journal row first, the walk-back top to
     /// bottom. Empty when the chain explained nothing.</summary>
     public IReadOnlyList<InspectorRowViewModel> Rows { get; }
 
@@ -38,7 +38,7 @@ public sealed partial class InspectorViewModel : ObservableObject
     /// the chain has no summary.</summary>
     public string Summary { get; }
 
-    /// <summary>True when there is at least one contribution row to show — the panel binds its
+    /// <summary>True when there is at least one contribution row to show, the panel binds its
     /// content visibility to this and shows a friendly empty note otherwise.</summary>
     public bool HasRows => Rows.Count > 0;
 
@@ -73,7 +73,7 @@ public sealed class InspectorRowViewModel
     /// <summary>True when this row carries a number (drives the value column's visibility).</summary>
     public bool HasValue => _contribution.Value is { Length: > 0 };
 
-    /// <summary>The source journal <c>seq</c> — the provenance anchor behind the row.</summary>
+    /// <summary>The source journal <c>seq</c>, the provenance anchor behind the row.</summary>
     public long SourceSeq => _contribution.SourceSeq;
 }
 
@@ -81,7 +81,7 @@ public sealed class InspectorRowViewModel
 /// A tiny host mixin for a surface that opens the shared inspector (Standings, History): it holds
 /// the currently open <see cref="InspectorViewModel"/> and a close command, so a view binds one
 /// panel and one dismiss target regardless of which number was clicked. Both mouse (click a number)
-/// and keyboard (Esc / a bound key) drive it — locked decision 8's mouse+keyboard parity — because
+/// and keyboard (Esc / a bound key) drive it, locked decision 8's mouse+keyboard parity, because
 /// <see cref="CloseInspectorCommand"/> is a plain command any input can invoke.
 /// </summary>
 public abstract partial class InspectorHostViewModel : ObservableObject

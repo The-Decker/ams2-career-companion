@@ -112,7 +112,7 @@ public sealed class JournalForTests : IDisposable
 
         var chain = session.JournalFor("player", 1);
         var result = chain.Contributions.First(c => c.Label == "Expected finish");
-        // The DNF cause serialises as an enum string, not boolean true — the inspector still
+        // The DNF cause serialises as an enum string, not boolean true, the inspector still
         // reads it as a retirement.
         Assert.Equal("DNF", result.Value);
         Assert.Contains("Retired", result.Detail);
@@ -128,7 +128,7 @@ public sealed class JournalForTests : IDisposable
         ApplyOneRound(session);
 
         // Apply writes a "result" provenance row on the "round" entity (bookkeeping about the
-        // entry event) — the inspector walks derived sim state only, never provenance.
+        // entry event), the inspector walks derived sim state only, never provenance.
         Assert.True(session.JournalFor("round").IsEmpty);
     }
 

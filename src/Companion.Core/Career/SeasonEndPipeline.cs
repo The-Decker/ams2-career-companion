@@ -100,7 +100,7 @@ public sealed record SeasonEndResult
 /// per entity) with seeded foreshadowing for next season,
 /// (5) AI seat market (stream `offers`, keyed per team),
 /// (6) player offer letters (archetype-weighted contract formula, tier-gated, top N),
-/// (7) tier drift ±1 (stream `tier-drift`, keyed per team) — then the season digest headline.
+/// (7) tier drift ±1 (stream `tier-drift`, keyed per team), then the season digest headline.
 /// Pure function: no I/O, no clocks, no ambient randomness; every stream is named and keyed,
 /// so consuming numbers for one entity never shifts another entity's rolls.
 /// </summary>
@@ -109,7 +109,7 @@ public static class SeasonEndPipeline
     /// <summary>The player's age-risk term for offer scoring: years past their (perk-shifted) peak,
     /// scaled by the aging-decline multiplier. Identity/null mods reproduce the exact shipped value
     /// (Math.Max(0, age+1−peakEnd)); a veteran-aging perk (agingCurve peakShift / declineAccelMult)
-    /// starts the age penalty LATER and grows it more gently — the real, felt cost of age lives here in
+    /// starts the age penalty LATER and grows it more gently, the real, felt cost of age lives here in
     /// the offer market, NOT in on-track ratings (the sim's self-balancer makes lower talent an easier
     /// rep bar, so a rating decline would not penalize the player).</summary>
     public static double PlayerAgeRisk(int playerAge, int peakAgeEnd, PlayerPerkModifiers? mods)
@@ -119,7 +119,7 @@ public static class SeasonEndPipeline
     }
 
     /// <summary>How many years the Durability meta-stat shifts the driver's EFFECTIVE age in the offer
-    /// market (§2.2): <c>round(6·(durability−0.5))</c> — a tough 1.0 driver is courted as if 3 years
+    /// market (§2.2): <c>round(6·(durability−0.5))</c>, a tough 1.0 driver is courted as if 3 years
     /// younger, a fragile 0.0 as if 3 older; a neutral 0.5 shifts nothing. Subtracted from the age fed
     /// to <see cref="PlayerAgeRisk"/>.</summary>
     public static int DurabilityAgeShift(double durabilityStat) =>
@@ -135,7 +135,7 @@ public static class SeasonEndPipeline
         var curve = context.AgingCurves.ForYear(year);
 
         // ---- step 1: final standings -------------------------------------------------
-        // Scoring resolves over CHAMPIONSHIP rounds only — context.Rounds already carries
+        // Scoring resolves over CHAMPIONSHIP rounds only, context.Rounds already carries
         // championship ordinals (Data's ChampionshipCalendar rule), so best-N segments must
         // span the same domain. Resolving over the full calendar would corrupt best-N on
         // mixed calendars (a non-championship event between rounds). Identical for
@@ -236,7 +236,7 @@ public static class SeasonEndPipeline
 
         // ---- character season XP (progression you feel): the big end-of-season reward ---------
         // A character career banks the best championship-placement bonus plus the season-completed
-        // grant (pure XpMath.PerSeason — no stream). A pre-character career (or one without rules)
+        // grant (pure XpMath.PerSeason, no stream). A pre-character career (or one without rules)
         // emits no row and leaves Xp/Level at their defaults, so its journal + player-state blob are
         // byte-identical and the f1db oracle is untouched.
         long seasonEndXp = player.Xp;
@@ -353,7 +353,7 @@ public static class SeasonEndPipeline
                     Entity = "player",
                     DeltaJson = CareerJson.Serialize(new
                     {
-                        text = $"{who} sidelined by an off-season injury — reputation takes a knock",
+                        text = $"{who} sidelined by an off-season injury, reputation takes a knock",
                     }),
                     Cause = "injury",
                 });
@@ -371,18 +371,18 @@ public static class SeasonEndPipeline
             // The per-error injury load is a WITHIN-season tally: consumed by the roll above, it resets
             // so it never carries into next season's start state (SeasonRollover copies the end state).
             SeasonInjuryLoad = 0.0,
-            // A season-ending injury / minor suspension heals over the break — the driver returns next
+            // A season-ending injury / minor suspension heals over the break, the driver returns next
             // season. Deceased is TERMINAL, so it is deliberately NOT reset here (it carries verbatim,
             // exactly as the SMGP CareerOver floor does). (Character death & injury §3.3.)
             SeasonEndingInjury = false,
             RaceSuspensionRemaining = 0,
         };
 
-        // ---- SMGP season fold (M3 slice 4) — only for a career carrying the mode's state ----
+        // ---- SMGP season fold (M3 slice 4), only for a career carrying the mode's state ----
         // Streaks and the defense scratchpad reset between seasons; a CHAMPIONSHIP win banks a
         // title, arms the Madonna title defense and moves the champion into Madonna (the reserved
         // challenger is introduced into his home car). SeasonRollover copies the end state, so
-        // this IS the next season's seating — re-derived identically on replay. Null state (every
+        // this IS the next season's seating, re-derived identically on replay. Null state (every
         // other career) folds exactly as before.
         if (player.Smgp is { CareerOver: false } smgpEnd)
         {
@@ -426,10 +426,10 @@ public static class SeasonEndPipeline
         }
 
         // ---- Dynasty owner economy: the season settlement (docs/dev/dynasty-tycoon-economy.md §3)
-        // — constructors' prize + sponsor season/title money, then contract run-down and the
+        //, constructors' prize + sponsor season/title money, then contract run-down and the
         // development carryover. Gated on the carried economy state (+ rules present), so every
         // other career emits no row and folds byte-identically. SeasonRollover copies the end
-        // state, so the carried-over ledger IS next season's opening position — re-derived
+        // state, so the carried-over ledger IS next season's opening position, re-derived
         // identically on replay, exactly like the SMGP season fold above.
         if (player.Economy is { Bankrupt: false } economyState && context.EconomyRules is { } economyRules)
         {
@@ -617,7 +617,7 @@ public static class SeasonEndPipeline
 
             // Journal/state parity: the hire is a state change, so the hired driver enters
             // the returned driver states (age as-is; deltas anchor their skills against the
-            // pack baseline — 0.5 for pool outsiders, matching AgeOneSeason's default).
+            // pack baseline, 0.5 for pool outsiders, matching AgeOneSeason's default).
             if (!finalDrivers.Any(d => string.Equals(d.DriverId, best.DriverId, StringComparison.Ordinal)))
             {
                 packDriversById.TryGetValue(best.DriverId, out var hiredPackDriver);
@@ -637,7 +637,7 @@ public static class SeasonEndPipeline
         double salaryAsk = context.PlayerSalaryAskBu ?? Math.Max(1.0, finalRep / 10.0);
         // Durability (a meta-stat) shifts the driver's EFFECTIVE age in the offer market: a tough
         // driver is courted as if a few years younger (races ~3 yrs longer at 1.0), a fragile one as
-        // if older (§2.2). Deterministic — the stat is folded start-state, so live and replay compute
+        // if older (§2.2). Deterministic, the stat is folded start-state, so live and replay compute
         // the same shift; a neutral 0.5 (and every character-free career) shifts nothing.
         int durabilityAgeShift = player.Character is { } durabilityChr
             ? DurabilityAgeShift(durabilityChr.Stat("durability"))
@@ -700,7 +700,7 @@ public static class SeasonEndPipeline
                 .ToDictionary(x => x.TeamId, x => x.Rank, StringComparer.Ordinal);
 
             // Journal in teamId order (stable regardless of caller list order); the drift is
-            // ±1 at most and never stacks — a bounded, tested invariant.
+            // ±1 at most and never stacks, a bounded, tested invariant.
             foreach (var team in teams.OrderBy(t => t.TeamId, StringComparer.Ordinal))
             {
                 int? actual = table

@@ -129,7 +129,7 @@ public partial class NewsView : UserControl
                 UpdateActionSuppression();
                 return;
             }
-            existing.Close(); // a stale window from a previous career — replace it
+            existing.Close(); // a stale window from a previous career, replace it
         }
 
         var owner = Window.GetWindow(this);

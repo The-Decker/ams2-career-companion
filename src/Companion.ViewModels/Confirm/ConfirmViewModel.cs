@@ -67,7 +67,7 @@ public sealed partial class ConfirmViewModel : ObservableObject
     public string Headline { get; }
 
     /// <summary>False only in minimal-narrative mode for a non-championship-critical
-    /// headline — the view shows the plain review line instead.</summary>
+    /// headline, the view shows the plain review line instead.</summary>
     public bool ShowHeadline { get; }
 
     /// <summary>Minimal narrative keeps championship-critical headlines: the authored
@@ -86,15 +86,15 @@ public sealed partial class ConfirmViewModel : ObservableObject
         _ => "–",
     };
 
-    /// <summary>The movement row's hover text, e.g. "Jim Clark — P5 → P2: gained 3 places".</summary>
+    /// <summary>The movement row's hover text, e.g. "Jim Clark, P5 → P2: gained 3 places".</summary>
     public static string MovementTooltip(string displayName, int? from, int? to) => (from, to) switch
     {
-        (null, { } t) => $"{displayName} — first classification: P{t}",
-        ({ } f, null) => $"{displayName} — no longer classified (was P{f})",
-        (null, null) => $"{displayName} — not classified",
-        ({ } f, { } t) when t < f => $"{displayName} — P{f} → P{t}: gained {f - t} " + Places(f - t),
-        ({ } f, { } t) when t > f => $"{displayName} — P{f} → P{t}: lost {t - f} " + Places(t - f),
-        ({ } f, _) => $"{displayName} — holds P{f}",
+        (null, { } t) => $"{displayName}, first classification: P{t}",
+        ({ } f, null) => $"{displayName}, no longer classified (was P{f})",
+        (null, null) => $"{displayName}, not classified",
+        ({ } f, { } t) when t < f => $"{displayName}, P{f} → P{t}: gained {f - t} " + Places(f - t),
+        ({ } f, { } t) when t > f => $"{displayName}, P{f} → P{t}: lost {t - f} " + Places(t - f),
+        ({ } f, _) => $"{displayName}, holds P{f}",
     };
 
     private static string Places(int count) => count == 1 ? "place" : "places";

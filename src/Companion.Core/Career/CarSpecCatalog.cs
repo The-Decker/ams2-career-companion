@@ -3,7 +3,7 @@ using Companion.Core.Json;
 
 namespace Companion.Core.Career;
 
-/// <summary>The five arcade car-spec bars (each 0..<c>CarSpecCatalog.BarMax</c>) — the classic Super
+/// <summary>The five arcade car-spec bars (each 0..<c>CarSpecCatalog.BarMax</c>), the classic Super
 /// Monaco GP car-select readout: ENGine, Transmission, SUSpension, TIRE, BRAke.</summary>
 public sealed record CarSpecBars
 {
@@ -14,7 +14,7 @@ public sealed record CarSpecBars
     public int Brake { get; init; }
 }
 
-/// <summary>One car's spec card: the machine name, engine, peak power, and the five bars — the
+/// <summary>One car's spec card: the machine name, engine, peak power, and the five bars, the
 /// arcade car-select panel Mike wants on the character and rival screens. DISPLAY-ONLY (never a fold
 /// input, like the news/quote corpora).</summary>
 public sealed record CarSpec
@@ -29,7 +29,7 @@ public sealed record CarSpec
 /// Per-car spec cards, keyed by TEAM id or VEHICLE id, loaded from <c>data/rules/car-specs.json</c>.
 /// A team-id key wins over its car's vehicle-id key, so a pack can give every team its own machine
 /// name/bars OR let all teams on a shared car model fall back to that model's row. Absent-tolerant:
-/// a missing file, or a car with no entry, returns null so the card simply collapses — which is why
+/// a missing file, or a car with no entry, returns null so the card simply collapses, which is why
 /// the whole pipeline ships now and Mike's real numbers are the only later edit (zero code change).
 /// DISPLAY-ONLY; never folded.
 /// </summary>
@@ -50,7 +50,7 @@ public sealed class CarSpecCatalog
     public static CarSpecCatalog Empty { get; } =
         new(new Dictionary<string, CarSpec>(StringComparer.Ordinal), 8);
 
-    /// <summary>The spec for a team or its car — team id first (a per-team override), then the vehicle
+    /// <summary>The spec for a team or its car, team id first (a per-team override), then the vehicle
     /// id (the shared-model default); null when neither is authored, so the card collapses.</summary>
     public CarSpec? For(string? teamId, string? vehicleId)
     {

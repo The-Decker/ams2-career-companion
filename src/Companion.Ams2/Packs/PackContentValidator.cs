@@ -9,7 +9,7 @@ namespace Companion.Ams2.Packs;
 /// items 2-4 and 6's content half): the checks that need the extracted AMS2 content library
 /// and an installed-skin scan, which Core must never see. Structural checks (id integrity,
 /// calendar, points system, coverage, double-binding) live in
-/// <c>Companion.Core.Packs.PackStructuralValidator</c> — run both on import.
+/// <c>Companion.Core.Packs.PackStructuralValidator</c>, run both on import.
 /// </summary>
 public static class PackContentValidator
 {
@@ -40,7 +40,7 @@ public static class PackContentValidator
             string.Equals(k, season.Ams2Class, StringComparison.OrdinalIgnoreCase));
 
         issues.Add(Error(caseInsensitive is not null
-            ? $"ams2Class '{season.Ams2Class}' does not match the game's casing '{caseInsensitive}' — " +
+            ? $"ams2Class '{season.Ams2Class}' does not match the game's casing '{caseInsensitive}', " +
               "class names are case-sensitive (the CustomAIDrivers filename IS the binding)."
             : $"ams2Class '{season.Ams2Class}' is not in the content library " +
               $"(extracted from {library.ExtractedFrom})."));
@@ -73,7 +73,7 @@ public static class PackContentValidator
                 {
                     issues.Add(Error(
                         $"{where}: setupGuide grid of {grid} (opponents + player) exceeds " +
-                        $"{track.TrackName ?? track.Id}'s AI cap of {track.MaxAiParticipants} — " +
+                        $"{track.TrackName ?? track.Id}'s AI cap of {track.MaxAiParticipants}, " +
                         "the game will fill fewer cars than the entry list."));
                 }
 
@@ -81,12 +81,12 @@ public static class PackContentValidator
                 {
                     issues.Add(Error(
                         $"{where}: grid.size {gridSize} exceeds {track.TrackName ?? track.Id}'s AI cap of " +
-                        $"{track.MaxAiParticipants} — size must be min(historical starters, the venue's Max AI)."));
+                        $"{track.MaxAiParticipants}, size must be min(historical starters, the venue's Max AI)."));
                 }
             }
 
             // Fallback venues: existence is still an error (a dangling fallback id is an
-            // authoring bug); a cap violation is only a warning — the fallback is only
+            // authoring bug); a cap violation is only a warning, the fallback is only
             // driven when the primary layout is missing locally.
             foreach (var fallbackId in round.Track.Fallbacks)
             {
@@ -99,7 +99,7 @@ public static class PackContentValidator
                     issues.Add(Warning(
                         $"{where}: fallback {fallback.TrackName ?? fallback.Id} caps AI at " +
                         $"{fallback.MaxAiParticipants}, below the setupGuide grid of {grid} " +
-                        "(opponents + player) — the grid will be short if this fallback is used."));
+                        "(opponents + player), the grid will be short if this fallback is used."));
                 }
             }
         }
@@ -110,7 +110,7 @@ public static class PackContentValidator
         var caseInsensitive = library.Tracks.Keys.FirstOrDefault(k =>
             string.Equals(k, trackId, StringComparison.OrdinalIgnoreCase));
         return caseInsensitive is not null
-            ? $"{what} '{trackId}' differs from library id '{caseInsensitive}' in case — track ids are case-sensitive."
+            ? $"{what} '{trackId}' differs from library id '{caseInsensitive}' in case, track ids are case-sensitive."
             : $"{what} '{trackId}' is not in the track library.";
     }
 
@@ -126,7 +126,7 @@ public static class PackContentValidator
         string ams2Class = pack.Season.Ams2Class;
 
         // PRIMARY: names the installed NAMeS/AI file for this class defines ("found before
-        // overwritten"). A name it declares binds in-game whatever the skin state — never warn.
+        // overwritten"). A name it declares binds in-game whatever the skin state, never warn.
         var aiNames = installedAiNames is { LiveryNames.Count: > 0 }
             ? installedAiNames.LiveryNames.ToHashSet(StringComparer.Ordinal)
             : [];
@@ -148,18 +148,18 @@ public static class PackContentValidator
         {
             issues.Add(Warning(
                 $"No livery reference data for class {ams2Class} (no installed AI file, no installed " +
-                $"overrides scanned, no stock library entry) — livery bindings cannot be verified. {RequiredSkinPacks(pack.Manifest)}"));
+                $"overrides scanned, no stock library entry), livery bindings cannot be verified. {RequiredSkinPacks(pack.Manifest)}"));
             return;
         }
 
         // Liveries the installed AI file defines but has no scanned skin for are NOT a per-car
-        // problem — the driver name binds, the car just uses the default skin until you add the
+        // problem, the driver name binds, the car just uses the default skin until you add the
         // pack's skins. Reporting one line per car buried the real warnings under a wall of text, so
         // they are counted and summarised in ONE info line.
         int aiDefinedNoSkin = 0;
         foreach (var livery in bound)
         {
-            // (1) The installed AI file defines this name — it binds. The skin may fall back to
+            // (1) The installed AI file defines this name, it binds. The skin may fall back to
             // default; that is at most an INFO note, never a warning (user manages skins).
             if (aiNames.Contains(livery))
             {
@@ -178,15 +178,15 @@ public static class PackContentValidator
 
             issues.Add(Warning(nearMiss is not null
                 ? $"Livery '{livery}' does not exactly match installed/known livery '{nearMiss}' " +
-                  "(case or whitespace differs — the binding is exact-match)."
+                  "(case or whitespace differs, the binding is exact-match)."
                 : $"Livery '{livery}' was not found in your installed {ams2Class} AI file, installed skin " +
-                  $"overrides, or known stock names — the entry will not bind. {RequiredSkinPacks(pack.Manifest)}"));
+                  $"overrides, or known stock names, the entry will not bind. {RequiredSkinPacks(pack.Manifest)}"));
         }
 
         if (aiDefinedNoSkin > 0)
             issues.Add(Info(
                 $"{aiDefinedNoSkin} of this grid's cars use names from your installed {ams2Class} AI file " +
-                "(the driver names bind in-game), but no matching skins were scanned — those cars may show " +
+                "(the driver names bind in-game), but no matching skins were scanned, those cars may show " +
                 "the default skin until you install the pack's skins. This is normal and does not block staging."));
     }
 
@@ -215,12 +215,12 @@ public static class PackContentValidator
                         string.Equals(k, vehicleId, StringComparison.OrdinalIgnoreCase));
                     issues.Add(Error(caseInsensitive is not null
                         ? $"Team '{team.Id}' car '{vehicleId}' differs from library vehicle id " +
-                          $"'{caseInsensitive}' in case — vehicle ids are case-sensitive."
+                          $"'{caseInsensitive}' in case, vehicle ids are case-sensitive."
                         : $"Team '{team.Id}' car '{vehicleId}' is not in the vehicle library."));
                     continue;
                 }
 
-                // Only meaningful when ams2Class itself resolved — otherwise every car would
+                // Only meaningful when ams2Class itself resolved, otherwise every car would
                 // repeat the already-reported class error.
                 if (classExists &&
                     !string.Equals(vehicle.VehicleClass, pack.Season.Ams2Class, StringComparison.Ordinal))

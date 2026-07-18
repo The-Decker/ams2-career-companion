@@ -4,7 +4,7 @@ using Companion.Core.Packs;
 namespace Companion.Ams2.Preflight;
 
 /// <summary>One mod track a pack's alternates require, and whether it is installed (its loose folder
-/// <c>&lt;install&gt;\Tracks\&lt;tag&gt;\</c> exists — base/DLC tracks are packed, mods are loose).</summary>
+/// <c>&lt;install&gt;\Tracks\&lt;tag&gt;\</c> exists, base/DLC tracks are packed, mods are loose).</summary>
 public sealed record RequiredModTrack(string Tag, string DisplayName, bool Installed);
 
 /// <summary>

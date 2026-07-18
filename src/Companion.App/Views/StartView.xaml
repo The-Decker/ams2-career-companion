@@ -434,7 +434,7 @@
                             <TextBlock Text="CAREER GARAGE" FontFamily="{StaticResource DisplayFont}"
                                        FontSize="22" FontWeight="Bold"
                                        Foreground="{DynamicResource OnMediaBrush}" />
-                            <TextBlock Text="Select a career, then continue—or right-click a card for file operations."
+                            <TextBlock Text="Select a career, then continue, or right-click a card for file operations."
                                        Foreground="{DynamicResource OnMediaMutedBrush}" FontSize="11"
                                        TextWrapping="Wrap" Margin="0,3,0,0" />
                         </StackPanel>

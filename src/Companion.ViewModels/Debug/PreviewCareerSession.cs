@@ -12,13 +12,13 @@ namespace Companion.ViewModels.Debug;
 /// DEV-ONLY <see cref="ICareerSession"/> that returns CANNED display projections and is
 /// <b>never resimulated, never serialized to a <c>.ams2career</c>, and never touches a database</b>.
 /// It is the render-harness stand-in pattern promoted out of the test suite so the app can preview
-/// states that cannot be reached through the real fold — Racing Passport (unbuildable), an arbitrary
+/// states that cannot be reached through the real fold, Racing Passport (unbuildable), an arbitrary
 /// level, or a death/career-over/sit-out screen without a fatal round.
 ///
 /// FOLD SAFETY: this class holds no journal, no seed, and no DB. <see cref="Apply"/> and
 /// <see cref="Preview"/> do NOT fold anything and write nothing; every read returns a value handed to
 /// it at construction. It exists solely to drive Views. Because it can never produce a persisted
-/// career, it can never diverge on replay — there is nothing to replay.
+/// career, it can never diverge on replay, there is nothing to replay.
 ///
 /// The default interface methods on <see cref="ICareerSession"/> cover every projection this host
 /// does not override; the overrides below are the ones a preview deliberately seeds.
@@ -56,7 +56,7 @@ public sealed class PreviewCareerSession : ICareerSession, IDisposable
     public StageOutcome StageCurrentGrid() => new()
     {
         Success = false,
-        Messages = ["Preview session — staging is disabled (nothing is written to the game or disk)."],
+        Messages = ["Preview session, staging is disabled (nothing is written to the game or disk)."],
     };
 
     /// <summary>The grid returned to result-entry (built from the preview pack). A preview never
@@ -70,14 +70,14 @@ public sealed class PreviewCareerSession : ICareerSession, IDisposable
     {
         RoundPoints = Array.Empty<(string, Rational)>(),
         Movements = Array.Empty<(string, int?, int?)>(),
-        Headline = "Preview — results are not scored.",
+        Headline = "Preview, results are not scored.",
     };
 
     /// <summary>NO-OP by contract: a preview session must never fold or persist a round. Advancing
     /// the round here would imply a fold; instead the preview stays exactly where it was seeded.</summary>
     public void Apply(ResultDraft draft)
     {
-        // Intentionally empty — a Tier-2 preview is display-only and never mutates career state.
+        // Intentionally empty, a Tier-2 preview is display-only and never mutates career state.
     }
 
     public StandingsSnapshot? Standings { get; set; }
@@ -98,7 +98,7 @@ public sealed class PreviewCareerSession : ICareerSession, IDisposable
 
     public void AcceptOffer(string teamId)
     {
-        // Preview — offer acceptance is not persisted.
+        // Preview, offer acceptance is not persisted.
     }
 
     // ---- seeded projections (each overrides an ICareerSession default) ----
@@ -181,8 +181,8 @@ public sealed class PreviewCareerSession : ICareerSession, IDisposable
     // ---- display-only mutators: safe no-ops so no preview button can throw ----
     // A Tier-2 preview is never resimulated and never persisted, so the INPUT mutators (which the
     // real session throws or folds on) are inert here. Overriding the throwing interface defaults
-    // means a View hosted over a preview — e.g. the sit-out screen's Continue, the Driver tab's
-    // skill-tree commands — advances harmlessly instead of raising an unhandled exception.
+    // means a View hosted over a preview, e.g. the sit-out screen's Continue, the Driver tab's
+    // skill-tree commands, advances harmlessly instead of raising an unhandled exception.
 
     /// <summary>Advances the injured sit-out screen: clears the seeded sit-out (no fold happens) so
     /// the shell moves on to the briefing instead of hitting the throwing interface default.</summary>
@@ -236,6 +236,6 @@ public sealed class PreviewCareerSession : ICareerSession, IDisposable
 
     public void Dispose()
     {
-        // No DB, no watcher, no unmanaged handle — a preview owns nothing to release.
+        // No DB, no watcher, no unmanaged handle, a preview owns nothing to release.
     }
 }

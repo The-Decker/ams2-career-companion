@@ -13,7 +13,7 @@ public sealed record NewsReadingState
 
 /// <summary>
 /// The news_reading_state table (schema v6): USER PREFERENCE persistence in the
-/// staging_override category — never journaled, never a fold input, never wiped by
+/// staging_override category, never journaled, never a fold input, never wiped by
 /// <see cref="StateStore.WipeDerived"/>. Keys are the stories' stable dedupe keys; articles
 /// themselves are never stored. Utc strings are caller-supplied (the Data layer never reads
 /// the machine clock).
@@ -39,7 +39,7 @@ public static class NewsReadingStateStore
         return states;
     }
 
-    /// <summary>Marks a story read (idempotent — the FIRST read timestamp is kept).</summary>
+    /// <summary>Marks a story read (idempotent, the FIRST read timestamp is kept).</summary>
     public static void MarkRead(CareerDatabase db, string storyKey, string utc, SqliteTransaction? tx = null)
     {
         using var scope = TransactionScope.Enter(db, tx);

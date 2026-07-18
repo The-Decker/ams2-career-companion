@@ -22,7 +22,7 @@ public sealed record DiscoveredPack
         ? System.IO.Path.GetFileName(System.IO.Path.TrimEndingDirectorySeparator(Directory))
         : $"{Manifest.Name} ({Manifest.Version})";
 
-    /// <summary>The season name WITHOUT the pack version ("Formula One 1988") — for the season-pick
+    /// <summary>The season name WITHOUT the pack version ("Formula One 1988"), for the season-pick
     /// cards. Falls back to the folder name when the manifest is unreadable.</summary>
     public string Title => Manifest?.Name is { Length: > 0 } name
         ? name
@@ -160,7 +160,7 @@ public static class PackDiscovery
         }
     }
 
-    /// <summary>Reads just the "year" property out of the pack's season.json — discovery must
+    /// <summary>Reads just the "year" property out of the pack's season.json, discovery must
     /// stay cheap (the wizard and the season review both scan whole folders), so no full
     /// five-file parse happens here. Null on any problem; a broken season.json only surfaces
     /// when the pack is actually selected.</summary>

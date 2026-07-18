@@ -82,7 +82,7 @@ public class SeasonReviewViewModelTests
 
         Assert.True(vm.HasNextSeason);
         Assert.Equal("Sign & start 1969", vm.SignButtonText);
-        Assert.Equal("1968 has no pack — your career bridges through it.", vm.BridgeNote);
+        Assert.Equal("1968 has no pack, your career bridges through it.", vm.BridgeNote);
         Assert.True(vm.HasBridgeNote);
         Assert.Contains("1969", vm.EraTransitionText);
 
@@ -129,7 +129,7 @@ public class SeasonReviewViewModelTests
         } };
         var vm = new SeasonReviewViewModel(session);
 
-        Assert.Equal("1968–1973 have no packs — your career bridges through them.", vm.BridgeNote);
+        Assert.Equal("1968–1973 have no packs, your career bridges through them.", vm.BridgeNote);
     }
 
     [Fact]
@@ -301,7 +301,7 @@ public class SeasonReviewViewModelTests
         Assert.True(vm.DevelopmentPerks[1].HasDrawback);
 
         // Buy Rain Man: the spend goes through the seam and the pool drops to 1, which no longer
-        // affords the 2-point perk — so the offer list empties.
+        // affords the 2-point perk, so the offer list empties.
         vm.BuyPerkCommand.Execute("rain_man");
         Assert.Contains(session.Spends, s => s.Kind == "perk" && s.Target == "rain_man");
         Assert.Equal(1, vm.AvailableCp);

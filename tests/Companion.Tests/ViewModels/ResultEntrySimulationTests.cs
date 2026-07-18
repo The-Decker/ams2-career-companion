@@ -4,8 +4,8 @@ using Companion.ViewModels.ResultEntry;
 namespace Companion.Tests.ViewModels;
 
 /// <summary>
-/// The product target behind the grammar: a full 26-car race result — classifications,
-/// a penalty re-position, a DSQ, reasoned and bulk DNFs — entered end-to-end through the
+/// The product target behind the grammar: a full 26-car race result, classifications,
+/// a penalty re-position, a DSQ, reasoned and bulk DNFs, entered end-to-end through the
 /// keyboard grammar in well under 120 keystrokes (the proxy for the &lt;90-second budget:
 /// the research digest clocks the grammar at ~80s for 26 cars).
 /// </summary>

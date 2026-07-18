@@ -8,7 +8,7 @@ namespace Companion.Ams2.Preflight;
 /// <summary>A livery display name declared by an installed skin-pack override XML.</summary>
 public sealed record InstalledLivery
 {
-    /// <summary>The LIVERY_OVERRIDE NAME attribute — the display name a custom-AI
+    /// <summary>The LIVERY_OVERRIDE NAME attribute, the display name a custom-AI
     /// livery_name must match exactly (case- and whitespace-sensitive).</summary>
     public required string Name { get; init; }
 
@@ -18,7 +18,7 @@ public sealed record InstalledLivery
     public required string SourceFile { get; init; }
 
     /// <summary>The raw LIVERY slot attribute (e.g. "53", or "##"/"" for a placeholder). AMS2 only
-    /// loads a livery whose slot is a real number — a "##" placeholder is shipped on disk but NOT
+    /// loads a livery whose slot is a real number, a "##" placeholder is shipped on disk but NOT
     /// switched on in-game until a selector assigns it a real slot. This is why a skin pack can
     /// list a livery the game never shows.</summary>
     public string Slot { get; init; } = "";
@@ -41,7 +41,7 @@ public sealed record LiveryScanResult
     public required int FilesScanned { get; init; }
 
     /// <summary>Files that failed strict XML parsing but yielded their liveries through the
-    /// lenient pass (comment/ampersand repair) or the regex scrape — the normal state of
+    /// lenient pass (comment/ampersand repair) or the regex scrape, the normal state of
     /// community skin packs, worth a count but never a warning.</summary>
     public required int FilesRecoveredLeniently { get; init; }
 
@@ -65,11 +65,11 @@ public sealed record LiveryScanResult
 /// Scans installed skin packs for the livery display names they define, the ground truth the
 /// preflight validator checks generated custom-AI files against. Overrides live under
 /// <c>Vehicles\Textures\CustomLiveries\Overrides\</c> in EITHER the game install directory
-/// (how AMS2 Content Manager deploys — verified on this machine) or
+/// (how AMS2 Content Manager deploys, verified on this machine) or
 /// <c>Documents\Automobilista 2\</c> (manual installs per community guides): scan both.
 ///
 /// Community override files are frequently not well-formed XML ('--' runs inside comments,
-/// raw '&amp;' in texture paths, mismatched OUTFIT/HELMET tags — all live on this machine),
+/// raw '&amp;' in texture paths, mismatched OUTFIT/HELMET tags, all live on this machine),
 /// yet the game reads them. The scan therefore degrades per file: strict parse → lenient
 /// parse (<see cref="LenientXml.Clean"/>) → regex scrape of the LIVERY_OVERRIDE NAME
 /// attributes (the only thing the scanner needs). A file counts as unreadable ONLY when even
@@ -100,7 +100,7 @@ public static class LiveryOverrideScanner
 
     /// <summary>Parses every override XML under the given roots (roots that don't exist are
     /// skipped). Malformed files degrade strict → lenient → regex; a file is reported
-    /// unreadable — never thrown — only when all three passes yield nothing, so one broken
+    /// unreadable, never thrown, only when all three passes yield nothing, so one broken
     /// community file cannot hide any other installed livery.</summary>
     public static LiveryScanResult ScanDetailed(IEnumerable<string> overrideRoots)
     {
@@ -209,7 +209,7 @@ public static class LiveryOverrideScanner
         }
         catch (XmlException)
         {
-            return null; // partial finds are discarded — the lenient pass re-reads everything
+            return null; // partial finds are discarded, the lenient pass re-reads everything
         }
         return entries;
     }

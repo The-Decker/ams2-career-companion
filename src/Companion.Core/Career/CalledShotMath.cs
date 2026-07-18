@@ -4,7 +4,7 @@ namespace Companion.Core.Career;
 /// The "Setup Gamble" pre-race bet, resolved as a CALLED SHOT (design decision 2026-07-06, Mike):
 /// before a race the player may call a finishing position BETTER than the sim expects; hitting it
 /// banks reputation (and XP for a character), missing it costs the same stake. It is a pure function
-/// of the journaled call + the round's result + the sim's expected finish — no dice, no stream — so a
+/// of the journaled call + the round's result + the sim's expected finish, no dice, no stream, so a
 /// replay reproduces it byte-for-byte, and it deliberately sidesteps the self-balancer: the reward is
 /// contingent on hitting a SELF-SET target, not on raw pace (which the difficulty anchor would just
 /// re-rate away). A call that is not more ambitious than the expected finish is not a gamble at all
@@ -13,17 +13,17 @@ namespace Companion.Core.Career;
 public static class CalledShotMath
 {
     /// <summary>Reputation staked on the least-ambitious real gamble (calling exactly one place
-    /// better than expected). Comparable to a good round's rep swing — felt, never dominant.</summary>
+    /// better than expected). Comparable to a good round's rep swing, felt, never dominant.</summary>
     public const double BaseStake = 3.0;
 
     /// <summary>Extra reputation staked per place the call is more ambitious than the expected
-    /// finish — a bolder call risks (and pays) more.</summary>
+    /// finish, a bolder call risks (and pays) more.</summary>
     public const double PerPlaceStake = 1.0;
 
     /// <summary>Ceiling on the stake so a wild call cannot swing a whole career in one race.</summary>
     public const double MaxStake = 12.0;
 
-    /// <summary>XP granted per point of reputation staked, on a hit — a bold correct call is worth
+    /// <summary>XP granted per point of reputation staked, on a hit, a bold correct call is worth
     /// growth (a full-stake hit ≈ a race win's XP). Only a character career banks it.</summary>
     public const double XpPerStake = 4.0;
 

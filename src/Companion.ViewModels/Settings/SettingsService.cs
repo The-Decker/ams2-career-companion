@@ -3,7 +3,7 @@ namespace Companion.ViewModels.Settings;
 /// <summary>
 /// The live settings seam every consumer reads through: one current snapshot, updated
 /// atomically and persisted on every change, with a change event so settings apply live
-/// (no restart) — the accent/font resources, open screens, and future consumers all
+/// (no restart), the accent/font resources, open screens, and future consumers all
 /// subscribe to <see cref="Changed"/>.
 /// </summary>
 public interface ISettingsService

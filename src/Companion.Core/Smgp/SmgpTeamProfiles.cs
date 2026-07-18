@@ -6,7 +6,7 @@ namespace Companion.Core.Smgp;
 /// <summary>
 /// The SMGP-universe team profiles: each SEGA-world team's own quotes and multi-paragraph history,
 /// keyed by TEAM id (e.g. "team.madonna"). Loaded from <c>data/rules/smgp/team-profiles.json</c>.
-/// DISPLAY-ONLY — never a fold input (exactly like the news corpora, <see cref="SmgpRivalQuotes"/> and
+/// DISPLAY-ONLY, never a fold input (exactly like the news corpora, <see cref="SmgpRivalQuotes"/> and
 /// <see cref="SmgpWhatReallyHappened"/>): the promotion/demotion screen shows the new team's story when
 /// you move up or down the ladder. An absent file (or an un-authored team) resolves to null, so a
 /// non-SMGP install or an un-updated data folder is simply unaffected.
@@ -55,7 +55,7 @@ public sealed class SmgpTeamProfiles
     }
 }
 
-/// <summary>One SMGP-world team's profile — display-only reference content shown when the player
+/// <summary>One SMGP-world team's profile, display-only reference content shown when the player
 /// joins the team (a promotion or demotion). Fully fictional (the SEGA universe, never real F1).</summary>
 public sealed record SmgpTeamProfile
 {
@@ -65,7 +65,7 @@ public sealed record SmgpTeamProfile
     /// <summary>A one-line arcade motto / tagline for the team ("THE CROWN NEVER SLIPS").</summary>
     public string Motto { get; init; } = "";
 
-    /// <summary>The team's SMGP-world history — a few paragraphs (Mike: ~5).</summary>
+    /// <summary>The team's SMGP-world history, a few paragraphs (Mike: ~5).</summary>
     public IReadOnlyList<string> History { get; init; } = [];
 
     /// <summary>A few in-character team quotes (the principal, the garage, a rival's dig).</summary>

@@ -81,8 +81,8 @@ public sealed class EconomyNewsEventsTests
         var season = Season(
         [
             Round(1) with { EconomyOnTheBrink = true, EconomyBalance = "-2,000" },
-            Round(2) with { EconomyOnTheBrink = true, EconomyBalance = "-1,500" }, // same streak — no second story
-            Round(3) with { EconomyBalance = "5,000" },                            // recovered — re-arms
+            Round(2) with { EconomyOnTheBrink = true, EconomyBalance = "-1,500" }, // same streak, no second story
+            Round(3) with { EconomyBalance = "5,000" },                            // recovered, re-arms
             Round(4) with { EconomyOnTheBrink = true, EconomyBalance = "-800" },   // a new brush, a new story
         ]);
 

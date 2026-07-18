@@ -5,7 +5,7 @@ using Companion.Core.Json;
 namespace Companion.Core.Character;
 
 /// <summary>
-/// The parsed driver-character rules (<c>data/rules/perks.json</c>) — the app-shipped, user-editable
+/// The parsed driver-character rules (<c>data/rules/perks.json</c>), the app-shipped, user-editable
 /// data that prices character creation and progression. This is a PURE model + parser (Core owns no
 /// I/O): the ViewModels layer reads the file and calls <see cref="Parse"/>, exactly like the aging
 /// curves and team archetypes. Nothing here folds a round or scores a result; the perk effects
@@ -37,14 +37,14 @@ public sealed record CharacterRules
     public RespecRules Respec { get; init; } = new();
 
     /// <summary>The tunable accident bands + safety-offset scales (character death &amp; injury §3.4),
-    /// or null when perks.json ships no <c>accident</c> block — the fold then falls back to
+    /// or null when perks.json ships no <c>accident</c> block, the fold then falls back to
     /// <see cref="AccidentModel.DefaultRules"/>. Optional so every pre-feature fixture parses unchanged.</summary>
     public AccidentRules? Accident { get; init; }
 
     private Dictionary<string, Perk>? _perksById;
 
     /// <summary>Perk lookup by id (case-sensitive, matching the snake_case save-format keys).
-    /// Throws <see cref="KeyNotFoundException"/> for an unknown id — a career referencing a perk
+    /// Throws <see cref="KeyNotFoundException"/> for an unknown id, a career referencing a perk
     /// the rules no longer define is a data error the caller must surface, not silently drop.</summary>
     public Perk PerkById(string id) =>
         (_perksById ??= Perks.ToDictionary(p => p.Id, StringComparer.Ordinal))[id];
@@ -69,7 +69,7 @@ public sealed record CharacterRules
     /// <summary>Fails fast on structural problems the sim would otherwise hit mid-career: missing
     /// blocks, an archetype referencing a perk id that does not exist, a non-increasing XP curve.
     /// The full balance audit (no strictly-dominant/trap perk, per-lever caps) lives in the CI test
-    /// over the data — this is the load-time integrity gate only.</summary>
+    /// over the data, this is the load-time integrity gate only.</summary>
     public void Validate()
     {
         if (Perks.Count == 0)
@@ -187,7 +187,7 @@ public sealed record CharacterRules
     }
 
     /// <summary>Each severity's bands must be non-empty, have non-decreasing UpTo bounds, and the last
-    /// band must cover the top of the d500 range (500) — otherwise a high roll would resolve to nothing.</summary>
+    /// band must cover the top of the d500 range (500), otherwise a high roll would resolve to nothing.</summary>
     private static void ValidateAccidentBands(AccidentRules accident)
     {
         foreach (var (name, bands) in new (string, IReadOnlyList<AccidentBand>)[]
@@ -207,7 +207,7 @@ public sealed record CharacterRules
                 previous = band.UpTo;
                 // A hand-authored typo in the outcome (e.g. "deathh", "SeasonEnding") would otherwise
                 // silently resolve to "none" (AccidentModel.ParseKind's fallback), nullifying a fatal
-                // band — so reject an unknown outcome at load, like the archetype→perk-id gate above.
+                // band, so reject an unknown outcome at load, like the archetype→perk-id gate above.
                 if (band.Outcome is not ("none" or "minorInjury" or "seasonEnding" or "death"))
                     throw new JsonException(
                         $"accident.{name} band has unknown outcome '{band.Outcome}' " +
@@ -228,7 +228,7 @@ public sealed record CharacterPointsRules
     public int MinBudgetAfterSpend { get; init; }
     public int MaxRefundHeadroom { get; init; }
 
-    /// <summary>The most perks a character may carry at creation — an archetype is the identity
+    /// <summary>The most perks a character may carry at creation, an archetype is the identity
     /// (its signature perks) and creation should add only a few more. Null (file omits it) = no
     /// count limit (only the CP budget binds). The CP budget alone can't cap the count because a
     /// drawback-funded build refunds its way to many cheap perks; this is the hard ceiling.</summary>
@@ -467,7 +467,7 @@ public sealed record PerkEffect
     /// <summary>"benefit" | "drawback".</summary>
     public required string Kind { get; init; }
 
-    /// <summary>The lever (statDelta, carScalar, opiRetention, …) — see character-system.md §7.2.</summary>
+    /// <summary>The lever (statDelta, carScalar, opiRetention, …), see character-system.md §7.2.</summary>
     public required string Lever { get; init; }
 
     /// <summary>
@@ -490,7 +490,7 @@ public sealed record PerkEffect
 
     public double CpEquivalent { get; init; }
 
-    /// <summary>The authored human note for this effect, if any — a fallback description when the
+    /// <summary>The authored human note for this effect, if any, a fallback description when the
     /// UI describer has no friendlier phrase for the lever.</summary>
     public string? Note { get; init; }
 }

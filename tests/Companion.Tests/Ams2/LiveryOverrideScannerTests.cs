@@ -6,7 +6,7 @@ namespace Companion.Tests.Ams2;
 /// <summary>
 /// The lenient livery-override scan (fix round): community skin-pack XMLs are routinely not
 /// well-formed ('--' runs inside comments, raw '&amp;' in texture paths, mismatched
-/// OUTFIT/HELMET tags, multiple roots — all observed on this machine's install). Each file
+/// OUTFIT/HELMET tags, multiple roots, all observed on this machine's install). Each file
 /// degrades strict → lenient (<see cref="LenientXml.Clean"/>) → regex scrape of the
 /// LIVERY_OVERRIDE NAME attributes; a file is unreadable ONLY when even the regex finds
 /// nothing. The structured result feeds the ONE-line UI summary.
@@ -40,7 +40,7 @@ public sealed class LiveryOverrideScannerTests : IDisposable
         </USER_OVERRIDES>
         """;
 
-    /// <summary>'--' run inside the header comment — illegal XML, strict parse dies. This is
+    /// <summary>'--' run inside the header comment, illegal XML, strict parse dies. This is
     /// the #1 shape on this machine (48 of 84 strict failures).</summary>
     private const string DashComment = """
         <?xml version="1.0" encoding="utf-8" ?>
@@ -52,7 +52,7 @@ public sealed class LiveryOverrideScannerTests : IDisposable
         </USER_OVERRIDES>
         """;
 
-    /// <summary>Raw ampersand inside an attribute value — entity error under strict parsing
+    /// <summary>Raw ampersand inside an attribute value, entity error under strict parsing
     /// (the "'\' is an unexpected token" shape: 33 of 84 on this machine).</summary>
     private const string RawAmpersand = """
         <USER_OVERRIDES>
@@ -62,7 +62,7 @@ public sealed class LiveryOverrideScannerTests : IDisposable
         </USER_OVERRIDES>
         """;
 
-    /// <summary>Mismatched OUTFIT/HELMET tags — broken beyond any XML parse; only the regex
+    /// <summary>Mismatched OUTFIT/HELMET tags, broken beyond any XML parse; only the regex
     /// scrape can save the NAME attributes (formula_classic_g3m4_06_CAN.xml shape).</summary>
     private const string MismatchedTags = """
         <USER_OVERRIDES>
@@ -213,7 +213,7 @@ public sealed class LiveryOverrideScannerTests : IDisposable
     [Fact]
     public void TupleScan_StaysCompatible_WarningsAreTheUnreadableFiles()
     {
-        Write("car_a", "good.xml", DashComment);   // recovers — NOT a warning any more
+        Write("car_a", "good.xml", DashComment);   // recovers, NOT a warning any more
         Write("car_b", "bad.xml", "<<<");
 
         var (liveries, warnings) = LiveryOverrideScanner.Scan([_root]);
@@ -290,7 +290,7 @@ public sealed class LiveryOverrideScannerTests : IDisposable
         // Miniature of the real F1_1985 formula_retro_g3.xml: active blocks, then ONE giant
         // comment holding the manual swap instructions AND ~20 alternate "##" blocks. The dash
         // runs make strict parsing fail; after the lenient comment-strip only the ACTIVE blocks
-        // remain — the alternates must not be reported (AMS2 never loads them).
+        // remain, the alternates must not be reported (AMS2 never loads them).
         Write("formula_retro_g3", "formula_retro_g3.xml", """
             <?xml version="1.0" encoding="utf-8" ?>
             <USER_OVERRIDES>

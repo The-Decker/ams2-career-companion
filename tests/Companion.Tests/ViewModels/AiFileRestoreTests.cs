@@ -6,7 +6,7 @@ namespace Companion.Tests.ViewModels;
 /// <summary>
 /// Season-end restore (locked decision #7c) through the real CareerSessionService against a
 /// TEMP fake install: RestoreOriginalAiFile re-backs-up the CURRENT file first (restore never
-/// destroys state), then puts back the pre-season original — preferring the newest backup the
+/// destroys state), then puts back the pre-season original, preferring the newest backup the
 /// app did NOT generate (the user's own file) over later snapshots of app-generated rounds.
 /// Plus the end-to-end NAMeS-first happy path: import the installed file at creation, then
 /// staging round 1 is a no-op because the installed file already matches.
@@ -58,7 +58,7 @@ public sealed class AiFileRestoreTests : IDisposable
         }
     }
 
-    /// <summary>Never advances — every operation lands in the SAME wall-clock second, the
+    /// <summary>Never advances, every operation lands in the SAME wall-clock second, the
     /// worst case for second-resolution backup names (a real-clock stage + restore can and
     /// does hit this: proven by the live integration run of 2026-07-02).</summary>
     private sealed class FrozenClock : TimeProvider
@@ -124,7 +124,7 @@ public sealed class AiFileRestoreTests : IDisposable
 
         using var session = CreateCareer(Environment());
 
-        // Round 1: the user's file diverges (their ratings, not the pack's) — force-stage.
+        // Round 1: the user's file diverges (their ratings, not the pack's), force-stage.
         var round1 = ((IForceStaging)session).StageCurrentGrid(force: true);
         Assert.True(round1.Success);
         Assert.False(round1.NoOpAlreadyMatches);
@@ -144,7 +144,7 @@ public sealed class AiFileRestoreTests : IDisposable
         var outcome = ((IAiFileRestore)session).RestoreOriginalAiFile();
 
         Assert.True(outcome.Success);
-        // The USER'S file is back — not the newer app-generated round-1 snapshot.
+        // The USER'S file is back, not the newer app-generated round-1 snapshot.
         Assert.Equal(UserFileXml, File.ReadAllText(LiveAiPath));
         Assert.Equal(round1.BackupPath, outcome.RestoredFromBackupPath);
         // The pre-restore live file (generated round 2) was re-backed-up FIRST.
@@ -217,7 +217,7 @@ public sealed class AiFileRestoreTests : IDisposable
 
     /// <summary>Installed file fully covering both entries with exactly the fields the
     /// generated grid writes (10 authored ratings + vehicle_reliability equal to the team's
-    /// 0.93). After baseline import these ARE the pack values — so round-1 staging finds the
+    /// 0.93). After baseline import these ARE the pack values, so round-1 staging finds the
     /// installed file already equivalent and writes nothing.</summary>
     private const string FullCoverageXml = """
         <custom_ai_drivers>
@@ -270,7 +270,7 @@ public sealed class AiFileRestoreTests : IDisposable
         Assert.True(outcome.NoOpAlreadyMatches);
         Assert.Null(outcome.BackupPath);
         Assert.Equal(LiveAiPath, outcome.WrittenPath);
-        // The user's file is byte-identical — the app used it instead of overwriting it.
+        // The user's file is byte-identical, the app used it instead of overwriting it.
         Assert.Equal(FullCoverageXml, File.ReadAllText(LiveAiPath));
         Assert.Contains(outcome.Messages, m => m.Contains("already matches"));
     }

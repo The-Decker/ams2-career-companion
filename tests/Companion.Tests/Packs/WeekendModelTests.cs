@@ -18,7 +18,7 @@ public sealed class WeekendModelTests
 
         var round = JsonSerializer.Deserialize<PackRound>(json, CoreJson.Options)!;
 
-        Assert.Null(round.Weekend); // single-race default — the fold + scoring stay untouched
+        Assert.Null(round.Weekend); // single-race default, the fold + scoring stay untouched
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public sealed class WeekendModelTests
     public void Session_and_race_without_the_new_fields_omit_them_when_serialized()
     {
         // WhenWritingNull: CoreJson does NOT globally ignore nulls, so an un-migrated weekend must
-        // still serialize WITHOUT the new keys — the byte-identical round-trip guarantee.
+        // still serialize WITHOUT the new keys, the byte-identical round-trip guarantee.
         var round = new PackRound
         {
             Round = 1,

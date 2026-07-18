@@ -38,7 +38,7 @@
                 <!-- ===== Tier 1: real careers ===== -->
                 <Border Style="{StaticResource Panel}" Margin="0,0,0,14">
                     <StackPanel>
-                        <TextBlock Text="Tier 1 — real careers (replay-safe)" Style="{StaticResource DebugSectionTitle}" />
+                        <TextBlock Text="Tier 1, real careers (replay-safe)" Style="{StaticResource DebugSectionTitle}" />
                         <TextBlock Style="{StaticResource DebugSectionHint}"
                                    Text="Throwaway careers created through the real factory and advanced only through provenance-excluded INPUT seams. They resimulate byte-identical. The Open buttons each start a FRESH throwaway; Advance continues the one currently open." />
 
@@ -63,7 +63,7 @@
                                      VerticalAlignment="Center" Margin="0,0,8,8" />
                             <Button Content="Open SMGP at season" Style="{StaticResource DebugButton}"
                                     Command="{Binding OpenSmgpAtSeasonCommand}"
-                                    ToolTip="Fast-forward a throwaway SMGP career to this season through the real INPUT seams — resimulates byte-identical" />
+                                    ToolTip="Fast-forward a throwaway SMGP career to this season through the real INPUT seams, resimulates byte-identical" />
                         </WrapPanel>
 
                         <TextBlock Text="Open a specific pack" Margin="0,8,0,4"
@@ -97,7 +97,7 @@
                         <WrapPanel>
                             <Button Content="Advance one season ▸" Style="{StaticResource DebugButton}"
                                     Command="{Binding AdvanceSeasonCommand}"
-                                    ToolTip="Plays the open career one season end forward (signing from a season end) — the same file, resim-safe; monitors read it live" />
+                                    ToolTip="Plays the open career one season end forward (signing from a season end), the same file, resim-safe; monitors read it live" />
                         </WrapPanel>
                     </StackPanel>
                 </Border>
@@ -105,7 +105,7 @@
                 <!-- ===== Tier 2: previews ===== -->
                 <Border Style="{StaticResource Panel}" Margin="0,0,0,14">
                     <StackPanel>
-                        <TextBlock Text="Tier 2 — previews (display-only, no save written)" Style="{StaticResource DebugSectionTitle}" />
+                        <TextBlock Text="Tier 2, previews (display-only, no save written)" Style="{StaticResource DebugSectionTitle}" />
                         <TextBlock Style="{StaticResource DebugSectionHint}"
                                    Text="A fake session feeds canned state to the real Views for states the fold cannot reach. Never resimulated, never persisted." />
 
@@ -166,7 +166,7 @@
                                     Command="{Binding DumpJournalCommand}" />
                             <Button Content="Dump economy (Dynasty)" Style="{StaticResource DebugButton}"
                                     Command="{Binding DumpEconomyCommand}"
-                                    ToolTip="Read-only dashboard dump — the seam for future tycoon levers, which must route through DeclareEconomyDecision" />
+                                    ToolTip="Read-only dashboard dump, the seam for future tycoon levers, which must route through DeclareEconomyDecision" />
                         </WrapPanel>
                         <TextBox Text="{Binding InspectorText, Mode=OneWay}" IsReadOnly="True"
                                  FontFamily="Consolas, Cascadia Mono, monospace" FontSize="12"

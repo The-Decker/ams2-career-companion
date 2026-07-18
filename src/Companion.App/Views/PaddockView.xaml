@@ -8,7 +8,7 @@
     <!-- The Paddock lens (SMGP driver/team preview): a DRIVERS/TEAMS toggle over a master list (left)
          and a dossier detail pane (right). Click a driver for their bio + predetermined career stats +
          team; click a team for its motto, history, quotes and roster. Display-only. Codex owns the
-         visual polish (see docs/dev/codex-gui-brief.md) — this is the functional layout. -->
+         visual polish (see docs/dev/codex-gui-brief.md), this is the functional layout. -->
     <UserControl.Resources>
 
         <!-- compact driver list row: portrait thumb + name/team/epithet -->

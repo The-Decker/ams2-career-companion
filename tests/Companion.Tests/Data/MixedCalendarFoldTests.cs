@@ -9,7 +9,7 @@ namespace Companion.Tests.Data;
 
 /// <summary>
 /// Structural fix (integration report): the unified fold must resolve scoring with
-/// CHAMPIONSHIP-only ordinals exactly like CareerSessionService — on a mixed calendar
+/// CHAMPIONSHIP-only ordinals exactly like CareerSessionService, on a mixed calendar
 /// (a non-championship event between championship rounds) the non-championship result is
 /// recorded and folded but NEVER scored, and the journaled standings equal the engine run
 /// over championship results with the championship round count.
@@ -59,7 +59,7 @@ public sealed class MixedCalendarFoldTests
                 PointsSystem = new CatalogSeason
                 {
                     RacePoints = [new(9), new(6), new(4), new(3)],
-                    // Best 2 of the 3 CHAMPIONSHIP rounds — resolving over the 4-round
+                    // Best 2 of the 3 CHAMPIONSHIP rounds, resolving over the 4-round
                     // calendar would be the bug this test pins down.
                     DriversBestN = new CatalogBestN { WholeSeason = 2 },
                     Constructors = new CatalogConstructors { BestCarOnly = false },
@@ -109,7 +109,7 @@ public sealed class MixedCalendarFoldTests
         ["driver.d"] = "team.blue",
     };
 
-    /// <summary>An engine-shaped result whose Round is the CHAMPIONSHIP ordinal — exactly
+    /// <summary>An engine-shaped result whose Round is the CHAMPIONSHIP ordinal, exactly
     /// what the app's session service stores for a calendar round.</summary>
     private static RoundResult Result(SeasonPack pack, int calendarRound, params string[] order) => new()
     {
@@ -134,7 +134,7 @@ public sealed class MixedCalendarFoldTests
         AgingCurves = CareerTestData.LoadAgingCurves(),
         Archetypes = CareerTestData.LoadArchetypes(),
         Headlines = CareerTestData.LoadHeadlines(),
-        PlayerDriverId = "driver.none", // the player never races — pure standings season
+        PlayerDriverId = "driver.none", // the player never races, pure standings season
         PlayerAge = 27,
     };
 
@@ -230,7 +230,7 @@ public sealed class MixedCalendarFoldTests
         using var _ = db;
 
         Fold(db, seasonId, pack, 1, "driver.a", "driver.b", "driver.c", "driver.d");
-        // The Gold Cup: a DIFFERENT winner — if this scored, the standings would flip.
+        // The Gold Cup: a DIFFERENT winner, if this scored, the standings would flip.
         Fold(db, seasonId, pack, 2, "driver.d", "driver.c", "driver.b", "driver.a");
 
         var afterChampionshipRound = StandingsRows(db, seasonId, 1);

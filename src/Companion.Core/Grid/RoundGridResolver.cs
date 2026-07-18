@@ -12,8 +12,8 @@ namespace Companion.Core.Grid;
 /// applied last so an authored override always beats the nudge).
 ///
 /// When the round carries a <see cref="PackRoundGrid"/>, the regular (non-guest) seats are the
-/// covering entries INTERSECTED with grid.starterDriverIds — the drivers who actually started
-/// that round historically — so a pack that lists every season entrant no longer overfills the
+/// covering entries INTERSECTED with grid.starterDriverIds, the drivers who actually started
+/// that round historically, so a pack that lists every season entrant no longer overfills the
 /// grid with pre-qualifiers who mostly DNQ'd. Guests still append, the player's seat is always
 /// present (they take a real seat even if the driver they replaced was a non-starter that round),
 /// and a final safety cap trims to grid.size keeping the player and the highest-rated AI. A round
@@ -21,7 +21,7 @@ namespace Companion.Core.Grid;
 ///
 /// <para>Ratings Phase 3: when <c>applyWeekendForm</c> is set (a FormAware career), the round's
 /// per-race <see cref="Companion.Core.Packs.SeasonDefinition.DriverForm"/> is overlaid onto the AI
-/// seats' pace ratings AFTER the cap — the same additive, clamped nudge the staged AMS2 file gets —
+/// seats' pace ratings AFTER the cap, the same additive, clamped nudge the staged AMS2 file gets —
 /// so the field the sim scores reacts to who is hot that weekend. Default off, so a pre-Phase-3 (or
 /// form-less) career resolves a byte-identical grid.</para>
 /// </summary>
@@ -35,7 +35,7 @@ public static class RoundGridResolver
     {
         var packRound = pack.Season.Rounds.FirstOrDefault(r => r.Round == round)
             ?? throw new InvalidOperationException(
-                $"Round {round} is not on the {pack.Manifest.PackId} calendar — " +
+                $"Round {round} is not on the {pack.Manifest.PackId} calendar, " +
                 $"the season has rounds {MinRound(pack)}-{MaxRound(pack)}.");
 
         var teamsById = IndexById(pack.Teams, t => t.Id, pack, "teams.json");
@@ -43,8 +43,8 @@ public static class RoundGridResolver
 
         // When the round has a historical grid, only its listed starters seat from entries.json;
         // covering entries whose driver did not start that round stay out of the grid (they remain
-        // in the pack — available for one-off drives / divergence — but do not fill every round).
-        // ignoreStarters (staging-only) skips this so the WHOLE covering field enumerates — used to
+        // in the pack, available for one-off drives / divergence, but do not fill every round).
+        // ignoreStarters (staging-only) skips this so the WHOLE covering field enumerates, used to
         // name every SMGP livery AMS2 could field (incl. the per-race DNQ tail) so no slot stock-fills;
         // default false keeps the fold + f1db oracle byte-identical (they never pass it).
         HashSet<string>? starters = !ignoreStarters && packRound.Grid is { StarterDriverIds.Count: > 0 } grid
@@ -68,7 +68,7 @@ public static class RoundGridResolver
         }
 
         // "Choose the entire grid": when the career carries a field selection, only its chosen
-        // liveries seat — EXCEPT the player's own livery, which is always kept so a chosen field can
+        // liveries seat, EXCEPT the player's own livery, which is always kept so a chosen field can
         // never bench the player. Null selection = the whole pack field (byte-identical identity).
         bool Selected(string livery) =>
             selection is null || selection.Includes(livery) ||
@@ -110,7 +110,7 @@ public static class RoundGridResolver
             seats = ApplyPlayerSeat(pack, packRound, seats, playerSeat);
 
         // The cap trims the field to the track's grid size for the SIM. Staging can opt out
-        // (capToGridSize:false) to enumerate the whole qualified field — used only to name every
+        // (capToGridSize:false) to enumerate the whole qualified field, used only to name every
         // live-active livery so AMS2 never stock-fills a slot (cosmetic; the fold always caps).
         // SMGP seat movements are cap-PROTECTED: every car a pending override touches (targets,
         // the movers' current cars, the player's earned car) survives the trim like the player
@@ -119,7 +119,7 @@ public static class RoundGridResolver
         if (capToGridSize && packRound.Grid is { } capGrid)
             seats = CapToGridSize(seats, capGrid.Size, ProtectedLiveries(seats, seatOverrides, playerSeatOverride));
 
-        // SMGP seat swaps (M3 slice 3): reseat drivers onto other cars AFTER the cap — driver
+        // SMGP seat swaps (M3 slice 3): reseat drivers onto other cars AFTER the cap, driver
         // identity/ratings move, the cars (team, livery, scalars) stay put, membership never
         // changes. The player's block rides to playerSeatOverride (SmgpState.CurrentSeatLivery).
         // Default null ⇒ untouched ⇒ byte-identical; the oracle never passes either.
@@ -132,7 +132,7 @@ public static class RoundGridResolver
         if (applyWeekendForm)
             seats = ApplyWeekendForm(seats, pack.Season.DriverForm?.GetValueOrDefault(round));
 
-        // The character patch lands LAST, on wherever the player's block ended up — so an SMGP
+        // The character patch lands LAST, on wherever the player's block ended up, so an SMGP
         // seat swap carries the perk car scalars to the player's NEW car instead of leaving them
         // baked into the old one for a rival to inherit. Without overrides the player sits on the
         // same seat this always patched, so every existing career resolves byte-identically (the
@@ -161,7 +161,7 @@ public static class RoundGridResolver
     /// itself was capped below the starter count by the track's Max AI participants (e.g. 1988
     /// Australia: 26 starters, Adelaide caps at 25). Trim to <paramref name="size"/> keeping the
     /// player seat (and any override-protected cars) unconditionally and, among the rest, the
-    /// highest raceSkill (stable by original order on ties) — the field's slowest tail is what
+    /// highest raceSkill (stable by original order on ties), the field's slowest tail is what
     /// the game would drop anyway.</summary>
     private static List<GridSeat> CapToGridSize(
         List<GridSeat> seats, int size, IReadOnlyCollection<string>? protectedLiveries = null)
@@ -183,7 +183,7 @@ public static class RoundGridResolver
         return kept;
     }
 
-    /// <summary>The cars a pending SMGP seat-movement set touches — every override TARGET, every
+    /// <summary>The cars a pending SMGP seat-movement set touches, every override TARGET, every
     /// overridden driver's CURRENT car (his block must exist on the grid to move), and the
     /// player's earned car. Null when no overrides ride this resolve, so the cap's ordering (and
     /// every non-smgp career's grid) is byte-identical.</summary>
@@ -211,13 +211,13 @@ public static class RoundGridResolver
 
     // ---------- SMGP seat overrides (M3) ----------
 
-    /// <summary>Reseats drivers onto other cars — the SMGP swap ladder's view of the grid. Each
+    /// <summary>Reseats drivers onto other cars, the SMGP swap ladder's view of the grid. Each
     /// move (driver id → target livery, plus the player's block riding to
     /// <paramref name="playerSeatOverride"/>) transplants the DRIVER side of the seat (identity,
     /// ratings, driver car tuning, the IsPlayer mark) onto the target CAR (team, livery, number,
-    /// reliability, scalars — which stay with the livery, exactly like the game's own swaps). A
+    /// reliability, scalars, which stay with the livery, exactly like the game's own swaps). A
     /// moved driver with NO seat on the grid but authored in the pack (the reserved title-defense
-    /// challenger, who holds no season entry) is INTRODUCED onto the target car — its authored
+    /// challenger, who holds no season entry) is INTRODUCED onto the target car, its authored
     /// occupant loses the ride. STRICTLY ALL-OR-NOTHING: a move whose target car or mover is
     /// unresolvable, two moves booking one car, an unfilled vacated car, or a receiving car whose
     /// sitting driver did not move (unless he is being deliberately replaced by an introduction —
@@ -269,7 +269,7 @@ public static class RoundGridResolver
             else if (pack.Drivers.FirstOrDefault(d =>
                          string.Equals(d.Id, driverId, StringComparison.Ordinal)) is { } introduced)
             {
-                // The driver side only — the car block comes from the target seat below.
+                // The driver side only, the car block comes from the target seat below.
                 block = new GridSeat
                 {
                     DriverId = introduced.Id,
@@ -328,7 +328,7 @@ public static class RoundGridResolver
 
     // ---------- Ratings Phase 3: per-race form overlay ----------
 
-    /// <summary>Overlays the round's per-race form deltas onto the AI seats' pace ratings — the SAME
+    /// <summary>Overlays the round's per-race form deltas onto the AI seats' pace ratings, the SAME
     /// additive, 0..1-clamped nudge the staged AMS2 file gets (<c>GridStager.Nudge</c>), so the grid
     /// the sim scores equals the grid AMS2 shows. The PLAYER seat is deliberately excluded: the player
     /// is not the historical driver they replaced (their ability is tracked by OPI / pace anchor), so a
@@ -358,7 +358,7 @@ public static class RoundGridResolver
             .ToList();
     }
 
-    /// <summary>Additive form delta, clamped to 0..1 — mirrors <c>GridStager.Nudge</c> exactly so a
+    /// <summary>Additive form delta, clamped to 0..1, mirrors <c>GridStager.Nudge</c> exactly so a
     /// scored AI rating equals the staged AMS2 file's. A zero delta returns the base verbatim.</summary>
     private static double NudgeForm(double baseValue, double delta) =>
         delta != 0.0 ? Math.Clamp(baseValue + delta, 0.0, 1.0) : baseValue;
@@ -391,7 +391,7 @@ public static class RoundGridResolver
     };
 
     /// <summary>Driver-level car block with the round's per-driver aiOverrides car fields on top
-    /// (patch wins per field). STAGING-ONLY — the staged file prefers it over the team values;
+    /// (patch wins per field). STAGING-ONLY, the staged file prefers it over the team values;
     /// the sim's seat-strength model never reads it. Null when neither authors anything.</summary>
     private static PackDriverCar? MergeCarTuning(PackDriver driver, PackRound round)
     {
@@ -411,7 +411,7 @@ public static class RoundGridResolver
     }
 
     /// <summary>Baseline -> trackForm -> aiOverrides. The trackForm nudge expresses per-venue
-    /// FORM, so it moves the pace ratings (raceSkill, qualifyingSkill) and nothing else — a
+    /// FORM, so it moves the pace ratings (raceSkill, qualifyingSkill) and nothing else, a
     /// driver's aggression or blue-flag manners do not change with the venue. Nudged values
     /// clamp to 0..1; the aiOverrides patch then applies absolute per-field values verbatim.</summary>
     private static PackDriverRatings MergeRatings(PackDriver driver, PackRound round)
@@ -466,7 +466,7 @@ public static class RoundGridResolver
 
         // DISTINCT-DRIVER player (the SMGP clean-swap model): the player is their OWN driver, not the
         // authored occupant of the car they sit in. Stamp the player's id onto the car and DROP its
-        // authored AI (benched — he re-appears the moment the player moves to another car, because a
+        // authored AI (benched, he re-appears the moment the player moves to another car, because a
         // FRESH resolve only ever benches the CURRENT seat's driver). Everyone else keeps their home
         // seat, so a seat swap never cascades. Null DriverId keeps the historical "wear the seat's own
         // driver id" behavior below (byte-identical for every non-SMGP / pre-change career).
@@ -477,7 +477,7 @@ public static class RoundGridResolver
                 seats[index] = seats[index] with { DriverId = distinctId, IsPlayer = true };
                 return seats;
             }
-            // The player's car did not make this round's cut (pre-qualifying) — add it from its own
+            // The player's car did not make this round's cut (pre-qualifying), add it from its own
             // entry with the player's id, so the player always races (CapToGridSize trims the slowest AI).
             var ownEntry = pack.Entries.FirstOrDefault(e =>
                 string.Equals(e.Ams2LiveryName, playerSeat.Ams2LiveryName, StringComparison.Ordinal));
@@ -502,8 +502,8 @@ public static class RoundGridResolver
         {
             // The player takes over a real historical seat by livery, but the driver they replaced may
             // not have been entered EVERY round (they left or retired mid-season historically). The
-            // player races the WHOLE season regardless: seat them from their livery's own entry — which
-            // exists in the pack even when its rounds range excludes this round — so a mid-season
+            // player races the WHOLE season regardless: seat them from their livery's own entry, which
+            // exists in the pack even when its rounds range excludes this round, so a mid-season
             // historical exit never benches the player. The final CapToGridSize keeps the player and
             // trims the slowest AI, so the field stays at grid.size. Only a livery that matches NO entry
             // at all is a genuine misconfiguration and still errors.
@@ -512,9 +512,9 @@ public static class RoundGridResolver
             if (playerEntry is null)
             {
                 // Player-as-own-entrant: the chosen livery matches NO pack entry (a non-standard / custom
-                // skin the player picked). Seat them as their OWN full-season synthetic entrant — a stable
+                // skin the player picked). Seat them as their OWN full-season synthetic entrant, a stable
                 // synthetic driver id, a neutral independent team, and baseline ratings the character patch
-                // then shapes — so a custom skin works AND the career never dead-ends on a livery no
+                // then shapes, so a custom skin works AND the career never dead-ends on a livery no
                 // historical driver holds. Existing careers pick a pack-entry livery, so they never reach
                 // this branch (byte-identical). CapToGridSize keeps the player and trims the slowest AI.
                 seats.Add(SyntheticPlayerSeat(playerSeat.Ams2LiveryName) with { IsPlayer = true });
@@ -532,7 +532,7 @@ public static class RoundGridResolver
             return seats;
         }
 
-        // Mark the player seat only — the character patch is applied by Resolve as the LAST
+        // Mark the player seat only, the character patch is applied by Resolve as the LAST
         // step (after cap / SMGP seat overrides / form), so it always lands on the car the
         // player actually drives. No character = unchanged seat either way.
         seats[index] = seats[index] with { IsPlayer = true };
@@ -627,12 +627,12 @@ public static class RoundGridResolver
 
     /// <summary>Stable driver id for a player racing their OWN entrant (a non-pack / custom livery). One
     /// player ⇒ one id, so it never collides with a pack driver ("driver.&lt;name&gt;") and stays fixed
-    /// across the whole career — the fold's player-identity key.</summary>
+    /// across the whole career, the fold's player-identity key.</summary>
     public const string SyntheticPlayerDriverId = "driver.player-entrant";
 
     /// <summary>A neutral independent seat for the player-as-own-entrant path: mid-field baseline ratings
     /// (the character patch then shapes them), a neutral team (no physics scalars), on the player's chosen
-    /// livery. The display name is a placeholder — the app shows the character's name via PlayerIdentity.</summary>
+    /// livery. The display name is a placeholder, the app shows the character's name via PlayerIdentity.</summary>
     private static GridSeat SyntheticPlayerSeat(string livery) => new()
     {
         DriverId = SyntheticPlayerDriverId,
@@ -682,7 +682,7 @@ public static class RoundGridResolver
         var details = duplicates.Select(g =>
             $"'{g.Key}' is bound to {g.Count()} seats ({string.Join(", ", g.Select(s => s.DriverId))})");
         throw new InvalidOperationException(
-            $"Round {round.Round} of {pack.Manifest.PackId} resolves duplicate liveries — one livery, " +
+            $"Round {round.Round} of {pack.Manifest.PackId} resolves duplicate liveries, one livery, " +
             $"one seat, or the game binds only one of them: {string.Join("; ", details)}.");
     }
 

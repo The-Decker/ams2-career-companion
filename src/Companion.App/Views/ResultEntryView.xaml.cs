@@ -12,7 +12,7 @@ namespace Companion.App.Views;
 
 /// <summary>
 /// Result entry: the keyboard grammar AND full mouse parity over the same viewmodel (ux-round
-/// contract §1). This code-behind is pure UI mechanics — key routing to viewmodel commands,
+/// contract §1). This code-behind is pure UI mechanics, key routing to viewmodel commands,
 /// focus pinning on the input box (restored after every mouse action, so typing always
 /// works), the 1 Hz footer-timer tick, and one-line translations from context-menu /
 /// reason-picker / double-click gestures into the tested viewmodel mouse primitives. The
@@ -40,7 +40,7 @@ public partial class ResultEntryView : UserControl
                 FocusInput();
         };
 
-        // After any drop (handled inside the behavior) the input box gets focus back — but
+        // After any drop (handled inside the behavior) the input box gets focus back, but
         // never when a reason/detail/DSQ box is the active editor, or the drop would yank the
         // caret out of a box the user just started typing in (BUG A).
         AddHandler(DragDrop.DropEvent, new DragEventHandler((_, _) =>
@@ -64,7 +64,7 @@ public partial class ResultEntryView : UserControl
             return;
 
         // KEY-ROUTING GUARD (v0.3.3): when the caret sits in an editable box OTHER than the
-        // grammar InputBox — the DNF custom-cause box or the DSQ reason box — the key belongs to
+        // grammar InputBox, the DNF custom-cause box or the DSQ reason box, the key belongs to
         // that box, not the grammar. OnPreviewKeyDown is a tunnel handler at the UserControl level
         // (root→leaf), so without this early return it would fire BEFORE OnDnfDetailKeyDown /
         // OnDsqReasonKeyDown and swallow Enter/Esc (executing Submit/Confirm) so the user "can't
@@ -115,7 +115,7 @@ public partial class ResultEntryView : UserControl
     // ---------- focus pinning: the entry box always has focus ----------
 
     /// <summary>Left-click releases pin the grammar input back (typing must always work —
-    /// decision 8), EXCEPT when the click lands in — or focus already sits within — an editable
+    /// decision 8), EXCEPT when the click lands in, or focus already sits within, an editable
     /// text-entry box other than InputBox (the DNF custom-cause box, the DSQ reason box, the
     /// insert-position box). Re-focusing those away instantly yanked the caret the user was
     /// trying to place (BUG A). A right-click must not steal focus from the context menu it is
@@ -135,13 +135,13 @@ public partial class ResultEntryView : UserControl
     }
 
     /// <summary>True when keyboard focus currently sits in an editable TextBox that is NOT the
-    /// grammar InputBox — the DNF custom-cause box, the DSQ reason box, or the insert-position
+    /// grammar InputBox, the DNF custom-cause box, the DSQ reason box, or the insert-position
     /// box. Those own the caret; the grammar-input pin must stand down for them.</summary>
     private bool IsEditableTextEntryFocused() =>
         Keyboard.FocusedElement is TextBox { IsReadOnly: false } box && !ReferenceEquals(box, InputBox);
 
     /// <summary>True when a click's target is (or lives inside) an editable TextBox other than
-    /// InputBox — checked on mouse-up before the box has necessarily taken keyboard focus.</summary>
+    /// InputBox, checked on mouse-up before the box has necessarily taken keyboard focus.</summary>
     private bool IsEditableTextEntryTarget(object? source)
     {
         for (DependencyObject? node = source as DependencyObject; node is not null;
@@ -181,7 +181,7 @@ public partial class ResultEntryView : UserControl
     }
 
     /// <summary>Double-click on a remaining driver: next open position (DNF in the DNF
-    /// phase) — the same undoable primitives every other mouse path uses.</summary>
+    /// phase), the same undoable primitives every other mouse path uses.</summary>
     private void OnRemainingDoubleClick(object sender, MouseButtonEventArgs e)
     {
         if (ViewModel is { } vm && DriverIdOf((sender as FrameworkElement)?.DataContext) is { } id)
@@ -211,7 +211,7 @@ public partial class ResultEntryView : UserControl
     /// cause and closes the editor (row → compact DISPLAY, via the VM clearing
     /// EditingReasonDriverId), returning focus to the grammar box. Picking "o" keeps the editor
     /// open and reveals the custom-cause box, into which the caret is dropped so the user can
-    /// type straight away. Never blocks — the DNF is already committed and removable whether or
+    /// type straight away. Never blocks, the DNF is already committed and removable whether or
     /// not this is touched.</summary>
     private void OnReasonPickClick(object sender, RoutedEventArgs e)
     {
@@ -239,7 +239,7 @@ public partial class ResultEntryView : UserControl
         }
     }
 
-    /// <summary>The editor's "Done" affordance — commit whatever is in the box and close the
+    /// <summary>The editor's "Done" affordance, commit whatever is in the box and close the
     /// editor (row → compact DISPLAY). A mouse-only equivalent of pressing Enter in the box, for
     /// users who reach for a button. Commits EXPLICITLY (rather than relying on LostFocus, which
     /// may not have fired yet, and which never fires once the box is collapsed) so the typed text
@@ -262,7 +262,7 @@ public partial class ResultEntryView : UserControl
         FocusInput();
     }
 
-    /// <summary>The custom-cause text box on an "Other" DNF row — commits on Enter / lost
+    /// <summary>The custom-cause text box on an "Other" DNF row, commits on Enter / lost
     /// focus. Independent of the DNF mark, so leaving it blank never traps the driver.</summary>
     private void OnDnfDetailChanged(object sender, RoutedEventArgs e)
     {
@@ -294,7 +294,7 @@ public partial class ResultEntryView : UserControl
     }
 
     /// <summary>CLICK-TO-EDIT: a left-click on a resolved (DNF or DSQ) row's display area opens
-    /// that row's inline reason editor, seeded with its current reason/detail — the "click on the
+    /// that row's inline reason editor, seeded with its current reason/detail, the "click on the
     /// driver, the box comes back up with the options so you can modify it" behaviour that
     /// replaces remove-then-readd. Only one row edits at a time (the VM enforces it). Does not
     /// mark the event handled, so drag-to-move and the context menu still work; the deferred
@@ -316,8 +316,8 @@ public partial class ResultEntryView : UserControl
         // After layout realises the editor, re-seed its box from the VM (so an undo/redo that
         // changed the stored reason without touching the box is reflected) and drop the caret in
         // so the user can type straight away (DNF custom-cause box only when the reason is already
-        // "o"; DSQ reason box always). Deferred at Background priority — LOWER than the Input-
-        // priority FocusInput pin OnPreviewMouseUp schedules on this same click — so the editor
+        // "o"; DSQ reason box always). Deferred at Background priority, LOWER than the Input-
+        // priority FocusInput pin OnPreviewMouseUp schedules on this same click, so the editor
         // box wins the caret last, not the grammar InputBox.
         Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
         {
@@ -333,7 +333,7 @@ public partial class ResultEntryView : UserControl
         });
     }
 
-    /// <summary>The editable reason box for a driver's open editor — the DSQ reason box, or the
+    /// <summary>The editable reason box for a driver's open editor, the DSQ reason box, or the
     /// DNF custom-cause box when the DNF reason is "o". Walks the realised visual tree; null when
     /// no box is currently shown (e.g. a DNF still on Mechanical/Accident).</summary>
     private TextBox? FindEditorBoxFor(string driverId)
@@ -361,7 +361,7 @@ public partial class ResultEntryView : UserControl
         }
     }
 
-    /// <summary>The "driver's fault" toggle on an "Other" DNF row — flips the attribution the
+    /// <summary>The "driver's fault" toggle on an "Other" DNF row, flips the attribution the
     /// OPI blame model reads, keeping any custom text.</summary>
     private void OnDnfFaultToggle(object sender, RoutedEventArgs e)
     {
@@ -374,7 +374,7 @@ public partial class ResultEntryView : UserControl
     }
 
     /// <summary>The picker's own "Remove" affordance: the mistaken DNF goes straight back to
-    /// Remaining — the fix for the "can't re-select until a reason is picked" trap. Available
+    /// Remaining, the fix for the "can't re-select until a reason is picked" trap. Available
     /// whether or not a reason was ever chosen.</summary>
     private void OnReasonPickRemove(object sender, RoutedEventArgs e)
     {
@@ -394,7 +394,7 @@ public partial class ResultEntryView : UserControl
             box.Text = vm.DsqReasonOf(id);
     }
 
-    /// <summary>The per-row DSQ reason box (free text, e.g. "Underweight") — commit on Enter /
+    /// <summary>The per-row DSQ reason box (free text, e.g. "Underweight"), commit on Enter /
     /// lost focus. Independent of the DSQ mark; blank leaves no stated reason.</summary>
     private void OnDsqReasonChanged(object sender, RoutedEventArgs e)
     {
@@ -407,7 +407,7 @@ public partial class ResultEntryView : UserControl
         if (e.Key == Key.Enter && sender is TextBox box)
         {
             // Enter COMMITS the DSQ reason AND closes the editor (row → compact DISPLAY, showing
-            // the reason as a label): "you can't press enter to enter your dsq reasons" — before
+            // the reason as a label): "you can't press enter to enter your dsq reasons", before
             // the key-routing guard the grammar swallowed Enter and the box never committed nor
             // hid.
             OnDsqReasonChanged(box, e);
@@ -535,7 +535,7 @@ public partial class ResultEntryView : UserControl
     private static string? MenuDriverId(object sender) =>
         DriverIdOf((sender as FrameworkElement)?.DataContext);
 
-    /// <summary>The Confirm command lives on the Home conductor — walk up to it.</summary>
+    /// <summary>The Confirm command lives on the Home conductor, walk up to it.</summary>
     private HomeViewModel? FindHomeViewModel()
     {
         DependencyObject? node = VisualTreeHelper.GetParent(this);

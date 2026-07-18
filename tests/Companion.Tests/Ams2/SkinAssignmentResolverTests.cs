@@ -8,8 +8,8 @@ namespace Companion.Tests.Ams2;
 
 /// <summary>
 /// The read-only skin picture (<see cref="SkinAssignmentResolver"/>): every grid seat resolved
-/// to what it will actually show in AMS2 — a custom override skin, a stock livery, a NAMeS-only
-/// default, or an unbound name — plus the player's-own-car crib. Mirrors the ground truth the
+/// to what it will actually show in AMS2, a custom override skin, a stock livery, a NAMeS-only
+/// default, or an unbound name, plus the player's-own-car crib. Mirrors the ground truth the
 /// preflight validator checks: driver → livery_name(NAME) → installed skin.
 /// </summary>
 public class SkinAssignmentResolverTests
@@ -56,7 +56,7 @@ public class SkinAssignmentResolverTests
     [Fact]
     public void ActiveSlot_IsPreferredOverPlaceholder_ForTheSameName()
     {
-        // The same NAME shipped both as an active slot AND a placeholder — the active one wins.
+        // The same NAME shipped both as an active slot AND a placeholder, the active one wins.
         var plan = PlanWith(Seat("Skoal #9", "P. Alliot"));
         var skins = new[]
         {
@@ -126,7 +126,7 @@ public class SkinAssignmentResolverTests
     [Fact]
     public void UnboundSeatWithCaseOnlyDifference_SurfacesNearMiss()
     {
-        // Pack livery differs only in case from an installed override — the classic authoring typo.
+        // Pack livery differs only in case from an installed override, the classic authoring typo.
         var plan = PlanWith(Seat("brabham #3", "J. Brabham"));
         var skins = new[] { Livery("Brabham #3", VehicleDir) };
 

@@ -8,7 +8,7 @@ namespace Companion.RenderHarness.Tests;
 
 /// <summary>Off-screen render of the tactile motion layer (the "game feel" pass): the enhanced
 /// Button / CheckBox / Slider templates carry RenderTransform springs + a click ripple. A broken
-/// animated template throws at render, and a bad adorner throws when it's added — both surface here.
+/// animated template throws at render, and a bad adorner throws when it's added, both surface here.
 /// Self-skips off Windows.</summary>
 public sealed class MotionRenderTests
 {
@@ -69,7 +69,7 @@ public sealed class MotionRenderTests
             deco.Measure(new Size(600, 400));
             deco.Arrange(new Rect(0, 0, 600, 400));
 
-            // Two navigations — each should fire the fade+slide entrance without throwing.
+            // Two navigations, each should fire the fade+slide entrance without throwing.
             host.Content = new TextBlock { Text = "Screen one" };
             deco.UpdateLayout();
             WpfRenderHarness.Pump();
@@ -93,7 +93,7 @@ public sealed class MotionRenderTests
             var layer = AdornerLayer.GetAdornerLayer(button);
             Assert.NotNull(layer);
 
-            // A ripple from an off-centre click point — the same object MotionAssist spawns.
+            // A ripple from an off-centre click point, the same object MotionAssist spawns.
             var ripple = new RippleAdorner(button, new Point(30, 12));
             layer!.Add(ripple);
             WpfRenderHarness.Pump();

@@ -18,11 +18,11 @@ public sealed record ActiveSetResult
 /// <summary>
 /// Swaps a 1985-style override file's ACTIVE livery set for a round's entry list. Those packs
 /// ship a fixed budget of active <c>LIVERY_OVERRIDE</c> slots (51–60) plus ~20 alternates kept
-/// INSIDE one giant comment with manual copy-paste instructions — this does the pack's own
+/// INSIDE one giant comment with manual copy-paste instructions, this does the pack's own
 /// documented procedure automatically: an alternate the round needs is COPIED out of the comment
 /// into the slot of an active car the round does not field. The comment (and every alternate in
 /// it) is preserved verbatim for future swaps; edits are line-level and never re-serialize the
-/// (malformed) XML. Backup-first. Purely a skin-file operation — never the career DB / sim.
+/// (malformed) XML. Backup-first. Purely a skin-file operation, never the career DB / sim.
 /// </summary>
 public static class ActiveSetRewriter
 {
@@ -35,7 +35,7 @@ public static class ActiveSetRewriter
     /// <summary>An alternate block found INSIDE a comment: its line span and NAME.</summary>
     public sealed record AlternateBlock(int StartLine, int EndLine, string Name);
 
-    /// <summary>Every LIVERY_OVERRIDE block living inside <c>&lt;!-- --&gt;</c> comments — the
+    /// <summary>Every LIVERY_OVERRIDE block living inside <c>&lt;!-- --&gt;</c> comments, the
     /// 1985-style alternates. Blocks the game loads (outside comments) are NOT returned.</summary>
     public static IReadOnlyList<AlternateBlock> AlternateBlocks(IReadOnlyList<string> lines)
     {
@@ -131,7 +131,7 @@ public static class ActiveSetRewriter
             }
             else
             {
-                // Nothing left to displace — append on the next free slot while the cap allows.
+                // Nothing left to displace, append on the next free slot while the cap allows.
                 while (usedSlots.Contains(appendSlot))
                     appendSlot++;
                 if (maxSlot is { } cap && appendSlot > cap)
@@ -184,7 +184,7 @@ public static class ActiveSetRewriter
     }
 
     /// <summary>The donor block's lines with its <c>LIVERY="##"</c> (or any slot) renumbered to
-    /// <paramref name="slot"/>. The donor lines stay in the comment untouched — this is a copy.</summary>
+    /// <paramref name="slot"/>. The donor lines stay in the comment untouched, this is a copy.</summary>
     private static IReadOnlyList<string> RenumberedBlock(
         IReadOnlyList<string> lines, AlternateBlock donor, string slot)
     {

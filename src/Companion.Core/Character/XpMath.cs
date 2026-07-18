@@ -3,7 +3,7 @@ using Companion.Core.Career;
 namespace Companion.Core.Character;
 
 /// <summary>
-/// Character XP is a PURE function of the results the player enters — no dice, no stream — so a
+/// Character XP is a PURE function of the results the player enters, no dice, no stream, so a
 /// replay from the same seed + same results reproduces every level byte-for-byte
 /// (docs/dev/character-system.md §3.1). It lives beside <c>OpiMath</c> and consumes the same
 /// already-computed round facts (<c>expectedFinish</c>, the OPI <c>effectiveFinish</c>, the DNF
@@ -26,7 +26,7 @@ public static class XpMath
 
     /// <summary>Per-round XP: the overperformance term (clamped) plus one result bonus, plus the
     /// beat-teammate bonus on a classified finish. Overperforming in a weak car is the richest XP
-    /// — it mirrors the reputation underdog logic, so a backmarker career still levels.
+    ///, it mirrors the reputation underdog logic, so a backmarker career still levels.
     /// <code>xpRound = clamp((expectedFinish − effectiveFinish) · perPlace, floor, cap) + resultBonus</code>
     /// The result bonus is mutually exclusive by outcome (a win is not also paid the podium+points
     /// bonuses); beat-teammate stacks only on a genuine finish.</summary>
@@ -72,7 +72,7 @@ public static class XpMath
 
         // Blanket per-round multipliers, NOT tied to one result cause: "all" scales every round
         // (adaptable's -15%), "ageWindow" scales only while the round's age-window condition holds
-        // (wonderkid/late_bloomer — the fold folds ageLtPeak/ageGtePeak into these mods). Absent
+        // (wonderkid/late_bloomer, the fold folds ageLtPeak/ageGtePeak into these mods). Absent
         // cause ⇒ ×1.0 exactly, so a career without these perks is byte-identical to the shipped path.
         double blanket = Mult("all") * Mult("ageWindow");
 

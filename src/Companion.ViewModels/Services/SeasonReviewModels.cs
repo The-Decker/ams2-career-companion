@@ -17,7 +17,7 @@ public sealed record SeasonReviewModel
 
     public required double FinalOpi { get; init; }
 
-    /// <summary>Every journaled headline of the season, in journal order — the digest.</summary>
+    /// <summary>Every journaled headline of the season, in journal order, the digest.</summary>
     public required IReadOnlyList<string> Headlines { get; init; }
 
     /// <summary>Offer letters in the sim's ranking order.</summary>

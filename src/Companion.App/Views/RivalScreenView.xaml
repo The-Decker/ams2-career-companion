@@ -4,7 +4,7 @@
              xmlns:views="clr-namespace:Companion.App.Views"
              xmlns:audio="clr-namespace:Companion.App.Audio"
              Focusable="False">
-    <!-- The SMGP rival screen — its own step after race setup, before qualifying. DataContext is a
+    <!-- The SMGP rival screen, its own step after race setup, before qualifying. DataContext is a
          RivalScreenViewModel; the inner content binds to the shared BriefingViewModel (Briefing), so
          the round header / D.P. readout / pick-a-rival / dossier / "name him" all reuse the exact
          briefing state and commands (the naming rides into the race draft at Apply, unchanged). -->
@@ -87,7 +87,7 @@
                                         </Border>
                                         <TextBlock VerticalAlignment="Center">
                                             <Run Text="{Binding DriverName, Mode=OneWay}" FontWeight="SemiBold" />
-                                            <Run Text=" — " /><Run Text="{Binding TeamName, Mode=OneWay}" />
+                                            <Run Text=", " /><Run Text="{Binding TeamName, Mode=OneWay}" />
                                         </TextBlock>
                                     </StackPanel>
                                 </DataTemplate>
@@ -242,7 +242,7 @@
                                     Command="{Binding SmgpNameRivalCommand}"
                                     audio:SoundAssist.Cue="Confirm"
                                     Visibility="{Binding SmgpCanName, Converter={StaticResource BoolVisible}}"
-                                    ToolTip="Commit this rival for the round — finish ahead of them twice without losing and you may take their seat" />
+                                    ToolTip="Commit this rival for the round, finish ahead of them twice without losing and you may take their seat" />
                             <!-- after naming: the rival reacts in their OWN voice (mood-aware trash-talk),
                                  then the commitment line spells out what beating them means. -->
                             <Border x:Name="SmgpNamedBanner" Style="{StaticResource SuccessCallout}"
@@ -261,7 +261,7 @@
                             <CheckBox Content="{Binding SmgpSwapAcceptLabel}" IsChecked="{Binding SmgpSwapAccept}"
                                       Margin="0,12,0,0" FontSize="17"
                                       Visibility="{Binding SmgpSwapPromptVisible, Converter={StaticResource BoolVisible}}"
-                                      ToolTip="Beat the same rival twice without losing and you may get an offer to join their team — this is your standing answer" />
+                                      ToolTip="Beat the same rival twice without losing and you may get an offer to join their team, this is your standing answer" />
                         </StackPanel>
                     </Border>
 

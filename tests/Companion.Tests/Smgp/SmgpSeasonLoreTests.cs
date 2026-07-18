@@ -137,7 +137,7 @@ public sealed class SmgpSeasonLoreTests
         Assert.Contains(SmgpSeasonLoreEntry.PlayerTeamToken, season1.Subtitle, StringComparison.Ordinal);
         Assert.DoesNotContain("Minarae garage", season1.Subtitle, StringComparison.OrdinalIgnoreCase);
 
-        // Any field that carries the token is a PLAYER reference — never a hard-coded team beside it.
+        // Any field that carries the token is a PLAYER reference, never a hard-coded team beside it.
         foreach (var season in Lore.Seasons)
         {
             foreach (string text in AllStrings(season))
@@ -173,7 +173,7 @@ public sealed class SmgpSeasonLoreTests
     {
         // The guard that makes the "Minarae bug" impossible to reintroduce: the player's OWN team
         // is dynamic (a creation choice that moves across the campaign), so it is ALWAYS the
-        // {playerTeam} token — never a literal team in a membership construction. World teams
+        // {playerTeam} token, never a literal team in a membership construction. World teams
         // (Senna's Madonna, Nono's Minarae) stay literal, but they never sit in a PLAYER sentence.
         // A player-marked line naming "<Team> garage/signing/seat/overalls" fails the build.
         string[] teams =
@@ -182,7 +182,7 @@ public sealed class SmgpSeasonLoreTests
             "Firenze", "Iris", "Joke", "Lares", "Linden", "Losel", "Madonna", "May", "Millions",
             "Minarae", "Moon", "Orchis", "Rigel", "Serga", "Tyrant", "Zeroforce",
         ];
-        // Phrases that describe ONLY the player in this lore (verified — never an AI driver).
+        // Phrases that describe ONLY the player in this lore (verified, never an AI driver).
         string[] playerMarkers =
         [
             "the climber", "unheralded", "stranger at the anvil", "the new name",
@@ -205,7 +205,7 @@ public sealed class SmgpSeasonLoreTests
                     {
                         Assert.False(
                             text.Contains($"{team} {noun}", StringComparison.OrdinalIgnoreCase),
-                            $"S{season.Ordinal} names the player at the literal team '{team} {noun}' — " +
+                            $"S{season.Ordinal} names the player at the literal team '{team} {noun}', " +
                             $"use the {SmgpSeasonLoreEntry.PlayerTeamToken} token instead. Line: {text}");
                     }
                 }
@@ -216,7 +216,7 @@ public sealed class SmgpSeasonLoreTests
     [Fact]
     public void WithoutReplacedDriver_DropsEveryLineNamingThatDriver()
     {
-        // A player who takes Nono's Minarae seat benches him — the lore must not narrate Nono as an
+        // A player who takes Nono's Minarae seat benches him, the lore must not narrate Nono as an
         // active participant. Season 17 gives him an arc and a hook in the raw lore.
         var season17 = Lore.ForOrdinal(17)!;
         Assert.Contains(season17.Arcs, a => a.Contains("Nono", StringComparison.OrdinalIgnoreCase));
@@ -254,7 +254,7 @@ public sealed class SmgpSeasonLoreTests
     {
         var season1 = Lore.ForOrdinal(1)!.WithPlayerTeam("");
         Assert.DoesNotContain(SmgpSeasonLoreEntry.PlayerTeamToken, season1.Subtitle, StringComparison.Ordinal);
-        // "the {playerTeam} garage" → "the home garage" — grammatical, never a raw token or "the  garage".
+        // "the {playerTeam} garage" → "the home garage", grammatical, never a raw token or "the  garage".
         Assert.Contains("the home garage", season1.Subtitle, StringComparison.Ordinal);
     }
 

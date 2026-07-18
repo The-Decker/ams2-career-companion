@@ -7,7 +7,7 @@ namespace Companion.Ams2.Grid;
 /// Rebinds a staged custom-AI file's drivers onto real BASE-GAME liveries for the class (from
 /// <c>official-liveries.json</c>) so the file is GUARANTEED to load in AMS2. Every <c>livery_name</c>
 /// becomes a name the game actually ships, so AMS2 accepts the file and shows the real driver names
-/// + ratings on the grid — instead of silently rejecting a file that references community skins the
+/// + ratings on the grid, instead of silently rejecting a file that references community skins the
 /// player has not installed (the root cause of "nothing shows in game", confirmed on Mike's install).
 ///
 /// Purely a STAGING transform: it changes which livery each AI driver is painted as, never the
@@ -20,7 +20,7 @@ public static class BaseGameLiveryBinder
 {
     /// <param name="installedActiveLiveryNames">The exact display names of community skins that are
     /// INSTALLED and ACTIVE on disk for this class (a real numeric slot, not a "##" placeholder). A
-    /// driver already painted as one of these keeps that livery — the player installed the real skin,
+    /// driver already painted as one of these keeps that livery, the player installed the real skin,
     /// so AMS2 shows the historical paint. Every other base driver is floored onto a base-game livery
     /// the game always ships (guaranteed load). Null/empty = the original behavior: floor everyone.</param>
     public static CustomAiFile RebindToBaseGame(
@@ -50,7 +50,7 @@ public static class BaseGameLiveryBinder
         {
             if (driver.Tracks.Count != 0)
             {
-                drivers.Add(driver);                       // per-track entry — never touched
+                drivers.Add(driver);                       // per-track entry, never touched
                 continue;
             }
             if (installed.Contains(driver.LiveryName))

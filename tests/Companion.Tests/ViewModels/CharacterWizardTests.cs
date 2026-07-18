@@ -110,7 +110,7 @@ public sealed class CharacterWizardTests : IDisposable
     public void RedistributingTalentWithinTheCap_StaysValid()
     {
         var vm = new CharacterViewModel(Rules());
-        // Floor everything, then pour the freed talent into two stats — a real specialist, under cap.
+        // Floor everything, then pour the freed talent into two stats, a real specialist, under cap.
         foreach (var s in vm.Stats.Concat(vm.MetaStats))
             s.Value = 0.15;
         vm.Stats.First(s => s.Id == "pace").Value = 0.85;
@@ -139,7 +139,7 @@ public sealed class CharacterWizardTests : IDisposable
         var vm = new CharacterViewModel(Rules());
         Assert.NotNull(vm.MaxPerks); // the shipped rules cap the perk count
 
-        // Clear the preset, then select one MORE than the cap allows — using only zero-cost perks so
+        // Clear the preset, then select one MORE than the cap allows, using only zero-cost perks so
         // the CP net stays in budget and ONLY the count cap can fail the build.
         foreach (var selected in vm.Perks.Where(p => p.IsSelected).ToList())
             vm.TogglePerkCommand.Execute(selected);
@@ -147,7 +147,7 @@ public sealed class CharacterWizardTests : IDisposable
             vm.TogglePerkCommand.Execute(perk);
 
         Assert.Equal(vm.MaxPerks!.Value + 1, vm.SelectedPerkCount);
-        Assert.True(vm.PerksInBudget);      // net is in budget — only the COUNT cap fails
+        Assert.True(vm.PerksInBudget);      // net is in budget, only the COUNT cap fails
         Assert.False(vm.PerksWithinCount);
         Assert.False(vm.IsValid);
         Assert.Contains("at most", vm.Invalidity);
@@ -779,7 +779,7 @@ public sealed class CharacterWizardTests : IDisposable
         wizard.SelectedSeat = seat;
         wizard.NextCommand.Execute(null);                 // -> Grid (choices built on entry)
 
-        // The player REPLACES the seat's driver on their own (locked) card — new name, not the AI's.
+        // The player REPLACES the seat's driver on their own (locked) card, new name, not the AI's.
         var you = Assert.Single(wizard.GridChoices, c => c.IsLocked);
         Assert.Equal("Renamed Driver", you.DriverName);
         Assert.NotEqual(seat.DriverName, you.DriverName);
@@ -837,7 +837,7 @@ public sealed class CharacterWizardTests : IDisposable
         Assert.Null(request.ExperienceMode);
         Assert.Equal(CharacterLevelProgression.EraCappedVersion, request.Character!.ProgressionVersion);
         Assert.Equal("Chosen Driver", request.Character!.Name); // the pre-seat identity reached creation
-        // The default archetype's perks came through (profile lists them in perks.json order — a
+        // The default archetype's perks came through (profile lists them in perks.json order, a
         // deterministic order, so compared as a set here).
         Assert.Equal(
             wizard.Archetypes()[0].PerkIds.OrderBy(x => x, StringComparer.Ordinal),

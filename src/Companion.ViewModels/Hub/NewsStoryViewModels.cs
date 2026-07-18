@@ -138,7 +138,7 @@ public sealed record NewsCategoryFilterViewModel(
 internal static class NewsStoryProjection
 {
     /// <summary>Newsroom kinds the SMGP dispatch feed already voices with richer art and
-    /// canon language — suppressed for SMGP careers so one happening never appears twice.</summary>
+    /// canon language, suppressed for SMGP careers so one happening never appears twice.</summary>
     private static readonly HashSet<NewsEventKind> SmgpCoveredKinds =
     [
         NewsEventKind.CareerCreated, NewsEventKind.SeasonStarted, NewsEventKind.SeasonCompleted,
@@ -149,7 +149,7 @@ internal static class NewsStoryProjection
         NewsEventKind.PlayerTeamChanged, NewsEventKind.RivalryDeveloped, NewsEventKind.DnqDrama,
     ];
 
-    /// <summary>Newsroom kinds that constitute THE weekend result story — when one exists for a
+    /// <summary>Newsroom kinds that constitute THE weekend result story, when one exists for a
     /// round, the legacy journal headline for that round is superseded (never duplicated).</summary>
     private static readonly HashSet<NewsEventKind> ResultFamilyKinds =
     [

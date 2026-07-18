@@ -76,7 +76,7 @@ public readonly struct Rational : IEquatable<Rational>, IComparable<Rational>
     public int CompareTo(Rational other) =>
         ((Int128)Numerator * other.Denominator).CompareTo((Int128)other.Numerator * Denominator);
 
-    /// <summary>Formats as "n" for integers, "n/d" otherwise — the canonical round-trip form.</summary>
+    /// <summary>Formats as "n" for integers, "n/d" otherwise, the canonical round-trip form.</summary>
     public override string ToString() =>
         IsInteger
             ? Numerator.ToString(CultureInfo.InvariantCulture)

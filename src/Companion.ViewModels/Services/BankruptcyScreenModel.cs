@@ -3,7 +3,7 @@ using Companion.Data;
 namespace Companion.ViewModels.Services;
 
 /// <summary>
-/// The Dynasty bankruptcy game-over screen's complete, DB-free projection — the economy's
+/// The Dynasty bankruptcy game-over screen's complete, DB-free projection, the economy's
 /// <see cref="DeathScreenModel"/> (docs/dev/dynasty-tycoon-economy.md §7). Built lazily from the
 /// intact DB the first time the shell asks (bankruptcy never deletes the career file) and
 /// memoised: a bankrupt team takes no more rounds, so it never changes. The GUI lane renders it
@@ -33,7 +33,7 @@ public sealed record BankruptcyScreenModel
     /// <summary>The grace the rules allowed (for the screen's honest "how it ended" line).</summary>
     public required int GraceRounds { get; init; }
 
-    /// <summary>The whole-career records book — the legacy the team leaves behind.</summary>
+    /// <summary>The whole-career records book, the legacy the team leaves behind.</summary>
     public required CareerRecordsBook Record { get; init; }
 
     /// <summary>Season-by-season career cards (the campaign timeline's own data).</summary>

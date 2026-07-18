@@ -3,12 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:audio="clr-namespace:Companion.App.Audio"
              Focusable="False">
-    <!-- The 17-season SMGP campaign FINALE (Mike's "final final screen") — shown ONCE, at the fold
+    <!-- The 17-season SMGP campaign FINALE (Mike's "final final screen"), shown ONCE, at the fold
          that completes the grand campaign, built around the SECRET hero image: special.jpg (survived
          all 17) or ultimate.jpg (champion in all 17). The DataContext is an SmgpFinaleViewModel; its
          Model.HeroImageKey is emitted ONLY when the campaign is beaten, so the art (living at
          data/ams2/smgp/finale/<key>.jpg, a folder no other view references) is unreachable until then.
-         Absent-tolerant: a missing file just shows a sealed-vault placeholder — the UNLOCK is the
+         Absent-tolerant: a missing file just shows a sealed-vault placeholder, the UNLOCK is the
          achievement, the image is the payoff. Continue advances into the final season review. -->
     <DockPanel>
 
@@ -23,7 +23,7 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
             <StackPanel MaxWidth="820" HorizontalAlignment="Center">
 
-                <!-- the FLAWLESS ribbon (champion in all 17) — the deeper secret -->
+                <!-- the FLAWLESS ribbon (champion in all 17), the deeper secret -->
                 <Border Margin="0,0,0,6" Padding="14,4" CornerRadius="10" HorizontalAlignment="Center"
                         Background="{DynamicResource AccentBrush}"
                         Visibility="{Binding Model.IsFlawless, Converter={StaticResource BoolVisible}}">

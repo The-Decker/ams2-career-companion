@@ -18,7 +18,7 @@ public sealed record SeasonScoringDefinition
 
     /// <summary>Constructors excluded from the championship (2007 McLaren spygate; the
     /// pre-split 2018 Force India entity). Unlike excluded drivers, their counted points are
-    /// zeroed — that is how the official records treated both cases — and they receive no
+    /// zeroed, that is how the official records treated both cases, and they receive no
     /// position, so everyone below moves up.</summary>
     public IReadOnlySet<string> ExcludedConstructors { get; init; } = new HashSet<string>();
 
@@ -27,7 +27,7 @@ public sealed record SeasonScoringDefinition
     /// official-record quirks the data cannot express (1953 Fangio +0.5 Reims fastest lap,
     /// 1956 Fangio −1.5 Monaco second shared car).
     /// NOTE: adjustments and exclusions apply from the FIRST snapshot, not from the round the
-    /// penalty landed — final standings are exact, mid-season snapshots for such seasons are
+    /// penalty landed, final standings are exact, mid-season snapshots for such seasons are
     /// approximations (revisit if per-round snapshots become user-facing for oracle seasons).</summary>
     public IReadOnlyDictionary<string, Rational> DriverPointsAdjustments { get; init; } =
         new Dictionary<string, Rational>();

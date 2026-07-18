@@ -17,10 +17,10 @@ namespace Companion.Tests.Career;
 /// master seed, play all 11 rounds through the unified fold (raw envelope import + standings
 /// + player round update, one atomic unit per round), run the season-end pipeline off the
 /// round-11 FOLDED player state, then prove the whole career re-simulates byte-identically —
-/// per-round events included — and that a divergence is report-only (tamper → rollback →
+/// per-round events included, and that a divergence is report-only (tamper → rollback →
 /// stored data intact).
 ///
-/// The result synthesis is TEST SCAFFOLDING, not product code — the sim never invents race
+/// The result synthesis is TEST SCAFFOLDING, not product code, the sim never invents race
 /// results (they are imported from AMS2). It stands in for the human importing what the game
 /// produced: finishing order = merged grid raceSkill + a small per-round deterministic
 /// shuffle noise (Pcg32 stream 'results'), so outcomes stay rating-plausible while every
@@ -213,7 +213,7 @@ public class FullSeasonE2ETests(ITestOutputHelper output)
         int storedSimRows = journal.Count(r => !DataJournalPhases.IsProvenance(r.Phase));
         Assert.Equal(storedSimRows, report.ComparedRows);
 
-        // ---- assert: divergence is report-only — tamper → rollback → data intact ----
+        // ---- assert: divergence is report-only, tamper → rollback → data intact ----
         StateStore.SetOfferAccepted(db, seasonId, seasonEnd.Offers[0].TeamId);
 
         var victim = journal.First(r =>
@@ -233,8 +233,8 @@ public class FullSeasonE2ETests(ITestOutputHelper output)
         Assert.Equal("deltaJson", tamperedReport.FirstDivergence!.Reason);
         Assert.Equal(victim.Seq, tamperedReport.FirstDivergence.StoredSeq);
 
-        // Zero data loss: every stored artifact — journal (tamper included), raw results,
-        // offers with the accepted flag, end states, per-round folds — reads back untouched.
+        // Zero data loss: every stored artifact, journal (tamper included), raw results,
+        // offers with the accepted flag, end states, per-round folds, reads back untouched.
         Assert.Equal(storedJournalAfterTamper, JournalStore.ReadSeason(db, seasonId));
         Assert.Equal(storedResults, ResultStore.ReadSeasonResults(db, seasonId));
         Assert.Equal(storedOffersAfterTamper, StateStore.ReadOffers(db, seasonId));
@@ -291,7 +291,7 @@ public class FullSeasonE2ETests(ITestOutputHelper output)
         tamper.ExecuteNonQuery();
     }
 
-    /// <summary>TEST SCAFFOLDING — stands in for importing a real AMS2 result. Deterministic
+    /// <summary>TEST SCAFFOLDING, stands in for importing a real AMS2 result. Deterministic
     /// plausible classification: merged raceSkill + per-round 'results'-stream shuffle noise.
     /// When <paramref name="playerDnf"/> is set the player retires instead of classifying
     /// (the envelope carries the cause).</summary>

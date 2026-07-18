@@ -3,18 +3,18 @@ using Companion.Core.Json;
 
 namespace Companion.Core.Smgp;
 
-/// <summary>The rival's mood when the briefing offers him — drives which line he says. Derived from
+/// <summary>The rival's mood when the briefing offers him, drives which line he says. Derived from
 /// the two-wins tally: fresh (never engaged / streaks reset), the player one win up (the seat is one
 /// win away), or the rival one win up (he is one win from taking the player's seat).</summary>
 public enum SmgpRivalMood
 {
-    /// <summary>First challenge — neither has a live streak on the other.</summary>
+    /// <summary>First challenge, neither has a live streak on the other.</summary>
     First,
 
-    /// <summary>The player has beaten him once without losing — one more win takes his seat.</summary>
+    /// <summary>The player has beaten him once without losing, one more win takes his seat.</summary>
     PlayerLeads,
 
-    /// <summary>He has beaten the player once — one more loss and he takes the player's seat.</summary>
+    /// <summary>He has beaten the player once, one more loss and he takes the player's seat.</summary>
     RivalLeads,
 }
 
@@ -22,7 +22,7 @@ public enum SmgpRivalMood
 /// The SMGP rivals' trash-talk: each driver's own lines for each <see cref="SmgpRivalMood"/>, so the
 /// dossier says something DIFFERENT per character AND per situation (Mike: "every character will say
 /// something different to you ... depending on if you first challenged them or beat them once").
-/// Loaded from <c>data/rules/smgp/rival-quotes.json</c>. DISPLAY-ONLY — the briefing quote is never a
+/// Loaded from <c>data/rules/smgp/rival-quotes.json</c>. DISPLAY-ONLY, the briefing quote is never a
 /// fold input (like the news corpora), so the line is chosen from a deterministic per-round seed only
 /// so a re-open shows the same line. A driver with no authored lines (or an absent file) falls back
 /// to the shared pool, and finally to a single deadpan constant, so the panel always has a line.
@@ -38,7 +38,7 @@ public sealed class SmgpRivalQuotes
         _fallback = fallback;
     }
 
-    /// <summary>The last-resort line when nothing is authored — the arcade's own deadpan default.</summary>
+    /// <summary>The last-resort line when nothing is authored, the arcade's own deadpan default.</summary>
     public const string Default = "IT'S INTERESTING.";
 
     /// <summary>An empty bank (no file shipped): every lookup returns <see cref="Default"/>.</summary>

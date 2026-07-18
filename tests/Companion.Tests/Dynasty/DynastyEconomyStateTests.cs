@@ -8,7 +8,7 @@ namespace Companion.Tests.Dynasty;
 
 /// <summary>DynastyEconomyState is replay-safe by construction: canonical sponsor-key order,
 /// structural (not reference) equality, exact-rational money round-trips, and a null state
-/// serializes to NOTHING on the player blob — the byte-identical gate for every non-economy
+/// serializes to NOTHING on the player blob, the byte-identical gate for every non-economy
 /// career.</summary>
 public sealed class DynastyEconomyStateTests
 {

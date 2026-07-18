@@ -5,7 +5,7 @@ namespace Companion.Tests.ViewModels;
 
 /// <summary>Era-capped circuit FUN FACTS (reference data baked by derive_history.cs): the store
 /// parses the additive <c>circuit.facts</c> array (and defaults it empty on pre-facts files), the
-/// season schedule projection carries it, and the Calendar round VM exposes it. Sim-inert — the
+/// season schedule projection carries it, and the Calendar round VM exposes it. Sim-inert, the
 /// fold never reads any of this (same contract as <c>History</c>).</summary>
 public sealed class CircuitFactsTests : IDisposable
 {
@@ -20,7 +20,7 @@ public sealed class CircuitFactsTests : IDisposable
     [Fact]
     public void Store_parses_facts_and_defaults_empty_when_absent()
     {
-        // Round 1 carries facts; round 2 is the pre-facts file shape (no "facts" key) — back-compat.
+        // Round 1 carries facts; round 2 is the pre-facts file shape (no "facts" key), back-compat.
         File.WriteAllText(Path.Combine(_root, "1967.json"), """
             {"year":1967,"rounds":[
               {"round":1,"name":"South African Grand Prix",
@@ -86,7 +86,7 @@ public sealed class CircuitFactsTests : IDisposable
             Round = 1, Name = "Dutch GP", Date = "1978-08-27", RealVenue = "Circuit Zandvoort",
             Ams2TrackName = "Zandvoort", Laps = 75, Kind = SeasonTrackKind.RealVenue,
             CircuitLayoutId = "zandvoort",
-            CircuitFacts = ["First Grand Prix here: 1952 — 25 World Championship GPs held coming into this season."],
+            CircuitFacts = ["First Grand Prix here: 1952, 25 World Championship GPs held coming into this season."],
         });
         session.ScheduleEntries.Add(new SeasonScheduleEntry
         {

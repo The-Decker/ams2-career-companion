@@ -12,7 +12,7 @@ namespace Companion.Tests.Dynasty;
 /// <summary>The economy gate at creation: ONLY an opted-in grandPrixDynasty career seeds
 /// <see cref="Companion.Core.Dynasty.DynastyEconomyState"/> (opening balance pinned from the
 /// starting team's tier, era-scaled). A Dynasty career without the opt-in, a legacy career, and
-/// an SMGP career all seed nothing — their raw start blobs carry no "economy" key at all, the
+/// an SMGP career all seed nothing, their raw start blobs carry no "economy" key at all, the
 /// byte-identical guarantee for every pre-feature save.</summary>
 public sealed class DynastyEconomySeedingTests : IDisposable
 {
@@ -74,7 +74,7 @@ public sealed class DynastyEconomySeedingTests : IDisposable
         WritePack(1967);
         string careerPath = CareerPath("legacy-flagged");
         // A legacy (null-mode) creation with the flag set anyway: no campaign plan exists, so the
-        // mode half of the gate can never be satisfied — §2.1's "absent mode never infers Dynasty".
+        // mode half of the gate can never be satisfied, §2.1's "absent mode never infers Dynasty".
         using (CareerSessionService.CreateCareer(
                    RequestWithoutCharacter(careerPath) with { DynastyEconomy = true },
                    Environment()))

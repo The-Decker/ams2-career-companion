@@ -7,7 +7,7 @@ namespace Companion.Core.Smgp;
 /// The SMGP-universe SPONSOR board: fictional SEGA-world brands (a title watch-house on the crown, a
 /// struggling local shop clinging to the floor team, series-wide fuel/tyre giants) with their own story,
 /// tagline, industry, tier, brand colour and the teams they back. Loaded from
-/// <c>data/rules/smgp/sponsors.json</c>. DISPLAY-ONLY — never a fold input (like the team profiles / rival
+/// <c>data/rules/smgp/sponsors.json</c>. DISPLAY-ONLY, never a fold input (like the team profiles / rival
 /// quotes / almanac): shown on the Paddock's Sponsors tab, and the seed of the future Tycoon mode. An
 /// absent file resolves to <see cref="Empty"/>, so a non-SMGP install is simply unaffected.
 /// </summary>

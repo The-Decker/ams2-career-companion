@@ -64,7 +64,7 @@ public partial class StartView : UserControl
     private void OnOpenCareerFile(object sender, RoutedEventArgs e) => OpenCareerFilePicker();
 
     /// <summary>Shows the .ams2career file dialog and hands the chosen path to the VM command. The
-    /// dialog (view-layer only, per the shell contract) never blocks the VM — the command takes the
+    /// dialog (view-layer only, per the shell contract) never blocks the VM, the command takes the
     /// path so it stays unit-testable; opening routes through the same continue flow as the gallery.</summary>
     private void OpenCareerFilePicker()
     {
@@ -164,7 +164,7 @@ public partial class StartView : UserControl
 
     /// <summary>Right-click MRU → Set card image…: pick an image for this career's gallery card. The
     /// dialog is view-layer only; the VM records the chosen path (point-to-file, never copied). Any
-    /// image is accepted — a 16:9 source fills the hero band uncropped.</summary>
+    /// image is accepted, a 16:9 source fills the hero band uncropped.</summary>
     private void OnRecentSetImage(object sender, RoutedEventArgs e)
     {
         if (sender is not FrameworkElement { DataContext: RecentCareer career } ||
@@ -203,7 +203,7 @@ public partial class StartView : UserControl
     }
 
     /// <summary>Right-click MRU → Delete career file…: view-layer confirmation (same contract as
-    /// the open picker's dialog — the VM command is the already-confirmed action, so it stays
+    /// the open picker's dialog, the VM command is the already-confirmed action, so it stays
     /// unit-testable). Defaults to No; reachable by keyboard via the context-menu key.</summary>
     private void OnRecentDelete(object sender, RoutedEventArgs e)
     {

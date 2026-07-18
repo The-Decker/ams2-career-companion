@@ -46,7 +46,7 @@ for (int year = startYear; year <= endYear; year++)
     var root = new JsonObject
     {
         ["year"] = year,
-        ["source"] = "Derived from the f1db dataset (CC BY 4.0) — https://github.com/f1db/f1db",
+        ["source"] = "Derived from the f1db dataset (CC BY 4.0): https://github.com/f1db/f1db",
     };
 
     // Drivers' + constructors' champions (season standings, position 1).
@@ -229,7 +229,7 @@ static List<string> CircuitFacts(SqliteConnection conn, string circuitId, string
         cache[key] = facts;
         return facts;
     }
-    facts.Add($"First Grand Prix here: {firstYear} — {held} World Championship " +
+    facts.Add($"First Grand Prix here: {firstYear}, {held} World Championship " +
               $"{(held == 1 ? "GP" : "GPs")} held coming into this season.");
 
     // 2. Most wins (driver) — only when someone has won here more than once. Row counts are
@@ -282,7 +282,7 @@ static List<string> CircuitFacts(SqliteConnection conn, string circuitId, string
         "AND rd.fastest_lap_time_millis IS NOT NULL ORDER BY rd.fastest_lap_time_millis LIMIT 1;",
         ("$l", layoutId), y);
     if (record.Count == 1 && record[0][0] is { Length: > 0 } lapTime)
-        facts.Add($"Race lap record on this layout: {lapTime} — {record[0][1]} ({record[0][2]}).");
+        facts.Add($"Race lap record on this layout: {lapTime} - {record[0][1]} ({record[0][2]}).");
 
     // 7. Pole conversion — DISTINCT races (same shared-drive guard as fact 4).
     var fromPole = Rows(conn,

@@ -6,7 +6,7 @@ namespace Companion.Core.Smgp;
 /// <summary>
 /// SMGP-universe driver biographies (a short arcade epithet + a ~3-paragraph biography + in-world
 /// quotes), keyed by DRIVER id (e.g. "driver.ayrton_senna"). Loaded from
-/// <c>data/rules/smgp/driver-profiles.json</c>. DISPLAY-ONLY — never a fold input (exactly like
+/// <c>data/rules/smgp/driver-profiles.json</c>. DISPLAY-ONLY, never a fold input (exactly like
 /// <see cref="SmgpTeamProfiles"/> / <see cref="SmgpRivalQuotes"/>): shown on the Paddock driver-preview
 /// tab. Fully fictional (the SEGA universe, never real F1). An absent file (or an un-authored driver)
 /// resolves to null, so a non-SMGP install or an un-updated data folder is simply unaffected.
@@ -54,7 +54,7 @@ public sealed class SmgpDriverProfiles
     }
 }
 
-/// <summary>One SMGP-world driver's profile — display-only reference content for the Paddock tab.
+/// <summary>One SMGP-world driver's profile, display-only reference content for the Paddock tab.
 /// Fully fictional (the SEGA universe); names may echo real F1 but the people are invented.</summary>
 public sealed record SmgpDriverProfile
 {
@@ -67,7 +67,7 @@ public sealed record SmgpDriverProfile
     /// <summary>A short ALL-CAPS arcade epithet ("THE UNTOUCHABLE KING").</summary>
     public string Epithet { get; init; } = "";
 
-    /// <summary>The driver's SMGP-world biography — a few paragraphs (Mike: ~3).</summary>
+    /// <summary>The driver's SMGP-world biography, a few paragraphs (Mike: ~3).</summary>
     public IReadOnlyList<string> Bio { get; init; } = [];
 
     /// <summary>One or two in-character quotes (their own voice, or a paddock line about them).</summary>
@@ -81,22 +81,22 @@ public sealed record SmgpDriverProfile
     public SmgpPronouns Pronouns => SmgpPronouns.For(Gender);
 }
 
-/// <summary>A gendered pronoun set for rival/driver copy — subject (she/he/they), object (her/him/them) and
+/// <summary>A gendered pronoun set for rival/driver copy, subject (she/he/they), object (her/him/them) and
 /// possessive determiner (her/his/their). DISPLAY-ONLY. <see cref="For"/> maps a gender string to a set;
 /// anything but "female" defaults to he/him (the majority of the fictional grid, and the safe legacy default
 /// so existing copy is unchanged for every driver not explicitly marked).</summary>
 public readonly record struct SmgpPronouns(string Subject, string Object, string Possessive)
 {
-    /// <summary>he / him / his — the default for an unmarked or male driver.</summary>
+    /// <summary>he / him / his, the default for an unmarked or male driver.</summary>
     public static readonly SmgpPronouns He = new("he", "him", "his");
 
     /// <summary>she / her / her.</summary>
     public static readonly SmgpPronouns She = new("she", "her", "her");
 
-    /// <summary>they / them / their — reserved for a driver explicitly marked non-binary.</summary>
+    /// <summary>they / them / their, reserved for a driver explicitly marked non-binary.</summary>
     public static readonly SmgpPronouns They = new("they", "them", "their");
 
-    /// <summary>The default set (he/him) — used where no rival/gender is known.</summary>
+    /// <summary>The default set (he/him), used where no rival/gender is known.</summary>
     public static SmgpPronouns Default => He;
 
     /// <summary>Maps a gender string ("female"/"male"/"nonbinary", case-insensitive) to its pronoun set;

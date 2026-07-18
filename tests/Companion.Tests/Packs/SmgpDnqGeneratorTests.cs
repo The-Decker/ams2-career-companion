@@ -41,10 +41,10 @@ public sealed class SmgpDnqGeneratorTests
         var a = SmgpDnqField.Generate(Pack.Value, 42);
         var b = SmgpDnqField.Generate(Pack.Value, 987654321);
 
-        // At least one round seats a different SET of qualifiers — the rotation is per-career, not fixed.
+        // At least one round seats a different SET of qualifiers, the rotation is per-career, not fixed.
         bool anyDiffers = a.Keys.Any(r =>
             !a[r].ToHashSet(StringComparer.Ordinal).SetEquals(b[r]));
-        Assert.True(anyDiffers, "two seeds produced the identical field every round — the roll isn't seeded.");
+        Assert.True(anyDiffers, "two seeds produced the identical field every round, the roll isn't seeded.");
     }
 
     [Fact]
@@ -75,7 +75,7 @@ public sealed class SmgpDnqGeneratorTests
             {
                 var set = starters.ToHashSet(StringComparer.Ordinal);
                 foreach (var star in benchmarks)
-                    Assert.True(set.Contains(star), $"seed {seed}, round {round}: '{star}' was rolled out — a benchmark must never DNQ.");
+                    Assert.True(set.Contains(star), $"seed {seed}, round {round}: '{star}' was rolled out, a benchmark must never DNQ.");
             }
         }
     }
@@ -92,7 +92,7 @@ public sealed class SmgpDnqGeneratorTests
 
         int everDnq = perRoundDnq.SelectMany(s => s).Distinct(StringComparer.Ordinal).Count();
         int maxSingleRound = perRoundDnq.Max(s => s.Count);
-        Assert.True(everDnq > maxSingleRound, "the DNQ set doesn't rotate — more cars DNQ across the season than in any one round should hold.");
+        Assert.True(everDnq > maxSingleRound, "the DNQ set doesn't rotate, more cars DNQ across the season than in any one round should hold.");
     }
 
     // ---------- the per-season re-roll (17-season campaign) ----------
@@ -100,7 +100,7 @@ public sealed class SmgpDnqGeneratorTests
     [Fact]
     public void ForSeason_Season1_ReturnsThePackVerbatim()
     {
-        // Season 1 keeps its PINNED creation roll — ForSeason must be a no-op (same reference).
+        // Season 1 keeps its PINNED creation roll, ForSeason must be a no-op (same reference).
         Assert.Same(Pack.Value, SmgpDnqField.ForSeason(Pack.Value, 1, 424242));
         Assert.Same(Pack.Value, SmgpDnqField.ForSeason(Pack.Value, 0, 424242));
     }
@@ -123,8 +123,8 @@ public sealed class SmgpDnqGeneratorTests
                 !r.Grid!.StarterDriverIds.ToHashSet(StringComparer.Ordinal).SetEquals(
                     b.Season.Rounds.Single(x => x.Round == r.Round).Grid!.StarterDriverIds));
 
-        Assert.True(Differs(s2, s1Roll), "season 2 matched season 1's roll on every round — no re-roll.");
-        Assert.True(DiffersPacks(s2, s3), "season 2 and 3 rolled the identical field — the ordinal isn't in the seed key.");
+        Assert.True(Differs(s2, s1Roll), "season 2 matched season 1's roll on every round, no re-roll.");
+        Assert.True(DiffersPacks(s2, s3), "season 2 and 3 rolled the identical field, the ordinal isn't in the seed key.");
     }
 
     [Fact]
@@ -132,7 +132,7 @@ public sealed class SmgpDnqGeneratorTests
     {
         // The live fold applies ForSeason to the SmgpSeasonVariety-transformed pack; replay applies it to
         // the RAW pinned pack. Because SmgpSeasonVariety is fold-inert (it keeps the grid + round number
-        // with the round POSITION), both paths MUST resolve the identical StarterDriverIds — the invariant
+        // with the round POSITION), both paths MUST resolve the identical StarterDriverIds, the invariant
         // the byte-identical replay of a per-season re-roll depends on. (Adversarial-verify guard.)
         var pack = Pack.Value;
         const ulong seed = 7777;
@@ -191,6 +191,6 @@ public sealed class SmgpDnqGeneratorTests
                     .SetEquals(round.Grid.StarterDriverIds))
                 anyChangedFromBaked = true;
         }
-        Assert.True(anyChangedFromBaked, "the seeded field matched the baked default every round — the roll had no effect.");
+        Assert.True(anyChangedFromBaked, "the seeded field matched the baked default every round, the roll had no effect.");
     }
 }

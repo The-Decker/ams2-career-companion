@@ -3,14 +3,14 @@ using System.Text.RegularExpressions;
 namespace Companion.Ams2.Skins;
 
 /// <summary>
-/// Grafts a "bubble" car's livery (a car outside a round's active pool — e.g. 1988 Coloni/Eurobrun on
+/// Grafts a "bubble" car's livery (a car outside a round's active pool, e.g. 1988 Coloni/Eurobrun on
 /// a round they DNQ'd) into an override model file, taking a displaced same-model peer's slot. AMS2's
-/// override files hold, per slot, THREE blocks — LIVERY_OVERRIDE (car), HELMET_OVERRIDE, OUTFIT_OVERRIDE
-/// — all keyed by the same <c>LIVERY="NN"</c>. The community files are malformed (stray <c>--&gt;</c>
+/// override files hold, per slot, THREE blocks, LIVERY_OVERRIDE (car), HELMET_OVERRIDE, OUTFIT_OVERRIDE
+///, all keyed by the same <c>LIVERY="NN"</c>. The community files are malformed (stray <c>--&gt;</c>
 /// after each <c>&lt;/LIVERY_OVERRIDE&gt;</c>), so this works PURELY at the line level: it never
 /// re-serializes, only lifts a car's block-group verbatim and renumbers its slot. The active model file
 /// is regenerated from the pack's per-round variant on every stage (and backed up first), so a graft is
-/// disposable/recoverable. Cosmetic (skin) only — never touches the sim.
+/// disposable/recoverable. Cosmetic (skin) only, never touches the sim.
 /// </summary>
 public static class BubbleCarGraft
 {
@@ -25,7 +25,7 @@ public static class BubbleCarGraft
     public sealed record BlockGroup(int StartLine, int EndLine, string Slot, string Name);
 
     /// <summary>Every ACTIVE car block-group in <paramref name="lines"/>, in file order. Blocks
-    /// inside <c>&lt;!-- --&gt;</c> comments are skipped — packs like 1985 keep ~20 alternate
+    /// inside <c>&lt;!-- --&gt;</c> comments are skipped, packs like 1985 keep ~20 alternate
     /// LIVERY_OVERRIDE blocks inside one giant comment, and AMS2 never loads those, so treating
     /// them as cars would offer phantom displacement targets (a graft written into a comment is a
     /// silent in-game no-op).</summary>
@@ -68,7 +68,7 @@ public static class BubbleCarGraft
     /// Replaces the block-group of <paramref name="displaceName"/> in <paramref name="activeXml"/> with
     /// the block-group of <paramref name="playerName"/> lifted from <paramref name="sourceXml"/>, renumbered
     /// to the displaced slot. Returns the edited active text, or null when either car's block-group is not
-    /// found (nothing is written — the caller leaves the file untouched).
+    /// found (nothing is written, the caller leaves the file untouched).
     /// </summary>
     public static string? Graft(string activeXml, string sourceXml, string playerName, string displaceName)
     {

@@ -249,7 +249,7 @@
                     <Grid>
                         <!-- season pick as a GRID of year-pic cards (like the career gallery): the era
                              image is the hero; no version, no path. Selection gets an accent border.
-                             A UniformGrid lays the cards out in 4 responsive columns (Mike's ask) — the
+                             A UniformGrid lays the cards out in 4 responsive columns (Mike's ask), the
                              cards flex to fill the width at any screen size, and the year-pic hero keeps
                              its 16:9 aspect via AspectHeight so it scales with the card. CanContentScroll
                              is off so the taller cards scroll by pixel when they overflow the panel. -->
@@ -299,7 +299,7 @@
                                         </Border.Style>
                                         <StackPanel>
                                             <!-- 16:9 year-pic hero (era art keyed by the season year, or
-                                                 by identity for SMGP — its SEGA Grand Prix art rather than
+                                                 by identity for SMGP, its SEGA Grand Prix art rather than
                                                  the shared 1990 photo; coloured era placeholder when none).
                                                  The image binds the whole pack so the converter sees the
                                                  careerStyle; the accent still keys off the title text. -->
@@ -341,7 +341,7 @@
                             <TextBlock Style="{StaticResource Muted}" Margin="16,6,0,0" TextWrapping="Wrap"
                                        Text="• the bundled packs folder beside the exe" />
                             <TextBlock Style="{StaticResource Muted}" Margin="16,2,0,0" TextWrapping="Wrap"
-                                       Text="• Documents\AMS2CareerCompanion\Packs (yours — drop packs here)" />
+                                       Text="• Documents\AMS2CareerCompanion\Packs (yours, drop packs here)" />
                             <TextBlock Style="{StaticResource Muted}" Margin="16,2,0,0" TextWrapping="Wrap"
                                        Text="• any extra folders you add under Settings → Data" />
                             <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
@@ -363,9 +363,9 @@
                            Text="Structure, AMS2 content and installed liveries checked against the detected install. Errors block; warnings can be overridden." />
                 <StackPanel DockPanel.Dock="Bottom" Margin="0,12,0,0">
                     <TextBlock Foreground="{DynamicResource ErrorBrush}" TextWrapping="Wrap"
-                               Text="Errors block career creation — fix the pack and rescan."
+                               Text="Errors block career creation, fix the pack and rescan."
                                Visibility="{Binding HasErrors, Converter={StaticResource BoolVisible}}" />
-                    <CheckBox Content="Proceed anyway — I accept the warnings above"
+                    <CheckBox Content="Proceed anyway, I accept the warnings above"
                               IsChecked="{Binding ProceedAnyway}">
                         <CheckBox.Style>
                             <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
@@ -390,7 +390,7 @@
                         <StackPanel>
                             <CheckBox Content="Use alternate tracks (community mods)"
                                       IsChecked="{Binding UseAlternateTracks}"
-                                      ToolTip="Swaps this season's placeholder rounds to era-appropriate mod circuits — but ONLY if every required mod is installed. Off = default AMS2 tracks only." />
+                                      ToolTip="Swaps this season's placeholder rounds to era-appropriate mod circuits, but ONLY if every required mod is installed. Off = default AMS2 tracks only." />
                             <TextBlock Text="{Binding AlternateTrackStatus}" Style="{StaticResource Body}"
                                        TextWrapping="Wrap" Margin="0,6,0,0" />
                             <ItemsControl ItemsSource="{Binding AlternateModTracks}" Margin="0,6,0,0"
@@ -432,7 +432,7 @@
                         <StackPanel>
                             <CheckBox IsChecked="{Binding UseModdedField}"
                                       Content="{Binding ModdedVehicle.ModName, StringFormat='Add the {0} cars (community car mod)'}"
-                                      ToolTip="Fields the mod's extra cars to round out the grid — but ONLY if the car mod is installed. Off = the base grid." />
+                                      ToolTip="Fields the mod's extra cars to round out the grid, but ONLY if the car mod is installed. Off = the base grid." />
                             <TextBlock Text="{Binding ModdedFieldStatus}" Style="{StaticResource Body}"
                                        TextWrapping="Wrap" Margin="0,6,0,0" />
                             <DockPanel Margin="0,6,0,0"
@@ -493,7 +493,7 @@
                         <Grid>
                         <TextBlock Foreground="{DynamicResource SuccessBrush}" FontSize="15"
                                    Visibility="{Binding VerificationItems.Count, Converter={StaticResource CountCollapsed}}">
-                            <Run FontFamily="{StaticResource IconFont}" Text="&#xE73E;" /><Run Text="  All clear — the pack verifies clean against this install." />
+                            <Run FontFamily="{StaticResource IconFont}" Text="&#xE73E;" /><Run Text="  All clear, the pack verifies clean against this install." />
                         </TextBlock>
                         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False"
                                       Visibility="{Binding VerificationItems.Count, Converter={StaticResource CountVisible}}">
@@ -549,12 +549,12 @@
                 <TextBlock DockPanel.Dock="Top" Text="Choose your team &amp; car" Style="{StaticResource H2}" />
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,12" TextWrapping="Wrap"
                            Text="Pick the cockpit that starts your story. You take over this car for the season and its current driver steps away." />
-                <!-- SMGP: rookies start at the bottom — the list is filtered to LEVEL D cars. -->
+                <!-- SMGP: rookies start at the bottom, the list is filtered to LEVEL D cars. -->
                 <Border DockPanel.Dock="Top" Background="{DynamicResource AccentDimBrush}" CornerRadius="6"
                         Padding="10,7" Margin="0,0,0,10"
                         Visibility="{Binding IsSmgpPack, Converter={StaticResource BoolVisible}}">
                     <TextBlock Foreground="{DynamicResource AccentTextBrush}" TextWrapping="Wrap"
-                               Text="SUPER MONACO GP starts you at the bottom — LEVEL D cars only. Beat the same rival twice to take his seat and climb the ladder." />
+                               Text="SUPER MONACO GP starts you at the bottom, LEVEL D cars only. Beat the same rival twice to take his seat and climb the ladder." />
                 </Border>
                 <Border DockPanel.Dock="Top" Style="{StaticResource AccentCallout}"
                         Padding="10,7" Margin="0,0,0,10">
@@ -577,18 +577,18 @@
                 </Border>
                 <!-- ...or race as your own independent entrant (a custom AMS2 livery). Takes precedence
                      over the seat above; leave blank for the ordinary seat pick. Hidden for the SMGP
-                     replica — a custom livery holds no seat on the mode's ladder. -->
+                     replica, a custom livery holds no seat on the mode's ladder. -->
                 <Border DockPanel.Dock="Bottom" Style="{StaticResource Panel}" Margin="0,10,0,0" Padding="12"
                         Visibility="{Binding IsSmgpPack, Converter={StaticResource BoolCollapsed}}">
                     <StackPanel>
-                        <TextBlock Text="— or race as your own entrant —" Style="{StaticResource Faint}" />
+                        <TextBlock Text="- or race as your own entrant -" Style="{StaticResource Faint}" />
                         <TextBlock Style="{StaticResource Muted}" Margin="0,6,0,6" TextWrapping="Wrap"
                                    Text="Type the exact name of a custom livery installed in AMS2 to enter as an independent privateer. Leave it blank to accept one of the contracts above." />
                         <TextBox Text="{Binding CustomLiveryName, UpdateSourceTrigger=PropertyChanged}" FontSize="14"
-                                 ToolTip="The AMS2 livery name for your own car — leave blank to take a pack seat instead" />
+                                 ToolTip="The AMS2 livery name for your own car, leave blank to take a pack seat instead" />
                         <TextBlock Style="{StaticResource Faint}" Margin="0,6,0,0" TextWrapping="Wrap"
                                    Foreground="{DynamicResource AccentTextBrush}"
-                                   Text="Racing as your own entrant — the seat above is ignored."
+                                   Text="Racing as your own entrant, the seat above is ignored."
                                    Visibility="{Binding CustomLiveryName, Converter={StaticResource StringVisible}}" />
                     </StackPanel>
                 </Border>
@@ -864,15 +864,15 @@
             <!-- c1. choose the grid (v0.6.0) -->
             <DockPanel Visibility="{Binding Step, Converter={StaticResource EnumVisible}, ConverterParameter={x:Static wizard:WizardStep.Grid}}">
                 <TextBlock DockPanel.Dock="Top" Text="The Season's Grid" Style="{StaticResource H2}" />
-                <!-- The normal-career blurb (unchecking) — hidden for SMGP, whose field is locked and
+                <!-- The normal-career blurb (unchecking), hidden for SMGP, whose field is locked and
                      described by its own accent banner below. -->
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,4" TextWrapping="Wrap"
                            Visibility="{Binding IsSmgpPack, Converter={StaticResource BoolCollapsed}}"
-                           Text="The field you'll race — it carries across every season of the career. Your own car is always in (the card marked &quot;You&quot;). Uncheck any driver you don't want on the grid." />
+                           Text="The field you'll race, it carries across every season of the career. Your own car is always in (the card marked &quot;You&quot;). Uncheck any driver you don't want on the grid." />
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Faint}" Margin="0,0,0,10" TextWrapping="Wrap">
-                    <Run Text="Your season field is " /><Run Text="{Binding IncludedCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" cars. Each race fields the ones that qualified — up to " /><Run Text="{Binding MaxRaceCars, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" on the grid. In AMS2 set " /><Run Text="AI Opponents" FontWeight="SemiBold" /><Run Text=" to " /><Run Text="{Binding AiOpponentCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" (the briefing before each race shows the exact number)." />
+                    <Run Text="Your season field is " /><Run Text="{Binding IncludedCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" cars. Each race fields the ones that qualified, up to " /><Run Text="{Binding MaxRaceCars, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" on the grid. In AMS2 set " /><Run Text="AI Opponents" FontWeight="SemiBold" /><Run Text=" to " /><Run Text="{Binding AiOpponentCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" (the briefing before each race shows the exact number)." />
                 </TextBlock>
-                <!-- SMGP: the ladder needs the whole field — the pick is display-only (locked). The
+                <!-- SMGP: the ladder needs the whole field, the pick is display-only (locked). The
                      banner also sets the mode's expectations: it's a self-contained career (never the
                      historical gallery), the same cars for good, with a per-race DNQ field. -->
                 <Border DockPanel.Dock="Top" Background="{DynamicResource AccentDimBrush}" CornerRadius="6"
@@ -880,15 +880,15 @@
                         Visibility="{Binding IsSmgpPack, Converter={StaticResource BoolVisible}}">
                     <StackPanel>
                         <TextBlock Foreground="{DynamicResource AccentTextBrush}" TextWrapping="Wrap" FontWeight="SemiBold"
-                                   Text="SUPER MONACO GP is its own career — these are your cars for good." />
+                                   Text="SUPER MONACO GP is its own career, these are your cars for good." />
                         <TextBlock Foreground="{DynamicResource AccentTextBrush}" TextWrapping="Wrap" Margin="0,3,0,0"
-                                   Text="You stay in this 34-car world every season, however many titles you win — it never crosses into the historical careers. The field is locked (the rival ladder needs every seat), and each race only the cars that qualify start: the slowest pre-qualify out, and which ones changes race to race." />
+                                   Text="You stay in this 34-car world every season, however many titles you win, it never crosses into the historical careers. The field is locked (the rival ladder needs every seat), and each race only the cars that qualify start: the slowest pre-qualify out, and which ones changes race to race." />
                     </StackPanel>
                 </Border>
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
                     <!-- adaptive multi-column grid, ~230px per card so more portraits fit a screen
                          (Mike's ask) while the 148px portrait + car keep their detail. The whole
-                         control is NOT disabled for SMGP anymore — the cards stay vibrant; only the
+                         control is NOT disabled for SMGP anymore, the cards stay vibrant; only the
                          per-card checkbox is hidden (SMGP forces the whole field). -->
                     <ItemsControl ItemsSource="{Binding GridChoices}" HorizontalAlignment="Stretch"
                                   VerticalAlignment="Top">
@@ -949,7 +949,7 @@
                                             </StackPanel>
                                         </StackPanel>
                                         <!-- season-field checkbox: ONLY for a normal career. SMGP forces the whole
-                                             field, so nothing is clickable there — the checkbox is hidden. Overlaid
+                                             field, so nothing is clickable there, the checkbox is hidden. Overlaid
                                              top-left so the names stay centered. -->
                                         <CheckBox VerticalAlignment="Top" HorizontalAlignment="Left" Margin="9,9,0,0"
                                                   IsChecked="{Binding IsIncluded}" IsEnabled="{Binding IsUnlocked}"
@@ -1114,7 +1114,7 @@
             <DockPanel Visibility="{Binding Step, Converter={StaticResource EnumVisible}, ConverterParameter={x:Static wizard:WizardStep.Confirm}}">
                 <TextBlock DockPanel.Dock="Top" Text="Confirm" Style="{StaticResource H2}" />
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,16" TextWrapping="Wrap"
-                           Text="Creating the career pins the pack into the career file — later pack edits never touch a running season." />
+                           Text="Creating the career pins the pack into the career file, later pack edits never touch a running season." />
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
                     <!-- Fixed width, not MaxWidth+Center: a centered panel sizes to its content, so a
                          longer mortality description would otherwise widen the whole form on selection. -->
@@ -1277,7 +1277,7 @@
                         <Border Background="{DynamicResource WarningDimBrush}" CornerRadius="6" Padding="12,8" Margin="0,18,0,0"
                                 Visibility="{Binding BaselineImportError, Converter={StaticResource NullCollapsed}}">
                             <TextBlock Foreground="{DynamicResource WarningBrush}" TextWrapping="Wrap"
-                                       Text="{Binding BaselineImportError, StringFormat='Your installed AI file could not be read — the pack baseline will be used instead. ({0})'}" />
+                                       Text="{Binding BaselineImportError, StringFormat='Your installed AI file could not be read, the pack baseline will be used instead. ({0})'}" />
                         </Border>
 
                         </StackPanel>

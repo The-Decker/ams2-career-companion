@@ -15,7 +15,7 @@ namespace Companion.Tests.Scenarios;
 /// <summary>
 /// The SMGP-300 balance-simulation harness: full synthetic 17-season careers over the REAL
 /// packs/smgp-1 pack (16 rounds × 34 cars) through the REAL creation/fold/rollover machinery,
-/// across result-profile archetypes, reporting level/SP/injury/fatality distributions — the
+/// across result-profile archetypes, reporting level/SP/injury/fatality distributions, the
 /// evidence source for docs/LEVEL_300_BALANCE_REPORT.md and the release-evidence sweep
 /// (coordinator ledger blocker 4).
 ///
@@ -116,7 +116,7 @@ public sealed class BalanceSimulationHarness(ITestOutputHelper output)
         try
         {
             const long seed = 424242;
-            var archetype = Archetypes[0]; // exceptional — exercises the L300 path end to end
+            var archetype = Archetypes[0]; // exceptional, exercises the L300 path end to end
             string careerPath = Path.Combine(root, "evidence.ams2career");
             var seasonClocks = new List<double>();
 
@@ -166,7 +166,7 @@ public sealed class BalanceSimulationHarness(ITestOutputHelper output)
             }
             Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
 
-            // Byte-identical re-simulation over the whole 272-round campaign — the locked invariant.
+            // Byte-identical re-simulation over the whole 272-round campaign, the locked invariant.
             var resimClock = Stopwatch.StartNew();
             using (var db = CareerDatabase.Open(careerPath))
             {
@@ -316,7 +316,7 @@ public sealed class BalanceSimulationHarness(ITestOutputHelper output)
     }
 
     /// <summary>One synthetic round result: AI field ordered by rating + per-round noise, the
-    /// player inserted at an archetype-sampled finish — or DNF'd (mechanical / accident with a
+    /// player inserted at an archetype-sampled finish, or DNF'd (mechanical / accident with a
     /// sampled severity), which is what exercises the real injury/fatality fold.</summary>
     private static ResultDraft SynthesizeDraft(ICareerSession session, Random rng, Archetype archetype)
     {
@@ -398,7 +398,7 @@ public sealed class BalanceSimulationHarness(ITestOutputHelper output)
     };
 
     /// <summary>The fixed v2 character every simulated career drives (the SAME build across
-    /// archetypes — the RESULT profile is the experimental variable, not the character).</summary>
+    /// archetypes, the RESULT profile is the experimental variable, not the character).</summary>
     private static CharacterProfile SimCharacter()
     {
         var talent = new Dictionary<string, double>(StringComparer.Ordinal)
@@ -441,7 +441,7 @@ public sealed class BalanceSimulationHarness(ITestOutputHelper output)
     private static string Aggregate(IReadOnlyList<CareerSample> samples)
     {
         var sb = new StringBuilder();
-        sb.AppendLine("SMGP-300 balance sweep — level/SP/injury distributions per archetype");
+        sb.AppendLine("SMGP-300 balance sweep, level/SP/injury distributions per archetype");
         sb.AppendLine($"careers: {samples.Count} · pack: smgp-1 (16 rounds × 34 cars × up to 17 seasons)");
         sb.AppendLine();
 

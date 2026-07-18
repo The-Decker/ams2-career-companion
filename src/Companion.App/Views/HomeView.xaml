@@ -16,7 +16,7 @@
         <Border DockPanel.Dock="Top" Background="{DynamicResource SuccessDimBrush}"
                 Visibility="{Binding IsSeasonReview, Converter={StaticResource BoolVisible}}">
             <TextBlock Foreground="{DynamicResource SuccessBrush}" Margin="20,8" FontWeight="SemiBold"
-                       Text="🏁 Season complete — review the season, read your offer letters, and restore your AI file below." />
+                       Text="🏁 Season complete, review the season, read your offer letters, and restore your AI file below." />
         </Border>
 
         <!-- One non-blocking post-Apply announcement. It stays a single strip even when one race

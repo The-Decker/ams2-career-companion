@@ -17,7 +17,7 @@ public sealed record StageResult
 
     /// <summary>True when NOTHING was written because the installed file already matches the
     /// generated grid (NAMeS-first diff-aware staging): every seat's livery has a base entry
-    /// with equivalent effective fields, so the user's file stays untouched — no backup either.
+    /// with equivalent effective fields, so the user's file stays untouched, no backup either.
     /// <see cref="WrittenPath"/> then points at the installed file that satisfies the round.</summary>
     public bool NoOpAlreadyMatches { get; init; }
 
@@ -36,19 +36,19 @@ public sealed record StageResult
 /// <summary>
 /// Turns a resolved <see cref="GridPlan"/> into an AMS2 custom-AI file and stages it. v1
 /// regenerates the file before every round, so no per-track <c>tracks=</c> override entries
-/// are emitted — the base entries already carry the round-final merged ratings.
+/// are emitted, the base entries already carry the round-final merged ratings.
 /// </summary>
 public static class GridStager
 {
     /// <summary>Marker embedded in every generated file's header comment. Staging over a file
-    /// WITHOUT this marker (the user's own community NAMeS file) requires force — a backup is
+    /// WITHOUT this marker (the user's own community NAMeS file) requires force, a backup is
     /// taken either way, but clobbering curated files must be an explicit choice.</summary>
     public const string GeneratedMarker = "AMS2 Career Companion";
 
     // ---------- build ----------
 
     /// <param name="roundForm">STAGING-ONLY per-race form nudge for this round, keyed by driver id
-    /// (additive pace delta, clamped 0..1). Applied to the written AMS2 file ONLY — the resolved
+    /// (additive pace delta, clamped 0..1). Applied to the written AMS2 file ONLY, the resolved
     /// <see cref="GridPlan"/> the sim scores is never touched, so a career carrying form re-simulates
     /// byte-identically. Null/absent => no nudge (byte-identical output).</param>
     public static CustomAiFile Build(
@@ -65,7 +65,7 @@ public static class GridStager
 
     /// <summary>Public seat→driver conversion for the zero-stock staging pass: names a livery that is
     /// active in the pool but absent from the capped grid (a car the cap dropped, or a graft-displaced
-    /// peer), so AMS2 never stock-fills its slot. Cosmetic — never affects the sim's resolved grid.</summary>
+    /// peer), so AMS2 never stock-fills its slot. Cosmetic, never affects the sim's resolved grid.</summary>
     public static CustomAiDriver SeatToDriver(GridSeat seat) => ToCustomAiDriver(seat, null);
 
     private static PackDriverForm? FormFor(
@@ -129,7 +129,7 @@ public static class GridStager
     /// for each driver whose (original) <c>livery_name</c> is a key in <paramref name="overrides"/>,
     /// swaps in the custom driver name and/or rebinds the livery. The map is keyed by the seat's
     /// ORIGINAL livery, so it is applied AFTER the NAMeS-primary merge (which keys on the same
-    /// original livery) — the player's explicit edit is the final authority over the installed
+    /// original livery), the player's explicit edit is the final authority over the installed
     /// community name. Null/empty overrides return the file unchanged (byte-identical), so a career
     /// with no edits stages exactly as before. Cosmetic only: this never touches the resolved grid
     /// the sim scores.
@@ -153,7 +153,7 @@ public static class GridStager
             };
         }).ToList();
 
-        // Nothing actually matched a seat — return the original file so a no-edit stage stays a
+        // Nothing actually matched a seat, return the original file so a no-edit stage stays a
         // byte-identical no-op.
         return changed ? file with { Drivers = drivers } : file;
     }
@@ -162,15 +162,15 @@ public static class GridStager
 
     /// <summary>
     /// Makes the INSTALLED AI file PRIMARY for every generated seat it already defines (Mike's
-    /// requirement: the names/AI mod must be primary if found — "found before overwritten").
+    /// requirement: the names/AI mod must be primary if found, "found before overwritten").
     /// For a seat whose <c>livery_name</c> has a BASE entry in <paramref name="installed"/>:
     /// the installed NAME, country and base AI ratings become the base, and only the
     /// career-specific DELTA the generated file carries (per-round aiOverrides, trackForm,
-    /// career drift — everything the pinned pack layered on top of its own driver baseline) is
+    /// career drift, everything the pinned pack layered on top of its own driver baseline) is
     /// applied over them. The delta is measured against <paramref name="packBaselineByLivery"/>
     /// (the pinned pack's own per-livery driver values, before round/career effects): when the
     /// generated value equals the pinned baseline (no career change) the installed value is kept
-    /// verbatim — the user's curated name/ratings are never overwritten with stale pinned-pack
+    /// verbatim, the user's curated name/ratings are never overwritten with stale pinned-pack
     /// values. Physics scalars and reliability are the team career layer and come from the
     /// generated seat. Seats the installed file does not define pass through unchanged, as does
     /// the whole file when <paramref name="installed"/> is null.
@@ -182,7 +182,7 @@ public static class GridStager
     {
         // The merge is OPT-IN: it only runs when the caller supplies the pinned-pack baseline
         // (the delta reference). Without it there is no way to tell a genuine career/round
-        // change from a stale pinned value, so the generated file is written verbatim — the
+        // change from a stale pinned value, so the generated file is written verbatim, the
         // low-level dry-run / test path keeps its exact prior behaviour.
         if (installed is null || packBaselineByLivery is null)
             return generated;
@@ -215,7 +215,7 @@ public static class GridStager
     private static CustomAiDriver MergeSeat(
         CustomAiDriver generated, CustomAiDriver installed, CustomAiDriver? baseline) => new()
     {
-        // Exact livery match is the merge key — keep it (ordinal-equal to installed's).
+        // Exact livery match is the merge key, keep it (ordinal-equal to installed's).
         LiveryName = generated.LiveryName,
 
         // The installed name/country are the user's curated authority; fall back to the
@@ -257,7 +257,7 @@ public static class GridStager
 
     /// <summary>installed + (generated - baseline), clamped to 0..1. When no career/round
     /// change is present (generated == baseline, or either is absent) the installed value is
-    /// kept verbatim — never overwritten with a stale pinned-pack value.</summary>
+    /// kept verbatim, never overwritten with a stale pinned-pack value.</summary>
     private static double? Skill(double? installed, double? generated, double? baseline)
     {
         // No baseline to diff against, or the generated round produced no career change:
@@ -297,15 +297,15 @@ public static class GridStager
     /// Diff-aware staging (NAMeS-first, locked decision #7). BEFORE any write the currently
     /// installed class XML is lenient-parsed and, when <paramref name="packBaselineByLivery"/>
     /// is supplied, the installed file is made PRIMARY (<see cref="MergeInstalledPrimary"/>:
-    /// installed name/ratings kept, only the career/round delta applied) — "found before
+    /// installed name/ratings kept, only the career/round delta applied), "found before
     /// overwritten". When every resulting seat already has an equivalent base entry
     /// (<see cref="CustomAiEquivalence"/>: ordinal names, floats within 1e-4, omitted scalar ==
-    /// 1.0) the stage is a NO-OP — nothing written, nothing backed up, the user's installed
+    /// 1.0) the stage is a NO-OP, nothing written, nothing backed up, the user's installed
     /// file stays exactly as curated. Otherwise writes <c>&lt;VehicleClass&gt;.xml</c>, ALWAYS
     /// snapshotting any existing file first via <see cref="CustomAiBackup.BackupIfPresent"/>
     /// (never overwrite without backup). When the existing, genuinely-divergent file does not
-    /// carry <see cref="GeneratedMarker"/> — i.e. it is the user's own file, not one we
-    /// generated — the stage refuses unless <paramref name="force"/> is set.
+    /// carry <see cref="GeneratedMarker"/>, i.e. it is the user's own file, not one we
+    /// generated, the stage refuses unless <paramref name="force"/> is set.
     /// </summary>
     public static StageResult Stage(
         CustomAiFile file,
@@ -338,12 +338,12 @@ public static class GridStager
     {
         string target = Path.Combine(customAiDriversDirectory, file.VehicleClass + ".xml");
 
-        // Read the installed file ONCE, before any write — the authority that must be "found
+        // Read the installed file ONCE, before any write, the authority that must be "found
         // before overwritten". Unreadable simply means "no installed file to defer to".
         var installed = File.Exists(target) ? CommunityAiReader.TryReadFile(target) : null;
 
         // NAMeS-primary merge: for every seat the FOREIGN installed file (the user's own
-        // community NAMeS/AI file — NOT one we generated) already defines, keep its name + base
+        // community NAMeS/AI file, NOT one we generated) already defines, keep its name + base
         // ratings and apply only this round's / the career's delta on top. We never merge over
         // our OWN prior output: re-staging is handled by the diff-aware no-op below, and merging
         // a delta onto an already-round-final file would double-count it.
@@ -352,12 +352,12 @@ public static class GridStager
             ? MergeInstalledPrimary(file, installed, packBaselineByLivery)
             : file;
 
-        // The grid editor's per-seat cosmetic overrides are applied LAST — after the NAMeS-primary
-        // merge — so the player's explicit rename/rebind wins over the installed community value.
+        // The grid editor's per-seat cosmetic overrides are applied LAST, after the NAMeS-primary
+        // merge, so the player's explicit rename/rebind wins over the installed community value.
         toWrite = ApplyStagingOverrides(toWrite, overrides);
 
         // Diff-aware no-op: when the merged file matches the installed file, nothing is
-        // written — the user's curated file stays in place. SKIPPED for an explicit "apply this
+        // written, the user's curated file stays in place. SKIPPED for an explicit "apply this
         // grid" (alwaysWrite): the user chose this grid, so we ALWAYS write an app-marked file
         // (backup-first) even when the content is diff-equal, so the write is verifiable on disk
         // (the AMS2-diagnosis "why nothing changes": in the default flow the app wrote 0 bytes).
@@ -370,12 +370,12 @@ public static class GridStager
                 NoOpAlreadyMatches = true,
                 Report =
                     $"Installed {file.VehicleClass}.xml already matches this round's grid " +
-                    $"({toWrite.Drivers.Count} drivers) — your installed names/AI are kept; nothing written.",
+                    $"({toWrite.Drivers.Count} drivers), your installed names/AI are kept; nothing written.",
             };
         }
 
         // The community-file gate is bypassed by an explicit apply (alwaysWrite implies the user
-        // confirmed) — a timestamped backup is still taken first.
+        // confirmed), a timestamped backup is still taken first.
         if (!force && !alwaysWrite && File.Exists(target) && !LooksGenerated(target))
         {
             return new StageResult
@@ -385,7 +385,7 @@ public static class GridStager
                 RequiresForce = true,
                 Report =
                     $"'{target}' exists and was not generated by this app (community NAMeS file?). " +
-                    "Staging over it requires force — a timestamped backup is still taken first.",
+                    "Staging over it requires force, a timestamped backup is still taken first.",
             };
         }
 
@@ -398,7 +398,7 @@ public static class GridStager
         string report =
             $"Staged {toWrite.VehicleClass}.xml ({toWrite.Drivers.Count} drivers) to '{target}'. " +
             (backupPath is null
-                ? "No existing file — nothing to back up."
+                ? "No existing file, nothing to back up."
                 : $"Previous file backed up to '{backupPath}'.");
 
         return new StageResult
@@ -409,7 +409,7 @@ public static class GridStager
         };
     }
 
-    /// <summary>Scratch write with no backup and no force gate — for dry-run output folders
+    /// <summary>Scratch write with no backup and no force gate, for dry-run output folders
     /// only, NEVER a live CustomAIDrivers directory. Returns the written path.</summary>
     public static string DryRun(CustomAiFile file, string targetDirectory)
     {
@@ -418,7 +418,7 @@ public static class GridStager
     }
 
     /// <summary>True when the file at <paramref name="path"/> carries the app's
-    /// <see cref="GeneratedMarker"/> header — i.e. this app wrote it and it is regenerable,
+    /// <see cref="GeneratedMarker"/> header, i.e. this app wrote it and it is regenerable,
     /// as opposed to the user's own curated community file.</summary>
     public static bool LooksGenerated(string path)
     {

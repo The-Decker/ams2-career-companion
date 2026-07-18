@@ -4,7 +4,7 @@ namespace Companion.Core.Character;
 
 /// <summary>
 /// Turns a character's chosen perks into the identity-defaulting <see cref="PlayerPerkModifiers"/>
-/// the sim reads — a PURE function of the journaled <c>{perkIds}</c>, computed once and threaded
+/// the sim reads, a PURE function of the journaled <c>{perkIds}</c>, computed once and threaded
 /// into each call site, so the fold reproduces it exactly (docs/dev/character-system.md §6.1). Each
 /// effect's <c>lever</c>/<c>target</c> names exactly one modifier field; unconditional effects are
 /// summed into the field, round-conditional ones are carried through for the fold to apply. An empty
@@ -14,7 +14,7 @@ public static class PerkResolver
 {
     /// <summary>The rating One-Trick Pony's specialism defaults to when a profile carries the perk
     /// but named no chosen flavor (a legacy character created before the pick existed). A fixed
-    /// constant so every call site — live and replay — resolves the same delta byte-for-byte.</summary>
+    /// constant so every call site, live and replay, resolves the same delta byte-for-byte.</summary>
     public const string DefaultChosenFlavor = "wetSkill";
 
     /// <summary>The closed set of rating fields a persisted chosen-flavor input may target. Pace's
@@ -32,7 +32,7 @@ public static class PerkResolver
     public static bool IsEligibleChosenFlavor(string? value) =>
         value is not null && EligibleChosenFlavorSet.Contains(value);
 
-    /// <summary>Resolve straight from a character profile — threads the profile's chosen flavor so
+    /// <summary>Resolve straight from a character profile, threads the profile's chosen flavor so
     /// One-Trick Pony's <c>chosenFlavor</c>/<c>lockToOne</c> bind to the rating the player picked.
     /// Prefer this overload wherever a full <see cref="CharacterProfile"/> is in hand.</summary>
     public static PlayerPerkModifiers Resolve(
@@ -69,14 +69,14 @@ public static class PerkResolver
         double injuryDurability = 0.0, injuryBase = 0.0, statSoftCap = 0.0;
 
         // One lever→accumulator mapping, reused by both unconditional effects and the conditional
-        // effects whose condition holds for this round (activeConditions) — so a fired conditional
+        // effects whose condition holds for this round (activeConditions), so a fired conditional
         // stacks onto exactly the same field its unconditional twin would.
         void ApplyEffect(string lever, string? target, double m)
         {
             switch (lever)
             {
                 case "statDelta" when target is { } rating:
-                    // "chosenFlavor" is the One-Trick Pony placeholder — resolve it to the concrete
+                    // "chosenFlavor" is the One-Trick Pony placeholder, resolve it to the concrete
                     // rating the player's specialism owns before it lands on a talent field.
                     string field = rating == "chosenFlavor" ? flavor : rating;
                     talent[field] = talent.GetValueOrDefault(field) + m;

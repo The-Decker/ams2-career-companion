@@ -113,7 +113,7 @@ public class SeasonEndPipelineTests
         var withExtra = SeasonEndPipeline.Run(CareerTestData.Context(drivers: extended));
 
         // Aging, retirement, and foreshadow rows for every original driver must be identical
-        // — rolls are keyed per entity, so a new consumer cannot shift anyone's sequence.
+        //, rolls are keyed per entity, so a new consumer cannot shift anyone's sequence.
         foreach (string driverId in CareerTestData.DriverStates().Select(d => d.DriverId))
         {
             Assert.Equal(
@@ -720,7 +720,7 @@ public class SeasonEndPipelineTests
     public void SeatMarketNoiseStreamIsKeyedByTeamAndVacatedDriver()
     {
         // Reproduce every journaled hire from first principles with the documented stream
-        // key `offers|year|0|{teamId}->{vacatedBy}` — proving each vacancy rolls its own
+        // key `offers|year|0|{teamId}->{vacatedBy}`, proving each vacancy rolls its own
         // noise sequence even when one team vacates two seats in a winter (the fixture's
         // vacancies are all team.min: canon_now guaranteed, driver.old hazard-dependent).
         var context = CareerTestData.Context();
@@ -839,7 +839,7 @@ public class SeasonEndPipelineTests
             foreach (var row in result.Events.Where(e => e.Phase == JournalPhases.TeamTier))
             {
                 // Causes match the authored headline template keys (team.tier|promoted /
-                // team.tier|relegated) — and with a bank present, the headline itself fires.
+                // team.tier|relegated), and with a bank present, the headline itself fires.
                 Assert.True(row.Cause is "promoted" or "relegated");
                 Assert.Contains("\"roll\":", row.DeltaJson);
                 Assert.Contains(result.Events, e =>

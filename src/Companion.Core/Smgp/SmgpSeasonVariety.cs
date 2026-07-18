@@ -8,8 +8,8 @@ namespace Companion.Core.Smgp;
 /// much different than the first season"). Given the 1-based season ORDINAL, returns the calendar
 /// that season should run:
 /// <list type="bullet">
-///   <item>Season 1 (or any non-SMGP pack) — the authored pack, verbatim: the known baseline.</item>
-///   <item>Season 2+ of an SMGP career — a seeded shuffle of every round's venue EXCEPT the finale
+///   <item>Season 1 (or any non-SMGP pack), the authored pack, verbatim: the known baseline.</item>
+///   <item>Season 2+ of an SMGP career, a seeded shuffle of every round's venue EXCEPT the finale
 ///     (kept as the Super Monaco GP climax), plus fresh per-round weather. Each ordinal draws a
 ///     different, deterministic calendar from the master seed, so a re-open (or any replay) shows
 ///     the same year again.</item>
@@ -32,7 +32,7 @@ public static class SmgpSeasonVariety
         var rounds = pack.Season.Rounds;
         int n = rounds.Count;
 
-        // A deterministic Fisher-Yates over positions 0..n-2 — the finale (n-1) stays Monaco.
+        // A deterministic Fisher-Yates over positions 0..n-2, the finale (n-1) stays Monaco.
         var order = new int[n - 1];
         for (int i = 0; i < order.Length; i++)
             order[i] = i;
@@ -87,14 +87,14 @@ public static class SmgpSeasonVariety
         };
     }
 
-    // Weather pools by weekend "character" — AMS2 display labels (see tools/author_weather.cs).
+    // Weather pools by weekend "character", AMS2 display labels (see tools/author_weather.cs).
     private static readonly string[] Dry = ["Clear", "Clear", "Light Cloud", "Medium Cloud", "Hazy", "Overcast"];
     private static readonly string[] Showery = ["Overcast", "Medium Cloud", "Light Rain", "Light Rain", "Rain", "Overcast"];
     private static readonly string[] Wet = ["Overcast", "Rain", "Rain", "Heavy Rain", "Storm", "Light Rain"];
 
     /// <summary>Four seeded weather slots for one session. The whole ROUND shares a "character"
     /// (dry ~55% / showery ~30% / wet ~15%) so a weekend is coherent, while each session draws its
-    /// own four slots — a wet weekend can still have a drier practice than its race.</summary>
+    /// own four slots, a wet weekend can still have a drier practice than its race.</summary>
     private static IReadOnlyList<string> Slots(long seed, int ord, int round, int session)
     {
         double character = new Pcg32(Mix(seed, ord, (uint)(round * 131 + 17)), 0xC1A).NextDouble();
@@ -107,7 +107,7 @@ public static class SmgpSeasonVariety
         return slots;
     }
 
-    /// <summary>FNV-1a 64 over (masterSeed, seasonOrdinal, salt) — a stable, build-independent seed
+    /// <summary>FNV-1a 64 over (masterSeed, seasonOrdinal, salt), a stable, build-independent seed
     /// for a Pcg32 stream, so the same career re-derives the same season calendar every time.</summary>
     private static ulong Mix(long seed, int ord, uint salt)
     {

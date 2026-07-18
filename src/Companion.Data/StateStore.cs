@@ -13,7 +13,7 @@ public sealed record OfferRow
 
 /// <summary>The post-round player state persisted by the unified fold (schema v3,
 /// round_player_state): the folded <see cref="PlayerCareerState"/> plus the Opponent Skill
-/// slider recommendation for the NEXT round (0 = no recommendation yet — uncalibrated).</summary>
+/// slider recommendation for the NEXT round (0 = no recommendation yet, uncalibrated).</summary>
 public sealed record RoundPlayerState
 {
     public required PlayerCareerState Player { get; init; }
@@ -24,13 +24,13 @@ public sealed record RoundPlayerState
 /// <summary>
 /// Season-keyed driver/team/player state snapshots, per-round folded player states, and offer
 /// letters (schema v2/v3). Stage 'start' rows are sim inputs; stage 'end' rows, offers, and
-/// round_player_state rows are derived pipeline/fold output — <see cref="WipeDerived"/>
+/// round_player_state rows are derived pipeline/fold output, <see cref="WipeDerived"/>
 /// deletes exactly the derived rows for re-simulation. Whole-set upserts persist the caller's
 /// list order verbatim (ord column) because journal event order follows it: reading states
 /// back MUST reproduce the original sim context ordering.
 ///
 /// Every write (and the reads the fold needs mid-transaction) takes an optional transaction:
-/// callers composing atomic units — FoldRound, Resimulate — pass theirs; standalone callers
+/// callers composing atomic units, FoldRound, Resimulate, pass theirs; standalone callers
 /// omit it and each method is atomic on its own.
 /// </summary>
 public static class StateStore
@@ -155,7 +155,7 @@ public static class StateStore
     // ---------- per-round folded player state (schema v3, derived) ----------
 
     /// <summary>Persists the fold's post-round player state. STRICT insert: a duplicate
-    /// (season, round) means a round was folded twice — a bug, never silently replaced.</summary>
+    /// (season, round) means a round was folded twice, a bug, never silently replaced.</summary>
     public static void InsertRoundPlayerState(
         CareerDatabase db,
         long seasonId,
@@ -174,7 +174,7 @@ public static class StateStore
             ("@state", DataJson.Serialize(state)));
     }
 
-    /// <summary>Replace an already-folded round's player state — the promotion screen's forward
+    /// <summary>Replace an already-folded round's player state, the promotion screen's forward
     /// resolution (3c-2) re-persists the round it belongs to after the deferred seat swap resolves.
     /// The re-fold path re-derives this exact state, so replay stays byte-identical.</summary>
     public static void UpdateRoundPlayerState(
@@ -206,7 +206,7 @@ public static class StateStore
             : null;
     }
 
-    /// <summary>Every folded round state of the season in round order — the home header's
+    /// <summary>Every folded round state of the season in round order, the home header's
     /// reputation/OPI trend reads this.</summary>
     public static IReadOnlyList<(int Round, RoundPlayerState State)> ReadRoundPlayerStates(
         CareerDatabase db, long seasonId)
@@ -224,7 +224,7 @@ public static class StateStore
     // ---------- offers ----------
 
     /// <summary>Replaces the season's offer letters, preserving the sim's ranking order.
-    /// Accepted flags reset — callers preserving a player's choice across re-simulation
+    /// Accepted flags reset, callers preserving a player's choice across re-simulation
     /// re-apply it afterwards (see ReplayService).</summary>
     public static void UpsertOffers(
         CareerDatabase db,
@@ -287,8 +287,8 @@ public static class StateStore
 
     // ---------- replay support ----------
 
-    /// <summary>Deletes every DERIVED row — stage-'end' states, all offers, and all
-    /// round_player_state rows — across all seasons. Raw results, pinned packs, the journal,
+    /// <summary>Deletes every DERIVED row, stage-'end' states, all offers, and all
+    /// round_player_state rows, across all seasons. Raw results, pinned packs, the journal,
     /// and stage-'start' states survive: they are the inputs re-simulation refolds from.</summary>
     public static void WipeDerived(CareerDatabase db, SqliteTransaction? transaction = null)
     {
@@ -319,6 +319,6 @@ public static class StateStore
     private static void ValidateStage(string stage)
     {
         if (stage is not (StageStart or StageEnd))
-            throw new ArgumentException($"Unknown state stage '{stage}' — use 'start' or 'end'.", nameof(stage));
+            throw new ArgumentException($"Unknown state stage '{stage}', use 'start' or 'end'.", nameof(stage));
     }
 }

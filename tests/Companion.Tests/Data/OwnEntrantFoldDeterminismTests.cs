@@ -11,7 +11,7 @@ namespace Companion.Tests.Data;
 /// <summary>
 /// Player-as-own-entrant: a career created on a CUSTOM livery that matches no pack entry seats the
 /// player as their own independent synthetic entrant (stable <see cref="RoundGridResolver.SyntheticPlayerDriverId"/>,
-/// neutral team + baseline ratings) — so a non-standard skin works and the career never dead-ends — and
+/// neutral team + baseline ratings), so a non-standard skin works and the career never dead-ends, and
 /// re-simulates BYTE-IDENTICALLY. Careers on a pack-entry livery never reach the synthetic branch.
 /// </summary>
 public sealed class OwnEntrantFoldDeterminismTests : IDisposable

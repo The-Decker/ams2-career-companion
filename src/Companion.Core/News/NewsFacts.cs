@@ -1,7 +1,7 @@
 namespace Companion.Core.News;
 
 /// <summary>
-/// The round facts a news article is generated FROM — a read-only projection over the folded
+/// The round facts a news article is generated FROM, a read-only projection over the folded
 /// journal + standings snapshots (never new persistence). Every field is optional: a template
 /// only fills the slots it names, and the article builder degrades a missing fact to a neutral
 /// phrase, so a thin <c>race.result</c> row still yields a complete body.
@@ -11,7 +11,7 @@ namespace Companion.Core.News;
 /// </summary>
 public sealed record NewsFacts
 {
-    /// <summary>Journal phase of the source row (e.g. <c>race.result</c>) — with
+    /// <summary>Journal phase of the source row (e.g. <c>race.result</c>), with
     /// <see cref="Cause"/> it keys the article bank, exactly like the headline bank.</summary>
     public required string Phase { get; init; }
 
@@ -19,11 +19,11 @@ public sealed record NewsFacts
     /// dnf-mechanical / dnf-driver-error / midfield / …).</summary>
     public required string Cause { get; init; }
 
-    /// <summary>Season year — selects the era (unless <see cref="PreferredEra"/> overrides) and
+    /// <summary>Season year, selects the era (unless <see cref="PreferredEra"/> overrides) and
     /// fills <c>{year}</c>.</summary>
     public required int Year { get; init; }
 
-    /// <summary>An explicit era key that overrides the year→era resolution — the SMGP replica mode
+    /// <summary>An explicit era key that overrides the year→era resolution, the SMGP replica mode
     /// routes to its own fictional-world corpus ("smgp") regardless of the 1990 career year, so the
     /// SEGA universe never borrows the historical 1990s outlet. Null = resolve by year as normal.</summary>
     public string? PreferredEra { get; init; }

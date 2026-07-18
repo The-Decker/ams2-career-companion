@@ -10,8 +10,8 @@ namespace Companion.Tests.ViewModels;
 
 /// <summary>
 /// The SMGP promotion / demotion screen (3c-3): the HomeViewModel shows it as its own full-immersion
-/// step AFTER the confirm when the round moved seats — a two-wins offer to accept/decline, or a
-/// forced relegation to acknowledge — and does NOT advance the round until it is answered. Plus the
+/// step AFTER the confirm when the round moved seats, a two-wins offer to accept/decline, or a
+/// forced relegation to acknowledge, and does NOT advance the round until it is answered. Plus the
 /// session projection (<see cref="ICareerSession.CurrentSmgpPromotion"/>) built from a real pending
 /// offer, and that answering it on the screen resolves the 3c-2 fold.
 /// </summary>
@@ -41,7 +41,7 @@ public sealed class SmgpPromotionScreenTests : IDisposable
 
         ApplyARound(home);
 
-        // The round did NOT advance to the briefing — the promotion screen owns the step.
+        // The round did NOT advance to the briefing, the promotion screen owns the step.
         Assert.True(home.IsPromotionStep);
         var screen = Assert.IsType<PromotionViewModel>(home.CurrentContent);
         Assert.Equal("AN OFFER FROM MADONNA", screen.Model.Headline);
@@ -73,7 +73,7 @@ public sealed class SmgpPromotionScreenTests : IDisposable
     public void ForcedDemotion_IsAcknowledgeOnly_AndAdvances_WithoutResolvingAnOffer()
     {
         var session = FakeWithGrid();
-        // A demotion (not a pending offer) — already applied inline by the fold; the screen only
+        // A demotion (not a pending offer), already applied inline by the fold; the screen only
         // acknowledges it, so it must NOT call the offer-resolution seam.
         session.Demotion = new SmgpPromotionModel
         {
@@ -93,7 +93,7 @@ public sealed class SmgpPromotionScreenTests : IDisposable
 
         screen.AcceptCommand.Execute(null);
 
-        Assert.Empty(session.ResolvedOffers); // acknowledge only — no fold decision
+        Assert.Empty(session.ResolvedOffers); // acknowledge only, no fold decision
         Assert.True(home.IsBriefingState);
     }
 
@@ -268,7 +268,7 @@ public sealed class SmgpPromotionScreenTests : IDisposable
     };
 
     /// <summary>Applies one round with the player finishing FIRST and naming <paramref name="rival"/>
-    /// — a win in the two-wins ladder.</summary>
+    ///, a win in the two-wins ladder.</summary>
     private static void WinAgainst(ICareerSession session, string rival)
     {
         var others = session.CurrentGrid()

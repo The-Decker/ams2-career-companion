@@ -7,7 +7,7 @@
     <DockPanel>
         <Border DockPanel.Dock="Bottom" Padding="0,14,0,0">
             <Button x:Name="SitOutContinueButton"
-                    Content="Continue — simulate round  &#x23CE;"
+                    Content="Continue, simulate round  &#x23CE;"
                     Style="{StaticResource AccentButton}"
                     MinWidth="260" Padding="18,10" FontWeight="Bold"
                     HorizontalAlignment="Right"

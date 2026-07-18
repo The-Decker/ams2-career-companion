@@ -8,10 +8,10 @@ namespace Companion.Tests.Packs;
 /// <summary>
 /// Roster-drift guard for the SMGP replica pack (docs/dev/audits/audit-smgp-roster.md): the
 /// skin override XMLs mirrored at <c>data/ams2/skin-seasons/smgp/</c> are the SOURCE OF TRUTH
-/// for the fictional universe — <c>entries.json.ams2LiveryName</c> is the load-bearing binding
+/// for the fictional universe, <c>entries.json.ams2LiveryName</c> is the load-bearing binding
 /// the staged AI file carries into the game, so every entry must byte-match a skin
 /// <c>LIVERY_OVERRIDE NAME</c> (typos and all: "P. Kilnger" binds, "P. Klinger" pool-fills).
-/// This suite failed for real once — the McLaren entries said "Iris #1"/"Azalea #8" while the
+/// This suite failed for real once, the McLaren entries said "Iris #1"/"Azalea #8" while the
 /// installed Kobra Fleetworks liveries (v1.1+) are #33/#34, so both cars pool-filled at staging.
 /// </summary>
 public class SmgpRosterDriftTests
@@ -29,7 +29,7 @@ public class SmgpRosterDriftTests
     private static string Read(string filePart)
     {
         string path = Path.Combine(PackDirectory, filePart);
-        Assert.True(File.Exists(path), $"Pack file '{path}' missing — check the packs None-Include.");
+        Assert.True(File.Exists(path), $"Pack file '{path}' missing, check the packs None-Include.");
         return File.ReadAllText(path);
     }
 
@@ -38,7 +38,7 @@ public class SmgpRosterDriftTests
     private static readonly Lazy<IReadOnlyList<string>> SkinNames = new(() =>
     {
         Assert.True(Directory.Exists(SkinSetDirectory),
-            $"'{SkinSetDirectory}' missing — check the skin-seasons None-Include.");
+            $"'{SkinSetDirectory}' missing, check the skin-seasons None-Include.");
         var names = new List<string>();
         foreach (string file in Directory.EnumerateFiles(SkinSetDirectory, "*.xml").Order(StringComparer.Ordinal))
         {
@@ -64,7 +64,7 @@ public class SmgpRosterDriftTests
         foreach (var entry in Pack.Value.Entries)
             Assert.True(universe.Contains(entry.Ams2LiveryName),
                 $"entries.json binds '{entry.Ams2LiveryName}' ({entry.DriverId}) but no skin " +
-                "override NAME matches byte-for-byte — the car will pool-fill in-game.");
+                "override NAME matches byte-for-byte, the car will pool-fill in-game.");
     }
 
     [Fact]
@@ -87,7 +87,7 @@ public class SmgpRosterDriftTests
     }
 
     /// <summary>The unbound skin names must all be the authored RESERVES (drivers.json rows with
-    /// no season entry) — a skin nobody owns means a roster hole, an entry short means drift.
+    /// no season entry), a skin nobody owns means a roster hole, an entry short means drift.
     /// (The design-doc typo corrections, Elssler/Klinger, are both BOUND entries, so every
     /// reserve display name matches its skin initial + surname exactly.)</summary>
     [Fact]
@@ -107,7 +107,7 @@ public class SmgpRosterDriftTests
             Assert.True(reserves.Any(d =>
                     d.Name.StartsWith(m.Groups[1].Value, StringComparison.Ordinal) &&
                     d.Name.EndsWith(m.Groups[2].Value, StringComparison.Ordinal)),
-                $"unbound skin '{name}' matches no authored reserve driver — roster hole.");
+                $"unbound skin '{name}' matches no authored reserve driver, roster hole.");
         }
     }
 }

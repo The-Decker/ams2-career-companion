@@ -11,7 +11,7 @@ using System.Windows.Shapes;
 namespace Companion.App;
 
 /// <summary>
-/// Attached behaviours for tactile "game feel" that a ControlTemplate alone cannot express — a
+/// Attached behaviours for tactile "game feel" that a ControlTemplate alone cannot express, a
 /// Material-style click ripple that radiates from exactly where the pointer lands. Opt any control
 /// in with <c>MotionAssist.Ripple="True"</c> (the base Button style opts every button in). It is
 /// pure presentation: a transient <see cref="RippleAdorner"/> is added to the adorner layer, never
@@ -33,7 +33,7 @@ public static class MotionAssist
         if (d is not UIElement element)
             return;
         // PreviewMouseLeftButtonDown is a bubbling/tunnelling handler we never mark handled, so the
-        // control's own Click/command fires exactly as before — the ripple just rides along.
+        // control's own Click/command fires exactly as before, the ripple just rides along.
         if ((bool)e.NewValue)
             element.PreviewMouseLeftButtonDown += OnPreviewMouseLeftButtonDown;
         else
@@ -53,14 +53,14 @@ public static class MotionAssist
         }
         catch
         {
-            // presentation-only — a failed ripple must never interrupt the click
+            // presentation-only, a failed ripple must never interrupt the click
         }
     }
 
     // ---------- entrance transition (screens fade + slide in on navigation) ----------
 
     /// <summary>Set on a <see cref="ContentControl"/> (the shell's screen host): every time its
-    /// Content changes, the new screen fades up from slightly below — so moving between Start,
+    /// Content changes, the new screen fades up from slightly below, so moving between Start,
     /// wizard, hub and settings feels like arriving somewhere, not a hard cut. Fails safe.</summary>
     public static readonly DependencyProperty EntranceProperty =
         DependencyProperty.RegisterAttached(
@@ -104,7 +104,7 @@ public static class MotionAssist
         }
         catch
         {
-            // presentation-only — never let a transition break navigation
+            // presentation-only, never let a transition break navigation
         }
     }
 }
@@ -122,7 +122,7 @@ internal sealed class RippleAdorner : Adorner
     {
         _origin = origin;
         // Initialise the child collection FIRST: setting IsHitTestVisible below force-inherits onto
-        // children, which reads VisualChildrenCount — a null _children there is an NRE.
+        // children, which reads VisualChildrenCount, a null _children there is an NRE.
         _children = new VisualCollection(this);
         IsHitTestVisible = false;
 
@@ -155,7 +155,7 @@ internal sealed class RippleAdorner : Adorner
         var grow = new DoubleAnimation(0.0, 1.0, dur) { EasingFunction = ease };
         scale.BeginAnimation(ScaleTransform.ScaleXProperty, grow);
         scale.BeginAnimation(ScaleTransform.ScaleYProperty, grow);
-        // A whisper of white that fades fast — present but never "crazy".
+        // A whisper of white that fades fast, present but never "crazy".
         var fade = new DoubleAnimation(0.09, 0.0, dur) { EasingFunction = ease };
         fade.Completed += (_, _) =>
         {

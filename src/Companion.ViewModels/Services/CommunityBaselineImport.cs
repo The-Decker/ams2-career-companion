@@ -6,7 +6,7 @@ namespace Companion.ViewModels.Services;
 /// <summary>The imported drivers list plus the summary diff the wizard shows.</summary>
 public sealed record BaselineImportResult
 {
-    /// <summary>The pack's drivers with the community file's values folded in — this is what
+    /// <summary>The pack's drivers with the community file's values folded in, this is what
     /// gets serialized into the pinned drivers.json.</summary>
     public required IReadOnlyList<PackDriver> Drivers { get; init; }
 

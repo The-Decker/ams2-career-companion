@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 namespace Companion.Core.Dynasty;
 
 /// <summary>
-/// One player economic decision — the payload of an <c>economy.decision</c> journal INPUT row
+/// One player economic decision, the payload of an <c>economy.decision</c> journal INPUT row
 /// (provenance-excluded; the fold reads it back and applies it deterministically, so its DERIVED
 /// effects are byte-compared). Declared for the next UNFOLDED round (the
 /// <c>PlayerRoundConditionsStore.Declare</c> shape: refused once that round has a raw result) and
@@ -32,7 +32,7 @@ public sealed record DynastyEconomyDecision
 }
 
 /// <summary>The Dynasty economy decision surface (docs/dev/dynasty-tycoon-economy.md §5).
-/// Serialized camelCase into the journal — part of the save format, never rename.</summary>
+/// Serialized camelCase into the journal, part of the save format, never rename.</summary>
 public enum DynastyEconomyDecisionKind
 {
     /// <summary>Sign a sponsor from the board: the contract starts and the signing bonus lands.</summary>

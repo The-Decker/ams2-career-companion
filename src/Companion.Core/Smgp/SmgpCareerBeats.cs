@@ -1,8 +1,8 @@
 namespace Companion.Core.Smgp;
 
-/// <summary>One beat in the player's evolving career story — a milestone detected from the folded results
+/// <summary>One beat in the player's evolving career story, a milestone detected from the folded results
 /// + the SMGP state (first start/points/pole/podium/win, each promotion or demotion, each title, a rivalry
-/// earned, a career-over near-miss, season progress, the finale). DISPLAY-ONLY — a pure projection over the
+/// earned, a career-over near-miss, season progress, the finale). DISPLAY-ONLY, a pure projection over the
 /// immutable results. Lives in Core so the ordering/firsts logic is unit-testable; the ViewModels shape the
 /// per-round input from the career database, exactly like <see cref="SmgpLiveStats"/>.</summary>
 public sealed record SmgpCareerBeat
@@ -26,7 +26,7 @@ public sealed record SmgpCareerBeat
     /// <summary>The 1-based campaign season this beat belongs to (0 on a beat built without season context).</summary>
     public int Season { get; init; }
 
-    /// <summary>The round within the season (0 for a season-level beat — arrival, title, finale — which
+    /// <summary>The round within the season (0 for a season-level beat, arrival, title, finale, which
     /// have no single round).</summary>
     public int Round { get; init; }
 
@@ -61,21 +61,21 @@ public enum SmgpBeatKind
     Title,
     /// <summary>A two-wins battle earned over a named rival (a seat offer).</summary>
     RivalryEarned,
-    /// <summary>A two-losses battle lost to a rival (reserved — currently surfaced through the demotion it
+    /// <summary>A two-losses battle lost to a rival (reserved, currently surfaced through the demotion it
     /// causes; kept for the GUI/future finer detection).</summary>
     RivalryLost,
-    /// <summary>A brush with the LEVEL D floor — one loss from career-over.</summary>
+    /// <summary>A brush with the LEVEL D floor, one loss from career-over.</summary>
     NearMiss,
     /// <summary>Reaching a new season of the 17-season campaign (SEASON n/17).</summary>
     SeasonMilestone,
-    /// <summary>The locked 17-season campaign finale — the summit.</summary>
+    /// <summary>The locked 17-season campaign finale, the summit.</summary>
     Finale,
-    /// <summary>An accident injured the driver — they must sit out one or more rounds (character death &amp;
+    /// <summary>An accident injured the driver, they must sit out one or more rounds (character death &amp;
     /// injury §6).</summary>
     Injured,
     /// <summary>An accident ended the driver's season (they return next year).</summary>
     SeasonEndingInjury,
-    /// <summary>The driver was KILLED in an accident — the SMGP career ends here.</summary>
+    /// <summary>The driver was KILLED in an accident, the SMGP career ends here.</summary>
     Died,
 }
 
@@ -85,7 +85,7 @@ public sealed record SmgpNarrativeRound
     /// <summary>The venue label for this round (the WhenLabel's location part).</summary>
     public required string Venue { get; init; }
 
-    /// <summary>The pack round number — additive (default 0) so the dispatch feed can key a beat to its
+    /// <summary>The pack round number, additive (default 0) so the dispatch feed can key a beat to its
     /// round for chronological ordering; the beat-content tests leave it 0.</summary>
     public int Round { get; init; }
 
@@ -115,11 +115,11 @@ public sealed record SmgpNarrativeRound
     /// floor) is folded into this one beat rather than also emitting a bare demotion.</summary>
     public string? RivalryLostTo { get; init; }
 
-    /// <summary>The DRIVER ID of the rival named in <see cref="RivalryWonOver"/> — additive (default null)
+    /// <summary>The DRIVER ID of the rival named in <see cref="RivalryWonOver"/>, additive (default null)
     /// so the dispatch feed can attach the rival's portrait + their own trash-talk to the story.</summary>
     public string? RivalryWonOverId { get; init; }
 
-    /// <summary>The DRIVER ID of the rival named in <see cref="RivalryLostTo"/> — additive (default null).</summary>
+    /// <summary>The DRIVER ID of the rival named in <see cref="RivalryLostTo"/>, additive (default null).</summary>
     public string? RivalryLostToId { get; init; }
 
     /// <summary>Cumulative LEVEL-D floor losses after this round (a near-miss approaches the floor limit).</summary>
@@ -128,7 +128,7 @@ public sealed record SmgpNarrativeRound
     /// <summary>True once the career has ended (the floor kicked the player out of F1 SMGP).</summary>
     public bool CareerOver { get; init; }
 
-    /// <summary>The injuring outcome of the player's accident this round — <c>"minorInjury"</c> /
+    /// <summary>The injuring outcome of the player's accident this round, <c>"minorInjury"</c> /
     /// <c>"seasonEnding"</c> / <c>"death"</c> from the <c>player.accident</c> journal row (character death &amp;
     /// injury §6), or null when the round had no injuring accident (a survived accident is skipped). Drives
     /// the living-world Setback dispatch. Additive (default null) so the beat-content tests leave it unset.</summary>
@@ -145,7 +145,7 @@ public sealed record SmgpNarrativeSeason
     /// <summary>1-based campaign ordinal (Season n of 17).</summary>
     public required int Ordinal { get; init; }
 
-    /// <summary>The player's seat TEAM at the season START (before any round) — catches a between-seasons
+    /// <summary>The player's seat TEAM at the season START (before any round), catches a between-seasons
     /// promotion (an accepted season-review offer) or a lost-defense drop.</summary>
     public required string StartSeatTeamName { get; init; }
 
@@ -173,7 +173,7 @@ public sealed record SmgpNarrativeSeason
 /// and deterministic: it walks seasons in ordinal order, then rounds in round order, emitting each beat once
 /// in true chronological order. The career "firsts" (first start/points/top-5/pole/podium/win) fire once
 /// across the whole career; promotions/demotions come from seat-tier transitions (which the folded state
-/// exposes reliably — unlike the battle streak, which resets to 0 in the same fold that fires its trigger,
+/// exposes reliably, unlike the battle streak, which resets to 0 in the same fold that fires its trigger,
 /// so a two-wins offer is read from the PENDING rival, and a forfeit from the tier drop it causes).
 /// </summary>
 public static class SmgpCareerBeats
@@ -192,7 +192,7 @@ public static class SmgpCareerBeats
     {
         var beats = new List<SmgpCareerBeat>();
 
-        // Career-wide "firsts" — fire once each, the first time they occur across every season.
+        // Career-wide "firsts", fire once each, the first time they occur across every season.
         bool firstStart = false, firstPoints = false, firstTop5 = false, firstPole = false,
              firstPodium = false, firstWin = false;
 
@@ -200,7 +200,7 @@ public static class SmgpCareerBeats
         bool arrived = false;
         bool careerEnded = false;
 
-        // The (season, round) the current beat belongs to — stamped onto every emitted beat so the
+        // The (season, round) the current beat belongs to, stamped onto every emitted beat so the
         // living-world dispatch feed can order it chronologically. A season-level beat uses the START/END
         // round sentinels so arrivals sort before, and titles/finales after, the season's scored rounds.
         int curSeason = 0, curRound = 0;
@@ -266,7 +266,7 @@ public static class SmgpCareerBeats
                 }
 
                 // Escalating firsts (points → top-5 → podium → win), plus the first pole. A breakout debut
-                // can trip several in one round — each is a genuine, separate first.
+                // can trip several in one round, each is a genuine, separate first.
                 if (!firstPoints && round.ScoredPointsCumulative)
                 {
                     firstPoints = true;
@@ -284,7 +284,7 @@ public static class SmgpCareerBeats
                         Emit(new SmgpCareerBeat
                         {
                             WhenLabel = when, Kind = SmgpBeatKind.FirstTop5, Headline = "FIRST TOP 5",
-                            Detail = $"A first top-five — P{pos}.",
+                            Detail = $"A first top-five, P{pos}.",
                         });
                     }
                     if (!firstPodium && pos <= 3)
@@ -293,7 +293,7 @@ public static class SmgpCareerBeats
                         Emit(new SmgpCareerBeat
                         {
                             WhenLabel = when, Kind = SmgpBeatKind.FirstPodium, Headline = "FIRST PODIUM",
-                            Detail = $"The rostrum, at last — P{pos}.",
+                            Detail = $"The rostrum, at last, P{pos}.",
                         });
                     }
                     if (!firstWin && pos == 1)
@@ -322,7 +322,7 @@ public static class SmgpCareerBeats
                     {
                         WhenLabel = when, Kind = SmgpBeatKind.RivalryEarned,
                         Headline = "RIVALRY WON",
-                        Detail = $"Beat {wonOver} twice — the offer of his seat is on the table.",
+                        Detail = $"Beat {wonOver} twice, the offer of his seat is on the table.",
                         SubjectId = round.RivalryWonOverId ?? "",
                     });
 
@@ -332,7 +332,7 @@ public static class SmgpCareerBeats
                 if (round.RivalryLostTo is { Length: > 0 } lostTo)
                 {
                     string dest = droppedTier && !string.IsNullOrWhiteSpace(round.SeatTeamName)
-                        ? $" — forced down to {round.SeatTeamName}"
+                        ? $", forced down to {round.SeatTeamName}"
                         : "";
                     Emit(new SmgpCareerBeat
                     {
@@ -359,7 +359,7 @@ public static class SmgpCareerBeats
                     {
                         WhenLabel = when, Kind = SmgpBeatKind.NearMiss,
                         Headline = "ON THE BRINK",
-                        Detail = $"{round.FloorLosses} floor losses — one more ends the career.",
+                        Detail = $"{round.FloorLosses} floor losses, one more ends the career.",
                     });
                 prevFloorLosses = round.FloorLosses;
 
@@ -371,15 +371,15 @@ public static class SmgpCareerBeats
                         WhenLabel = when, Kind = SmgpBeatKind.Injured,
                         Headline = "SIDELINED",
                         Detail = round.AccidentMissRaces == 1
-                            ? "A crash leaves the driver hurt — out of the next race."
-                            : $"A crash leaves the driver hurt — out for {round.AccidentMissRaces} races.",
+                            ? "A crash leaves the driver hurt, out of the next race."
+                            : $"A crash leaves the driver hurt, out for {round.AccidentMissRaces} races.",
                     });
                 else if (round.AccidentOutcome == "seasonEnding")
                     Emit(new SmgpCareerBeat
                     {
                         WhenLabel = when, Kind = SmgpBeatKind.SeasonEndingInjury,
                         Headline = "SEASON IN THE BARRIERS",
-                        Detail = "A heavy crash ends the season — the driver returns next year.",
+                        Detail = "A heavy crash ends the season, the driver returns next year.",
                     });
                 else if (round.AccidentOutcome == "death")
                 {
@@ -387,7 +387,7 @@ public static class SmgpCareerBeats
                     {
                         WhenLabel = when, Kind = SmgpBeatKind.Died,
                         Headline = "TRAGEDY",
-                        Detail = "The driver was killed in an accident — the career ends here.",
+                        Detail = "The driver was killed in an accident, the career ends here.",
                     });
                     careerEnded = true;
                     break;
@@ -399,7 +399,7 @@ public static class SmgpCareerBeats
                     {
                         WhenLabel = when, Kind = SmgpBeatKind.Demotion,
                         Headline = "OUT OF THE SMGP",
-                        Detail = "The LEVEL D floor claimed the career — knocked out of F1 SMGP.",
+                        Detail = "The LEVEL D floor claimed the career, knocked out of F1 SMGP.",
                     });
                     careerEnded = true;
                     break;
@@ -414,7 +414,7 @@ public static class SmgpCareerBeats
                 {
                     WhenLabel = seasonLabel, Kind = SmgpBeatKind.Title,
                     Headline = "CHAMPION",
-                    Detail = $"Season {season.Ordinal} won — a championship banked.",
+                    Detail = $"Season {season.Ordinal} won, a championship banked.",
                 });
 
             if (season.Complete && season.CampaignComplete)
@@ -423,8 +423,8 @@ public static class SmgpCareerBeats
                     WhenLabel = seasonLabel, Kind = SmgpBeatKind.Finale,
                     Headline = season.CampaignFlawless ? "THE EMPEROR RUN" : "SEVENTEEN CONQUERED",
                     Detail = season.CampaignFlawless
-                        ? "Champion in all seventeen seasons — the SEGA world never forgets this name."
-                        : "Seventeen seasons survived — the campaign is complete.",
+                        ? "Champion in all seventeen seasons, the SEGA world never forgets this name."
+                        : "Seventeen seasons survived, the campaign is complete.",
                 });
         }
 
@@ -440,16 +440,16 @@ public static class SmgpCareerBeats
                 WhenLabel = when, Kind = SmgpBeatKind.Promotion,
                 Headline = $"PROMOTED TO {team.ToUpperInvariant()}",
                 Detail = offSeason
-                    ? $"Signed for {team} — a rung up the ladder for the new season."
-                    : $"Moved up into {team} — a rung up the ladder.",
+                    ? $"Signed for {team}, a rung up the ladder for the new season."
+                    : $"Moved up into {team}, a rung up the ladder.",
             }
             : new SmgpCareerBeat
             {
                 WhenLabel = when, Kind = SmgpBeatKind.Demotion,
                 Headline = $"DROPPED TO {team.ToUpperInvariant()}",
                 Detail = offSeason
-                    ? $"Relegated to {team} for the new season — the seat could not be held."
-                    : $"Forced down into {team} — the seat could not be held.",
+                    ? $"Relegated to {team} for the new season, the seat could not be held."
+                    : $"Forced down into {team}, the seat could not be held.",
             };
     }
 }

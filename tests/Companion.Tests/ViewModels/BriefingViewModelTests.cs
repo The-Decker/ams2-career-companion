@@ -42,7 +42,7 @@ public class BriefingViewModelTests
         var vm = new BriefingViewModel(SessionWithRealRound3());
 
         Assert.False(vm.SeasonComplete);
-        Assert.Equal("Dutch Grand Prix — placeholder: Spielberg_Vintage", vm.Title);
+        Assert.Equal("Dutch Grand Prix, placeholder: Spielberg_Vintage", vm.Title);
         Assert.Equal("Circuit Park Zandvoort", vm.VenueDisplayName);
         Assert.True(vm.IsPlaceholder);
         Assert.Equal("Track", vm.Settings[0].Label);
@@ -89,7 +89,7 @@ public class BriefingViewModelTests
         Assert.False(vm.HasCalledShot);
         Assert.Contains("Team benchmark: around P10", vm.CalledShotSummary);
 
-        // "Bolder" from no call starts one place better than expected (P9) — the base stake.
+        // "Bolder" from no call starts one place better than expected (P9), the base stake.
         vm.CallBolderCommand.Execute(null);
         Assert.Equal(9, vm.CalledShot);
         Assert.True(vm.HasCalledShot);
@@ -188,7 +188,7 @@ public class BriefingViewModelTests
             Messages =
             [
                 "Error: Vehicle class 'F-Vintage_Gen1' is not in the content library.",
-                "Staging aborted — fix the preflight errors above and stage again.",
+                "Staging aborted, fix the preflight errors above and stage again.",
             ],
         });
         var watcher = new FakeFileWatcher();

@@ -4,7 +4,7 @@ using Companion.ViewModels.Services;
 namespace Companion.Tests.ViewModels;
 
 /// <summary>
-/// <see cref="ICareerSession.RoundProgression"/> — what one applied round did to the player's
+/// <see cref="ICareerSession.RoundProgression"/>, what one applied round did to the player's
 /// progression, projected from that round's journaled <c>player.xp</c> row (the fold's own audit
 /// record). A character career's applied round reports its XP movement and banked Skill Points; an
 /// un-applied round and a career with no character both report null (the additive seam default).
@@ -54,7 +54,7 @@ public sealed class RoundProgressionTests : IDisposable
                 library: TestPackBuilder.Library()));
     }
 
-    /// <summary>Applies the current round with the player WINNING — a strong result, so the round's
+    /// <summary>Applies the current round with the player WINNING, a strong result, so the round's
     /// XP award is positive on the shipped legacy formula (win bonus + a non-negative expectation term).</summary>
     private static void ApplyWinningRound(ICareerSession session)
     {
@@ -94,7 +94,7 @@ public sealed class RoundProgressionTests : IDisposable
         // Projection stability: a second read of the same journal is value-identical.
         Assert.Equal(progression, session.RoundProgression(1));
 
-        // An un-applied round has no journaled XP row — null, not a zeroed summary.
+        // An un-applied round has no journaled XP row, null, not a zeroed summary.
         Assert.Null(session.RoundProgression(2));
         Assert.Null(session.RoundProgression(99));
     }

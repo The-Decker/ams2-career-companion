@@ -6,7 +6,7 @@ namespace Companion.Tests.Smgp;
 /// The SMGP-universe "What Really Happened" almanac (<c>data/rules/smgp/what-really-happened.json</c>)
 /// is the fictional SEGA world's account of every calendar circuit, revealed on the History tab once
 /// the player has raced it. DISPLAY-ONLY (never a fold input, like the rival quotes + news corpora).
-/// These pin the loader (parse, venue lookup, empty/absent = hidden) and — the important guard — that
+/// These pin the loader (parse, venue lookup, empty/absent = hidden) and, the important guard, that
 /// the SHIPPED almanac authors EVERY venue on the smgp-1 calendar, so a new/renamed round never shows
 /// a blank legend, and never carries an orphan entry that maps to no round.
 /// </summary>
@@ -17,14 +17,14 @@ public sealed class SmgpWhatReallyHappenedTests
       "$comment": "test fixture",
       "races": {
         "San Marino": {
-          "title": "SAN MARINO — THE OPENER",
+          "title": "SAN MARINO, THE OPENER",
           "circuit": "the season's lights-out",
           "champion": "A. Senna · Madonna",
           "body": ["The king sets the tone.", "The insurgent lurks."],
           "notes": ["A note.", "Another note."]
         },
         "Monaco": {
-          "title": "MONACO — THE JEWEL",
+          "title": "MONACO, THE JEWEL",
           "circuit": "the hairpin the game is named for",
           "champion": "A. Senna · Madonna",
           "body": ["Where kings are crowned."],
@@ -41,7 +41,7 @@ public sealed class SmgpWhatReallyHappenedTests
     {
         var lore = Almanac.ForVenue("San Marino");
         Assert.NotNull(lore);
-        Assert.Equal("SAN MARINO — THE OPENER", lore!.Title);
+        Assert.Equal("SAN MARINO, THE OPENER", lore!.Title);
         Assert.Equal("the season's lights-out", lore.Circuit);
         Assert.Equal("A. Senna · Madonna", lore.Champion);
         Assert.Equal(2, lore.Body.Count);
@@ -90,7 +90,7 @@ public sealed class SmgpWhatReallyHappenedTests
         string rulesDir = Path.Combine(AppContext.BaseDirectory, "Fixtures", "rules");
         string path = Path.Combine(rulesDir, "smgp", "what-really-happened.json");
         Assert.True(File.Exists(path),
-            $"'{path}' missing — check the smgp None-Include in Companion.Tests.csproj.");
+            $"'{path}' missing, check the smgp None-Include in Companion.Tests.csproj.");
 
         var almanac = SmgpWhatReallyHappened.Load(rulesDir);
 
@@ -123,6 +123,6 @@ public sealed class SmgpWhatReallyHappenedTests
         // silently never render, so pin it).
         foreach (var venue in almanac.Venues)
             Assert.True(venueNames.Contains(venue),
-                $"almanac venue '{venue}' matches no smgp-1 calendar round — a typo or a stale key.");
+                $"almanac venue '{venue}' matches no smgp-1 calendar round, a typo or a stale key.");
     }
 }

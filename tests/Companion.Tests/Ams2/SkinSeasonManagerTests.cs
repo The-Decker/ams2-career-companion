@@ -4,7 +4,7 @@ namespace Companion.Tests.Ams2;
 
 /// <summary>
 /// The Skin Season Manager: two season packs for the same car model collide ONLY on the model's
-/// active override pointer (<c>&lt;model&gt;.xml</c>) — textures live in per-pack subfolders and
+/// active override pointer (<c>&lt;model&gt;.xml</c>), textures live in per-pack subfolders and
 /// coexist. Swapping seasons = swapping pointer files, backup-first, all-or-nothing per set;
 /// an installed file we cannot recognize as pack-managed content is held behind the force gate.
 /// </summary>

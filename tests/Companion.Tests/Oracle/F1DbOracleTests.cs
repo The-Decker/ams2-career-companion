@@ -23,7 +23,7 @@ namespace Companion.Tests.Oracle;
 ///  - engine competitors absent from the expected list must have zero counted points;
 ///  - all mismatches for a season are collected into one failure, each naming the season,
 ///    the competitor, expected vs actual points and position, plus the engine's per-round
-///    scores and dropped-rounds list — the debugging surface for rules-data bugs.
+///    scores and dropped-rounds list, the debugging surface for rules-data bugs.
 /// </summary>
 public class F1DbOracleTests
 {
@@ -44,7 +44,7 @@ public class F1DbOracleTests
         if (!File.Exists(CatalogPath))
             throw new FileNotFoundException(
                 $"Rules catalog not found at '{CatalogPath}'. The test project links " +
-                "data/rules/f1-points-systems.json into the output — rebuild tests/Companion.Tests.",
+                "data/rules/f1-points-systems.json into the output, rebuild tests/Companion.Tests.",
                 CatalogPath);
         return PointsSystemCatalog.Parse(File.ReadAllText(CatalogPath));
     });
@@ -75,21 +75,21 @@ public class F1DbOracleTests
     {
         if (seasonFixture == NoFixturesSentinel)
             Assert.Fail(
-                $"No f1db oracle fixtures found under '{FixturesDirectory}' — no fixtures generated yet. " +
+                $"No f1db oracle fixtures found under '{FixturesDirectory}', no fixtures generated yet. " +
                 "Run tools/Companion.FixtureGen <f1db.db> <catalog.json> tests/Companion.Tests/Fixtures/f1db " +
                 "and rebuild the test project so the fixtures copy to the output.");
 
         if (!int.TryParse(seasonFixture, NumberStyles.None, CultureInfo.InvariantCulture, out int year))
             Assert.Fail(
                 $"Fixture file '{seasonFixture}.json' under '{FixturesDirectory}' does not name a season " +
-                "year — oracle fixtures must be named '<year>.json' (docs/dev/oracle-fixtures.md).");
+                "year, oracle fixtures must be named '<year>.json' (docs/dev/oracle-fixtures.md).");
 
         var fixture = LoadFixture(seasonFixture);
         var failures = new List<string>();
 
         if (fixture.Year != year)
             failures.Add(
-                $"[{year}] fixture file '{seasonFixture}.json' declares \"year\": {fixture.Year} — " +
+                $"[{year}] fixture file '{seasonFixture}.json' declares \"year\": {fixture.Year}, " +
                 "file name and payload disagree (FixtureGen bug). Comparing using the file-name year.");
 
         SeasonScoringDefinition definition;
@@ -133,7 +133,7 @@ public class F1DbOracleTests
             if (final.Constructors is null)
                 failures.Add(
                     $"[{year}] fixture expects a constructors championship ({expectedConstructors.Count} entries) " +
-                    "but the season's rules define none — catalog gap in data/rules/f1-points-systems.json.");
+                    "but the season's rules define none, catalog gap in data/rules/f1-points-systems.json.");
             else
                 Compare(
                     year, "constructor",
@@ -147,7 +147,7 @@ public class F1DbOracleTests
         {
             failures.Add(
                 $"[{year}] the season's rules define a constructors championship but the fixture has no " +
-                "expectedConstructors — FixtureGen gap; the constructors standings went unverified.");
+                "expectedConstructors, FixtureGen gap; the constructors standings went unverified.");
         }
 
         if (failures.Count > 0)
@@ -155,7 +155,7 @@ public class F1DbOracleTests
             var message = new StringBuilder();
             message.AppendLine(
                 $"f1db oracle: season {year} has {failures.Count} standings mismatch(es). " +
-                "These are usually rules-data bugs in data/rules/f1-points-systems.json — " +
+                "These are usually rules-data bugs in data/rules/f1-points-systems.json, " +
                 "debug with the per-round scores and dropped-rounds lists below.");
             foreach (string failure in failures)
             {
@@ -191,8 +191,8 @@ public class F1DbOracleTests
 
         // Tie-tolerant positions (contract v2): dead-heat ranking conventions vary by era
         // (pre-2000 shared positions with gaps, later countback/chronology order), so group
-        // the EXPECTED rows by points value — exact double equality is safe within one
-        // fixture file — and accept any engine position inside the group's span. Rows with
+        // the EXPECTED rows by points value, exact double equality is safe within one
+        // fixture file, and accept any engine position inside the group's span. Rows with
         // null expected positions occupy no ranking slot and never widen a span.
         var tieGroups = expected
             .Where(e => e.Position is not null)
@@ -213,7 +213,7 @@ public class F1DbOracleTests
             bool pointsMatch = Math.Abs(act.CountedPoints.ToDouble() - exp.Points) < PointsTolerance;
 
             // Null expected positions skip the check (excluded competitors' EX rows —
-            // 1997 Schumacher, 2007 McLaren — carry no official position).
+            // 1997 Schumacher, 2007 McLaren, carry no official position).
             bool positionMatch = true;
             string allowedSpan = "";
             if (exp.Position is int expectedPosition)

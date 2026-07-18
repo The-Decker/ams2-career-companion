@@ -193,7 +193,7 @@ internal static class DataCareerFixture
     };
 
     /// <summary>Creates the career, pins the pack, starts the 1967 season, and seeds the
-    /// start-of-season states — everything a new-career wizard would do.</summary>
+    /// start-of-season states, everything a new-career wizard would do.</summary>
     public static (long SeasonId, SeasonPack Pack) SetupCareer(CareerDatabase db)
     {
         var pack = Pack();

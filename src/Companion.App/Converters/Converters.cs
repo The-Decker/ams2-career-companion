@@ -43,7 +43,7 @@ public sealed class BoolToVisibilityConverter : IValueConverter
         throw new NotSupportedException();
 }
 
-/// <summary>Negates a bool both ways (two-way) — e.g. a "Dark" radio bound to the inverse of IsLightTheme.</summary>
+/// <summary>Negates a bool both ways (two-way), e.g. a "Dark" radio bound to the inverse of IsLightTheme.</summary>
 public sealed class NegateBoolConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) => value is not true;
@@ -140,7 +140,7 @@ public sealed class StringEqualsToVisibilityConverter : IValueConverter
 
 /// <summary>Shared era-year resolution for the gallery converters. A <see cref="RecentCareer"/>
 /// resolves to its STORED season year (falling back to a year parsed from the name for legacy
-/// entries — <see cref="Companion.ViewModels.Services.EraArtResolver.YearForEntry"/>); a bare int is
+/// entries, <see cref="Companion.ViewModels.Services.EraArtResolver.YearForEntry"/>); a bare int is
 /// itself; a bare string is parsed for a year. Null when nothing yields a plausible year, so the
 /// card shows its neutral placeholder.</summary>
 internal static class EraCardYear
@@ -155,7 +155,7 @@ internal static class EraCardYear
         _ => null,
     };
 
-    /// <summary>The identity art key ("smgp") when this value is an SMGP career/pack — it must
+    /// <summary>The identity art key ("smgp") when this value is an SMGP career/pack, it must
     /// resolve its own art rather than collide on its (shared) 1990 year. Null otherwise.</summary>
     public static string? IdentityKey(object? value)
     {
@@ -293,7 +293,7 @@ public sealed class EraLabelConverter : IValueConverter
 /// <summary>A career name (or a year) → the drop-in era-art image for its gallery card, or null
 /// when none is present (the card then shows its coloured era placeholder). Real historical photos
 /// live in <c>{BaseDirectory}\data\ams2\era-art\</c>; the resolver picks the most specific one
-/// (a year file like <c>1967.jpg</c> over the era-medium file like <c>telegram.jpg</c>) — see
+/// (a year file like <c>1967.jpg</c> over the era-medium file like <c>telegram.jpg</c>), see
 /// career-hub-design.md §11. The bitmap is loaded with <see cref="BitmapCacheOption.OnLoad"/> and
 /// frozen so the file is read once and never left locked (images can be swapped while the app runs).
 /// </summary>
@@ -306,7 +306,7 @@ public sealed class EraImageConverter : IValueConverter
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         // 1) A user-chosen card image (picked with "Set card image…") wins, when the file still
-        //    exists — point-to-file, so a moved/deleted image just falls back to the era art below.
+        //    exists, point-to-file, so a moved/deleted image just falls back to the era art below.
         if (value is Companion.ViewModels.Services.RecentCareer { CustomImagePath: { Length: > 0 } custom }
             && File.Exists(custom)
             && LoadFrozen(custom) is { } chosen)
@@ -315,7 +315,7 @@ public sealed class EraImageConverter : IValueConverter
         }
 
         // 2) IDENTITY-keyed art (the SMGP fictional world's SEGA Grand Prix picture) beats the
-        //    year — SMGP shares 1990 with the f1-1990 pack, so it must not collide on 1990.jpg.
+        //    year, SMGP shares 1990 with the f1-1990 pack, so it must not collide on 1990.jpg.
         if (EraCardYear.IdentityKey(value) is { } key &&
             Companion.ViewModels.Services.EraArtResolver.ResolveKey(EraArtDirectory, key) is { } keyedPath)
         {
@@ -341,7 +341,7 @@ public sealed class EraImageConverter : IValueConverter
 /// <summary>Shared user-image loader for the gallery / track / story art converters. Loads a file
 /// fully now (<see cref="BitmapCacheOption.OnLoad"/>) and freezes it, so the file is never left
 /// locked (art can be swapped while the app runs) and the bitmap is cross-thread safe. A
-/// corrupt/unreadable file returns null — a view never crashes on bad art, it shows its placeholder.</summary>
+/// corrupt/unreadable file returns null, a view never crashes on bad art, it shows its placeholder.</summary>
 internal static class FrozenImage
 {
     public static BitmapImage? Load(string path)
@@ -366,7 +366,7 @@ internal static class FrozenImage
 
 /// <summary>A track id (string) → the drop-in track-layout thumbnail for that track, or null when
 /// none is present (the view then hides the image). User-managed art lives in
-/// <c>{BaseDirectory}\data\ams2\track-art\&lt;trackId&gt;.{jpg,jpeg,png}</c> — the shared
+/// <c>{BaseDirectory}\data\ams2\track-art\&lt;trackId&gt;.{jpg,jpeg,png}</c>, the shared
 /// "folder + key + resolver with fallback" convention (<see cref="Companion.ViewModels.Services.UserImageResolver"/>),
 /// keyed by the track id from data/ams2/tracks.json. Untracked, like era art.</summary>
 public sealed class TrackImageConverter : IValueConverter
@@ -495,10 +495,10 @@ public sealed class ExpandGlyphConverter : IValueConverter
 }
 
 /// <summary>A key (string or int) → the drop-in user image for it, from the folder named by the
-/// <c>ConverterParameter</c> under <c>data/ams2/</c> — e.g. <c>ConverterParameter=history-art</c>
+/// <c>ConverterParameter</c> under <c>data/ams2/</c>, e.g. <c>ConverterParameter=history-art</c>
 /// resolves <c>data/ams2/history-art/&lt;key&gt;.{jpg,jpeg,png}</c>. The parameter may list several
-/// folders separated by <c>|</c> in preference order — <c>ConverterParameter=portraits|cars</c>
-/// tries <c>portraits/&lt;key&gt;</c> then falls back to <c>cars/&lt;key&gt;</c> — so a driver card
+/// folders separated by <c>|</c> in preference order, <c>ConverterParameter=portraits|cars</c>
+/// tries <c>portraits/&lt;key&gt;</c> then falls back to <c>cars/&lt;key&gt;</c>, so a driver card
 /// shows the hand-supplied portrait when present, else the extracted car preview. The shared,
 /// reusable half of the user-asset convention (<see cref="Companion.ViewModels.Services.UserImageResolver"/>):
 /// one converter, any keyed image folder. Null when absent (the view hides the image); user art is
@@ -663,7 +663,7 @@ public sealed class LatestHubDispatchConverter : IMultiValueConverter
 /// the tear-off useful even though it has no Hub ancestor.</summary>
 public sealed class SmgpPaddockRumorConverter : IMultiValueConverter
 {
-    private const string Quiet = "The paddock is quiet—for now.";
+    private const string Quiet = "The paddock is quiet, for now.";
 
     public object Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)
     {
@@ -979,7 +979,7 @@ public sealed class CircuitGeometryConverter : IValueConverter
         }
         catch (Exception ex) when (ex is System.Text.Json.JsonException or IOException or FormatException or InvalidOperationException)
         {
-            // A bad/unreadable circuit file must never crash a screen — just show no map.
+            // A bad/unreadable circuit file must never crash a screen, just show no map.
             return null;
         }
     }
@@ -1048,7 +1048,7 @@ public sealed class WidthFractionConverter : IValueConverter
 
 /// <summary>An element's ActualWidth → how many UniformGrid columns fit (ConverterParameter = the
 /// target card width, default 360), clamped 2–6. Makes a card grid adaptive: ~2 columns at 920,
-/// 4 around 1440, 6 on an ultrawide — instead of a fixed count that cramps or balloons.</summary>
+/// 4 around 1440, 6 on an ultrawide, instead of a fixed count that cramps or balloons.</summary>
 public sealed class WidthToColumnsConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -1209,7 +1209,7 @@ public sealed class DsqReasonLabelConverter : IMultiValueConverter
 }
 
 /// <summary>Candidates dropdown visibility: candidates exist AND (the input has text, or the
-/// DNF phase is on — where the remaining drivers ARE the candidates for bare-Enter bulking).
+/// DNF phase is on, where the remaining drivers ARE the candidates for bare-Enter bulking).
 /// Values: [0] Candidates.Count (int), [1] Input (string), [2] IsDnfPhase (bool).</summary>
 public sealed class CandidatesVisibilityConverter : IMultiValueConverter
 {

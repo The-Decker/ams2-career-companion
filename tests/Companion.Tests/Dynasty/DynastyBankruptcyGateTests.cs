@@ -12,7 +12,7 @@ namespace Companion.Tests.Dynasty;
 /// <summary>Bankruptcy is a REAL terminal state (economy §7), held to the PostDeathArchiveTests
 /// bar: the fold sets it deterministically, all three scoring entries refuse it, the season end is
 /// suppressed on the fatal settlement, the screen model + shell routing project it (live and on
-/// reopen), the archive stays readable, the gallery badges it — and the whole ending re-simulates
+/// reopen), the archive stays readable, the gallery badges it, and the whole ending re-simulates
 /// byte-identically.</summary>
 public sealed class DynastyBankruptcyGateTests : IDisposable
 {
@@ -114,7 +114,7 @@ public sealed class DynastyBankruptcyGateTests : IDisposable
 
     /// <summary>Creates a Dynasty economy career and buries it: eight development increments
     /// (≈229k against a 100k opening balance) declared for the FINAL round send the settlement
-    /// far past the −25k hard floor — an immediate, deterministic bankruptcy on round 2.</summary>
+    /// far past the −25k hard floor, an immediate, deterministic bankruptcy on round 2.</summary>
     private string CreateBankruptCareer()
     {
         WritePack(1967);

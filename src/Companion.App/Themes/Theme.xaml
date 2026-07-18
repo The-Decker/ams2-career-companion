@@ -27,14 +27,14 @@
     <FontFamily x:Key="AltPixelFont">/Fonts/#Silkscreen</FontFamily>
 
     <!-- root UI scale (settings: font scale 90–130% ÷ 100). Every window's root LayoutTransform
-         multiplies by this, so ALL text + spacing scales uniformly — inline font sizes, headings
+         multiplies by this, so ALL text + spacing scales uniformly, inline font sizes, headings
          and the tear-off windows included, not just inherited body text. App.ApplyAppearance
          replaces the value on change (live); 1 = no scaling. -->
     <sys:Double x:Key="AppUiScale">1</sys:Double>
 
     <!-- ===== motion (tactile "game feel": controls physically respond to touch) =====
          Shared easing curves so every interaction springs with one consistent vocabulary.
-         SpringOut overshoots then settles — the satisfying "pop" on release; the others are
+         SpringOut overshoots then settles, the satisfying "pop" on release; the others are
          quick, natural accelerations for press-down and hover. Durations are short (80–450ms)
          so the app feels crisp, never sluggish. -->
     <BackEase x:Key="SpringOut" EasingMode="EaseOut" Amplitude="0.55" />
@@ -132,7 +132,7 @@
 
     <!-- ===== keyboard focus ring (ux-round §2/§4 focus-visuals audit) =====
          FocusVisualStyle only renders for KEYBOARD focus (Tab/arrows), so mouse users never
-         see it — every focusable control below opts in so the ring is never lost. -->
+         see it, every focusable control below opts in so the ring is never lost. -->
     <Style x:Key="FocusRing">
         <Setter Property="Control.Template">
             <Setter.Value>
@@ -266,7 +266,7 @@
 
     <!-- Team crests are smooth, transparent renders (not pixel art), so they scale best with
          high-quality (Fant) filtering. Every team-logo Image references this one style so the
-         crisp look from the starting grid is applied identically app-wide — one dial to tune. -->
+         crisp look from the starting grid is applied identically app-wide, one dial to tune. -->
     <Style x:Key="TeamLogoImage" TargetType="Image">
         <Setter Property="RenderOptions.BitmapScalingMode" Value="HighQuality" />
     </Style>
@@ -294,7 +294,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <!-- RenderTransform (post-layout) so the press/hover scale never nudges
-                         neighbouring controls — the button just feels like it moves. -->
+                         neighbouring controls, the button just feels like it moves. -->
                     <Grid x:Name="VisualRoot" RenderTransformOrigin="0.5,0.5">
                         <!-- CommonStates are mutually exclusive. The old independent trigger
                              storyboards both held their final values, so Pressed could restore a
@@ -385,7 +385,7 @@
         <Setter Property="MinHeight" Value="38" />
     </Style>
     <!-- icon-only button (ux-round §4 consistent iconography): Segoe MDL2 glyph content.
-         Every use MUST set ToolTip + AutomationProperties.Name — the glyph alone says nothing. -->
+         Every use MUST set ToolTip + AutomationProperties.Name, the glyph alone says nothing. -->
     <Style x:Key="IconButton" TargetType="Button" BasedOn="{StaticResource SubtleButton}">
         <Setter Property="FontFamily" Value="{StaticResource IconFont}" />
         <Setter Property="FontSize" Value="14" />
@@ -927,7 +927,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
                     <!-- the thumb grows under the finger and lights a soft accent halo while
-                         grabbed — a dial you can feel take hold. -->
+                         grabbed, a dial you can feel take hold. -->
                     <Grid RenderTransformOrigin="0.5,0.5" Background="Transparent">
                         <Grid.RenderTransform>
                             <ScaleTransform x:Name="ThumbScale" ScaleX="1" ScaleY="1" />
@@ -1014,7 +1014,7 @@
     <!-- ===== virtualized flat list (ux-round §4: big grids) =====
          ItemsControl does NOT virtualize by default; this style gives it a virtualizing
          panel and its own item-scrolling ScrollViewer. Use for long flat tables (standings
-         rows, round points) — NOT for lists whose row template depends on AlternationIndex
+         rows, round points), NOT for lists whose row template depends on AlternationIndex
          (virtualization renumbers realized containers). -->
     <!-- ===== scroll bars ===== -->
     <Style x:Key="ScrollPageButton" TargetType="RepeatButton">

@@ -47,7 +47,7 @@ public class CareerStoreTests
             Convert.ToHexStringLower(SHA256.HashData(pinned.PackJson)),
             pinned.Sha256);
 
-        // The loaded pack re-serializes to the exact pinned bytes — the real byte contract.
+        // The loaded pack re-serializes to the exact pinned bytes, the real byte contract.
         var loaded = pinned.Load();
         Assert.Equal(pinned.PackJson, JsonSerializer.SerializeToUtf8Bytes(loaded, CoreJson.Options));
         Assert.Equal(pack.Manifest.PackId, loaded.Manifest.PackId);

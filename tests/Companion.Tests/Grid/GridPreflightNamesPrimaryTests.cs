@@ -28,7 +28,7 @@ public class GridPreflightNamesPrimaryTests
         var file = FileWith(Morbidelli, DeCesaris);
         var aiNames = AiNames(Morbidelli, DeCesaris);
 
-        // No skin overrides, no stock library entry — the ONLY source is the installed AI file.
+        // No skin overrides, no stock library entry, the ONLY source is the installed AI file.
         var report = GridPreflight.Check(
             file, LibraryWithClassButNoStockLiveries(), installedLiveries: [],
             installedAiNames: aiNames);
@@ -75,7 +75,7 @@ public class GridPreflightNamesPrimaryTests
             file, LibraryWithClassButNoStockLiveries(), installedLiveries: [skin],
             installedAiNames: AiNames(Morbidelli));
 
-        // Name binds AND a skin is deployed — not even an Info note.
+        // Name binds AND a skin is deployed, not even an Info note.
         Assert.DoesNotContain(report.Issues, i => i.Message.Contains(Morbidelli));
     }
 
@@ -170,7 +170,7 @@ public class GridPreflightNamesPrimaryTests
     };
 
     /// <summary>A library where the class EXISTS (so no class-name error) but there is no stock
-    /// livery entry for it — isolating the installed-AI-file name source, exactly like Mike's
+    /// livery entry for it, isolating the installed-AI-file name source, exactly like Mike's
     /// F-Classic_Gen3 whose names come only from the community 1990 AI file.</summary>
     private static Ams2ContentLibrary LibraryWithClassButNoStockLiveries() => new()
     {

@@ -7,7 +7,7 @@ namespace Companion.Tests.ViewModels;
 /// The race-setup circuit map keys by the PACK's authored year, not the career's current season year.
 /// They are equal for every ordinary season, but a CARRYOVER season reuses the same pinned pack (its
 /// calendar / its tracks) for a LATER year, so the career year runs ahead of the pack while the track
-/// actually set up in AMS2 stays the pack's — the circuit map must follow the track being raced.
+/// actually set up in AMS2 stays the pack's, the circuit map must follow the track being raced.
 /// </summary>
 public class BriefingCircuitTests
 {

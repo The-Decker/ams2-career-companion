@@ -6,7 +6,7 @@ namespace Companion.Core.Career;
 /// Non-graphic, deterministic injury descriptions for the medical record and injury coverage.
 /// A pure DISPLAY projection of an already-persisted accident outcome: the pick hashes the
 /// outcome's own identity (season/round/outcome), drawing nothing from any RNG stream, so it can
-/// never perturb the fold or replay — reopening the career always describes the same injury the
+/// never perturb the fold or replay, reopening the career always describes the same injury the
 /// same way. In-game simulation flavour only, never a medical claim.
 /// </summary>
 public static class InjuryFlavor
@@ -33,7 +33,7 @@ public static class InjuryFlavor
     ];
 
     /// <summary>The deterministic description for one persisted accident outcome, or empty for
-    /// outcomes that carry no injury description (none / death — a fatality is never captioned
+    /// outcomes that carry no injury description (none / death, a fatality is never captioned
     /// with clinical detail).</summary>
     public static string Describe(string outcome, int seasonOrdinal, int round)
     {

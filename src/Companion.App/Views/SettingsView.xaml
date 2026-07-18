@@ -30,12 +30,12 @@
                 <Button Content="Done" Style="{StaticResource AccentButton}" MinWidth="96" Margin="10,0,0,0"
                         audio:SoundAssist.Cue="Back"
                         Command="{Binding CloseCommand}"
-                        ToolTip="Close settings (Esc works too) — changes are already applied and saved" />
+                        ToolTip="Close settings (Esc works too), changes are already applied and saved" />
             </StackPanel>
             <StackPanel>
                 <TextBlock Text="Settings" Style="{StaticResource H1}" />
                 <TextBlock Style="{StaticResource Muted}"
-                           Text="Everything applies live and saves as you change it — there is no OK button." />
+                           Text="Everything applies live and saves as you change it, there is no OK button." />
             </StackPanel>
         </DockPanel>
 
@@ -49,7 +49,7 @@
                     <StackPanel>
                         <TextBlock Text="Appearance" Style="{StaticResource SectionTitle}" />
                         <TextBlock Style="{StaticResource SectionHint}"
-                                   Text="Pick a base theme and an accent — both apply live across every screen. Each accent is tuned for legibility on light and dark." />
+                                   Text="Pick a base theme and an accent, both apply live across every screen. Each accent is tuned for legibility on light and dark." />
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -69,7 +69,7 @@
                                              ToolTip="The default dark, cinematic interface" />
                                 <RadioButton Content="Light" GroupName="BaseTheme" VerticalAlignment="Center"
                                              IsChecked="{Binding IsLightTheme}"
-                                             ToolTip="A light interface — every accent stays contrast-correct" />
+                                             ToolTip="A light interface, every accent stays contrast-correct" />
                             </StackPanel>
 
                             <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource RowLabel}" Text="Accent color" Margin="0,12,0,0" />
@@ -121,7 +121,7 @@
                                             Minimum="{Binding MinFontScalePercent}" Maximum="{Binding MaxFontScalePercent}"
                                             Value="{Binding FontScalePercent}" TickFrequency="5" IsSnapToTickEnabled="True"
                                             Margin="0,0,10,0"
-                                            ToolTip="UI size, 90–160% — scales interface text, controls, and spacing live across every screen and pop-out window." />
+                                            ToolTip="UI size, 90–160%, scales interface text, controls, and spacing live across every screen and pop-out window." />
                                 </DockPanel>
                                 <TextBlock Style="{StaticResource Muted}" FontSize="10.5" Margin="0,4,52,0"
                                            TextWrapping="Wrap"
@@ -218,7 +218,7 @@
 
                             <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,12,0,0"
                                       IsChecked="{Binding MinimalNarrative}"
-                                      Content="Minimal narrative — suppress headlines except championship-critical ones"
+                                      Content="Minimal narrative, suppress headlines except championship-critical ones"
                                       ToolTip="The confirm screen skips flavor headlines; title deciders still show" />
                             <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0"
                                       IsChecked="{Binding AutoOpenBriefing}"
@@ -236,7 +236,7 @@
                                    Text="Settings to modify what you see: how far the era skin (telegram → fax → email) reaches, and how much of each news dispatch the News tab shows." />
 
                         <CheckBox IsChecked="{Binding EraThemingEnabled}"
-                                  Content="Era theming — skin the app to each career's period (telegram / fax / email)"
+                                  Content="Era theming: skin the app to each career's period (telegram / fax / email)"
                                   ToolTip="Off = neutral chrome: the hub's era badge and the career gallery's era labels are hidden" />
 
                         <Grid Margin="0,14,0,0">
@@ -263,13 +263,13 @@
                     <StackPanel>
                         <TextBlock Text="Staging" Style="{StaticResource SectionTitle}" />
                         <TextBlock Style="{StaticResource SectionHint}"
-                                   Text="NAMeS-first: your installed community AI files are the preferred baseline — the app only writes when a round genuinely diverges, always backup-first." />
+                                   Text="NAMeS-first: your installed community AI files are the preferred baseline, the app only writes when a round genuinely diverges, always backup-first." />
 
                         <CheckBox IsChecked="{Binding PreferInstalledBaseline}"
                                   Content="New careers default to importing the installed AI file as the season baseline"
                                   ToolTip="The wizard's 'use your installed AI file' checkbox starts ticked whenever the file parses (you can still untick it per career)" />
                         <CheckBox Margin="0,8,0,0" IsChecked="{Binding DiffAwareStaging}"
-                                  Content="Diff-aware staging — write nothing when the installed file already matches"
+                                  Content="Diff-aware staging, write nothing when the installed file already matches"
                                   ToolTip="Recommended. Off = every staging writes a fresh file (still backup-first)" />
                         <CheckBox Margin="0,8,0,0" IsChecked="{Binding RestorePromptOnSeasonEnd}"
                                   Content="Offer to restore the original AI file when a season ends"
@@ -297,7 +297,7 @@
 
                         <TextBlock Style="{StaticResource RowLabel}" Margin="0,12,0,4" Text="Extra pack folders" />
                         <TextBlock Style="{StaticResource Faint}" Margin="0,0,0,6"
-                                   Text="None added — the wizard searches the default locations only."
+                                   Text="None added, the wizard searches the default locations only."
                                    Visibility="{Binding PackFolders.Count, Converter={StaticResource CountCollapsed}}" />
                         <ItemsControl ItemsSource="{Binding PackFolders}">
                             <ItemsControl.ItemTemplate>

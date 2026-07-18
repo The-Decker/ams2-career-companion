@@ -71,3 +71,8 @@ BOTH roles, run as **two parallel instances** against a strict lane boundary. Re
   camelCase strings, `Rational` as `"3"`/`"1/7"` strings).
 - Scoring quirks (half/double points, Indy exclusion, shortened-race tables) are round-level DATA
   (`PointsFactor`, `CountsForConstructors`, `AlternateRaceTableId`) — never hard-coded era logic.
+- **The em-dash `"—"` (U+2014) is banned from everything user-visible** (owner rule, 2026-07-17):
+  XAML, JSON content (`data/rules`, `packs`, `data/history`, `data/ams2`), and C# string literals.
+  In prose it becomes a comma, headings/labels take a colon, empty-value glyphs a plain hyphen.
+  Allowed only in code comments (users never see those). Enforced by
+  `tests/Companion.Tests/Guards/NoEmDashGuardTests.cs` — it must stay green.

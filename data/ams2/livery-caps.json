@@ -1,5 +1,5 @@
 {
-  "extractedFrom": "AMS2 in-game 'LIVERIES' count per open-wheel class (observed by Mike, 2026-07-07). This is the class's fixed livery-slot CAP: a custom grid can show at most this many DISTINCT liveries, so custom slots run 51..(50+cap). A historical field larger than the cap must be trimmed or the extra cars duplicate/show a default skin. Class keys are the exact CustomAIDrivers xmlName (verified against Y:\\...\\UserData\\CustomAIDrivers). Classes whose display name could not be mapped confidently to an xmlName (Formula Edge, the F-Hybrid/F-Ultimate family) are omitted rather than guessed — an absent cap means 'unknown', not 'unlimited'.",
+  "extractedFrom": "AMS2 in-game 'LIVERIES' count per open-wheel class (observed by Mike, 2026-07-07). This is the class's fixed livery-slot CAP: a custom grid can show at most this many DISTINCT liveries, so custom slots run 51..(50+cap). A historical field larger than the cap must be trimmed or the extra cars duplicate/show a default skin. Class keys are the exact CustomAIDrivers xmlName (verified against Y:\\...\\UserData\\CustomAIDrivers). Classes whose display name could not be mapped confidently to an xmlName (Formula Edge, the F-Hybrid/F-Ultimate family) are omitted rather than guessed, an absent cap means 'unknown', not 'unlimited'.",
   "caps": {
     "F-Hitech_Gen1": 26,
     "F-Hitech_Gen2": 26,

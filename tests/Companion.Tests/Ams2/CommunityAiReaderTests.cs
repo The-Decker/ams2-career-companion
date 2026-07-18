@@ -89,7 +89,7 @@ public class CommunityAiReaderTests
             ["Brabham-Repco #1 J. Brabham", "Surtees Bang & Olufsen - C. Pace #18", "Honda #7 J. Surtees"],
             file.BaseEntries.Select(e => e.LiveryName));
 
-        // Track-scoped entries stay separate — they are round-level, never baseline.
+        // Track-scoped entries stay separate, they are round-level, never baseline.
         Assert.Equal(3, file.TrackEntries.Count);
         Assert.All(file.TrackEntries, e => Assert.NotEmpty(e.Tracks));
         Assert.All(file.BaseEntries, e => Assert.Empty(e.Tracks));

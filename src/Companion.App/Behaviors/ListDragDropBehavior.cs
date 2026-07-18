@@ -14,7 +14,7 @@ namespace Companion.App.Behaviors;
 /// properties turn a list or drop-zone border into a node of the drag graph via a
 /// <see cref="RoleProperty"/> ("remaining" | "order" | "dnf" | "dsq"); every drop resolves to
 /// exactly one call on the tested <see cref="ResultEntryViewModel"/> mouse primitives —
-/// InsertAt / MoveTo / MarkDnf(+Bulk) / MarkDsq / Unmark — so NO result mutation logic lives
+/// InsertAt / MoveTo / MarkDnf(+Bulk) / MarkDsq / Unmark, so NO result mutation logic lives
 /// here. What does live here is pure UI mechanics: the drag threshold, the payload
 /// (driver ids + source role), the insertion-indicator adorner on the finishing order, and
 /// the <see cref="IsDragOverProperty"/> flag the zone styles highlight on.
@@ -65,7 +65,7 @@ public static class ListDragDropBehavior
 
     public static void SetIsDropTarget(DependencyObject element, bool value) => element.SetValue(IsDropTargetProperty, value);
 
-    /// <summary>True while an acceptable drag hovers this drop target — styles highlight on it.</summary>
+    /// <summary>True while an acceptable drag hovers this drop target, styles highlight on it.</summary>
     public static readonly DependencyProperty IsDragOverProperty =
         DependencyProperty.RegisterAttached(
             "IsDragOver", typeof(bool), typeof(ListDragDropBehavior), new PropertyMetadata(false));

@@ -8,7 +8,7 @@ namespace Companion.Tests.ViewModels;
 
 /// <summary>
 /// Task 3.3 screen-data projections over a fake session: the Standings player + rival highlight flags, and
-/// the Driver/Dossier tab surfacing the Task-2 evolving narrative. Display-only — the fake supplies the ids
+/// the Driver/Dossier tab surfacing the Task-2 evolving narrative. Display-only, the fake supplies the ids
 /// and the paddock card; the VMs just flag/surface them.
 /// </summary>
 public sealed class SmgpScreenDataTests

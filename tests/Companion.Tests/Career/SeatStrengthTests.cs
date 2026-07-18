@@ -8,7 +8,7 @@ public class SeatStrengthTests
     public void FasterCarBeatsBetterDriverInATierGap()
     {
         // Tier-5 car (1.02/0.98) with a modest driver vs neutral car with a great driver:
-        // the car weighting must dominate — "your tier-4 car really is slower".
+        // the car weighting must dominate, "your tier-4 car really is slower".
         var strongCar = CareerTestData.Seat("d1", "t1", raceSkill: 0.70, power: 1.02, weight: 0.98);
         var strongDriver = CareerTestData.Seat("d2", "t2", raceSkill: 0.85);
         Assert.True(

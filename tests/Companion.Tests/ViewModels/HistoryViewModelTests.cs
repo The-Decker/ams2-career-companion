@@ -62,7 +62,7 @@ public sealed class HistoryViewModelTests
 
         var inProgress = history.Seasons[0];
         Assert.False(inProgress.IsComplete);
-        Assert.Equal("In progress — 6 of 12 rounds", inProgress.ResultText);
+        Assert.Equal("In progress, 6 of 12 rounds", inProgress.ResultText);
         Assert.False(inProgress.HasForm); // no folded rep/OPI until the season completes
 
         var completed = history.Seasons[1];
@@ -148,13 +148,13 @@ public sealed class HistoryViewModelTests
                     new SmgpWorldRace
                     {
                         Round = 1, VenueName = "San Marino", IsRevealed = true,
-                        Title = "SAN MARINO — THE OPENER", Circuit = "the season's lights-out",
+                        Title = "SAN MARINO, THE OPENER", Circuit = "the season's lights-out",
                         Champion = "A. Senna · Madonna", Body = ["The king sets the tone."], Notes = ["A note."],
                     },
                     new SmgpWorldRace
                     {
                         Round = 2, VenueName = "Brazil", IsRevealed = true,
-                        Title = "BRAZIL — CEARA'S FORTRESS", Champion = "G. Ceara · Bullets",
+                        Title = "BRAZIL, CEARA'S FORTRESS", Champion = "G. Ceara · Bullets",
                         Body = ["Home hero."], Notes = [],
                     },
                     // Unraced → sealed: the header still shows the venue, but the legend stays hidden.
@@ -200,7 +200,7 @@ public sealed class HistoryViewModelTests
             {
                 Seasons = [new CareerSeasonCard { SeasonYear = 1967, RoundsApplied = 1, RoundCount = 11 }],
             },
-            // SmgpWorld left null (the seam default) — the panel must stay hidden.
+            // SmgpWorld left null (the seam default), the panel must stay hidden.
         };
 
         var history = new HistoryViewModel(session);
@@ -209,7 +209,7 @@ public sealed class HistoryViewModelTests
         Assert.Null(history.SmgpWorld);
     }
 
-    /// <summary>A session that only implements what the History lens reads — the additive
+    /// <summary>A session that only implements what the History lens reads, the additive
     /// default seam members keep this minimal and prove the lens couples to nothing else.</summary>
     [Fact]
     public void Season_card_carries_the_real_historical_results_for_its_year()
@@ -266,7 +266,7 @@ public sealed class HistoryViewModelTests
         Assert.True(real.HasConstructorsChampion);
 
         // The data-grounded summary names the champion + the dominant constructor (Hulme did not win
-        // the single fixture round — Pedro did — so no win count is claimed here).
+        // the single fixture round, Pedro did, so no win count is claimed here).
         Assert.True(real.HasSummary);
         Assert.Contains("Denny Hulme took the 1967 title", real.SummaryText);
         Assert.Contains("Brabham led the constructors", real.SummaryText);
@@ -425,7 +425,7 @@ public sealed class HistoryViewModelTests
         Assert.Equal(
             "Nelson Piquet · Rio de Janeiro · 5.03 km · 11 turns · anti-clockwise circuit",
             CircuitCaptions.Compose(circuit));
-        // Briefing form (venue is the heading) — no duplicated circuit name.
+        // Briefing form (venue is the heading), no duplicated circuit name.
         Assert.Equal(
             "Rio de Janeiro · 5.03 km · 11 turns · anti-clockwise circuit",
             CircuitCaptions.Compose(circuit, includeName: false));

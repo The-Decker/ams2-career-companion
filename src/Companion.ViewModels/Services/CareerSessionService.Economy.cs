@@ -8,12 +8,12 @@ namespace Companion.ViewModels.Services;
 
 /// <summary>
 /// The Dynasty owner-economy session surface (docs/dev/dynasty-tycoon-economy.md §9): the
-/// dashboard projection (a pure display read — no fold input is ever derived from it) and the
+/// dashboard projection (a pure display read, no fold input is ever derived from it) and the
 /// validated decision write path. The session is the affordability/availability AUTHORITY: it
 /// dry-runs the pending plan through the REAL fold (<see cref="DynastyEconomyFold.ApplyDecisions"/>)
 /// plus policy checks, then journals the accepted decision via
 /// <see cref="ReplayService.DeclareEconomyDecision"/> for the next unfolded round. The fold later
-/// applies journaled decisions unconditionally — validation lives here, exactly once.
+/// applies journaled decisions unconditionally, validation lives here, exactly once.
 /// </summary>
 public sealed partial class CareerSessionService
 {
@@ -26,7 +26,7 @@ public sealed partial class CareerSessionService
         if (player?.Economy is not { } economy)
             return null;
         // A career carrying economy state but no tables on this install (a stale-data install) has
-        // no dashboard to project — the ledger figures cannot be resolved. The career is not lost;
+        // no dashboard to project, the ledger figures cannot be resolved. The career is not lost;
         // it simply cannot render its economy until the data folder is restored.
         if (_environment.Rules.DynastyEconomy is not { } rules)
             return null;
@@ -115,7 +115,7 @@ public sealed partial class CareerSessionService
     }
 
     /// <summary>Pending-decision display lines, amounts computed by replaying the plan ONCE in
-    /// journal order — exactly the arithmetic the next fold will run.</summary>
+    /// journal order, exactly the arithmetic the next fold will run.</summary>
     private IReadOnlyList<DynastyPendingDecisionModel> BuildPendingModels(
         IReadOnlyList<(long Seq, DynastyEconomyDecision Decision)> pending,
         DynastyEconomyState economy,
@@ -160,20 +160,20 @@ public sealed partial class CareerSessionService
     {
         ArgumentNullException.ThrowIfNull(decision);
         if (_careerFileDeleted)
-            throw new InvalidOperationException("This career has ended — the save was deleted.");
+            throw new InvalidOperationException("This career has ended, the save was deleted.");
         var player = CurrentPlayerState();
         if (player?.Economy is not { } economy)
             throw new InvalidOperationException("This career does not run the Dynasty owner economy.");
         if (player.Deceased || player.Smgp?.CareerOver == true)
-            throw new InvalidOperationException("The career is over — no further decisions can be made.");
+            throw new InvalidOperationException("The career is over, no further decisions can be made.");
         if (economy.Bankrupt)
-            throw new InvalidOperationException("The team is bankrupt — the ledger is closed.");
+            throw new InvalidOperationException("The team is bankrupt, the ledger is closed.");
         if (SeasonComplete)
             throw new InvalidOperationException(
-                "The season is complete — decisions reopen with the next season's first round.");
+                "The season is complete, decisions reopen with the next season's first round.");
         if (_environment.RulesDirectory is null || _environment.Rules.DynastyEconomy is not { } rules)
             throw new InvalidOperationException(
-                "The Dynasty economy tables are unavailable on this install — restore the app's " +
+                "The Dynasty economy tables are unavailable on this install, restore the app's " +
                 "data\\rules\\dynasty folder to make decisions.");
         int year = _seasonYear;
 
@@ -203,7 +203,7 @@ public sealed partial class CareerSessionService
                 var cost = rules.DevelopmentCost(effective.DevelopmentLevel, effective.StaffTier, year);
                 if (effective.Balance - cost < Rational.Zero)
                     throw new InvalidOperationException(
-                        $"The team cannot afford this increment ({FormatMoney(cost.ToString())}) — " +
+                        $"The team cannot afford this increment ({FormatMoney(cost.ToString())}), " +
                         "development is bought with money in the bank, not on credit.");
                 break;
             }
@@ -224,7 +224,7 @@ public sealed partial class CareerSessionService
         }
 
         // Structural backstop: the REAL fold must accept the whole pending plan plus this
-        // decision — whatever it refuses now it would refuse at fold time, so nothing invalid
+        // decision, whatever it refuses now it would refuse at fold time, so nothing invalid
         // can ever reach the journal.
         _ = DynastyEconomyFold.ApplyDecisions(new DynastyDecisionFoldContext
         {
@@ -269,7 +269,7 @@ public sealed partial class CareerSessionService
     }
 
     /// <summary>The economy state AFTER the pending plan (a dry-run through the real fold); the
-    /// folded state verbatim when the plan cannot apply (a tampered row — resim reports it).</summary>
+    /// folded state verbatim when the plan cannot apply (a tampered row, resim reports it).</summary>
     private DynastyEconomyState EffectiveEconomyState(
         DynastyEconomyState economy,
         IReadOnlyList<DynastyEconomyDecision> pending,
@@ -300,7 +300,7 @@ public sealed partial class CareerSessionService
             .FirstOrDefault(t => string.Equals(t.TeamId, player.CurrentTeamId, StringComparison.Ordinal))
             ?.Tier ?? 3;
 
-    /// <summary>Why this deal cannot be signed right now — "" when it can (economy §5). The
+    /// <summary>Why this deal cannot be signed right now, "" when it can (economy §5). The
     /// requirement checks read the current season's standings; a results-gated deal is honestly
     /// unavailable until the team has the record.</summary>
     private string SponsorIneligibleReason(
@@ -351,7 +351,7 @@ public sealed partial class CareerSessionService
                         string kind = root.TryGetProperty("kind", out var kv) ? kv.GetString() ?? "" : "";
                         lines.Add(new DynastyLedgerLineModel
                         {
-                            Label = $"Decision — {row.Cause.Replace('-', ' ')}",
+                            Label = $"Decision, {row.Cause.Replace('-', ' ')}",
                             Round = row.Round,
                             Net = SignedMoney(root.TryGetProperty("amount", out var av) ? av.GetString() ?? "0" : "0"),
                             BalanceAfter = FormatMoney(
@@ -437,7 +437,7 @@ public sealed partial class CareerSessionService
     private static string SignedMoney(string rationalText)
     {
         string formatted = FormatMoney(rationalText);
-        // A zero movement (a free lever — drop a sponsor, set staff/second-seat) shows blank, not
+        // A zero movement (a free lever, drop a sponsor, set staff/second-seat) shows blank, not
         // "+0", matching the pending-decision display so the ledger reads consistently.
         if (formatted.Length == 0 || formatted == "0")
             return "";

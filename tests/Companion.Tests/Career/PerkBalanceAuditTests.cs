@@ -24,7 +24,7 @@ public class PerkBalanceAuditTests
     private const int ExpectedPerkCount = 42;
     private const int ExpectedArchetypeCount = 13;
 
-    // §7.2 — the closed lever vocabulary. Every effect's "lever" must be one of these.
+    // §7.2, the closed lever vocabulary. Every effect's "lever" must be one of these.
     private static readonly HashSet<string> KnownLevers = new(StringComparer.Ordinal)
     {
         "statDelta", "carScalar", "opiRetention", "opiErrorBlame", "reputationGainRate",
@@ -32,7 +32,7 @@ public class PerkBalanceAuditTests
         "income", "injuryHazard", "xpRate", "statPoints",
     };
 
-    // §7.1 — the closed condition set. A missing condition (null) is always allowed.
+    // §7.1, the closed condition set. A missing condition (null) is always allowed.
     private static readonly HashSet<string> KnownConditions = new(StringComparer.Ordinal)
     {
         "wetRound", "dryRound", "longRace", "shortRace", "tierLte2", "tierGte4",
@@ -394,12 +394,12 @@ public class PerkBalanceAuditTests
     [Fact]
     public void EveryStatDeltaAndCarScalarIsWithinItsPerLeverMagnitudeCap()
     {
-        // §4.1(d) — the levers that buy REAL pace/expectation are magnitude-capped so a community
+        // §4.1(d), the levers that buy REAL pace/expectation are magnitude-capped so a community
         // edit can't smuggle an outlier past the cpEquivalent self-consistency check. statDelta ±0.15
         // (a signature-specialism wetSkill/tyreManagement/chosenFlavor may reach ±0.30 ONLY when the
         // perk pairs it with a drawback); carScalar ±0.015 (a weather/distance-conditional may reach
         // ±0.040). The softer "±40% rate multiplier" guidance is governed by the cpEquivalent audit,
-        // not a raw cap — xpRate/offerWeight/income are not multiplicative and carry larger honest
+        // not a raw cap, xpRate/offerWeight/income are not multiplicative and carry larger honest
         // values (student_of_the_craft, journeyman, sponsor_magnet). CharacterRules.Validate() names
         // this test as the home of the balance/cap audit.
         var root = Root();

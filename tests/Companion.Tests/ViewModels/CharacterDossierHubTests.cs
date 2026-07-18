@@ -137,10 +137,10 @@ public sealed class CharacterDossierHubTests : IDisposable
         Assert.Equal("BRA", session.CurrentPlayerCountryCode());
         // The team-coloured player portrait key (player.<team>) drives the dossier hero image.
         Assert.StartsWith("player.", vm.PlayerImageKey);
-        // The car the player drives — its preview key is the seat's driver id.
+        // The car the player drives, its preview key is the seat's driver id.
         Assert.False(string.IsNullOrEmpty(vm.PlayerCarKey));
         // The test pack's car has no authored car-spec (only the five SMGP models ship one), so the
-        // card is gracefully absent — proving the absent-tolerant wiring end to end.
+        // card is gracefully absent, proving the absent-tolerant wiring end to end.
         Assert.Null(vm.PlayerCarSpec);
     }
 
@@ -151,7 +151,7 @@ public sealed class CharacterDossierHubTests : IDisposable
 
         var raceTab = hub.Tabs.Single(t => t.Key == HubViewModel.RaceTabKey);
         Assert.Equal("Upcoming Race", raceTab.Title);
-        // The Upcoming Race tab now shows in the rail (the header loop buttons are gone — the top is
+        // The Upcoming Race tab now shows in the rail (the header loop buttons are gone, the top is
         // reserved for the tycoon team mode) and leads it; its loop is walked with its own Continue.
         Assert.True(raceTab.ShowInRail);
         Assert.Same(raceTab, hub.Tabs[0]);

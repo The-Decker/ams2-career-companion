@@ -9,7 +9,7 @@ namespace Companion.Tests.Ams2;
 /// <summary>
 /// Pass + fail coverage for each content rule in <see cref="PackContentValidator"/>, driven off
 /// a minimal valid two-round pack and a small in-memory content library (records constructed
-/// directly — no file I/O).
+/// directly, no file I/O).
 /// </summary>
 public class PackContentValidatorTests
 {

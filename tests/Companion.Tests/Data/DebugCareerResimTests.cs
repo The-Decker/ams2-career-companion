@@ -11,7 +11,7 @@ namespace Companion.Tests.Data;
 /// FOLD SAFETY (build brief §4/§7): a career created and advanced entirely through the debug menu's
 /// Tier-1 helpers routes through the SAME provenance-excluded INPUT seams the normal app uses
 /// (<c>CareerCreationRequest</c> → create, then <c>Apply</c> / <c>ApplySkillPlan</c> / offers /
-/// <c>StartNextSeason</c>). It must therefore resimulate byte-identical — proving the debug menu
+/// <c>StartNextSeason</c>). It must therefore resimulate byte-identical, proving the debug menu
 /// creates honest saves and never pokes derived state.
 /// </summary>
 public sealed class DebugCareerResimTests : IDisposable
@@ -202,11 +202,11 @@ public sealed class DebugCareerResimTests : IDisposable
     }
 
     // ---------- SMGP scaffolding (mirrors SmgpMultiSeasonDnqTests' ladder shape) ----------
-    private const string PlayerSeat = "Stock Livery #3"; // team.c — a midfield start on the ladder
+    private const string PlayerSeat = "Stock Livery #3"; // team.c, a midfield start on the ladder
 
     /// <summary>Five one-driver teams down the ladder over the REQUIRED 16-round replica season
     /// (the bounded SMGP campaign plan rejects any other round count), each round capping the grid
-    /// at 4 — the minimal SMGP-shape pack a real SMGP career can be created from.</summary>
+    /// at 4, the minimal SMGP-shape pack a real SMGP career can be created from.</summary>
     private static SeasonPack SmgpLadderPack()
     {
         var basePack = TestPackBuilder.TwoRoundPack();

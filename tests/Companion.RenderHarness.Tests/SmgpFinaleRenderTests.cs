@@ -6,7 +6,7 @@ using Companion.ViewModels.Shell;
 namespace Companion.RenderHarness.Tests;
 
 /// <summary>Off-screen render of the 17-season SMGP campaign FINALE (Mike's "final final screen") over a
-/// real <see cref="SmgpFinaleViewModel"/> — exercises the full-immersion layout (the flawless ribbon,
+/// real <see cref="SmgpFinaleViewModel"/>, exercises the full-immersion layout (the flawless ribbon,
 /// the triumphant headline, the secret-hero placeholder, the dedication line, the record) end to end,
 /// catching a broken binding or missing brush/converter resource. Both the survivor (special.jpg) and
 /// the flawless (ultimate.jpg) variants render. Self-skips off Windows.</summary>
@@ -19,7 +19,7 @@ public sealed class SmgpFinaleRenderTests
                 Headline = flawless ? "THE FLAWLESS EMPEROR" : "SEVENTEEN SEASONS CONQUERED",
                 Subhead = flawless
                     ? "Champion of every season across the whole SEGA world."
-                    : "You went the distance — all seventeen seasons survived.",
+                    : "You went the distance, all seventeen seasons survived.",
                 IsFlawless = flawless,
                 HeroImageKey = flawless ? "ultimate" : "special",
                 Record =

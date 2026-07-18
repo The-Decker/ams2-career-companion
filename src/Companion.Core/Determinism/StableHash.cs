@@ -4,7 +4,7 @@ namespace Companion.Core.Determinism;
 
 /// <summary>
 /// FNV-1a 64-bit over UTF-8 bytes. Used everywhere a string must hash identically across
-/// runs, processes, and .NET versions — never <see cref="string.GetHashCode()"/>, which is
+/// runs, processes, and .NET versions, never <see cref="string.GetHashCode()"/>, which is
 /// randomized per process and unspecified across versions.
 ///
 /// API guarantee: byte-stable forever; stream seeds derived from it live in career saves.

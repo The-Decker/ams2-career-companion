@@ -7,7 +7,7 @@ using Companion.Tests.ViewModels;
 namespace Companion.Tests.Grid;
 
 /// <summary>
-/// M3 slice 3 — <see cref="RoundGridResolver"/>'s SMGP seat overrides, pure. A move transplants
+/// M3 slice 3, <see cref="RoundGridResolver"/>'s SMGP seat overrides, pure. A move transplants
 /// the DRIVER side onto the target CAR; only closed permutations apply (anything else resolves
 /// verbatim); the default arguments resolve byte-identically to a call without them.
 /// </summary>
@@ -91,7 +91,7 @@ public sealed class SmgpSeatOverrideTests
     [Fact]
     public void ABrokenChain_ResolvesVerbatim()
     {
-        // driver.a moves to Seat D but nothing backfills Seat A: NOT a permutation — applying it
+        // driver.a moves to Seat D but nothing backfills Seat A: NOT a permutation, applying it
         // would field driver.a twice. The resolver must return the plain grid.
         var grid = RoundGridResolver.Resolve(
             LadderPack(), 1, new PlayerSeat { Ams2LiveryName = SeatC },
@@ -104,11 +104,11 @@ public sealed class SmgpSeatOverrideTests
     [Fact]
     public void TheRoundCap_NeverTrimsACarTheSwapsTouch()
     {
-        // A 3-car round cap on a 4-car field would trim the slowest car — Seat D's 0.5-rated
-        // driver — which is exactly where the swap chain moved the player. Override-involved
+        // A 3-car round cap on a 4-car field would trim the slowest car, Seat D's 0.5-rated
+        // driver, which is exactly where the swap chain moved the player. Override-involved
         // cars are cap-protected (like the player seat), so the chain survives and an
         // UNINVOLVED car sits out instead. (Unprotected, the trim starved the closure check and
-        // the whole swap set silently refused — the player raced the wrong car all round.)
+        // the whole swap set silently refused, the player raced the wrong car all round.)
         var basePack = LadderPack();
         var pack = basePack with
         {
@@ -165,6 +165,6 @@ public sealed class SmgpSeatOverrideTests
             CoreJson.Options);
 
         Assert.Equal(plain, defaulted);
-        Assert.Equal(plain, samePlace); // the player already sits there — an identity move
+        Assert.Equal(plain, samePlace); // the player already sits there, an identity move
     }
 }

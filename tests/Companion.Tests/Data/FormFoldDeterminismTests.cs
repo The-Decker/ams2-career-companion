@@ -9,8 +9,8 @@ namespace Companion.Tests.Data;
 
 /// <summary>
 /// OFF-path determinism gate for per-race form (<see cref="SeasonDefinition.DriverForm"/>): a
-/// PRE-Phase-3 career — one that is NOT <see cref="Companion.Core.Career.PlayerCareerState.FormAware"/>
-/// (the default; the request here does not opt in) — folds form-inert and re-simulates BYTE-IDENTICALLY,
+/// PRE-Phase-3 career, one that is NOT <see cref="Companion.Core.Career.PlayerCareerState.FormAware"/>
+/// (the default; the request here does not opt in), folds form-inert and re-simulates BYTE-IDENTICALLY,
 /// even on a pack that ships form deltas. The fold never reads DriverForm for such a career, so it can
 /// never move a replayed result; form only changes what AMS2 shows on track (via <c>GridStager.Build</c>).
 /// This is what keeps EXISTING careers on the form-carrying bundled packs byte-identical. The sibling
@@ -35,7 +35,7 @@ public sealed class FormFoldDeterminismTests : IDisposable
         var basePack = TestPackBuilder.TwoRoundPack();
         // Author a per-race form overlay: both seats get a nudge in round 1, one in round 2. These
         // deltas are large enough that, were they to leak into the resolved grid, the fold would
-        // diverge — so a byte-identical replay proves the fold never reads them.
+        // diverge, so a byte-identical replay proves the fold never reads them.
         var formPack = basePack with
         {
             Season = basePack.Season with

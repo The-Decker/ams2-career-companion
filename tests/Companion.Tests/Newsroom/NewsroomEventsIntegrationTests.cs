@@ -8,14 +8,14 @@ using Xunit;
 namespace Companion.Tests.Newsroom;
 
 /// <summary>
-/// The newsroom event spine over the REAL career machinery — proving what the mission demands:
+/// The newsroom event spine over the REAL career machinery, proving what the mission demands:
 /// a plain HISTORICAL career (no SMGP gating) now yields firsts, result stories, and
 /// championship movement, all as a pure display projection that leaves replay byte-identical.
 /// Scaffolding mirrors <c>SmgpDispatchesTests</c>' real-machinery ladder.
 /// </summary>
 public sealed class NewsroomEventsIntegrationTests : IDisposable
 {
-    private const string PlayerSeat = "Stock Livery #3"; // team.c — the player's start
+    private const string PlayerSeat = "Stock Livery #3"; // team.c, the player's start
     private const long Seed = 20260716;
 
     private readonly string _root = Directory.CreateTempSubdirectory("companion-newsroom-").FullName;

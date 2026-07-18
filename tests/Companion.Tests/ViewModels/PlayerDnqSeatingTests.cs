@@ -4,10 +4,10 @@ using Companion.ViewModels.Services;
 namespace Companion.Tests.ViewModels;
 
 /// <summary>
-/// A player who picked a car that did NOT qualify for a round (1988 was a pre-qualifying year — more
+/// A player who picked a car that did NOT qualify for a round (1988 was a pre-qualifying year, more
 /// cars than grid slots) must still appear on the grid the app stages into AMS2, because the grid size
 /// is hardcoded. The session's grid resolution seats the player from their own pack entry and drops the
-/// slowest qualifier to hold the size — matching the fold, which already scores the player every round.
+/// slowest qualifier to hold the size, matching the fold, which already scores the player every round.
 /// (Regression for the display/staging vs fold discrepancy on DNQ / gap-seat careers.)
 /// </summary>
 public sealed class PlayerDnqSeatingTests : IDisposable
@@ -27,7 +27,7 @@ public sealed class PlayerDnqSeatingTests : IDisposable
         string packDirectory = Path.Combine(_root, "pack");
 
         // A three-car pack whose round 1 authors a hardcoded two-slot grid that EXCLUDES the player's
-        // driver (driver.hulme) — as if the player's car failed to qualify that round.
+        // driver (driver.hulme), as if the player's car failed to qualify that round.
         var basePack = TestPackBuilder.TwoRoundPack();
         var pack = basePack with
         {
@@ -68,7 +68,7 @@ public sealed class PlayerDnqSeatingTests : IDisposable
         var grid = session.CurrentGrid();
 
         // The player is on the grid even though their car didn't qualify, and the field is held at the
-        // hardcoded size (one qualifier was dropped to make room) — so the staged AMS2 file includes
+        // hardcoded size (one qualifier was dropped to make room), so the staged AMS2 file includes
         // the player's car instead of leaving them off the grid.
         Assert.Equal(2, grid.Count);
         Assert.Contains(grid, s => s.IsPlayer && s.Ams2LiveryName == TestPackBuilder.StockLivery2);

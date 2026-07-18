@@ -14,21 +14,21 @@ public enum SkinSeasonModelState
     OtherSeason,
 
     /// <summary>The installed file matches one of the model folder's own <c>&lt;model&gt;_*.xml</c>
-    /// per-race variants — pack-managed content (a round swap left it active), safe to swap.</summary>
+    /// per-race variants, pack-managed content (a round swap left it active), safe to swap.</summary>
     Variant,
 
-    /// <summary>There is no active <c>&lt;model&gt;.xml</c> yet (folder exists) — activation
+    /// <summary>There is no active <c>&lt;model&gt;.xml</c> yet (folder exists), activation
     /// simply creates it.</summary>
     NoActiveFile,
 
-    /// <summary>The installed file matches nothing we know — possibly hand-edited. Swapping it
+    /// <summary>The installed file matches nothing we know, possibly hand-edited. Swapping it
     /// requires the force gate (backup-first, like the AI-file contract).</summary>
     Unrecognized,
 
-    /// <summary>The model's Overrides folder does not exist — the skins are not installed.</summary>
+    /// <summary>The model's Overrides folder does not exist, the skins are not installed.</summary>
     FolderMissing,
 
-    /// <summary>The pointer references texture subfolders that are not on disk — the season's
+    /// <summary>The pointer references texture subfolders that are not on disk, the season's
     /// textures are not (fully) installed; activating would show broken cars.</summary>
     TexturesMissing,
 }
@@ -77,12 +77,12 @@ public sealed record SkinSeasonApplyResult
 
 /// <summary>
 /// The Skin Season Manager: swaps which season's skins a car model shows by writing that
-/// season's <c>&lt;model&gt;.xml</c> pointer over the active one — the ONLY file two season
+/// season's <c>&lt;model&gt;.xml</c> pointer over the active one, the ONLY file two season
 /// packs collide on (textures live in per-pack subfolders and coexist). Backup-first always;
 /// an installed file we cannot recognize as pack-managed content is never overwritten without
 /// the force gate (the AI-file staging contract). All-or-nothing per season set: a season is
 /// only activated when EVERY model in the set can go (otherwise a half-swapped grid mixes two
-/// seasons' cars). Purely a skin-file operation — never the career DB / sim / oracle.
+/// seasons' cars). Purely a skin-file operation, never the career DB / sim / oracle.
 /// </summary>
 public static class SkinSeasonManager
 {
@@ -104,7 +104,7 @@ public static class SkinSeasonManager
             {
                 Model = model,
                 State = SkinSeasonModelState.FolderMissing,
-                Detail = $"No Overrides\\{model} folder — install the season's skin pack first.",
+                Detail = $"No Overrides\\{model} folder, install the season's skin pack first.",
             };
 
         var missingTextures = MissingTextureFolders(folder, xml);
@@ -160,14 +160,14 @@ public static class SkinSeasonManager
         {
             Model = model,
             State = SkinSeasonModelState.Unrecognized,
-            Detail = $"{model}.xml matches no known season or variant — it may be hand-edited. " +
+            Detail = $"{model}.xml matches no known season or variant, it may be hand-edited. " +
                      "Overwriting takes a timestamped backup first.",
         };
     }
 
     /// <summary>
     /// Activates <paramref name="set"/>: writes each model's pointer file, backup-first.
-    /// All-or-nothing — when any model's skins are missing the whole activation refuses, and an
+    /// All-or-nothing, when any model's skins are missing the whole activation refuses, and an
     /// unrecognized (possibly hand-edited) file refuses without <paramref name="force"/>.
     /// </summary>
     public static SkinSeasonApplyResult Activate(
@@ -191,7 +191,7 @@ public static class SkinSeasonManager
                 Success = false,
                 Applied = 0,
                 Errors = blockers.Select(b => $"{b.Model}: {b.Detail}").ToList(),
-                Message = $"Cannot switch to the {set.Key} skins — {blockers.Count} car model(s) are " +
+                Message = $"Cannot switch to the {set.Key} skins, {blockers.Count} car model(s) are " +
                           "missing installed skins (a partial swap would mix two seasons' cars).",
             };
 
@@ -204,7 +204,7 @@ public static class SkinSeasonManager
                 Applied = 0,
                 RequiresForce = true,
                 Errors = held.Select(h => $"{h.Model}: {h.Detail}").ToList(),
-                Message = $"{held.Count} installed override file(s) match no known season — they may be " +
+                Message = $"{held.Count} installed override file(s) match no known season, they may be " +
                           "hand-edited. 'Overwrite anyway' takes a timestamped backup first.",
             };
         }
@@ -285,7 +285,7 @@ public static class SkinSeasonManager
         return false;
     }
 
-    /// <summary>Content equality modulo line endings and trailing whitespace — archives and
+    /// <summary>Content equality modulo line endings and trailing whitespace, archives and
     /// installs disagree on CRLF/LF, which must not make a season look inactive.</summary>
     internal static bool SameContent(string a, string b)
     {

@@ -2,7 +2,7 @@ namespace Companion.Core.Newsroom;
 
 /// <summary>
 /// Every trigger the newsroom can cover. Detected by <see cref="CareerNewsEvents"/> as a pure
-/// projection over already-folded facts — an event NEVER feeds a fold input, so detection rules
+/// projection over already-folded facts, an event NEVER feeds a fold input, so detection rules
 /// may evolve freely without touching replay. Names are data-format identifiers (they key
 /// dedupe keys and corpus template families): additive only, never rename.
 /// </summary>
@@ -97,16 +97,16 @@ public enum NewsEventKind
     // Medical comeback: the first start after injury sit-out rounds
     ReturnedFromInjury,
 
-    // Campaign completion: the final pinned season closed — the career retrospective moment
+    // Campaign completion: the final pinned season closed, the career retrospective moment
     CareerCompleted,
 
     // SMGP canon divergence (D9): the career's venue winner vs the almanac's remembered ruler.
-    // Fiction-provenance (SmgpFiction) — the SEGA canon must never read as verified history.
+    // Fiction-provenance (SmgpFiction), the SEGA canon must never read as verified history.
     SmgpCanonDiverged,
     SmgpCanonHeld,
 
     // Dynasty owner economy (docs/dev/dynasty-tycoon-economy.md §8): display projections of the
-    // folded money ledger — never fold inputs. Emitted only for careers carrying the economy, so
+    // folded money ledger, never fold inputs. Emitted only for careers carrying the economy, so
     // every other career's event set is unchanged.
     SponsorSigned,
     MajorRepairBill,
@@ -144,7 +144,7 @@ public sealed record NewsEventFacts
     public bool RivalInvolved { get; init; }
     public string RivalName { get; init; } = "";
     public int MilestoneValue { get; init; }
-    /// <summary>"wins" | "podiums" | "starts" | "points" — which counter hit the milestone.</summary>
+    /// <summary>"wins" | "podiums" | "starts" | "points", which counter hit the milestone.</summary>
     public string MilestoneCounter { get; init; } = "";
     public string WinnerName { get; init; } = "";
     public string WinnerTeamName { get; init; } = "";

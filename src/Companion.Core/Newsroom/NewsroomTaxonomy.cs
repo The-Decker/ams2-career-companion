@@ -57,16 +57,16 @@ public enum EditorialStatus
 }
 
 /// <summary>
-/// Content provenance — the visible boundary between what really happened and the player's
+/// Content provenance, the visible boundary between what really happened and the player's
 /// simulated universe. Every article, timeline entry, and history record carries one.
 /// <list type="bullet">
-/// <item><see cref="VerifiedHistorical"/> — real-world fact from a sourced dataset
+/// <item><see cref="VerifiedHistorical"/>, real-world fact from a sourced dataset
 /// (data/history, f1db CC BY 4.0). Never mixed with simulated outcomes.</item>
-/// <item><see cref="CareerUniverse"/> — an outcome of the player's simulated career.</item>
-/// <item><see cref="EditorialAnalysis"/> — desk-written interpretation over career facts.</item>
-/// <item><see cref="SmgpFiction"/> — the SEGA-universe canon (almanac, driver lore); fictional
+/// <item><see cref="CareerUniverse"/>, an outcome of the player's simulated career.</item>
+/// <item><see cref="EditorialAnalysis"/>, desk-written interpretation over career facts.</item>
+/// <item><see cref="SmgpFiction"/>, the SEGA-universe canon (almanac, driver lore); fictional
 /// by definition, labeled so it can never be mistaken for real motorsport history.</item>
-/// <item><see cref="SystemGenerated"/> — structural/system notices (migration, legacy).</item>
+/// <item><see cref="SystemGenerated"/>, structural/system notices (migration, legacy).</item>
 /// </list>
 /// </summary>
 public enum ContentProvenance
@@ -78,7 +78,7 @@ public enum ContentProvenance
     SystemGenerated,
 }
 
-/// <summary>Editorial layout tier derived from the importance score — never random.</summary>
+/// <summary>Editorial layout tier derived from the importance score, never random.</summary>
 public enum EditorialTier
 {
     Lead,

@@ -1,10 +1,10 @@
 namespace Companion.Core.Newsroom;
 
 /// <summary>
-/// The shaped, mode-agnostic input <see cref="CareerNewsEvents"/> detects over — the same
+/// The shaped, mode-agnostic input <see cref="CareerNewsEvents"/> detects over, the same
 /// shape-in-the-session, detect-in-Core split as <c>SmgpNarrativeSeason</c>. The session builds
 /// these from stored envelopes, standings snapshots, journal rows, and folded states; Core never
-/// touches I/O. Every optional field means "assert only what the stored data proves" — a null
+/// touches I/O. Every optional field means "assert only what the stored data proves", a null
 /// simply suppresses the triggers that need it (older careers stay quieter, never wrong).
 /// </summary>
 public sealed record NewsroomSeason
@@ -30,7 +30,7 @@ public sealed record NewsroomSeason
     public int? PlayerLevelAtSeasonEnd { get; init; }
 
     /// <summary>True when completing this season completes the whole campaign (SMGP season 17 of
-    /// 17, or the final pinned season of a bounded historical campaign) — the career-retrospective
+    /// 17, or the final pinned season of a bounded historical campaign), the career-retrospective
     /// trigger.</summary>
     public bool IsCampaignFinale { get; init; }
 
@@ -41,7 +41,7 @@ public sealed record NewsroomSeason
     public string EconomySeasonAmount { get; init; } = "";
 
     /// <summary>The season settlement was a WINDFALL (a front-running constructors' cheque
-    /// and/or title bonuses — the session decides against the rules tables).</summary>
+    /// and/or title bonuses, the session decides against the rules tables).</summary>
     public bool EconomyWindfall { get; init; }
 }
 
@@ -56,7 +56,7 @@ public sealed record NewsroomRound
     // Player result facts (from the race.result journal row + stored envelope)
     public int? PlayerFinish { get; init; }
     public int? ExpectedFinish { get; init; }
-    /// <summary>"" | "mechanical" | "driverError" — the player's own DNF cause.</summary>
+    /// <summary>"" | "mechanical" | "driverError", the player's own DNF cause.</summary>
     public string PlayerDnfCause { get; init; } = "";
     public bool PlayerDidNotStart { get; init; }
     public bool PlayerScoredPoints { get; init; }
@@ -114,13 +114,13 @@ public sealed record NewsroomRound
     public bool EconomyMajorRepair { get; init; }
 
     /// <summary>The settlement left the team ON THE BRINK: the deficit streak has consumed the
-    /// whole grace window — one more deficit round folds the team.</summary>
+    /// whole grace window, one more deficit round folds the team.</summary>
     public bool EconomyOnTheBrink { get; init; }
 
     /// <summary>The team's balance after this round, pre-formatted ("" = no economy).</summary>
     public string EconomyBalance { get; init; } = "";
 
-    /// <summary>This round's settlement BANKRUPTED the team — terminal.</summary>
+    /// <summary>This round's settlement BANKRUPTED the team, terminal.</summary>
     public bool EconomyBankrupt { get; init; }
 
     /// <summary>Car development level after this round's decisions, or null (no economy).</summary>

@@ -31,11 +31,11 @@ public sealed class DebugCareerOpenedEventArgs(ICareerSession session, string ca
 /// The app-wide developer DEBUG MENU (dynasty-passport-roadmap.md Piece 2). A pure, WPF-free
 /// ViewModel over the real creation factory + session seams, split into two fold-safe tiers:
 ///
-/// <b>Tier 1 — real, replay-safe.</b> Throwaway careers created through <see cref="ICareerFactory"/>
+/// <b>Tier 1, real, replay-safe.</b> Throwaway careers created through <see cref="ICareerFactory"/>
 /// and advanced only through the provenance-excluded INPUT mutators (<c>Apply</c>,
 /// <c>ApplySkillPlan</c>). A career made this way still resimulates byte-identical.
 ///
-/// <b>Tier 2 — non-persistent preview.</b> A fake <see cref="PreviewCareerSession"/> feeds canned
+/// <b>Tier 2, non-persistent preview.</b> A fake <see cref="PreviewCareerSession"/> feeds canned
 /// projections to any View for states the real fold cannot reach (Racing Passport, an arbitrary
 /// level, a death/career-over/sit-out screen). NEVER resimulated, NEVER written to a
 /// <c>.ams2career</c>.
@@ -104,17 +104,17 @@ public sealed partial class DebugMenuViewModel : ObservableObject
     private string _inspectorText = "";
 
     /// <summary>The SMGP season ordinal (1–17) <see cref="OpenSmgpAtSeasonCommand"/> fast-forwards
-    /// a throwaway SMGP career to — through the real INPUT seams, so it resimulates honestly.</summary>
+    /// a throwaway SMGP career to, through the real INPUT seams, so it resimulates honestly.</summary>
     [ObservableProperty]
     private int _targetSmgpSeason = 5;
 
     /// <summary>The Racing DNA identity the level preview renders (an id from the shipped catalog;
-    /// null = the default circuit specialist). Preview-only — never validated for real creation.</summary>
+    /// null = the default circuit specialist). Preview-only, never validated for real creation.</summary>
     [ObservableProperty]
     private string? _selectedDnaId;
 
     /// <summary>The completed-seasons position on the mastery track the level preview carries
-    /// (clamped to the synthesized plan's mastery season — 499-SP pool gate).</summary>
+    /// (clamped to the synthesized plan's mastery season, 499-SP pool gate).</summary>
     [ObservableProperty]
     private int _previewCompletedSeasons = 16;
 
@@ -162,7 +162,7 @@ public sealed partial class DebugMenuViewModel : ObservableObject
     }
 
     /// <summary>Create a throwaway SMGP career and FAST-FORWARD it to the start of season
-    /// <see cref="TargetSmgpSeason"/> — the only way to preview the 17-ordinal campaign without
+    /// <see cref="TargetSmgpSeason"/>, the only way to preview the 17-ordinal campaign without
     /// grinding. Every season advances through the real INPUT seams (Apply player-wins,
     /// ResolveSmgpOffer, AcceptOffer, StartNextSeason + reopen), so the result resimulates
     /// byte-identical; <see cref="DebugCareerFactory.AdvanceSmgpToSeason"/> reports early stops
@@ -210,7 +210,7 @@ public sealed partial class DebugMenuViewModel : ObservableObject
 
     /// <summary>Create a throwaway career and FAST-FORWARD it to season end (auto-winning every round
     /// through the real <c>Apply</c> INPUT), then spend one Skill Point through the real
-    /// <c>ApplySkillPlan</c> INPUT — an honest, replay-safe way to preview an advanced career.</summary>
+    /// <c>ApplySkillPlan</c> INPUT, an honest, replay-safe way to preview an advanced career.</summary>
     [RelayCommand]
     private void OpenPackAtSeasonEnd(DebugPackEntry? pack)
     {
@@ -220,7 +220,7 @@ public sealed partial class DebugMenuViewModel : ObservableObject
         CreateThrowaway(pack.Directory, mode, advance: true);
     }
 
-    /// <summary>Continue the CURRENTLY OPEN real career exactly one season end forward — the
+    /// <summary>Continue the CURRENTLY OPEN real career exactly one season end forward, the
     /// season-by-season navigation the fresh-throwaway buttons can't give. Plays out an unfinished
     /// season; from a season end, signs the first offer and plays the new season out too. The SAME
     /// career file advances (every step a real INPUT, so it still resimulates byte-identical), then
@@ -232,12 +232,12 @@ public sealed partial class DebugMenuViewModel : ObservableObject
         var session = _currentSession();
         if (session is null)
         {
-            InspectorText = "No live career is open — open a Tier-1 career first.";
+            InspectorText = "No live career is open, open a Tier-1 career first.";
             return;
         }
         if (session is PreviewCareerSession)
         {
-            InspectorText = "A Tier-2 preview is display-only — there is no career to advance. " +
+            InspectorText = "A Tier-2 preview is display-only, there is no career to advance. " +
                             "Open a Tier-1 career first.";
             return;
         }
@@ -252,7 +252,7 @@ public sealed partial class DebugMenuViewModel : ObservableObject
             DebugCareerFactory.AdvanceToNextSeasonEnd(session, out string note);
 
             // Hand the shell a FRESH session on the continued file: AttachHome disposes the old hub
-            // — and its session — so the hub must never show the instance this menu advanced.
+            //, and its session, so the hub must never show the instance this menu advanced.
             var fresh = _factory.Open(path);
             DebugCareerFactory.FinishSeason(fresh); // play the just-signed season out; no-op at an end
             if (note.Length > 0)
@@ -359,7 +359,7 @@ public sealed partial class DebugMenuViewModel : ObservableObject
     {
         var model = DebugPreviews.Promotion(demotion);
         // The promotion/demotion screens only appear post-Apply in the real loop, so they cannot be
-        // routed to through a hub constructor — host the leaf ViewModel directly. Accept/decline just
+        // routed to through a hub constructor, host the leaf ViewModel directly. Accept/decline just
         // return to the debug menu (a preview commits nothing).
         var vm = new PromotionViewModel(
             model,
@@ -375,7 +375,7 @@ public sealed partial class DebugMenuViewModel : ObservableObject
 
     // ---------- inspect / dump ----------
 
-    /// <summary>Reveal the spoiler-hidden SMGP future lore — every authored campaign season's identity
+    /// <summary>Reveal the spoiler-hidden SMGP future lore, every authored campaign season's identity
     /// (title/era/overview), which the live game keeps sealed until reached.</summary>
     [RelayCommand]
     private void RevealSmgpLore()
@@ -392,11 +392,11 @@ public sealed partial class DebugMenuViewModel : ObservableObject
             }
 
             var sb = new StringBuilder();
-            sb.AppendLine($"SMGP FUTURE LORE — {lore.Seasons.Count} of {SmgpRules.CampaignSeasons} seasons authored")
+            sb.AppendLine($"SMGP FUTURE LORE, {lore.Seasons.Count} of {SmgpRules.CampaignSeasons} seasons authored")
                 .AppendLine();
             foreach (var season in lore.Seasons)
             {
-                sb.AppendLine($"SEASON {season.Ordinal} / {SmgpRules.CampaignSeasons} — {season.Title}");
+                sb.AppendLine($"SEASON {season.Ordinal} / {SmgpRules.CampaignSeasons}, {season.Title}");
                 if (season.Era.Length > 0)
                     sb.AppendLine($"  Era: {season.Era}");
                 if (season.Subtitle.Length > 0)
@@ -415,14 +415,14 @@ public sealed partial class DebugMenuViewModel : ObservableObject
 
     /// <summary>Dump the current live career's journal + determinism-relevant state for debugging.
     /// Reads only public session projections (the journal chain, the folded summary, the campaign
-    /// timeline) — no DB poke. Reports plainly when no live career is open.</summary>
+    /// timeline), no DB poke. Reports plainly when no live career is open.</summary>
     [RelayCommand]
     private void DumpJournal()
     {
         var session = _currentSession();
         if (session is null)
         {
-            InspectorText = "No live career is open — open a Tier-1 career first, then dump.";
+            InspectorText = "No live career is open, open a Tier-1 career first, then dump.";
             return;
         }
 
@@ -434,8 +434,8 @@ public sealed partial class DebugMenuViewModel : ObservableObject
             sb.AppendLine($"Career:  {s.CareerName}");
             sb.AppendLine($"Season:  {s.SeasonYear} · round {s.CurrentRound}/{s.RoundCount}" +
                           (s.SeasonComplete ? " (complete)" : ""));
-            sb.AppendLine($"Standing: {(s.PlayerPosition is { } p ? $"P{p}" : "—")}" +
-                          $"   Rep {s.Reputation?.ToString("0.#") ?? "—"}   OPI {s.Opi?.ToString("+0.00;-0.00") ?? "—"}");
+            sb.AppendLine($"Standing: {(s.PlayerPosition is { } p ? $"P{p}" : "-")}" +
+                          $"   Rep {s.Reputation?.ToString("0.#") ?? "-"}   OPI {s.Opi?.ToString("+0.00;-0.00") ?? "-"}");
 
             var mortality = session.PlayerMortality();
             sb.AppendLine($"Mortality: {mortality.Mode}  fit={mortality.IsFit}  deceased={mortality.Deceased}");
@@ -447,11 +447,11 @@ public sealed partial class DebugMenuViewModel : ObservableObject
                 foreach (var e in timeline)
                     sb.AppendLine($"  #{e.Ordinal} {e.State}" +
                                   (e.Year is { } y ? $" ({y})" : "") +
-                                  (e.Title.Length > 0 ? $" — {e.Title}" : ""));
+                                  (e.Title.Length > 0 ? $", {e.Title}" : ""));
             }
 
             var chain = session.JournalFor("player");
-            sb.AppendLine().AppendLine($"Journal chain for 'player' — {chain.Contributions.Count} rows");
+            sb.AppendLine().AppendLine($"Journal chain for 'player', {chain.Contributions.Count} rows");
             foreach (var row in chain.Contributions.Take(40))
                 sb.AppendLine($"  [{row.SourceSeq}] {row.Label}: {row.Value ?? row.Detail}");
 
@@ -467,7 +467,7 @@ public sealed partial class DebugMenuViewModel : ObservableObject
     }
 
     /// <summary>Dump the live career's Dynasty owner-economy dashboard (balance, sponsors, statement,
-    /// pending decisions) as inspector text. READ-ONLY — and the declared SEAM for the future tycoon
+    /// pending decisions) as inspector text. READ-ONLY, and the declared SEAM for the future tycoon
     /// debug levers (build brief §2): force-money commands, when that workstream wants them, go through
     /// <c>DeclareEconomyDecision</c> (the validated, journaled INPUT seam) so the economy still
     /// resimulates byte-identical. Never a direct state poke.</summary>
@@ -477,7 +477,7 @@ public sealed partial class DebugMenuViewModel : ObservableObject
         var session = _currentSession();
         if (session is null)
         {
-            InspectorText = "No live career is open — open a Tier-1 career first, then dump the economy.";
+            InspectorText = "No live career is open, open a Tier-1 career first, then dump the economy.";
             return;
         }
 

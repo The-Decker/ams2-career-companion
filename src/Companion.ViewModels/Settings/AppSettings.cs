@@ -4,18 +4,18 @@ using Companion.Core.Career;
 namespace Companion.ViewModels.Settings;
 
 /// <summary>How much of the immersive news article the News tab shows (career-hub-design.md
-/// decision 17 — "immersion is user-configurable", the spectrum replacing the binary toggle):
+/// decision 17, "immersion is user-configurable", the spectrum replacing the binary toggle):
 /// full <see cref="Articles"/> bodies, <see cref="HeadlinesOnly"/> (the ticker headline with no
 /// expanded body), or <see cref="Minimal"/> (headlines only, the most stripped-back reading).</summary>
 public enum NewsDetailLevel
 {
-    /// <summary>Full period articles — the headline expands into the immersive body (default).</summary>
+    /// <summary>Full period articles, the headline expands into the immersive body (default).</summary>
     Articles = 0,
 
-    /// <summary>Headlines only — the ticker headline, no expanded article body.</summary>
+    /// <summary>Headlines only, the ticker headline, no expanded article body.</summary>
     HeadlinesOnly = 1,
 
-    /// <summary>The most stripped-back reading — headlines only, no body.</summary>
+    /// <summary>The most stripped-back reading, headlines only, no body.</summary>
     Minimal = 2,
 }
 
@@ -48,7 +48,7 @@ public sealed record WindowPlacementSettings
         Width > 0 && Height > 0;
 
     /// <summary>Fits this placement into the given virtual-screen rectangle (monitors change
-    /// between runs — a window restored onto an unplugged screen would be unreachable):
+    /// between runs, a window restored onto an unplugged screen would be unreachable):
     /// size shrinks to fit, then the origin shifts so the window sits fully inside.</summary>
     public WindowPlacementSettings ClampTo(
         double screenLeft, double screenTop, double screenWidth, double screenHeight)
@@ -90,14 +90,14 @@ public sealed record AppSettings
 
     public int Version { get; init; } = CurrentVersion;
 
-    // ---------- developer (dynasty-passport-roadmap Piece 2 — the debug menu gate) ----------
+    // ---------- developer (dynasty-passport-roadmap Piece 2, the debug menu gate) ----------
 
     /// <summary>The app-wide developer debug menu gate. OFF by default and deliberately NOT
     /// surfaced in the normal Settings UI, so a shipped Release shows nothing and costs nothing
     /// until it is unlocked. Unlocked for the session via the hidden Ctrl+Shift+F12 chord (which
     /// persists it here) or the <c>AMS2_DEVMODE=1</c> environment variable read at startup. When
     /// true, Ctrl+Shift+D opens the debug overlay; when false that keybind is a no-op and the
-    /// overlay never renders. Additive bool — an older settings file (no field) loads it false.</summary>
+    /// overlay never renders. Additive bool, an older settings file (no field) loads it false.</summary>
     public bool DeveloperMode { get; init; }
 
     // ---------- appearance ----------
@@ -106,7 +106,7 @@ public sealed record AppSettings
     /// <c>Theme.&lt;name&gt;.xaml</c> (and which accent variant) the appearance service loads.</summary>
     public string Theme { get; init; } = ThemeDark;
 
-    /// <summary>The named accent preset (<see cref="AccentNames"/>) — the appearance service loads
+    /// <summary>The named accent preset (<see cref="AccentNames"/>), the appearance service loads
     /// <c>Accents/&lt;base&gt;/Accent.&lt;name&gt;.xaml</c>. Replaces the old custom-hex accent.</summary>
     public string AccentName { get; init; } = DefaultAccentName;
 
@@ -130,7 +130,7 @@ public sealed record AppSettings
     public bool AutoOpenBriefing { get; init; } = true;
 
     // ---------- immersion (career-hub-design.md §2.1 + decisions 7 & 17: "settings to
-    //            modify what you see" — the era skin and the news verbosity) ----------
+    //            modify what you see", the era skin and the news verbosity) ----------
 
     /// <summary>Master switch for the era skin: when off, era-medium chrome (the hub's
     /// telegram/fax/email badge, the gallery's era labels) falls back to neutral. Default on
@@ -190,7 +190,7 @@ public sealed record AppSettings
 
     // ---------- discoverability (ux-round contract section 4) ----------
 
-    /// <summary>Coach-mark ids the user dismissed — those callouts never show again.
+    /// <summary>Coach-mark ids the user dismissed, those callouts never show again.
     /// Unknown ids survive normalization so newer builds' flags round-trip.</summary>
     public IReadOnlyList<string> DismissedCoachMarks { get; init; } = [];
 
@@ -228,7 +228,7 @@ public sealed record AppSettings
         return DefaultAccentName;
     }
 
-    /// <summary>Every field clamped/sanitized into its legal range — what the store returns
+    /// <summary>Every field clamped/sanitized into its legal range, what the store returns
     /// after any load and what the service persists after any update.</summary>
     public AppSettings Normalized() => this with
     {

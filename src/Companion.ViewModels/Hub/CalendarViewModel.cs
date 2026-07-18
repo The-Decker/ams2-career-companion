@@ -8,7 +8,7 @@ namespace Companion.ViewModels.Hub;
 
 /// <summary>
 /// The Calendar lens: the whole season's TRACK schedule, visible up front so the circuits you'll race
-/// are never a mystery — only the results reveal as you go (that's the History lens). Each round shows
+/// are never a mystery, only the results reveal as you go (that's the History lens). Each round shows
 /// the real venue, the ACTUAL AMS2 track driven, and a badge (real venue / stand-in / mod alternate),
 /// plus a note when an alternate exists that wasn't enabled. Pure read-only projection of
 /// <see cref="ICareerSession.SeasonSchedule"/>; refreshed in place after every Apply like the other
@@ -45,7 +45,7 @@ public sealed partial class CalendarViewModel : ObservableObject
         }
     }
 
-    /// <summary>True when any round has an alternate that COULD be enabled but isn't — the calendar
+    /// <summary>True when any round has an alternate that COULD be enabled but isn't, the calendar
     /// shows a hint that alternate tracks are available (turn them on at career creation).</summary>
     public bool HasUnusedAlternates => Rounds.Any(r => r.HasUnusedAlternate);
 
@@ -87,20 +87,20 @@ public sealed partial class CalendarRoundViewModel : ObservableObject
         (BadgeText, TrackLine) = entry.Kind switch
         {
             SeasonTrackKind.RealVenue => ("Real venue", Ams2TrackName),
-            SeasonTrackKind.Alternate => ("Alternate", $"{Ams2TrackName} — mod alternate for {RealVenue}"),
-            _ => ("Stand-in", $"{Ams2TrackName} — stand-in for {RealVenue}"),
+            SeasonTrackKind.Alternate => ("Alternate", $"{Ams2TrackName}, mod alternate for {RealVenue}"),
+            _ => ("Stand-in", $"{Ams2TrackName}, stand-in for {RealVenue}"),
         };
 
         PlayerStatus = entry.PlayerStatus;
         PlayerStatusLabel = entry.PlayerStatus switch
         {
-            SchedulePlayerStatus.SatOut => "SAT OUT — injured",
-            SchedulePlayerStatus.WillMiss => "WILL MISS — injured",
+            SchedulePlayerStatus.SatOut => "SAT OUT, injured",
+            SchedulePlayerStatus.WillMiss => "WILL MISS, injured",
             _ => "",
         };
 
         UnusedAlternateNote = UnusedAlternateName is { Length: > 0 } alt
-            ? $"Alternate available: {alt} — enable “Use alternate tracks” at career creation to race it."
+            ? $"Alternate available: {alt}, enable “Use alternate tracks” at career creation to race it."
             : "";
     }
 
@@ -108,12 +108,12 @@ public sealed partial class CalendarRoundViewModel : ObservableObject
     public string Name { get; }
 
     /// <summary>The short name for the at-a-glance overview chip ("Belgian Grand Prix" →
-    /// "Belgian") — the full name still heads the round card.</summary>
+    /// "Belgian"), the full name still heads the round card.</summary>
     public string ChipLabel { get; }
 
     public string DateText { get; }
     public string RealVenue { get; }
-    /// <summary>The AMS2 track you will actually drive — the calendar's headline value.</summary>
+    /// <summary>The AMS2 track you will actually drive, the calendar's headline value.</summary>
     public string Ams2TrackName { get; }
     /// <summary>The stable AMS2 layout key used by the embedded venue-banner manifest.</summary>
     public string TrackId { get; }
@@ -137,12 +137,12 @@ public sealed partial class CalendarRoundViewModel : ObservableObject
     /// miss under the active injury / ordinary upcoming).</summary>
     public SchedulePlayerStatus PlayerStatus { get; }
 
-    /// <summary>The injury chip ("SAT OUT — injured" / "WILL MISS — injured"); empty for ordinary
+    /// <summary>The injury chip ("SAT OUT, injured" / "WILL MISS, injured"); empty for ordinary
     /// raced/upcoming rounds so the calendar stays quiet when the driver is fit.</summary>
     public string PlayerStatusLabel { get; }
     public bool HasPlayerStatus => PlayerStatusLabel.Length > 0;
 
-    /// <summary>The "alternate available — enable at creation" hint (empty when none).</summary>
+    /// <summary>The "alternate available, enable at creation" hint (empty when none).</summary>
     public string UnusedAlternateNote { get; }
 
     // ---------- expandable detail: the ORIGINAL circuit (not the stand-in) ----------
@@ -154,7 +154,7 @@ public sealed partial class CalendarRoundViewModel : ObservableObject
     [RelayCommand]
     private void Toggle() => IsExpanded = !IsExpanded;
 
-    /// <summary>The ORIGINAL (historical) circuit's map layout id — keys the SVG map + the venue photo.
+    /// <summary>The ORIGINAL (historical) circuit's map layout id, keys the SVG map + the venue photo.
     /// Empty when no circuit data is shipped for the round.</summary>
     public string CircuitLayoutId { get; }
     public bool HasCircuit => CircuitLayoutId.Length > 0;
@@ -167,7 +167,7 @@ public sealed partial class CalendarRoundViewModel : ObservableObject
     public string CircuitHistory { get; }
     public bool HasCircuitHistory => CircuitHistory.Length > 0;
 
-    /// <summary>Era-capped fun facts about the original circuit — spoiler-free by construction.</summary>
+    /// <summary>Era-capped fun facts about the original circuit, spoiler-free by construction.</summary>
     public IReadOnlyList<string> CircuitFacts { get; }
     public bool HasCircuitFacts => CircuitFacts.Count > 0;
 

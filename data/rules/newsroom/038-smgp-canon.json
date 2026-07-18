@@ -1,5 +1,5 @@
 {
-  "$comment": "SMGP canon-divergence pack (prefix sc.): the career's venue winners measured against the almanac's remembered rulers (what-really-happened.json). SMGP UNIVERSE provenance — the SEGA canon is fiction and these cards keep the two ledgers visibly separate, never merged. Follows 010-core.json format; read-side only.",
+  "$comment": "SMGP canon-divergence pack (prefix sc.): the career's venue winners measured against the almanac's remembered rulers (what-really-happened.json). SMGP UNIVERSE provenance, the SEGA canon is fiction and these cards keep the two ledgers visibly separate, never merged. Follows 010-core.json format; read-side only.",
   "version": 1,
   "pools": {
     "scLedger": {
@@ -35,7 +35,7 @@
       "deck": "SMGP universe feature, season {season}",
       "summary": "Canon gave this circuit to {rival}; the race answered to {winner}.",
       "sections": {
-        "lead": "Every circuit in this universe has a remembered ruler[[?venue: , and {venue}'s is {rival}]]. Remembered — not eternal. The demonstration came from {winner}[[?winnerTeam: and {winnerTeam}]], in front of everyone.",
+        "lead": "Every circuit in this universe has a remembered ruler[[?venue: , and {venue}'s is {rival}]]. Remembered, not eternal. The demonstration came from {winner}[[?winnerTeam: and {winnerTeam}]], in front of everyone.",
         "impact": "The old page stays printed; the new page starts an argument. The paddock will happily conduct it all season.",
         "close": "{pool:scLedger}"
       }

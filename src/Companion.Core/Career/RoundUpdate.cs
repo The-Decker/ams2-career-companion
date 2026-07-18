@@ -36,7 +36,7 @@ public sealed record RoundUpdateContext
     public required double SliderUsed { get; init; }
 
     /// <summary>How many positions score points this round, from the round's RESOLVED scoring
-    /// definition (alternate shortened-race tables included) — drives the "points" race cause.
+    /// definition (alternate shortened-race tables included), drives the "points" race cause.
     /// Never a hard-coded top-6.</summary>
     public required int PointsPositions { get; init; }
 
@@ -53,17 +53,17 @@ public sealed record RoundUpdateContext
     /// single-race careers emit the identical journal sequence. (Increment 2.)</summary>
     public int? PlayerQualifyingPosition { get; init; }
 
-    /// <summary>The player's resolved character modifier, or null for a pre-character career — then
+    /// <summary>The player's resolved character modifier, or null for a pre-character career, then
     /// every OPI/reputation/pace-anchor call takes its exact shipped path and the round is
     /// byte-identical. Built once by the fold from the folded character. (Increment 4a.)</summary>
     public PlayerPerkModifiers? Modifiers { get; init; }
 
-    /// <summary>The character rules (perks.json) when this career carries a character — supplies the
+    /// <summary>The character rules (perks.json) when this career carries a character, supplies the
     /// XP curve + sources for the <c>player.xp</c> row. Null for a pre-character career (no XP row,
     /// journal sequence unchanged). (Increment 4a.)</summary>
     public CharacterRules? CharacterRules { get; init; }
 
-    /// <summary>The per-error injury contribution this race banks toward the season injury load — the
+    /// <summary>The per-error injury contribution this race banks toward the season injury load, the
     /// driverErrorDnf-gated <c>perErrorAdd</c> isolated from the unconditional base, so it stacks
     /// exactly once per driver-error DNF. 0 on a clean round or a character without a perErrorAdd
     /// injury perk ⇒ the folded player state is byte-identical. (Task #18.)</summary>
@@ -77,7 +77,7 @@ public sealed record RoundUpdateContext
     /// per championship round, so secondary races remain fold-visible but award no v2 XP.</summary>
     public required bool IsPrimaryRace { get; init; }
 
-    /// <summary>The Setup Gamble the player called before the race — the finishing position they bet
+    /// <summary>The Setup Gamble the player called before the race, the finishing position they bet
     /// on (1-based), or null for no bet. Resolved against the actual finish + the sim's expected
     /// finish only when it is a real gamble (called better than expected); otherwise a no-op, so a
     /// round without a gamble is byte-identical. (Setup Gamble, 4b.)</summary>
@@ -85,7 +85,7 @@ public sealed record RoundUpdateContext
 
     /// <summary>The Dynasty car-development strength bonus for the player's seat
     /// (economy §6: development level × the rules' strengthPerLevel), applied to the expected
-    /// finish only. 0 (the default) for every non-economy career — the shipped expectation math
+    /// finish only. 0 (the default) for every non-economy career, the shipped expectation math
     /// is then bit-exact, so existing careers replay byte-identically.</summary>
     public double DynastyDevelopmentStrength { get; init; }
 }
@@ -109,7 +109,7 @@ public sealed record RoundUpdateResult
 
 /// <summary>
 /// Pure per-round career update for the player: OPI, reputation, pace anchor, difficulty
-/// recommendation, and the round's single headline — all journaled.
+/// recommendation, and the round's single headline, all journaled.
 /// </summary>
 public static class RoundUpdate
 {
@@ -137,7 +137,7 @@ public static class RoundUpdate
         double repAfterRound = ReputationMath.Apply(player.Reputation, repDelta);
 
         // Setup Gamble (called shot, 4b): if the player called a finish better than the sim expected,
-        // resolve the bet against the actual finish — a hit banks the stake in reputation (chained on
+        // resolve the bet against the actual finish, a hit banks the stake in reputation (chained on
         // top of the round move), a miss costs it. Pure function of the journaled call, so it
         // re-simulates exactly; no call (or a non-gamble call) leaves rep untouched → byte-identical.
         bool calledShotResolved = context.CalledShot is { } cs && CalledShotMath.IsGamble(cs, expected);
@@ -172,7 +172,7 @@ public static class RoundUpdate
         string cause = RaceCause(context, expected, effective);
 
         // Character XP (Increment 4a): a pure function of this round's result. Accrued and journaled
-        // only for a character career — a pre-character career emits no player.xp row, so its journal
+        // only for a character career, a pre-character career emits no player.xp row, so its journal
         // sequence is unchanged.
         long newXp = player.Xp;
         int newLevel = player.Level;
@@ -286,7 +286,7 @@ public static class RoundUpdate
         };
 
         // Setup Gamble resolution (4b): a fixed position right after the reputation row it stakes,
-        // emitted ONLY when the player made a real gamble — so every ordinary round is unchanged.
+        // emitted ONLY when the player made a real gamble, so every ordinary round is unchanged.
         if (calledShotResolved)
         {
             bool hit = CalledShotMath.Hit(context.CalledShot!.Value, context.PlayerFinish);
@@ -327,7 +327,7 @@ public static class RoundUpdate
             Cause = cause,
         });
 
-        // Qualifying anchor row (weekend rounds only) — a fixed position after the pace anchor,
+        // Qualifying anchor row (weekend rounds only), a fixed position after the pace anchor,
         // absent for single-race rounds so their journal sequence is unchanged.
         if (context.PlayerQualifyingPosition is { } qPos)
         {

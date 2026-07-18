@@ -14,7 +14,7 @@ namespace Companion.Tests.ViewModels;
 /// </summary>
 public sealed class SmgpTeamDashboardTests : IDisposable
 {
-    private const string SeatC = "Stock Livery #3"; // team.c LEVEL C — the player's start
+    private const string SeatC = "Stock Livery #3"; // team.c LEVEL C, the player's start
     private const long Seed = 20260712;
 
     private readonly string _root = Directory.CreateTempSubdirectory("companion-smgp-tycoon-").FullName;

@@ -128,13 +128,13 @@ public sealed class WizardGatingTests : IDisposable
         SelectPack(wizard, "clean");
         wizard.NextCommand.Execute(null);
 
-        // b: verification — a fully consistent pack has no findings at all.
+        // b: verification, a fully consistent pack has no findings at all.
         Assert.Equal(WizardStep.Verification, wizard.Step);
         Assert.Empty(wizard.VerificationItems);
         Assert.True(wizard.CanGoNext);
         wizard.NextCommand.Execute(null);
 
-        // c: seat pick — pack entries with ratings and team tier/reliability.
+        // c: seat pick, pack entries with ratings and team tier/reliability.
         Assert.Equal(WizardStep.SeatPick, wizard.Step);
         Assert.Equal(2, wizard.Seats.Count);
         var seat = wizard.Seats[1];
@@ -156,7 +156,7 @@ public sealed class WizardGatingTests : IDisposable
         Assert.True(wizard.GridChoices.Count > 0 && wizard.GridChoices.All(c => c.IsIncluded));
         wizard.NextCommand.Execute(null);
 
-        // d: confirm — defaults and rules summary.
+        // d: confirm, defaults and rules summary.
         Assert.Equal(WizardStep.Confirm, wizard.Step);
         Assert.Equal("Test Championship 1967", wizard.CareerName);
         Assert.True(long.TryParse(wizard.MasterSeedText, out long defaultSeed)); // random default
@@ -277,7 +277,7 @@ public sealed class WizardGatingTests : IDisposable
         var player = wizard.GridChoices.Single(c => c.LiveryName == TestPackBuilder.StockLivery2);
         Assert.True(player is { IsLocked: true, IsIncluded: true }); // player is locked on
 
-        // The AI-opponent count is the field minus the player's own car — the exact number to type
+        // The AI-opponent count is the field minus the player's own car, the exact number to type
         // into AMS2, so the player never does the "minus one" themselves.
         Assert.Equal(2, wizard.AiOpponentCount); // 3 cars in, minus the player
 
@@ -296,7 +296,7 @@ public sealed class WizardGatingTests : IDisposable
 
     private NewCareerWizardViewModel WizardAtGridWithSwapAndPerRaceGrid(string folderName)
     {
-        // Car #3 changes drivers mid-season (two entries, SAME number, DIFFERENT liveries — the
+        // Car #3 changes drivers mid-season (two entries, SAME number, DIFFERENT liveries, the
         // shape 1988's Williams #5 has); and every round has a per-race grid of only 2 cars, smaller
         // than the 3-car roster (the pre-qualifying shape).
         var basePack = TestPackBuilder.TwoRoundPack();
@@ -338,13 +338,13 @@ public sealed class WizardGatingTests : IDisposable
         var wizard = WizardAtGridWithSwapAndPerRaceGrid("grid-swap");
         Assert.Equal(WizardStep.Grid, wizard.Step);
 
-        // The swap seat (car #3) is ONE car across the year → ONE row, not two — so three seats, not
+        // The swap seat (car #3) is ONE car across the year → ONE row, not two, so three seats, not
         // four entries. (A pack whose livery names embed the driver used to list the seat twice.)
         Assert.Equal(3, wizard.GridChoices.Count);
         var swapSeat = wizard.GridChoices.Single(c => c.LiveryName == "Stock Livery #3");
         Assert.Equal(2, swapSeat.Liveries.Count); // both drivers' liveries ride on the one seat
 
-        // The per-race grid is 2 cars, smaller than the 3-car roster — so the AMS2 opponent count is
+        // The per-race grid is 2 cars, smaller than the 3-car roster, so the AMS2 opponent count is
         // the on-track grid minus the player (1), NOT roster-minus-one (2).
         Assert.Equal(3, wizard.IncludedCount);   // season roster
         Assert.Equal(2, wizard.MaxRaceCars);     // on-track grid per race
@@ -361,7 +361,7 @@ public sealed class WizardGatingTests : IDisposable
 
         var selection = _factory.LastRequest!.GridSelection;
         Assert.NotNull(selection);
-        // Both of the excluded seat's liveries are gone — not just the primary one.
+        // Both of the excluded seat's liveries are gone, not just the primary one.
         Assert.DoesNotContain("Stock Livery #3", selection!.IncludedLiveries!);
         Assert.DoesNotContain("Stock Livery #3 (swap)", selection.IncludedLiveries!);
     }

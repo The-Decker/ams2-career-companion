@@ -40,7 +40,7 @@ public sealed class CareerDatabase : IDisposable
             // Safety net before the schema chain runs: a genuine old-format file (version 1..N-1,
             // never a freshly created empty DB) gets a one-time consistent sibling snapshot
             // (`<name>.pre-v<N>.bak`) via VACUUM INTO, so even a future destructive migration —
-            // or a power loss mid-chain — always leaves a restorable pre-upgrade copy.
+            // or a power loss mid-chain, always leaves a restorable pre-upgrade copy.
             int preVersion = database.SchemaVersion;
             if (preVersion > 0 && preVersion < Migrations.CurrentVersion)
             {
@@ -76,7 +76,7 @@ public sealed class CareerDatabase : IDisposable
     }
 
     /// <summary>Dispose returns the connection to Microsoft.Data.Sqlite's pool, which keeps the
-    /// native file handle open — on Windows that blocks File.Delete/Move on the .ams2career (and
+    /// native file handle open, on Windows that blocks File.Delete/Move on the .ams2career (and
     /// holds -wal/-shm) until the pool prunes. Closing a career must actually release the file
     /// (the Start gallery's "Delete career file…" depends on it), so clear this connection's pool
     /// after disposing. Same discipline as the test infrastructure's TempDb.</summary>

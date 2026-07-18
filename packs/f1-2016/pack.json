@@ -23,7 +23,7 @@
     "Class F-Ultimate_Gen1 maps to the single vehicle formula_ultimate_2016 (verified against data/ams2/classes.json + vehicles.json).",
     "Mid-season driver swap modeled from f1db: Verstappen (Toro Rosso #33 rounds 1-4 → Red Bull #33 rounds 5-21) and Kvyat (Red Bull #26 rounds 1-4 → Toro Rosso #26 rounds 5-21), each carried as two entries.",
     "Substitutions: Vandoorne (McLaren #47) raced only round 2 in place of Alonso, who missed Bahrain (Alonso rounds 1,3-21). Manor #88 Haryanto (rounds 1-12) was replaced by #31 Ocon (rounds 13-21).",
-    "Coverage: the NAMeS file also carries two off-season/fictional base liveries — '2016 Ferrari #17 - J. Bianchi' and '2016 Sauber #7 - K. Räikkönen' — that do not correspond to real 2016 f1db entrants; they are not included in this pack.",
+    "Coverage: the NAMeS file also carries two off-season/fictional base liveries, '2016 Ferrari #17 - J. Bianchi' and '2016 Sauber #7 - K. Räikkönen', that do not correspond to real 2016 f1db entrants; they are not included in this pack.",
     "Placeholder venues (AMS2 lacks the real layout): Melbourne→Adelaide Modern, Bahrain→Jerez 2019, Shanghai→Nürburgring GP, Sochi→Estoril 2019, Baku→Long Beach, Marina Bay→Imola, Sepang→Curvelo, Hermanos Rodríguez→Interlagos 1993, Yas Marina→Imola 2005. For each, laps are recomputed to preserve the real race distance.",
     "The source custom-AI XML also carries a large per-track (tracks=\"...\") override set; those patches are not carried into this pack's aiOverrides in this version."
   ]

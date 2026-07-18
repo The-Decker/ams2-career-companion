@@ -4,10 +4,10 @@ using Companion.Core.Packs;
 namespace Companion.Core.Smgp;
 
 /// <summary>
-/// Folds ONE round's rival battle into the career's <see cref="SmgpState"/> (M3 slice 2) — the
+/// Folds ONE round's rival battle into the career's <see cref="SmgpState"/> (M3 slice 2), the
 /// pure half the round fold calls when the raw envelope stored a rival call. Consumes
 /// <see cref="SmgpRules"/> for the outcome/tally/trigger math and resolves the seat movements
-/// against the pack's authored team LADDER (teams.json order, top tier first — LEVEL A down to
+/// against the pack's authored team LADDER (teams.json order, top tier first, LEVEL A down to
 /// the floor team last, per docs/dev/smgp-design.md). Everything derives from pinned pack +
 /// stored inputs + carried state, so replay re-folds byte-identically.
 /// </summary>
@@ -16,7 +16,7 @@ public static class SmgpBattleFold
     public static SmgpBattleFoldResult Apply(SmgpBattleFoldContext context)
     {
         // The Madonna title defense OWNS its two rounds' battles against the reserved
-        // challenger — the ordinary two-wins ladder never runs there (losing both must fire
+        // challenger, the ordinary two-wins ladder never runs there (losing both must fire
         // you to Dardan, not demote you one tier).
         if (SmgpSchedule.IsTitleDefenseRound(context.State, context.Round) &&
             string.Equals(context.RivalDriverId, SmgpSchedule.DefenseChallenger(context.Pack), StringComparison.Ordinal))
@@ -31,14 +31,14 @@ public static class SmgpBattleFold
         var seatEvents = new List<JournalEvent>();
         char? playerTier = TierOf(ladder, state.CurrentSeatLivery);
 
-        // A two-wins offer promotes in EVERY tier (incl. D→C — the way out of the floor). A
+        // A two-wins offer promotes in EVERY tier (incl. D→C, the way out of the floor). A
         // two-losses forfeit relegates only ABOVE D (to a RANDOM team one class below); at the D
         // floor there is nowhere below, so it does not relegate.
         if (update.Trigger == SmgpTrigger.SeatSwapOfferToPlayer)
         {
             if (state.TwoPhasePromotion)
             {
-                // TWO-PHASE (3c-2): DEFER the promotion to the post-race screen — record the offer
+                // TWO-PHASE (3c-2): DEFER the promotion to the post-race screen, record the offer
                 // (the car the player would move into) instead of moving the seat. No seat row yet;
                 // the resolution (below / from the promotion screen) emits it on accept.
                 string? rivalSeat = CurrentSeatOf(context.Pack, state, context.RivalDriverId);
@@ -63,7 +63,7 @@ public static class SmgpBattleFold
             state = ApplyForfeit(context, ladder, state, seatEvents);
 
         // The LEVEL D floor: every LOST battle (any rival) counts toward FloorLossLimit; reaching
-        // it ends the career — kicked out of F1 SMGP (Mike's rule).
+        // it ends the career, kicked out of F1 SMGP (Mike's rule).
         if (playerTier == 'D' && outcome == SmgpBattleOutcome.RivalBeatPlayer)
         {
             state = state with { FloorLosses = state.FloorLosses + 1 };
@@ -71,7 +71,7 @@ public static class SmgpBattleFold
                 state = state with { CareerOver = true };
         }
 
-        // Promoting OUT of D (a win-swap up to C) wipes the floor-loss count — a fresh start above.
+        // Promoting OUT of D (a win-swap up to C) wipes the floor-loss count, a fresh start above.
         if (playerTier == 'D' && TierOf(ladder, state.CurrentSeatLivery) is { } newTier && newTier != 'D')
             state = state with { FloorLosses = 0 };
 
@@ -99,7 +99,7 @@ public static class SmgpBattleFold
     }
 
     /// <summary>The Madonna title defense (M3 slice 4): round 1's outcome is carried on the
-    /// state; round 2 resolves both via <see cref="SmgpRules.TitleDefense"/> — win at least one
+    /// state; round 2 resolves both via <see cref="SmgpRules.TitleDefense"/>, win at least one
     /// → Madonna kept; lose both → fired to Dardan (the challenger takes the player's car, the
     /// player takes the demotion seat, its occupant takes the challenger's old car). Defense
     /// battles never touch the two-wins tallies.</summary>
@@ -136,7 +136,7 @@ public static class SmgpBattleFold
             {
                 // CLEAN (Mike's anti-chaos rule): the player is fired into the demotion car (Dardan);
                 // Madonna reverts to its authored driver and the challenger keeps his own car. Only the
-                // player moves — no cascade. (The old chain's "the challenger takes Madonna" flourish is
+                // player moves, no cascade. (The old chain's "the challenger takes Madonna" flourish is
                 // dropped in favour of a clean grid.)
                 state = state with { CurrentSeatLivery = demotionSeat };
                 events.Add(BattleEvent(context, outcome, state.TallyFor(context.RivalDriverId),
@@ -148,7 +148,7 @@ public static class SmgpBattleFold
             }
 
             // The verdict stands even when the seat chain cannot resolve (no demotion target /
-            // no challenger seat) — journal the LOSS honestly; only the seats stay put.
+            // no challenger seat), journal the LOSS honestly; only the seats stay put.
             events.Add(BattleEvent(context, outcome, state.TallyFor(context.RivalDriverId),
                 SmgpTrigger.None, state.CareerOver, cause: "defense-lost"));
             return new SmgpBattleFoldResult { State = state, Events = events };
@@ -182,7 +182,7 @@ public static class SmgpBattleFold
     };
 
     /// <summary>The two-wins offer, accepted: the verified displacement chain via
-    /// <see cref="SmgpRules.PlayerSeatSwap"/> — player takes the rival's car, the rival drops to
+    /// <see cref="SmgpRules.PlayerSeatSwap"/>, player takes the rival's car, the rival drops to
     /// the first ladder team one tier below the player's OLD tier, that seat's occupant takes the
     /// player's old car. No resolvable rival seat / player seat off the ladder → no movement
     /// (the battle row still folds; a UI can only offer rivals that race).</summary>
@@ -197,10 +197,10 @@ public static class SmgpBattleFold
 
         // CLEAN swap (Mike: "the original driver should come back to that car i just left and the rival
         // i beat disappears until you switch teams again"): the player simply MOVES into the rival's car.
-        // No AI seat overrides — the whole grid is a fresh function of the player's current car, so the
+        // No AI seat overrides, the whole grid is a fresh function of the player's current car, so the
         // rival benches while the player holds his seat, and the car the player just left reverts to its
         // authored driver. Nobody else moves; the field never cascades. (The distinct-driver player id +
-        // the grid resolver do the rest — see RoundGridResolver.ApplyPlayerSeat.)
+        // the grid resolver do the rest, see RoundGridResolver.ApplyPlayerSeat.)
         state = state with { CurrentSeatLivery = rivalSeat };
         seatEvents.Add(SeatEvent("seat-swap", playerSeat, rivalSeat,
             context.RivalDriverId, rivalSeat, Benched,
@@ -213,7 +213,7 @@ public static class SmgpBattleFold
     private const string Benched = "";
 
     /// <summary>
-    /// Resolve a PENDING two-wins offer (3c-2) with the player's post-race decision — the shared
+    /// Resolve a PENDING two-wins offer (3c-2) with the player's post-race decision, the shared
     /// half both paths run so live and replay produce the SAME state + seat rows:
     /// <list type="bullet">
     /// <item>the promotion SCREEN (live) calls it once the player answers, appending the resulting
@@ -243,7 +243,7 @@ public static class SmgpBattleFold
             pending.RivalDriverId, pending.OfferedSeat, Benched,
             displacedDriverId: null, displacedFrom: null, displacedTo: null));
 
-        // Promoting OUT of D wipes the floor-loss count — the same fresh-start rule the inline path
+        // Promoting OUT of D wipes the floor-loss count, the same fresh-start rule the inline path
         // applies, now on the round the offer is ACCEPTED (the deferred move actually happens here).
         if (oldTier == 'D' && TierOf(ladder, state.CurrentSeatLivery) is { } newTier && newTier != 'D')
             state = state with { FloorLosses = 0 };
@@ -252,9 +252,9 @@ public static class SmgpBattleFold
 
     /// <summary>The rival beat the player twice (above D): the player is RELEGATED to a team in
     /// the class BELOW, chosen at RANDOM (deterministically, from the master seed) among that
-    /// tier's teams — the rival takes the player's old car, and the random team's displaced
+    /// tier's teams, the rival takes the player's old car, and the random team's displaced
     /// driver takes the rival's old car (the mirrored chain). Caller guards D out (the floor has
-    /// nowhere below — the FloorLoss counter governs it there).</summary>
+    /// nowhere below, the FloorLoss counter governs it there).</summary>
     private static SmgpState ApplyForfeit(
         SmgpBattleFoldContext context, IReadOnlyList<LadderSeat> ladder, SmgpState state,
         List<JournalEvent> seatEvents)
@@ -304,7 +304,7 @@ public static class SmgpBattleFold
     // ---------- the authored ladder + seat occupancy ----------
 
     /// <summary>One CAR on the ladder, in the pack's authored team order (the design doc's tier
-    /// listing — the LAST team is the floor team) with each team's cars in their authored entry
+    /// listing, the LAST team is the floor team) with each team's cars in their authored entry
     /// order (data contract: a team's LADDER/champion car is authored FIRST in its block). Every
     /// entry is a ladder seat, so two-car teams (the 32-car skinpack field) swap and demote per
     /// CAR while team-level rules (the floor check) key the TeamId.</summary>
@@ -329,14 +329,14 @@ public static class SmgpBattleFold
         ladder.FirstOrDefault(s => string.Equals(s.Livery, livery, StringComparison.Ordinal))?.Tier;
 
     /// <summary>The first authored seat at <paramref name="tier"/> not already involved in the
-    /// swap — the deterministic stand-in for the game's "the team one tier below yours".</summary>
+    /// swap, the deterministic stand-in for the game's "the team one tier below yours".</summary>
     internal static string? FirstSeatAt(
         IReadOnlyList<LadderSeat> ladder, char tier, string excludeSeat1, string excludeSeat2) =>
         ladder.FirstOrDefault(s => s.Tier == tier &&
             !string.Equals(s.Livery, excludeSeat1, StringComparison.Ordinal) &&
             !string.Equals(s.Livery, excludeSeat2, StringComparison.Ordinal))?.Livery;
 
-    /// <summary>A RANDOM team's (first) seat at <paramref name="tier"/> — the relegation target,
+    /// <summary>A RANDOM team's (first) seat at <paramref name="tier"/>, the relegation target,
     /// picked deterministically from the master seed + round + rival so replay re-derives the
     /// exact same team. One seat per team (its first, in ladder order), excluding the player's and
     /// rival's seats. Null when no team at that tier is eligible.</summary>
@@ -361,7 +361,7 @@ public static class SmgpBattleFold
         return candidates[(int)(pick % (uint)candidates.Count)];
     }
 
-    /// <summary>A stable FNV-1a hash over (master seed, round, rival) — deterministic and
+    /// <summary>A stable FNV-1a hash over (master seed, round, rival), deterministic and
     /// build-stable, so the relegation team is identical on the live and replay paths.</summary>
     private static uint DeterministicHash(long seed, int round, string rival)
     {
@@ -377,7 +377,7 @@ public static class SmgpBattleFold
     }
 
     /// <summary>The car <paramref name="driverId"/> currently drives: his seat override when a
-    /// swap moved him, else his authored pack seat — UNLESS someone else holds that car (the
+    /// swap moved him, else his authored pack seat, UNLESS someone else holds that car (the
     /// player took it at creation, or a swap/introduction moved another driver in), which means
     /// he lost the ride without receiving one: he does not race. Null = no current car.</summary>
     internal static string? CurrentSeatOf(SeasonPack pack, SmgpState state, string driverId)
@@ -394,7 +394,7 @@ public static class SmgpBattleFold
     }
 }
 
-/// <summary>The battle fold's inputs — pinned pack + carried state + the round's stored rival
+/// <summary>The battle fold's inputs, pinned pack + carried state + the round's stored rival
 /// call and both finishing positions (1-based classified positions; null = DNF/unclassified).</summary>
 public sealed record SmgpBattleFoldContext
 {
@@ -404,12 +404,12 @@ public sealed record SmgpBattleFoldContext
 
     public required string RivalDriverId { get; init; }
 
-    /// <summary>The 1-based round this battle happened in — the title defense keys off rounds
+    /// <summary>The 1-based round this battle happened in, the title defense keys off rounds
     /// 1 and 2. Default 0 (callers that never see a defense season) never matches a defense
     /// round, so the ordinary ladder runs exactly as before.</summary>
     public int Round { get; init; }
 
-    /// <summary>The career's master seed — the relegation team is picked deterministically from
+    /// <summary>The career's master seed, the relegation team is picked deterministically from
     /// it (+ round + rival), so the "random" team is identical on the live and replay paths.</summary>
     public long MasterSeed { get; init; }
 
@@ -422,7 +422,7 @@ public sealed record SmgpBattleFoldContext
 
     /// <summary>The player's POST-RACE promotion-screen decision for a two-phase career (3c-2),
     /// read back from the journaled <c>smgp.swap</c> input at re-fold. Null = undecided (the live
-    /// result-entry fold, before the screen — the offer stays pending) or a non-two-phase career.
+    /// result-entry fold, before the screen, the offer stays pending) or a non-two-phase career.
     /// When set on a round that raised an offer, <see cref="Apply"/> resolves the pending swap
     /// inline so replay re-derives the live outcome byte-identically.</summary>
     public bool? SwapDecision { get; init; }

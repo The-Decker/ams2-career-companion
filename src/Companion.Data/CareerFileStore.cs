@@ -5,7 +5,7 @@ namespace Companion.Data;
 /// <summary>
 /// File-level operations on career files for the Start gallery (rename / duplicate). The display
 /// name lives INSIDE the .ams2career (career.name, id = 1) as well as in the MRU, so both
-/// operations rewrite it in the affected file — otherwise the next open would resurrect the old
+/// operations rewrite it in the affected file, otherwise the next open would resurrect the old
 /// name. Connections are short-lived and their pools cleared on the way out so the touched files
 /// stay immediately renamable/deletable (same contract as <see cref="CareerDatabase.Dispose"/>).
 /// </summary>
@@ -31,7 +31,7 @@ public static class CareerFileStore
         }
     }
 
-    /// <summary>Copies the career via SQLite's backup API — a consistent snapshot even while the
+    /// <summary>Copies the career via SQLite's backup API, a consistent snapshot even while the
     /// source is open somewhere (a raw File.Copy of a WAL-mode database mid-write can tear) —
     /// then rewrites the copy's stored name.</summary>
     public static void Duplicate(string sourcePath, string destinationPath, string copyName)
@@ -55,7 +55,7 @@ public static class CareerFileStore
         }
         catch (SqliteException ex)
         {
-            throw new InvalidOperationException($"Could not copy the career file — {ex.Message}", ex);
+            throw new InvalidOperationException($"Could not copy the career file, {ex.Message}", ex);
         }
         finally
         {
@@ -80,7 +80,7 @@ public static class CareerFileStore
         }
         catch (SqliteException ex)
         {
-            throw new InvalidOperationException($"Could not update the stored career name — {ex.Message}", ex);
+            throw new InvalidOperationException($"Could not update the stored career name, {ex.Message}", ex);
         }
         finally
         {

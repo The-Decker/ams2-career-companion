@@ -31,7 +31,7 @@ public sealed class ProgressionNewsEventsTests
         Assert.Equal("player", milestone.SubjectId);
 
         // Re-detecting the same shaped seasons yields the identical event set, and every
-        // dedupe key in it is unique — the pipeline's stable-identity contract.
+        // dedupe key in it is unique, the pipeline's stable-identity contract.
         var second = CareerNewsEvents.Detect([season]);
         Assert.Equal(events.Count, second.Count);
         for (var i = 0; i < events.Count; i++)
@@ -54,7 +54,7 @@ public sealed class ProgressionNewsEventsTests
         var milestones = events.Where(e => e.Kind == NewsEventKind.LevelMilestone).ToList();
         Assert.Equal([25, 50, 75], milestones.Select(m => m.Facts.MilestoneValue));
         Assert.All(milestones, m => Assert.Equal(2, m.Round));
-        // Same kind/round/subject — only the threshold discriminator keeps the keys apart.
+        // Same kind/round/subject, only the threshold discriminator keeps the keys apart.
         Assert.Equal(3, milestones.Select(m => m.DedupeKey).Distinct(StringComparer.Ordinal).Count());
     }
 
@@ -178,7 +178,7 @@ public sealed class ProgressionNewsEventsTests
             Raced(1, levelAfter: 30),  // fires 25
             Raced(2, levelAfter: 20),  // backwards: silent
             Raced(3, levelAfter: 30),  // back to the high-water mark: still silent (25 stays fired)
-            Raced(4, levelAfter: 55)); // fires 50 only — 25 must not re-fire
+            Raced(4, levelAfter: 55)); // fires 50 only, 25 must not re-fire
 
         var events = CareerNewsEvents.Detect([season]);
 

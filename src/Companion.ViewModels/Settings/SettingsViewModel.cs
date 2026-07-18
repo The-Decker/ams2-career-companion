@@ -13,8 +13,8 @@ public sealed record AccentPreset(string Name, string PresetName, string Hex);
 public sealed record NewsDetailOption(NewsDetailLevel Level, string Label, string Description);
 
 /// <summary>
-/// The settings screen (ux-round contract section 3): four sections — Appearance, Racing,
-/// Staging (NAMeS-first), Data — every control applying LIVE through
+/// The settings screen (ux-round contract section 3): four sections, Appearance, Racing,
+/// Staging (NAMeS-first), Data, every control applying LIVE through
 /// <see cref="ISettingsService"/> (no OK/Apply buttons, no restart), plus Reset-to-defaults.
 /// WPF-free; the view adds folder pickers and open-in-Explorer buttons on top.
 /// </summary>
@@ -128,8 +128,8 @@ public sealed partial class SettingsViewModel : ObservableObject
     public IReadOnlyList<NewsDetailOption> NewsDetailOptions { get; } =
     [
         new(NewsDetailLevel.Articles, "Full articles", "Headlines expand into the full period article"),
-        new(NewsDetailLevel.HeadlinesOnly, "Headlines only", "Show just the headline — no expanded article body"),
-        new(NewsDetailLevel.Minimal, "Minimal", "The most stripped-back reading — headlines only"),
+        new(NewsDetailLevel.HeadlinesOnly, "Headlines only", "Show just the headline, no expanded article body"),
+        new(NewsDetailLevel.Minimal, "Minimal", "The most stripped-back reading, headlines only"),
     ];
 
     [ObservableProperty]

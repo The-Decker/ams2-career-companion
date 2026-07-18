@@ -7,7 +7,7 @@ namespace Companion.RenderHarness.Tests;
 /// <summary>Proves the circuit-map pipeline end-to-end: every shipped data/ams2/circuits/*.json (path
 /// data emitted by tools/derive_circuits.cs, normalized from f1db SVGs) parses with WPF's
 /// <see cref="Geometry.Parse"/> into a non-empty geometry. This is the load-bearing check that the
-/// SVG→WPF number-normalization is correct — if WPF rejected the path syntax, the maps would silently
+/// SVG→WPF number-normalization is correct, if WPF rejected the path syntax, the maps would silently
 /// fail to render. Runs on an STA thread (WPF). Self-skips off Windows / when the data dir is absent.</summary>
 public sealed class CircuitGeometryRenderTests
 {
@@ -19,7 +19,7 @@ public sealed class CircuitGeometryRenderTests
 
         string? circuitsDir = FindCircuitsDirectory();
         if (circuitsDir is null)
-            return; // data dir not locatable from the test bin — skip rather than false-fail
+            return; // data dir not locatable from the test bin, skip rather than false-fail
 
         var files = Directory.GetFiles(circuitsDir, "*.json");
         Assert.True(files.Length >= 100, $"expected the full shipped circuit set, found {files.Length}");

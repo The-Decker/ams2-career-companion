@@ -39,14 +39,14 @@ public sealed record RoundLiveryResult
 /// AMS2 then pool-fills with random stock drivers).
 ///
 /// <para>Deactivations run FIRST (freeing slots), then activations fill the freed slots, so the file
-/// never exceeds the class livery cap. Only the pack's OWN liveries are touched — base-game and other
+/// never exceeds the class livery cap. Only the pack's OWN liveries are touched, base-game and other
 /// packs' liveries in the same file are never moved. Every edit is the minimal in-place textual swap
 /// <see cref="LiveryOverrideWriter"/> performs, backup-first, and idempotent (a re-stage of the same
 /// round writes nothing).</para>
 ///
 /// <para>NOTE: AMS2 reads the override files when it builds a session's car pool. If a car still shows
 /// a wrong/random driver after staging, the game may need a full restart to reload the newly-activated
-/// slots — the staging message says so.</para>
+/// slots, the staging message says so.</para>
 /// </summary>
 public static class RoundLiveryActivator
 {
@@ -62,7 +62,7 @@ public static class RoundLiveryActivator
     {
         var liveries = LiveryOverrideWriter.Liveries(xml);
 
-        // Park every ACTIVE pack livery that is NOT in this round's grid — frees its slot first.
+        // Park every ACTIVE pack livery that is NOT in this round's grid, frees its slot first.
         var toDeactivate = liveries
             .Where(l => l.Active && packLiveryNames.Contains(l.Name) && !roundLiveryNames.Contains(l.Name))
             .Select(l => l.Name)
@@ -94,7 +94,7 @@ public static class RoundLiveryActivator
             int slot = LiveryOverrideWriter.NextFreeSlot(xml);
             if (maxSlot is { } max && slot > max)
             {
-                skipped.Add(name); // class livery cap reached — the car floors to base-game downstream
+                skipped.Add(name); // class livery cap reached, the car floors to base-game downstream
                 continue;
             }
             string? edited = LiveryOverrideWriter.Activate(xml, name, slot);
@@ -105,7 +105,7 @@ public static class RoundLiveryActivator
             }
             else
             {
-                skipped.Add(name); // no matching placeholder in this file (shouldn't happen — guard)
+                skipped.Add(name); // no matching placeholder in this file (shouldn't happen, guard)
             }
         }
 
@@ -114,7 +114,7 @@ public static class RoundLiveryActivator
 
     /// <summary>Applies the round to every model override file under <paramref name="overridesRoot"/>
     /// (<c>&lt;dir&gt;/&lt;dir&gt;.xml</c>), backup-first, writing each changed file once. A missing or
-    /// unreadable file is skipped (never blocks staging). Idempotent — files already matching the round
+    /// unreadable file is skipped (never blocks staging). Idempotent, files already matching the round
     /// are left untouched (no needless backups).</summary>
     public static RoundLiveryResult ApplyRound(
         string overridesRoot,

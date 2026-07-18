@@ -8,7 +8,7 @@ namespace Companion.Tests.ViewModels;
 
 /// <summary>
 /// The Calendar lens's per-round player-status chip (commit 8a0427c): a SatOut round reads
-/// "SAT OUT — injured", a WillMiss round reads "WILL MISS — injured", and ordinary Raced /
+/// "SAT OUT, injured", a WillMiss round reads "WILL MISS, injured", and ordinary Raced /
 /// Upcoming rounds stay quiet (empty label, HasPlayerStatus false) so the calendar shows the
 /// injury story only when there is one. Uses a local stub session (the interface's default
 /// members mean only <c>SeasonSchedule()</c> and the abstract core need implementing).
@@ -71,7 +71,7 @@ public sealed class CalendarPlayerStatusTests
         var round = Round(SchedulePlayerStatus.SatOut);
 
         Assert.Equal(SchedulePlayerStatus.SatOut, round.PlayerStatus);
-        Assert.Equal("SAT OUT — injured", round.PlayerStatusLabel);
+        Assert.Equal("SAT OUT, injured", round.PlayerStatusLabel);
         Assert.True(round.HasPlayerStatus);
     }
 
@@ -81,7 +81,7 @@ public sealed class CalendarPlayerStatusTests
         var round = Round(SchedulePlayerStatus.WillMiss);
 
         Assert.Equal(SchedulePlayerStatus.WillMiss, round.PlayerStatus);
-        Assert.Equal("WILL MISS — injured", round.PlayerStatusLabel);
+        Assert.Equal("WILL MISS, injured", round.PlayerStatusLabel);
         Assert.True(round.HasPlayerStatus);
     }
 

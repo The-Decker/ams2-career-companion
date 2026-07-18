@@ -20,9 +20,9 @@
     ]
   },
   "notes": [
-    "The source AI set's 'Benetton-Ford #19 M. Andretti' entry is a v1.4 'what-if' scenario preset — Michael Andretti is not an f1db 1990 entrant — and is not included in this pack.",
+    "The source AI set's 'Benetton-Ford #19 M. Andretti' entry is a v1.4 'what-if' scenario preset, Michael Andretti is not an f1db 1990 entrant, and is not included in this pack.",
     "Coloni ran Subaru power in rounds 1-8 and Ford in rounds 9-16 (f1db lists both stints); the pack format binds one livery per team+driver entry, so the source XML's first livery 'Coloni-Subaru #31 B. Gachot' covers rounds 1-16 and 'Coloni-Ford #31 B. Gachot' is not included. The composed team name 'Coloni-Ford' follows the f1db engine data.",
     "Bruno Giacomelli's Life stint has two source liveries (the works W12 'Life #39 B. Giacomelli' and the late-season 'Life-Judd #39 B. Giacomelli'); the first covers rounds 3-14 and the Life-Judd livery is not included.",
-    "The F1_Season_1990 skinpack ships no body textures for car numbers 21-22 (Dallara), 33-34 (EuroBrun), 35 (Onyx) and 39 (Life); those liveries exist only in the AI set. Their car-model bindings are authored by engine analogue — Dallara and Onyx (Ford V8) -> formula_classic_g3m2, EuroBrun (Judd V8) -> formula_classic_g3m4, Life (W12) -> formula_classic_g3m1 — instead of derived from the override scan."
+    "The F1_Season_1990 skinpack ships no body textures for car numbers 21-22 (Dallara), 33-34 (EuroBrun), 35 (Onyx) and 39 (Life); those liveries exist only in the AI set. Their car-model bindings are authored by engine analogue, Dallara and Onyx (Ford V8) -> formula_classic_g3m2, EuroBrun (Judd V8) -> formula_classic_g3m4, Life (W12) -> formula_classic_g3m1, instead of derived from the override scan."
   ]
 }

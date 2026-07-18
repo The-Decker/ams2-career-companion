@@ -19,7 +19,7 @@ public sealed class InspectorViewModelTests
     {
         Entity = "player",
         Round = 3,
-        Title = "Why P2 — You, Round 3",
+        Title = "Why P2, You, Round 3",
         Summary = "You finished P2, beating your expected P5.",
         Contributions =
         [
@@ -30,7 +30,7 @@ public sealed class InspectorViewModelTests
             },
             new JournalContribution
             {
-                Label = "Reputation", Detail = "Reputation moved this round — you beat your teammate.",
+                Label = "Reputation", Detail = "Reputation moved this round, you beat your teammate.",
                 Value = "43.2", SourceSeq = 12,
             },
             // A narrative row with no number (a headline) is valid alongside numeric rows.
@@ -45,13 +45,13 @@ public sealed class InspectorViewModelTests
     {
         var vm = new InspectorViewModel(SampleChain());
 
-        Assert.Equal("Why P2 — You, Round 3", vm.Title);
+        Assert.Equal("Why P2, You, Round 3", vm.Title);
         Assert.Equal("You finished P2, beating your expected P5.", vm.Summary);
         Assert.True(vm.HasSummary);
         Assert.True(vm.HasRows);
         Assert.Equal(3, vm.Rows.Count);
 
-        // Ordered rows, oldest journal seq first — the walk-back top to bottom.
+        // Ordered rows, oldest journal seq first, the walk-back top to bottom.
         Assert.Equal(new[] { "Expected finish", "Reputation", "Headline" }, vm.Rows.Select(r => r.Label));
         Assert.Equal(new long[] { 10, 12, 14 }, vm.Rows.Select(r => r.SourceSeq));
 
@@ -60,7 +60,7 @@ public sealed class InspectorViewModelTests
         Assert.Equal("P2", numeric.Value);
         Assert.True(numeric.HasDetail);
 
-        // A narrative row carries no number — the value column stays empty.
+        // A narrative row carries no number, the value column stays empty.
         var narrative = vm.Rows[2];
         Assert.False(narrative.HasValue);
         Assert.Equal("", narrative.Value);
@@ -96,7 +96,7 @@ public sealed class InspectorViewModelTests
         {
             Chain = new JournalChain
             {
-                Entity = "driver.hulme", Title = "Why — Denny Hulme, 1967",
+                Entity = "driver.hulme", Title = "Why, Denny Hulme, 1967",
                 Contributions = [new JournalContribution { Label = "Reputation", Value = "42" }],
             },
         };
@@ -107,7 +107,7 @@ public sealed class InspectorViewModelTests
 
         Assert.Equal(("driver.hulme", (int?)null), session.LastRequest);
         Assert.True(vm.IsInspectorOpen);
-        Assert.Equal("Why — Denny Hulme, 1967", vm.SelectedInspector!.Title);
+        Assert.Equal("Why, Denny Hulme, 1967", vm.SelectedInspector!.Title);
 
         // Keyboard + mouse parity: the same close command any input binds dismisses the panel.
         vm.CloseInspectorCommand.Execute(null);
@@ -122,7 +122,7 @@ public sealed class InspectorViewModelTests
         {
             Chain = new JournalChain
             {
-                Entity = "driver.hulme", Round = 2, Title = "Why P1 — Denny Hulme, Round 2",
+                Entity = "driver.hulme", Round = 2, Title = "Why P1, Denny Hulme, Round 2",
                 Contributions = [new JournalContribution { Label = "Expected finish", Value = "P1" }],
             },
         };
@@ -152,7 +152,7 @@ public sealed class InspectorViewModelTests
         Assert.Equal("driver.hulme", real.InspectorRef!.DriverId);
         Assert.Equal(2, real.InspectorRef.Round);
 
-        // A blank cell (no driver/round) has no click target — the number renders plain.
+        // A blank cell (no driver/round) has no click target, the number renders plain.
         var blank = new RoundMatrixCell("", IsDropped: false);
         Assert.Null(blank.InspectorRef);
     }
@@ -166,13 +166,13 @@ public sealed class InspectorViewModelTests
         {
             Chain = new JournalChain
             {
-                Entity = "player", Title = "Why — You, 1967",
+                Entity = "player", Title = "Why, You, 1967",
                 Contributions = [new JournalContribution { Label = "Reputation", Value = "42" }],
             },
         };
         var history = new HistoryViewModel(session);
 
-        // A season card's number walks the SEASON-SCOPED seam for that card's year — the current
+        // A season card's number walks the SEASON-SCOPED seam for that card's year, the current
         // season is just the current-year case of the same call.
         history.OpenSeasonInspectorCommand.Execute(1967);
         Assert.Equal(("player", 1967, (int?)null), session.LastSeasonRequest);
@@ -189,7 +189,7 @@ public sealed class InspectorViewModelTests
         {
             Chain = new JournalChain
             {
-                Entity = "player", Title = "Why — You, 1965",
+                Entity = "player", Title = "Why, You, 1965",
                 Contributions = [new JournalContribution { Label = "Reputation", Value = "42" }],
             },
         };
@@ -208,14 +208,14 @@ public sealed class InspectorViewModelTests
         var session = new InspectorFakeSession { Chain = JournalChain.Empty };
         var history = new HistoryViewModel(session);
 
-        // A year the season-scoped seam has no rows for returns the empty chain — the panel stays
+        // A year the season-scoped seam has no rows for returns the empty chain, the panel stays
         // closed rather than opening blank.
         history.OpenSeasonInspectorCommand.Execute(1965);
         Assert.Equal(("player", 1965, (int?)null), session.LastSeasonRequest);
         Assert.False(history.IsInspectorOpen);
     }
 
-    /// <summary>A session that records the JournalFor request and returns a controlled chain — the
+    /// <summary>A session that records the JournalFor request and returns a controlled chain, the
     /// additive default seam members keep it minimal, proving the inspector couples only to
     /// <see cref="ICareerSession.JournalFor"/> (and, for History, <see cref="ICareerSession.Summary"/>).</summary>
     private sealed class InspectorFakeSession : ICareerSession

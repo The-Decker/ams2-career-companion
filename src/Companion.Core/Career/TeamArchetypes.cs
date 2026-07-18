@@ -97,7 +97,7 @@ public sealed class TeamArchetypeCatalog
                + w.Experience * experienceSeasons
                - w.Salary * salaryAskBu
                - w.AgeRisk * ageRiskYears
-               // Sponsor money the driver brings — scaled like the AI candidate pay term
+               // Sponsor money the driver brings, scaled like the AI candidate pay term
                // (SeasonEndPipeline seat market: PayDriverWeight · payBudgetBu / 100).
                + archetype.PayDriverWeight * payBudgetBu / 100.0;
     }

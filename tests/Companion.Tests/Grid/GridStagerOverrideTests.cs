@@ -90,7 +90,7 @@ public class GridStagerOverrideTests
     [Fact]
     public void AlwaysWrite_WritesAnAppMarkedFile_OverACommunityFile_WithoutForce()
     {
-        // A foreign community file exists. Normal staging without force REFUSES (0 bytes) — the bug
+        // A foreign community file exists. Normal staging without force REFUSES (0 bytes), the bug
         // that left Mike's edits unwritten. alwaysWrite writes it anyway (backup-first), marked.
         using var dir = new TempInstall(
             "<custom_ai_drivers><driver livery_name=\"" + Livery + "\">" +

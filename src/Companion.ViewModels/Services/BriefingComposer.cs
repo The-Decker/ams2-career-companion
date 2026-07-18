@@ -6,14 +6,14 @@ namespace Companion.ViewModels.Services;
 
 /// <summary>
 /// Pure composition of the Race Day briefing (app-shell contract): every in-game setting as an
-/// exact copy-ready string, grouped into the AMS2 custom-race screen's sections — Event
+/// exact copy-ready string, grouped into the AMS2 custom-race screen's sections, Event
 /// (track/class/opponents), then each SESSION (Practice, Qualifying, Race) with its own timed
 /// length + up to four independent weather slots, then Rules (mandatory pit stop, refuelling).
 /// Per-session weather comes from <see cref="PackWeekend"/>, falling back to the round-level
 /// <see cref="PackSessionSettings.WeatherSlots"/> for un-migrated packs. Placeholder rounds keep the
-/// REAL venue as the display name and are titled "&lt;GP name&gt; — placeholder: &lt;track&gt;"; the
+/// REAL venue as the display name and are titled "&lt;GP name&gt;, placeholder: &lt;track&gt;"; the
 /// distance note travels in <see cref="BriefingModel.SetupNotes"/> (authored in setupGuide.notes),
-/// and the fuel advisory in <see cref="BriefingModel.FuelNote"/>. All display-only — no fold input.
+/// and the fuel advisory in <see cref="BriefingModel.FuelNote"/>. All display-only, no fold input.
 /// </summary>
 public static class BriefingComposer
 {
@@ -43,7 +43,7 @@ public static class BriefingComposer
         // Practice / Qualifying: timed length + this session's weather. AMS2's practice and qualifying
         // are always time-limited (qualifying can never be lap-based). Only rendered when the pack
         // authors at least one detail, so an un-migrated pack shows no empty session block.
-        // SMGP's qualifying IS the game's "Preliminary Race" — the heading keeps the QUALIFYING word
+        // SMGP's qualifying IS the game's "Preliminary Race", the heading keeps the QUALIFYING word
         // (Mike: it read like a separate race before) with the game's own name alongside.
         bool smgp = string.Equals(
             pack.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal);
@@ -61,7 +61,7 @@ public static class BriefingComposer
             settings.Add(new("Time progression", timeProgression) { Section = Race });
 
         // Rules: mandatory pit stop (when a setup guide exists) + refuelling (only when the season
-        // declares it — hidden on packs that don't yet author the flag).
+        // declares it, hidden on packs that don't yet author the flag).
         if (session is not null)
             settings.Add(new("Mandatory pit stop", session.MandatoryPitStop ? "Yes" : "No") { Section = Rules });
         if (pack.Season.RefuellingAllowed is { } refuellingAllowed)
@@ -104,7 +104,7 @@ public static class BriefingComposer
     }
 
     /// <summary>Screen title per the contract: placeholder rounds carry the explicit
-    /// "&lt;GP name&gt; — placeholder: &lt;track&gt;" labeling.</summary>
+    /// "&lt;GP name&gt;, placeholder: &lt;track&gt;" labeling.</summary>
     public static string ComposeTitle(BriefingModel briefing)
     {
         if (!briefing.IsPlaceholder)
@@ -112,7 +112,7 @@ public static class BriefingComposer
 
         string track = briefing.Settings.FirstOrDefault(s => s.Label == TrackLabel)?.Value
             ?? briefing.Round.Track.Id;
-        return $"{briefing.Round.Name} — placeholder: {track}";
+        return $"{briefing.Round.Name}, placeholder: {track}";
     }
 
     private static string InGameTrackName(PackRound round, Ams2ContentLibrary library) =>

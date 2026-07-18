@@ -8,13 +8,13 @@ namespace Companion.Tests.Career;
 /// driver at the 14,951-XP cap reads Level 300 / <see cref="CharacterDossier.IsAtLevelCap"/> with
 /// XpIntoLevel clamped to 0 (banked XP never renders as progress toward a level 301), and
 /// <see cref="CharacterDossier.ActiveModifiers"/> projects the SAME resolved perk modifiers the
-/// sim consumes — unconditional talent deltas as always-active lines, round-conditional effects
+/// sim consumes, unconditional talent deltas as always-active lines, round-conditional effects
 /// carrying their friendly condition label ("Wet rounds").
 /// </summary>
 public sealed class CharacterDossierCapAndModifiersTests
 {
     private const string PackHash = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    private const long XpAtCap = 14_951; // CumulativeXpToLevel(2, 300) — pinned by CharacterLevelProgressionTests
+    private const long XpAtCap = 14_951; // CumulativeXpToLevel(2, 300), pinned by CharacterLevelProgressionTests
 
     private static CharacterRules Rules() => CharacterRules.Parse(CareerTestData.ReadRules("perks.json"));
 

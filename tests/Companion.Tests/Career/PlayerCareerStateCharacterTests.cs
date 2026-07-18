@@ -6,7 +6,7 @@ using Companion.Core.Json;
 namespace Companion.Tests.Career;
 
 /// <summary>The character fields added to <see cref="PlayerCareerState"/> must not perturb a
-/// pre-character career's serialized state — they are omitted when default, so an existing
+/// pre-character career's serialized state, they are omitted when default, so an existing
 /// career's player_state blob is byte-identical. A character career round-trips them.</summary>
 public sealed class PlayerCareerStateCharacterTests
 {

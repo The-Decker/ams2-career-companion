@@ -18,8 +18,8 @@ namespace Companion.App;
 ///
 /// Settings live-apply (ux-round contract section 3): the accent color mutates the shared
 /// AccentBrush/AccentDimBrush instances in place and the font scale replaces the AppUiScale
-/// resource (which every window's root LayoutTransform reads), so every open screen — and every
-/// tear-off window — restyles and rescales immediately, no restart, no view reload.
+/// resource (which every window's root LayoutTransform reads), so every open screen, and every
+/// tear-off window, restyles and rescales immediately, no restart, no view reload.
 /// </summary>
 public partial class App : Application
 {
@@ -42,7 +42,7 @@ public partial class App : Application
 
             // Alternate developer-mode unlock (dynasty-passport-roadmap Piece 2): AMS2_DEVMODE=1
             // flips the runtime gate at startup and persists it, so the debug menu is reachable via
-            // Ctrl+Shift+D. The chord Ctrl+Shift+F12 is the in-app equivalent. Default OFF — a
+            // Ctrl+Shift+D. The chord Ctrl+Shift+F12 is the in-app equivalent. Default OFF, a
             // shipped Release with neither set shows nothing.
             if (IsDevModeEnvSet() && !settings.Current.DeveloperMode)
                 settings.Update(static s => s with { DeveloperMode = true });
@@ -102,7 +102,7 @@ public partial class App : Application
     /// <summary>Pushes the appearance settings into the theme resources: accent + derived
     /// dim accent (a 24% blend toward the window background) and the root UI scale (font scale ÷
     /// 100), which every window's root LayoutTransform multiplies by so ALL text and spacing scale
-    /// uniformly — inline sizes, headings and tear-off windows included, not just inherited body
+    /// uniformly, inline sizes, headings and tear-off windows included, not just inherited body
     /// text. Mutating the brush instances / replacing the resources updates every reference live.</summary>
     /// <summary>True when the AMS2_DEVMODE environment variable requests the developer debug menu
     /// (accepts "1"/"true"/"yes"/"on", case-insensitively). Any read failure degrades to off.</summary>
@@ -128,8 +128,8 @@ public partial class App : Application
     }
 
     // The two runtime-swappable theme slots (Codex's theme contract): a BASE palette
-    // (Theme.Dark/Light.xaml — the 32 semantic brushes) and an ACCENT (Accents/<base>/Accent.<name>.xaml
-    // — the 6 accent brushes). Merged AFTER Theme.xaml so they win, and every view consumes the brushes
+    // (Theme.Dark/Light.xaml, the 32 semantic brushes) and an ACCENT (Accents/<base>/Accent.<name>.xaml
+    //, the 6 accent brushes). Merged AFTER Theme.xaml so they win, and every view consumes the brushes
     // via DynamicResource, so replacing these recolors every open screen + tear-off window live.
     private ResourceDictionary? _baseThemeDict;
     private ResourceDictionary? _accentDict;
@@ -254,7 +254,7 @@ public partial class App : Application
     }
 
     /// <summary>Full exception detail lands in %APPDATA%\AMS2CareerCompanion\last-crash.txt
-    /// (the message box only shows the message) — best-effort, never throws.</summary>
+    /// (the message box only shows the message), best-effort, never throws.</summary>
     private static void TryWriteCrashLog(Exception exception)
     {
         try

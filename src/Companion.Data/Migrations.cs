@@ -12,7 +12,7 @@ public static class Migrations
     /// <summary>Ordered migration scripts; index + 1 is the resulting schema version.</summary>
     private static readonly string[] Scripts =
     [
-        // v1 — career skeleton: identity, pinned packs, seasons, raw results, journal.
+        // v1, career skeleton: identity, pinned packs, seasons, raw results, journal.
         """
         CREATE TABLE career (
             id           INTEGER PRIMARY KEY CHECK (id = 1),
@@ -68,12 +68,12 @@ public static class Migrations
         );
         """,
 
-        // v2 — career sim state (docs/dev/career-sim.md, Persistence): season-keyed
+        // v2, career sim state (docs/dev/career-sim.md, Persistence): season-keyed
         // driver/team/player snapshots plus season-end offer letters. driver_id/team ids are
         // lineage ids ("driver.j_clark", "team.lotus"); state blobs are single-line CoreJson
         // (simple, forward-migratable). stage 'start' rows are sim INPUTS (season 1's come
         // from the new-career wizard; later seasons' bake in the player's accepted offer);
-        // stage 'end' rows and offers are DERIVED season-end pipeline output — re-simulation
+        // stage 'end' rows and offers are DERIVED season-end pipeline output, re-simulation
         // wipes and rebuilds exactly those. ord preserves the caller's ordering verbatim
         // because journal event order follows it (the byte-identical replay contract).
         """
@@ -115,9 +115,9 @@ public static class Migrations
         CREATE INDEX journal_season_seq ON journal (season_id, seq);
         """,
 
-        // v3 — unified replay fold (docs/dev/m5-fix-integration.md): the post-round player
+        // v3, unified replay fold (docs/dev/m5-fix-integration.md): the post-round player
         // state persisted by ReplayService.FoldRound after every imported round. DERIVED
-        // data folded round-over-round from raw results — re-simulation wipes and rebuilds
+        // data folded round-over-round from raw results, re-simulation wipes and rebuilds
         // these rows exactly like stage-'end' states and offers. state_json is a
         // RoundPlayerState cell (player snapshot + next-round slider recommendation).
         """
@@ -129,10 +129,10 @@ public static class Migrations
         );
         """,
 
-        // v4 — grid staging overrides (the Skins grid editor). Per-season, per-seat COSMETIC
+        // v4, grid staging overrides (the Skins grid editor). Per-season, per-seat COSMETIC
         // overrides applied ONLY to the staged custom-AI file: a custom driver name and/or a
         // rebound livery (skin) for the seat identified by its original ams2LiveryName. This is
-        // NOT sim state — the fold/replay never reads it, so re-simulation stays byte-identical and
+        // NOT sim state, the fold/replay never reads it, so re-simulation stays byte-identical and
         // WipeDerived leaves it untouched (it is user input, like a preference, not derived data).
         """
         CREATE TABLE staging_override (
@@ -144,9 +144,9 @@ public static class Migrations
         );
         """,
 
-        // v5 — the career MORTALITY mode (character death & injury, Slice 1;
+        // v5, the career MORTALITY mode (character death & injury, Slice 1;
         // docs/dev/character-death-injury.md §2). Career-wide, chosen once at creation:
-        // 0 = Off (no injury/death — the default), 1 = Normal (injury/death + save & reload),
+        // 0 = Off (no injury/death, the default), 1 = Normal (injury/death + save & reload),
         // 2 = Hardcore (injury/death, no saves, death deletes the file). The NOT NULL DEFAULT 0
         // gives every existing career Off in place, so an upgraded file reads exactly as before.
         // The mode is ALSO mirrored into the start player_state for the fold to read without a DB
@@ -155,10 +155,10 @@ public static class Migrations
         ALTER TABLE career ADD COLUMN mortality_mode INTEGER NOT NULL DEFAULT 0;
         """,
 
-        // v6 — newsroom reading state (docs/dev/newsroom-history-overhaul.md D8). Per-story
+        // v6, newsroom reading state (docs/dev/newsroom-history-overhaul.md D8). Per-story
         // read/bookmark flags keyed by the story's stable dedupe key. USER PREFERENCE like
-        // staging_override — never journaled, never read by the fold, untouched by
-        // WipeDerived — so re-simulation stays byte-identical and an upgraded career reads
+        // staging_override, never journaled, never read by the fold, untouched by
+        // WipeDerived, so re-simulation stays byte-identical and an upgraded career reads
         // exactly as before (no rows until the user reads/bookmarks something). Articles
         // themselves are never stored (they re-render deterministically from the master
         // seed); only the user's relationship to them persists.
@@ -189,7 +189,7 @@ public static class Migrations
 
         if (version > CurrentVersion)
             throw new InvalidOperationException(
-                $"Career file schema v{version} is newer than this app understands (v{CurrentVersion}) — " +
+                $"Career file schema v{version} is newer than this app understands (v{CurrentVersion}), " +
                 "update the app instead of opening the file.");
 
         for (int next = version; next < targetVersion; next++)

@@ -5,17 +5,17 @@ using Companion.Core.Determinism;
 namespace Companion.Core.Newsroom;
 
 /// <summary>
-/// The newsroom's template grammar — the proven <c>{token}</c>/<c>{pool:name}</c> engine grown
+/// The newsroom's template grammar, the proven <c>{token}</c>/<c>{pool:name}</c> engine grown
 /// for editorial prose (docs/dev/newsroom-history-overhaul.md D5):
 /// <list type="bullet">
-/// <item><c>{token}</c> — substitute a fact value; UNKNOWN tokens throw (validation-tested).</item>
-/// <item><c>{a:token}</c> — indefinite article + value ("a win" / "an eighth place").</item>
-/// <item><c>{token's}</c> — possessive ("Senna's", "Brabhams'").</item>
-/// <item><c>{ord:token}</c> — ordinal for a numeric value ("4" → "4th").</item>
-/// <item><c>{pool:name}</c> — one fragment from a named pool, drawn from the supplied stream,
+/// <item><c>{token}</c>, substitute a fact value; UNKNOWN tokens throw (validation-tested).</item>
+/// <item><c>{a:token}</c>, indefinite article + value ("a win" / "an eighth place").</item>
+/// <item><c>{token's}</c>, possessive ("Senna's", "Brabhams'").</item>
+/// <item><c>{ord:token}</c>, ordinal for a numeric value ("4" → "4th").</item>
+/// <item><c>{pool:name}</c>, one fragment from a named pool, drawn from the supplied stream,
 /// recursively expanded (depth-capped).</item>
-/// <item><c>[[?token: text]]</c> — optional segment: rendered (and inner-expanded) only when
-/// the token has a non-empty value — missing optional facts drop cleanly, never "null".</item>
+/// <item><c>[[?token: text]]</c>, optional segment: rendered (and inner-expanded) only when
+/// the token has a non-empty value, missing optional facts drop cleanly, never "null".</item>
 /// </list>
 /// Substituted values are never re-scanned. A finishing pass tidies whitespace and duplicate
 /// punctuation so degraded segments still read like copy a sub-editor passed.
@@ -50,7 +50,7 @@ public static class NewsroomGrammar
         if (depth > MaxExpansionDepth)
         {
             throw new InvalidOperationException(
-                $"Template expansion exceeded depth {MaxExpansionDepth} — a pool probably references itself.");
+                $"Template expansion exceeded depth {MaxExpansionDepth}, a pool probably references itself.");
         }
 
         // Optional segments first, so their inner tokens are only demanded when present.

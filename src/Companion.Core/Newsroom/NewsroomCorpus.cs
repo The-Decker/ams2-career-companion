@@ -42,7 +42,7 @@ public sealed record NewsroomEra
 /// <summary>
 /// The merged newsroom content library: templates + era-voiced pools, loaded additively from
 /// every <c>data/rules/newsroom/*.json</c> pack (ordinal filename order, the NewsArticleBank
-/// convention). Read-side only — never a fold input — so packs are safe to edit and grow;
+/// convention). Read-side only, never a fold input, so packs are safe to edit and grow;
 /// rendezvous selection keeps existing articles' template choices stable under appends.
 /// </summary>
 public sealed class NewsroomCorpus
@@ -94,7 +94,7 @@ public sealed class NewsroomCorpus
 
     /// <summary>
     /// Picks the template for an event: filter to eligible (event kind, guards, era, desk),
-    /// prefer the MOST SPECIFIC situation (highest guard count — a first-win special always
+    /// prefer the MOST SPECIFIC situation (highest guard count, a first-win special always
     /// beats the generic when it applies), then rendezvous-hash among that tier so adding
     /// templates later only re-picks the events the newcomer actually wins.
     /// </summary>
@@ -300,7 +300,7 @@ public sealed class NewsroomCorpus
         };
     }
 
-    /// <summary>Authoring validation — run by the content tests over every shipped pack:
+    /// <summary>Authoring validation, run by the content tests over every shipped pack:
     /// duplicate ids, unknown event kinds, unknown guard keys, empty headline/sections, and
     /// unknown section names all throw with the offending id.</summary>
     public void Validate()
@@ -335,7 +335,7 @@ public sealed class NewsroomCorpus
                         $"Template '{t.Id}' section '{section.Key}' is empty.");
                 }
             }
-            // Each guard key validates alone (unknown keys throw) — a failing known guard
+            // Each guard key validates alone (unknown keys throw), a failing known guard
             // must not short-circuit past an unknown one hiding behind it.
             foreach (var guard in t.When)
             {

@@ -7,7 +7,7 @@ namespace Companion.Tests.Grid;
 
 /// <summary>
 /// The v1.3 juppo schema: per-driver CAR tuning (weight/power/drag scalars + reliability) and the
-/// setup-preference pair (setupDownforce/Randomness). All STAGING-ONLY — the resolved seat carries
+/// setup-preference pair (setupDownforce/Randomness). All STAGING-ONLY, the resolved seat carries
 /// them beside the team values the sim keeps reading, and only the staged custom-AI file prefers
 /// them. Base blocks live on drivers.json "car"; per-round aiOverrides may patch every field.
 /// </summary>
@@ -147,7 +147,7 @@ public sealed class CarTuningTests
             });
 
         // No CAR-range error (the synthetic round legitimately trips unrelated rules like the
-        // missing setupGuide — only the new range check is under test here).
+        // missing setupGuide, only the new range check is under test here).
         Assert.DoesNotContain(PackStructuralValidator.Validate(pack).Issues,
             i => i.Message.Contains("outside the sane range"));
     }
@@ -177,7 +177,7 @@ public sealed class CarTuningTests
 
         Assert.Null(withoutCar.Car);
         // The car block carries WhenWritingNull, so a driver without one never gains the key
-        // (ratings nulls serialize per the existing convention — packs are written surgically
+        // (ratings nulls serialize per the existing convention, packs are written surgically
         // by tools, never via the serializer, so that convention is unchanged).
         string reserialized = System.Text.Json.JsonSerializer.Serialize(withoutCar, Companion.Core.Json.CoreJson.Options);
         Assert.DoesNotContain("\"car\"", reserialized);

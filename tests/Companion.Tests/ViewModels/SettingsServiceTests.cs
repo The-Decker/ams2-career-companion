@@ -138,7 +138,7 @@ public sealed class SettingsServiceTests
         vm.MuteWhenUnfocused = false;
         Assert.False(service.Current.MuteWhenUnfocused);
 
-        Assert.Equal(15, changes);          // one Changed per control touch — live-apply
+        Assert.Equal(15, changes);          // one Changed per control touch, live-apply
         Assert.Equal(15, store.SaveCount);  // and every change hit the store immediately
     }
 
@@ -204,8 +204,8 @@ public sealed class SettingsServiceTests
         var vm = new SettingsViewModel(service, documentsDirectory: Path.GetTempPath());
 
         vm.AddPackFolder(@"D:\Packs");
-        vm.AddPackFolder(@"d:\packs");   // case-insensitive duplicate — ignored
-        vm.AddPackFolder("  ");          // blank — ignored
+        vm.AddPackFolder(@"d:\packs");   // case-insensitive duplicate, ignored
+        vm.AddPackFolder("  ");          // blank, ignored
         vm.AddPackFolder(@"E:\More");
 
         Assert.Equal(new[] { @"D:\Packs", @"E:\More" }, vm.PackFolders);

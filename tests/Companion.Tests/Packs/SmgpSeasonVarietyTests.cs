@@ -8,8 +8,8 @@ namespace Companion.Tests.Packs;
 /// SMGP season-to-season variety (Mike: "the second year is all the races random and the weather
 /// much different than the first season"). Season 1 is the authored baseline; season 2+ gets a
 /// seeded shuffle (Monaco kept as the finale) + fresh weather. The load-bearing property is that
-/// the transform is FOLD-INERT: it only moves display/staging fields, so the resolved grid — and
-/// therefore the sim, the fold, and every replay — is identical to the un-varied pack.
+/// the transform is FOLD-INERT: it only moves display/staging fields, so the resolved grid, and
+/// therefore the sim, the fold, and every replay, is identical to the un-varied pack.
 /// </summary>
 public sealed class SmgpSeasonVarietyTests
 {
@@ -72,7 +72,7 @@ public sealed class SmgpSeasonVarietyTests
         // At least one non-finale position now holds a different venue.
         bool reordered = Enumerable.Range(0, s1.Count - 1)
             .Any(i => !string.Equals(s1[i].Name, s2[i].Name, StringComparison.Ordinal));
-        Assert.True(reordered, "season 2 ran the identical order — the shuffle did nothing.");
+        Assert.True(reordered, "season 2 ran the identical order, the shuffle did nothing.");
     }
 
     [Fact]
@@ -85,7 +85,7 @@ public sealed class SmgpSeasonVarietyTests
         for (int i = 0; i < s1.Count; i++)
         {
             // The POSITION keeps the number, date, championship flag, and the whole grid block
-            // (size + baked DNQ qualifiers) — everything the resolver and fold read.
+            // (size + baked DNQ qualifiers), everything the resolver and fold read.
             Assert.Equal(s1[i].Round, s2[i].Round);
             Assert.Equal(s1[i].Date, s2[i].Date);
             Assert.Equal(s1[i].Championship, s2[i].Championship);
@@ -105,7 +105,7 @@ public sealed class SmgpSeasonVarietyTests
         var s2 = SmgpSeasonVariety.ForSeason(Pack, 2, Seed).Season.Rounds;
         bool anyWeather = s2.Any(r => r.Weekend!.Races.Any(race =>
             race.WeatherSlots!.Any(s => !string.Equals(s, "Clear", StringComparison.Ordinal))));
-        Assert.True(anyWeather, "season 2 was still all Clear — weather never changed.");
+        Assert.True(anyWeather, "season 2 was still all Clear, weather never changed.");
 
         // The setup guide (what AMS2 gets told to run) carries up to 4 slots now, not the lone Clear.
         Assert.All(s2, r => Assert.InRange(r.SetupGuide!.Session.WeatherSlots.Count, 1, 4));
@@ -139,7 +139,7 @@ public sealed class SmgpSeasonVarietyTests
     public void TheResolvedGrid_IsIdentical_BeforeAndAfterTheVariety()
     {
         // For every round POSITION, resolving the grid on the varied pack yields the same seats
-        // (driver ids, ratings, order) as the un-varied pack — the shuffle touches only fields the
+        // (driver ids, ratings, order) as the un-varied pack, the shuffle touches only fields the
         // resolver never reads, so the sim/fold/replay cannot diverge.
         var varied = SmgpSeasonVariety.ForSeason(Pack, 2, Seed);
 

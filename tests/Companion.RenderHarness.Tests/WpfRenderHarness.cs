@@ -11,7 +11,7 @@ namespace Companion.RenderHarness.Tests;
 /// onto its own STA thread through <see cref="RunSta"/>.
 ///
 /// If STA/WPF is unavailable in this environment the whole harness self-skips via
-/// <see cref="IsSupported"/> — the caller turns an unsupported result into <c>Assert.Skip</c>-style
+/// <see cref="IsSupported"/>, the caller turns an unsupported result into <c>Assert.Skip</c>-style
 /// early return rather than a false failure.
 /// </summary>
 internal static class WpfRenderHarness

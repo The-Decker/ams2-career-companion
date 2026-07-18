@@ -10,7 +10,7 @@ namespace Companion.Tests.Data;
 /// <summary>
 /// v0.6.0 determinism gate for "choose the entire grid": a career that carries a
 /// <see cref="GridSelection"/> folds the CHOSEN field (the resolver keeps only the selected liveries
-/// + always the player) and re-simulates byte-identically — the <c>player.gridSelection</c> creation
+/// + always the player) and re-simulates byte-identically, the <c>player.gridSelection</c> creation
 /// row is provenance-excluded while its data rides in the start player state. A whole-pack career is
 /// unaffected (the rest of the suite + the oracle stay byte-identical).
 /// </summary>

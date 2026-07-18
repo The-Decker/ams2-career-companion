@@ -1,7 +1,7 @@
 namespace Companion.Core.Newsroom;
 
 /// <summary>
-/// The importance model: a documented additive score with NO randomness — the same event facts
+/// The importance model: a documented additive score with NO randomness, the same event facts
 /// always produce the same score, and the score alone decides layout tier. Tunable by table,
 /// testable by table.
 /// </summary>
@@ -127,7 +127,7 @@ public sealed record EditorialSelection
 
 /// <summary>
 /// Turns a round's candidate events into a controlled editorial package: fewer meaningful
-/// stories over exhaustive filler. Deterministic — same events in, same package out.
+/// stories over exhaustive filler. Deterministic, same events in, same package out.
 /// </summary>
 public static class EditorialSelector
 {

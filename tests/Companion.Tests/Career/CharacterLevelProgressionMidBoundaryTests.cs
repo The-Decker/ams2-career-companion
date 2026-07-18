@@ -6,7 +6,7 @@ namespace Companion.Tests.Career;
 /// The version-2 (L300) integer curve's MID-CURVE boundaries, exact to the XP point: for each of
 /// the display-significant levels 100/150/200/250, the cumulative-XP threshold is precisely where
 /// <see cref="CharacterLevelProgression.LevelForTotalXp"/> flips from L-1 to L (99→100, 149→150,
-/// 199→200, 249→250) — and a single award crossing four-plus levels lands on the exact level the
+/// 199→200, 249→250), and a single award crossing four-plus levels lands on the exact level the
 /// cumulative table says, proving the lookup and the cumulative sum can never disagree mid-jump.
 /// Complements CharacterLevelProgressionTests, which pins the 298/299/300 cap boundaries.
 /// </summary>

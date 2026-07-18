@@ -74,7 +74,7 @@ public class HeadlineSelectionTests
     public void SubstitutedValuesAreNeverReScanned()
     {
         // A player named "{team} Kid" must print literally: substitution is a single pass
-        // over the TEMPLATE — values never re-enter the scan.
+        // over the TEMPLATE, values never re-enter the scan.
         var bank = CareerTestData.LoadHeadlines();
         var tokens = new Dictionary<string, string>(StringComparer.Ordinal)
         {

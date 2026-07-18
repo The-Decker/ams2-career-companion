@@ -35,7 +35,7 @@ public class CalendarViewModelTests
         var real = vm.Rounds[0];
         Assert.True(real.IsRealVenue);
         Assert.Equal("Real venue", real.BadgeText);
-        Assert.Equal("Monaco", real.TrackLine); // just the track — no "the actual …" tail
+        Assert.Equal("Monaco", real.TrackLine); // just the track, no "the actual …" tail
         Assert.False(real.HasUnusedAlternate);
 
         var alt = vm.Rounds[1];
@@ -66,7 +66,7 @@ public class CalendarViewModelTests
 
         Assert.Equal("United States", vm.Rounds[0].ChipLabel);
         Assert.Equal("Monaco", vm.Rounds[1].ChipLabel);
-        Assert.Equal("San Marino", vm.Rounds[2].ChipLabel); // no suffix — kept whole
+        Assert.Equal("San Marino", vm.Rounds[2].ChipLabel); // no suffix, kept whole
         Assert.Equal("United States Grand Prix", vm.Rounds[0].Name); // the card keeps the full name
     }
 

@@ -5,7 +5,7 @@ namespace Companion.Tests.Career;
 
 /// <summary>
 /// The veteran-aging perks (agingCurve peakShift / declineAccelMult) shift the player's age penalty in
-/// the OFFER market — resolved onto <see cref="PlayerPerkModifiers"/> and consumed by
+/// the OFFER market, resolved onto <see cref="PlayerPerkModifiers"/> and consumed by
 /// <see cref="SeasonEndPipeline.PlayerAgeRisk"/>. The player's on-track ratings deliberately do not age
 /// (the sim's self-balancer would make a rating decline an easier rep bar, not a penalty).
 /// </summary>
@@ -34,7 +34,7 @@ public sealed class AgingPerkTests
     public void VeteranPerks_ResolveTheAgingOverride()
     {
         var rules = Rules();
-        // late_bloomer: agingCurve peakShift +3 — the player's peak (and its age penalty) shifts later.
+        // late_bloomer: agingCurve peakShift +3, the player's peak (and its age penalty) shifts later.
         Assert.Equal(3.0, PerkResolver.Resolve(["late_bloomer"], rules).PeakShift, 6);
         // iron_constitution: agingCurve declineAccelMult −0.50 → the multiplier is 0.50 (a gentler tail).
         Assert.Equal(0.50, PerkResolver.Resolve(["iron_constitution"], rules).DeclineAccelMult, 6);

@@ -104,7 +104,7 @@ public sealed class SeasonGridRenderTests
         {
             using var host = Host.Show(SixSeasons(), width: 1400);
 
-            // Every hero (one per card) should have stretched to the same column width — proof the
+            // Every hero (one per card) should have stretched to the same column width, proof the
             // cards flex to fill rather than sitting at the old fixed 248px.
             var widths = host.Descendants<Grid>()
                 .Where(g => Math.Abs(g.MinHeight - 120) < 0.01 && g.ActualWidth > 0)

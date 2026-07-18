@@ -5,7 +5,7 @@ namespace Companion.Data;
 /// <summary>
 /// Reads/writes the per-season grid-editor staging overrides (v4 <c>staging_override</c> table):
 /// cosmetic per-seat driver-name and livery (skin) rebinds, keyed by the seat's original
-/// <c>ams2LiveryName</c>, applied to the staged custom-AI file. NON-journaled and non-derived — the
+/// <c>ams2LiveryName</c>, applied to the staged custom-AI file. NON-journaled and non-derived, the
 /// deterministic fold/replay never reads this table and <c>WipeDerived</c> never clears it, so
 /// re-simulation stays byte-identical whether or not a career carries edits.
 /// </summary>
@@ -31,7 +31,7 @@ public static class StagingOverrideStore
     }
 
     /// <summary>Upserts one seat's override (keyed by its original livery), or DELETES the row when
-    /// the override is empty (both fields cleared) — so clearing an edit removes it entirely.</summary>
+    /// the override is empty (both fields cleared), so clearing an edit removes it entirely.</summary>
     public static void Set(CareerDatabase database, long seasonId, string liveryKey, SeatStagingOverride ov)
     {
         using var command = database.Connection.CreateCommand();

@@ -801,7 +801,7 @@ public class ResultEntryViewModelTests
         k.Enter();       // Stewart (list order)
         k.Enter();       // Gurney
         Assert.False(vm.IsComplete);
-        k.Enter();       // Siffert — the last seat
+        k.Enter();       // Siffert, the last seat
 
         Assert.True(vm.IsComplete);
         Assert.Equal("10/10 placed", vm.ProgressText);

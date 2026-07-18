@@ -122,7 +122,7 @@
         </DataTemplate>
     </UserControl.Resources>
     <!-- The Driver dossier (character depth 3). DataContext is a DossierViewModel; the character
-         data is Dossier (a CharacterDossier). Read-only — this is the "see your driver" lens. -->
+         data is Dossier (a CharacterDossier). Read-only, this is the "see your driver" lens. -->
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False" DataContext="{Binding Dossier}">
         <!-- proportional page cap (was a hard 720) -->
         <StackPanel Margin="40,32" HorizontalAlignment="Left"
@@ -382,7 +382,7 @@
                                 </Style>
                             </TextBlock.Style>
                             <Run Text="Injury risk: " /><Run Text="{Binding InjuryRisk, Mode=OneWay}" FontWeight="SemiBold"
-                                 Foreground="{DynamicResource ErrorBrush}" /><Run Text="  — a fragile build can be set back at season's end." />
+                                 Foreground="{DynamicResource ErrorBrush}" /><Run Text=" , a fragile build can be set back at season's end." />
                         </TextBlock>
                         <Border Style="{StaticResource CompactChip}" Margin="8,0,0,0"
                                 Background="{DynamicResource SurfaceAltBrush}"
@@ -394,7 +394,7 @@
                                        Style="{StaticResource PixelBadge}" />
                         </Border>
                     </WrapPanel>
-                    <!-- the car you drive, as the arcade spec card — collapses when no spec is authored -->
+                    <!-- the car you drive, as the arcade spec card, collapses when no spec is authored -->
                     <ContentControl Content="{Binding DataContext.PlayerCarSpec, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                     HorizontalAlignment="Left" MaxWidth="300" Margin="0,14,0,0"
                                     Visibility="{Binding DataContext.PlayerCarSpec, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NullCollapsed}}">
@@ -1463,7 +1463,7 @@
             </ItemsControl>
 
             <TextBlock Style="{StaticResource Faint}" Margin="0,4,0,0" TextWrapping="Wrap"
-                       Text="Your stats set the sim's expectation of you — a faster driver is judged against a harder bar. Perks patch the deterministic inputs; nothing here decides a race." />
+                       Text="Your stats set the sim's expectation of you, a faster driver is judged against a harder bar. Perks patch the deterministic inputs; nothing here decides a race." />
         </StackPanel>
     </ScrollViewer>
 </UserControl>

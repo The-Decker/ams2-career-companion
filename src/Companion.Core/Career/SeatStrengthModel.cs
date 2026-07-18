@@ -55,11 +55,11 @@ public sealed record SeatExpectationBreakdown
 }
 
 /// <summary>
-/// Car+driver strength ranking over a resolved <see cref="GridPlan"/> — the source of
+/// Car+driver strength ranking over a resolved <see cref="GridPlan"/>, the source of
 /// "expected finish" for OPI and the pace anchor. Car strength comes from the team's tier
 /// scalar band (power/weight/drag, 1.0-neutral, authored per era) plus reliability; driver
 /// strength is the seat's merged raceSkill. The car is weighted heavier than the driver
-/// ("your tier-4 car really is slower" — PLAN.md).
+/// ("your tier-4 car really is slower", PLAN.md).
 /// </summary>
 public static class SeatStrengthModel
 {
@@ -263,7 +263,7 @@ public static class SeatStrengthModel
                 return i;
         }
         throw new InvalidOperationException(
-            $"Round {grid.Round} grid of {grid.PackId} has no player seat — resolve it with a PlayerSeat.");
+            $"Round {grid.Round} grid of {grid.PackId} has no player seat, resolve it with a PlayerSeat.");
     }
 
     private static double PerformanceAdjustment(double priorOpi) =>

@@ -4,7 +4,7 @@ namespace Companion.Core.Career;
 
 /// <summary>
 /// Overperformance index per the contract: <c>OPI ← 0.8·OPI + 0.2·(expectedFinish −
-/// actualFinish)</c>, DNF-cause aware — mechanical DNFs score as the expected finish (no
+/// actualFinish)</c>, DNF-cause aware, mechanical DNFs score as the expected finish (no
 /// blame, zero delta), driver-error DNFs as the grid size (full blame).
 ///
 /// A player's character perks patch this via an optional <see cref="PlayerPerkModifiers"/>: a null
@@ -18,7 +18,7 @@ public static class OpiMath
 
     /// <summary>The finish position OPI charges the player with. Classified finishes use the
     /// classification; DNFs substitute per cause. Perks scale ONLY the driver-error blame
-    /// (a knife-edge car blames the driver more; a calm head softens it) — a null modifier keeps
+    /// (a knife-edge car blames the driver more; a calm head softens it), a null modifier keeps
     /// the driver-error finish at the grid size exactly.</summary>
     public static double EffectiveFinish(
         double expectedFinish, int? actualFinish, DnfCause? dnfCause, int gridSize,

@@ -3,7 +3,7 @@ using Companion.Core.Scoring;
 
 namespace Companion.Core.Packs;
 
-/// <summary>season.json — calendar + points system + season-level rules.</summary>
+/// <summary>season.json, calendar + points system + season-level rules.</summary>
 public sealed record SeasonDefinition
 {
     public required int Year { get; init; }
@@ -24,10 +24,10 @@ public sealed record SeasonDefinition
     /// <summary>Optional per-race form overlay: round number -> (driver id -> additive pace nudge).
     /// Always applied when the app writes the AMS2 custom-AI file for that round
     /// (<see cref="Companion.Core.Grid"/> staging), so a driver who was hot that weekend is faster on
-    /// track and a slumping one slower — grounded in f1db per-race qualifying vs the season baseline.
+    /// track and a slumping one slower, grounded in f1db per-race qualifying vs the season baseline.
     /// For a <see cref="Companion.Core.Career.PlayerCareerState.FormAware"/> career (Ratings Phase 3)
     /// the FOLD also overlays it onto the AI seats, so the player's expected finish / OPI / pace anchor
-    /// react to who is hot — the SAME additive nudge, so scored == staged. A pre-Phase-3 career never
+    /// react to who is hot, the SAME additive nudge, so scored == staged. A pre-Phase-3 career never
     /// reads it in the fold, so it stays byte-identical. The scoring engine and f1db oracle never read
     /// it. Absent => no form. Guarded with WhenWritingNull so a form-less pack round-trips
     /// byte-identically.</summary>
@@ -37,7 +37,7 @@ public sealed record SeasonDefinition
     /// <summary>Whether the season's rules allow in-race refuelling (AMS2's
     /// <c>PitStopsAllowRefuelling</c>). <c>false</c> = disallowed (1967 cars ran the distance on one
     /// tank; refuelling only arrived ~1982); <c>true</c> = allowed; <c>null</c> = not shown/unknown.
-    /// Season-wide. SIM-INERT: shown on the Race-Day briefing only — the career fold and the f1db
+    /// Season-wide. SIM-INERT: shown on the Race-Day briefing only, the career fold and the f1db
     /// oracle never read it, so a pack that sets it folds byte-identically. Guarded with
     /// WhenWritingNull so a pack that omits it round-trips unchanged.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -70,14 +70,14 @@ public sealed record PackRound
 
     public required PackTrackRef Track { get; init; }
 
-    /// <summary>100% historical race distance — the whole app assumes full-length races.</summary>
+    /// <summary>100% historical race distance, the whole app assumes full-length races.</summary>
     public required int Laps { get; init; }
 
     /// <summary>Optional historical grid for this round (the drivers who ACTUALLY started, mapped
     /// from f1db to pack driver ids, plus the resolved grid size). When present, the resolver
     /// seats only the covering entries whose driver id is in <see cref="PackRoundGrid.StarterDriverIds"/>
-    /// (plus guests and the player). When absent, every covering entry fills the grid — the pre-grid
-    /// behaviour — so a partial regen that omits it on some rounds cannot regress.</summary>
+    /// (plus guests and the player). When absent, every covering entry fills the grid, the pre-grid
+    /// behaviour, so a partial regen that omits it on some rounds cannot regress.</summary>
     public PackRoundGrid? Grid { get; init; }
 
     /// <summary>Rendered on the Race Day briefing screen. The contract requires one on every
@@ -98,11 +98,11 @@ public sealed record PackRound
     /// in later Increment-2 slices.</summary>
     public PackWeekend? Weekend { get; init; }
 
-    /// <summary>Optional ORIGINAL-CIRCUIT pointer (v1.3, additive, DISPLAY-ONLY — the sim never
+    /// <summary>Optional ORIGINAL-CIRCUIT pointer (v1.3, additive, DISPLAY-ONLY, the sim never
     /// reads it): the season+round of the shipped <c>data/history</c> reference whose real event
     /// this pack round's venue models. Needed by packs whose calendar does not run a real
-    /// season's order — the SMGP replica races the GAME's round order over circuits modelled on
-    /// the 1989 season — where the default same-numbered-round join shows the wrong circuit's
+    /// season's order, the SMGP replica races the GAME's round order over circuits modelled on
+    /// the 1989 season, where the default same-numbered-round join shows the wrong circuit's
     /// map, caption and facts on the Calendar/briefing. Null = the pack year's same-numbered
     /// round (every historical pack, byte-identical).</summary>
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
@@ -123,14 +123,14 @@ public sealed record PackRoundHistoryRef
 /// Additive/optional on <see cref="PackRound"/>; a round without it runs the single-race loop.</summary>
 public sealed record PackWeekend
 {
-    /// <summary>Practice session (optional, informational — no result captured).</summary>
+    /// <summary>Practice session (optional, informational, no result captured).</summary>
     public PackWeekendSession? Practice { get; init; }
 
     /// <summary>Qualifying session (optional). When present, its order sets the race grid and
     /// (later slice) calibrates the one-lap pace anchor.</summary>
     public PackWeekendSession? Qualifying { get; init; }
 
-    /// <summary>The scoring races — 1 (a plain era-named Grand Prix) or 2 (e.g. sprint + feature).</summary>
+    /// <summary>The scoring races, 1 (a plain era-named Grand Prix) or 2 (e.g. sprint + feature).</summary>
     public required IReadOnlyList<PackWeekendRace> Races { get; init; }
 }
 
@@ -151,8 +151,8 @@ public sealed record PackWeekendSession
     public int? DurationMinutes { get; init; }
 
     /// <summary>This session's AMS2 weather, up to 4 independent slots (game display labels:
-    /// "Clear", "Light Cloud", "Rain", …). Null = not authored — the briefing then falls back to the
-    /// round-level <see cref="PackSessionSettings.WeatherSlots"/>. Briefing display only — never a
+    /// "Clear", "Light Cloud", "Rain", …). Null = not authored, the briefing then falls back to the
+    /// round-level <see cref="PackSessionSettings.WeatherSlots"/>. Briefing display only, never a
     /// fold input. Guarded with WhenWritingNull so an un-migrated pack round-trips unchanged.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public IReadOnlyList<string>? WeatherSlots { get; init; }
@@ -161,10 +161,10 @@ public sealed record PackWeekendSession
 /// <summary>One scoring race in a weekend.</summary>
 public sealed record PackWeekendRace
 {
-    /// <summary>Stable session id ("race", "race2") — the seam <c>SessionId</c> key and journal key.</summary>
+    /// <summary>Stable session id ("race", "race2"), the seam <c>SessionId</c> key and journal key.</summary>
     public required string Id { get; init; }
 
-    /// <summary>Era-correct display label — a single-race weekend uses whatever that era called the
+    /// <summary>Era-correct display label, a single-race weekend uses whatever that era called the
     /// race ("Grand Prix", "Feature"); a two-race weekend labels each ("Sprint" / "Grand Prix").</summary>
     public required string Label { get; init; }
 
@@ -178,8 +178,8 @@ public sealed record PackWeekendRace
     public string? GridFrom { get; init; }
 
     /// <summary>The race session's AMS2 weather, up to 4 independent slots (game display labels).
-    /// Null = not authored — the briefing then falls back to the round-level
-    /// <see cref="PackSessionSettings.WeatherSlots"/>. Briefing display only — never a fold input.
+    /// Null = not authored, the briefing then falls back to the round-level
+    /// <see cref="PackSessionSettings.WeatherSlots"/>. Briefing display only, never a fold input.
     /// Guarded with WhenWritingNull so an un-migrated pack round-trips unchanged.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public IReadOnlyList<string>? WeatherSlots { get; init; }
@@ -196,14 +196,14 @@ public sealed record PackRoundGrid
     public required int Size { get; init; }
 
     /// <summary>Pack driver ids (drivers.json ids) of the historical starters. A driver id here
-    /// that no entry covers this round is simply ignored — the intersection with covering entries
+    /// that no entry covers this round is simply ignored, the intersection with covering entries
     /// is what seats the grid, so the block never fabricates a seat.</summary>
     public IReadOnlyList<string> StarterDriverIds { get; init; } = [];
 }
 
 public sealed record PackTrackRef
 {
-    /// <summary>Internal id from data/ams2/tracks.json — the AMS2 track actually driven,
+    /// <summary>Internal id from data/ams2/tracks.json, the AMS2 track actually driven,
     /// which for placeholder rounds is NOT the historical venue.</summary>
     public required string Id { get; init; }
 
@@ -220,7 +220,7 @@ public sealed record PackTrackRef
     /// a different problem than placeholder substitution.</summary>
     public IReadOnlyList<string> Fallbacks { get; init; } = [];
 
-    /// <summary>Optional era/character-appropriate ALTERNATE venue for this round — a community MOD
+    /// <summary>Optional era/character-appropriate ALTERNATE venue for this round, a community MOD
     /// track curated as a better stand-in than <see cref="Id"/>. OPT-IN ONLY: applied solely when the
     /// player enables alternate tracks at career creation AND every required mod is confirmed
     /// installed (the season falls back to <see cref="Id"/> otherwise, so the default never gains a
@@ -233,7 +233,7 @@ public sealed record PackTrackRef
 
 /// <summary>An optional alternate mod-track venue for a round (see <see cref="PackTrackRef.Alternate"/>):
 /// the true on-disk mod tag (a <c>data/ams2/tracks.json</c> id with <c>isMod:true</c>) and the lap
-/// count that preserves the real race distance at that track's length — precomputed at authoring time
+/// count that preserves the real race distance at that track's length, precomputed at authoring time
 /// by the same rule as placeholder distance preservation.</summary>
 public sealed record PackTrackAlternate
 {
@@ -245,7 +245,7 @@ public sealed record PackTrackAlternate
     public required int Laps { get; init; }
 
     /// <summary>True when the alternate IS the round's authentic historical venue now available as a
-    /// mod (e.g. the 1978 Belgian GP really ran at Zolder) — applying it clears
+    /// mod (e.g. the 1978 Belgian GP really ran at Zolder), applying it clears
     /// <see cref="PackTrackRef.IsPlaceholder"/>. False for a character/era filler, which stays a
     /// labelled placeholder (the briefing keeps naming the stand-in honestly).</summary>
     public bool IsRealVenue { get; init; }
@@ -290,6 +290,6 @@ public sealed record PackGuestEntry
 
     public string? Number { get; init; }
 
-    /// <summary>EXACT livery display name (case-sensitive) — the load-bearing binding.</summary>
+    /// <summary>EXACT livery display name (case-sensitive), the load-bearing binding.</summary>
     public required string Ams2LiveryName { get; init; }
 }

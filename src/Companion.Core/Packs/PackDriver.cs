@@ -21,7 +21,7 @@ public sealed record PackDriver
 
     public required PackDriverRatings Ratings { get; init; }
 
-    /// <summary>Optional per-driver CAR tuning (v1.3, additive — the juppo schema): physics
+    /// <summary>Optional per-driver CAR tuning (v1.3, additive, the juppo schema): physics
     /// scalars + reliability for THIS driver's car, overriding the team-level values in the
     /// STAGED custom-AI file only. The sim's seat-strength model keeps reading the team values,
     /// so this is sim-inert staging data (community sets author per-driver "evolving car
@@ -35,7 +35,7 @@ public sealed record PackDriver
 }
 
 /// <summary>Per-driver car tuning in the AMS2 custom-AI vocabulary (all optional; ~1.0 =
-/// neutral scalars). Staged-file only — never the sim.</summary>
+/// neutral scalars). Staged-file only, never the sim.</summary>
 public sealed record PackDriverCar
 {
     public double? WeightScalar { get; init; }
@@ -57,11 +57,11 @@ public sealed record PackDriverCar
 }
 
 /// <summary>Driver ratings in the AMS2 custom-AI vocabulary verbatim, each 0.0–1.0.
-/// Only raceSkill and qualifyingSkill are required — they are the pace stats the career sim
+/// Only raceSkill and qualifyingSkill are required, they are the pace stats the career sim
 /// and the difficulty anchor read, and every real community AI file provides them. Every
 /// other stat is optional, mirroring the game format exactly: an omitted stat keeps the stock
 /// driver's default in-game (jusk's 1986 set, for instance, ships no start_reactions). Keeping
-/// them optional preserves NAMeS-first fidelity — a generated file omits precisely what the
+/// them optional preserves NAMeS-first fidelity, a generated file omits precisely what the
 /// installed file omits, so diff-aware staging stays a no-op.</summary>
 public sealed record PackDriverRatings
 {
@@ -81,7 +81,7 @@ public sealed record PackDriverRatings
     public double? FuelManagement { get; init; }
 
     /// <summary>Setup preference (v1.3, juppo schema): how much downforce the AI's setup runs
-    /// (0..1) and how much it randomizes race to race. Staged-file only — the sim never reads
+    /// (0..1) and how much it randomizes race to race. Staged-file only, the sim never reads
     /// either.</summary>
     public double? SetupDownforce { get; init; }
     public double? SetupDownforceRandomness { get; init; }
@@ -131,7 +131,7 @@ public sealed record PackRatingsPatch
 
     /// <summary>Per-round CAR overrides (v1.3, juppo's per-track "evolving car balancing"):
     /// scalar/reliability values for THIS driver THIS round, beating both the team performance
-    /// block and the driver's own car block — in the STAGED file only (never the sim).</summary>
+    /// block and the driver's own car block, in the STAGED file only (never the sim).</summary>
     public double? WeightScalar { get; init; }
     public double? PowerScalar { get; init; }
     public double? DragScalar { get; init; }
@@ -159,7 +159,7 @@ public sealed record PackRatingsPatch
     }
 
     /// <summary>Only the CAR fields the patch actually sets (validated on their own, wider,
-    /// ranges — scalars hover around 1.0, reliability can legitimately exceed it).</summary>
+    /// ranges, scalars hover around 1.0, reliability can legitimately exceed it).</summary>
     public IEnumerable<(string Name, double Value)> EnumerateCar()
     {
         if (WeightScalar is { } weightScalar) yield return ("weightScalar", weightScalar);

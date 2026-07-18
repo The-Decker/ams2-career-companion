@@ -15,7 +15,7 @@ public enum DivergenceKind
 }
 
 /// <summary>One round compared: what really happened vs what the career produced. The
-/// historical side is VerifiedHistorical, the career side is CareerUniverse — the two are
+/// historical side is VerifiedHistorical, the career side is CareerUniverse, the two are
 /// carried as separate labeled fields and never blended.</summary>
 public sealed record RoundDivergence
 {
@@ -27,7 +27,7 @@ public sealed record RoundDivergence
     public string CareerWinner { get; init; } = "";
     public string CareerWinnerTeam { get; init; } = "";
     /// <summary>The career winner does not exist in the historical record at all (the
-    /// player's own entrant, typically) — the strongest form of divergence.</summary>
+    /// player's own entrant, typically), the strongest form of divergence.</summary>
     public bool NonHistoricalWinner { get; init; }
 }
 
@@ -35,7 +35,7 @@ public sealed record RoundDivergence
 /// The season-level comparison between the player's universe and the historical record
 /// (docs/dev/newsroom-history-overhaul.md D9). Computed only for historical-style careers;
 /// the SMGP universe is fiction with its own almanac and never enters this comparison.
-/// The user's career never alters real history — this report is explicitly framed as an
+/// The user's career never alters real history, this report is explicitly framed as an
 /// alternate timeline against the unchanged historical record.
 /// </summary>
 public sealed record SeasonDivergenceReport

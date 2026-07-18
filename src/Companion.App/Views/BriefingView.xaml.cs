@@ -10,7 +10,7 @@ namespace Companion.App.Views;
 /// The Race Day briefing. The viewmodel is WPF-free, so this code-behind bridges the two
 /// WPF-specific pieces: the CopyRequested event onto the real clipboard, and the
 /// CompactChecklistOpen flag onto the small always-on-top checklist window
-/// (<see cref="BriefingCompactWindow"/>) bound to the SAME viewmodel — plus the
+/// (<see cref="BriefingCompactWindow"/>) bound to the SAME viewmodel, plus the
 /// stage/force-stage confirmation popovers (pure open/confirm mechanics; staging itself is
 /// the viewmodel's command).
 /// </summary>
@@ -50,7 +50,7 @@ public partial class BriefingView : UserControl
         }
         catch (COMException)
         {
-            // Another process holds the clipboard open (CLIPBRD_E_CANT_OPEN) — one retry,
+            // Another process holds the clipboard open (CLIPBRD_E_CANT_OPEN), one retry,
             // then give up quietly; a failed copy must never crash the briefing.
             try
             {
@@ -96,7 +96,7 @@ public partial class BriefingView : UserControl
         }
     }
 
-    /// <summary>The user closed the floating window directly — reflect it in the toggle.</summary>
+    /// <summary>The user closed the floating window directly, reflect it in the toggle.</summary>
     private void OnCompactWindowClosed(object? sender, EventArgs e)
     {
         _compactWindow = null;

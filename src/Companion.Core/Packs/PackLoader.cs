@@ -5,7 +5,7 @@ namespace Companion.Core.Packs;
 
 /// <summary>
 /// Parses the five season-pack files from JSON text into a <see cref="SeasonPack"/>.
-/// Core has no file I/O — callers read the files and hand in strings. Every
+/// Core has no file I/O, callers read the files and hand in strings. Every
 /// <see cref="JsonException"/> is rethrown with the pack file-part name prefixed so import
 /// errors point at the right file.
 /// </summary>

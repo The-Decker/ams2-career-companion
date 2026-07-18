@@ -4,7 +4,7 @@ using Companion.Core.Smgp;
 namespace Companion.Tests.Smgp;
 
 /// <summary>The pure live-stats counter: tallies wins/podiums/poles/top-5s/starts per driver from race
-/// classifications + the qualifying pole. Display-only — never a fold input.</summary>
+/// classifications + the qualifying pole. Display-only, never a fold input.</summary>
 public sealed class SmgpLiveStatsTests
 {
     private static ClassifiedEntry Fin(string id, int pos) =>

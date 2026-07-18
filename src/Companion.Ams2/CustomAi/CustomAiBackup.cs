@@ -2,7 +2,7 @@ namespace Companion.Ams2.CustomAi;
 
 /// <summary>
 /// Timestamped backup/restore for files under <c>UserData\CustomAIDrivers\</c>. The user's
-/// folder typically holds community NAMeS files they actively curate — the app NEVER
+/// folder typically holds community NAMeS files they actively curate, the app NEVER
 /// overwrites a class XML without snapshotting the existing file first, and restore puts
 /// back exactly what was there before the app touched it.
 /// </summary>
@@ -24,7 +24,7 @@ public sealed class CustomAiBackup
     /// writes its own. Returns the backup path, or null when there was nothing to back up.
     /// Backup names embed a sortable UTC timestamp: <c>F-Vintage_Gen1.20260702T153000Z.xml</c>.
     /// Two snapshots within the same second (a force-stage immediately followed by a restore)
-    /// get a <c>-2</c>/<c>-3</c>… suffix instead of colliding — a backup must never fail
+    /// get a <c>-2</c>/<c>-3</c>… suffix instead of colliding, a backup must never fail
     /// because the previous one was recent.
     /// </summary>
     public string? BackupIfPresent(string vehicleClass, DateTimeOffset now)
@@ -44,10 +44,10 @@ public sealed class CustomAiBackup
         return backupPath;
     }
 
-    /// <summary>All backups for a class, newest first — by when the backup was TAKEN, read
+    /// <summary>All backups for a class, newest first, by when the backup was TAKEN, read
     /// from the name's embedded timestamp plus the same-second <c>-n</c> suffix (plain
     /// string order would put <c>…Z-2.xml</c> BEFORE <c>…Z.xml</c>, inverting a same-second
-    /// pair; file times are no better — the copy preserves the source's write time).</summary>
+    /// pair; file times are no better, the copy preserves the source's write time).</summary>
     public IReadOnlyList<string> ListBackups(string vehicleClass)
     {
         if (!Directory.Exists(BackupDirectory))
@@ -60,7 +60,7 @@ public sealed class CustomAiBackup
 
     /// <summary>Splits a backup file name into its taken-time key: the timestamp text and
     /// the same-second sequence (no suffix = 1). Unparseable names sort by their whole
-    /// middle part, sequence 1 — degraded but stable.</summary>
+    /// middle part, sequence 1, degraded but stable.</summary>
     private static (string Stamp, int Sequence) TakenKey(string vehicleClass, string path)
     {
         string middle = Path.GetFileNameWithoutExtension(path);
@@ -85,7 +85,7 @@ public sealed class CustomAiBackup
     }
 
     /// <summary>Restores the newest backup over the live class file. Returns false when no
-    /// backup exists. The overwritten app-generated file is not preserved — it can always be
+    /// backup exists. The overwritten app-generated file is not preserved, it can always be
     /// regenerated, the user's original cannot.</summary>
     public bool RestoreLatest(string vehicleClass)
     {

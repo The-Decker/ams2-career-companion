@@ -20,13 +20,13 @@ namespace Companion.Tests.Scenarios;
 /// catalog, 14 seasons × 8 rounds, spanning the 1960s→1970s era-scaling boundary) through the
 /// REAL creation/decision/fold/rollover/era-transition machinery, across result profiles ×
 /// management strategies, reporting balance trajectories, bankruptcy rates and front-running
-/// rates — the evidence source for docs/DYNASTY_ECONOMY_BALANCE_REPORT.md.
+/// rates, the evidence source for docs/DYNASTY_ECONOMY_BALANCE_REPORT.md.
 ///
 /// DORMANT by default: the sweep runs only when COMPANION_ECONOMY_SIM=&lt;careers-per-cell&gt; is
 /// set, so the ordinary suite never pays for it. Reproducible: every career is fully determined
 /// by its master seed + cell (result synthesis is test scaffolding standing in for the human
 /// importing AMS2 results; the product sim never invents results). Decisions go through the REAL
-/// session validation (DeclareEconomyDecision) — a strategy can only do what a player could.
+/// session validation (DeclareEconomyDecision), a strategy can only do what a player could.
 /// </summary>
 public sealed class DynastyEconomyBalanceHarness(ITestOutputHelper output)
 {
@@ -46,7 +46,7 @@ public sealed class DynastyEconomyBalanceHarness(ITestOutputHelper output)
     ];
 
     /// <summary>A management strategy: what the owner does in every decision window. All levers
-    /// go through the real validated decision path — refusals (affordability, caps, slots) are
+    /// go through the real validated decision path, refusals (affordability, caps, slots) are
     /// caught and simply end that window's spending, exactly like a player being told no.</summary>
     private sealed record Strategy(string Name, int StaffTier, SecondSeatDeal SecondSeat, int DevBuysPerWindow);
 
@@ -218,13 +218,13 @@ public sealed class DynastyEconomyBalanceHarness(ITestOutputHelper output)
 
             ApplyStrategy(session, strategy);
             // Development makes the car genuinely quicker; the synthetic HUMAN result mirrors
-            // that the way the sim's own expectation does — a quarter of a place per stage.
+            // that the way the sim's own expectation does, a quarter of a place per stage.
             int developmentLevel = session.EconomyDashboard()?.DevelopmentLevel ?? 0;
             session.Apply(SynthesizeDraft(session, rng, profile, developmentLevel));
         }
     }
 
-    /// <summary>The owner's decision window, through the REAL validation authority — refusals
+    /// <summary>The owner's decision window, through the REAL validation authority, refusals
     /// (slots, floors, caps, affordability) end that lever's spending like a player told no.</summary>
     private static void ApplyStrategy(ICareerSession session, Strategy strategy)
     {
@@ -232,7 +232,7 @@ public sealed class DynastyEconomyBalanceHarness(ITestOutputHelper output)
         if (dashboard is null || dashboard.Bankrupt)
             return;
 
-        // Sponsors are signed by every strategy — backing is the sport's free money.
+        // Sponsors are signed by every strategy, backing is the sport's free money.
         foreach (var offer in dashboard.SponsorBoard.Where(o => o.Eligible))
         {
             TryDeclare(session, new DynastyEconomyDecision
@@ -286,7 +286,7 @@ public sealed class DynastyEconomyBalanceHarness(ITestOutputHelper output)
     }
 
     /// <summary>One synthetic round result on the six-car grid: AI ordered by rating + noise,
-    /// the player inserted at a profile-sampled finish — or DNF'd (mechanical / accident with a
+    /// the player inserted at a profile-sampled finish, or DNF'd (mechanical / accident with a
     /// sampled severity), which is what exercises the repair-bill economics.</summary>
     private static ResultDraft SynthesizeDraft(
         ICareerSession session, Random rng, ResultProfile profile, int developmentLevel)
@@ -355,7 +355,7 @@ public sealed class DynastyEconomyBalanceHarness(ITestOutputHelper output)
 
     // ---------- the synthetic Dynasty catalog ----------
 
-    /// <summary>Three teams across the tier range (5/3/1), six drivers, eight rounds — one pack
+    /// <summary>Three teams across the tier range (5/3/1), six drivers, eight rounds, one pack
     /// per year 1967–1980, so the pinned Dynasty sequence spans two eras of the scaling table.</summary>
     private static void WriteCatalog(string packsRoot)
     {
@@ -576,7 +576,7 @@ public sealed class DynastyEconomyBalanceHarness(ITestOutputHelper output)
     private static string Aggregate(IReadOnlyList<CareerSample> samples)
     {
         var sb = new StringBuilder();
-        sb.AppendLine("Dynasty economy balance sweep — balance/bankruptcy distributions per profile × strategy");
+        sb.AppendLine("Dynasty economy balance sweep, balance/bankruptcy distributions per profile × strategy");
         sb.AppendLine($"careers: {samples.Count} · catalog: {FirstYear}-{LastYear} " +
             $"({LastYear - FirstYear + 1} seasons × {RoundsPerSeason} rounds, tiers 5/3/1, player = tier 3)");
         sb.AppendLine();

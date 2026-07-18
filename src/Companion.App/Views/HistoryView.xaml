@@ -18,8 +18,8 @@
         </DataTemplate>
 
         <!-- one REAL historical race. Before the player has raced it (IsRevealed=false) it is a RACE
-             PREVIEW — circuit map + track detail, NO result spoiler. Once raced it becomes the
-             HISTORICAL DOCUMENT — winner + the full classified grid. Declared BEFORE SeasonCardTemplate,
+             PREVIEW, circuit map + track detail, NO result spoiler. Once raced it becomes the
+             HISTORICAL DOCUMENT, winner + the full classified grid. Declared BEFORE SeasonCardTemplate,
              which references it via StaticResource (no forward refs). -->
         <DataTemplate x:Key="HistoricalRoundTemplate">
             <StackPanel Margin="0,1">
@@ -198,7 +198,7 @@
                                     Command="{Binding DataContext.OpenSeasonInspectorCommand,
                                               RelativeSource={RelativeSource AncestorType=UserControl}}"
                                     CommandParameter="{Binding SeasonYear}"
-                                    ToolTip="Why? — walk back the journal rows behind this season" />
+                                    ToolTip="Why?, walk back the journal rows behind this season" />
                         </DockPanel>
 
                         <TextBlock Text="{Binding ChampionText}" Style="{StaticResource Muted}"
@@ -284,7 +284,7 @@
 
                         <!-- WHAT REALLY HAPPENED: the real f1db results of this year, clearly separated
                              from the player's OWN (diverged) season above by a divider + label. Read-only
-                             reference — collapsed by default, expands per season and per race. -->
+                             reference, collapsed by default, expands per season and per race. -->
                         <Border Margin="0,12,0,0" Padding="0,10,0,0" BorderBrush="{DynamicResource EdgeBrush}"
                                 BorderThickness="0,1,0,0"
                                 Visibility="{Binding HasRealSeason, Converter={StaticResource BoolVisible}}"
@@ -293,7 +293,7 @@
                                 <Button Style="{StaticResource SubtleButton}" HorizontalAlignment="Left"
                                         HorizontalContentAlignment="Left" Padding="0"
                                         Command="{Binding ToggleCommand}"
-                                        ToolTip="What really happened in F1 this year — the real results, separate from your career">
+                                        ToolTip="What really happened in F1 this year, the real results, separate from your career">
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE81C;" FontSize="12"
                                                    VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"
@@ -592,7 +592,7 @@
             <StackPanel>
                 <TextBlock Text="17-SEASON CAMPAIGN" Style="{StaticResource Eyebrow}"
                            Foreground="{DynamicResource AccentTextBrush}" />
-                <TextBlock Text="Every summer stays on the record — including seasons changed by injury."
+                <TextBlock Text="Every summer stays on the record, including seasons changed by injury."
                            Style="{StaticResource Muted}" Margin="0,3,0,9" TextWrapping="Wrap" />
                 <ScrollViewer x:Name="CampaignTimelineScroll"
                               HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"
@@ -693,7 +693,7 @@
         <!-- empty state: no season has an applied round yet -->
         <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" TextWrapping="Wrap" MaxWidth="460"
                    Margin="24,4,24,20" HorizontalAlignment="Left"
-                   Text="No history yet — finish a race and your career starts filling the scrapbook: season cards, a records book, and every dispatch archived forever."
+                   Text="No history yet, finish a race and your career starts filling the scrapbook: season cards, a records book, and every dispatch archived forever."
                    AutomationProperties.Name='History archive empty'
                    Visibility='{Binding IsFresh, Converter={StaticResource BoolVisible}}' />
 
@@ -717,7 +717,7 @@
                         </StackPanel>
                     </DockPanel>
                 </Border>
-                <!-- NEXT RACE preview: the current season's upcoming round — circuit map + track detail,
+                <!-- NEXT RACE preview: the current season's upcoming round, circuit map + track detail,
                      no result spoiler. The History screen's "what's coming next". -->
                 <!-- CAREER HERO: current identity and totals from the read-only career/paddock projection. -->
                 <Border x:Name='HistoryHero' Style='{StaticResource Panel}' Padding='18' Margin='0,0,0,16'
@@ -888,7 +888,7 @@
                     </StackPanel>
                 </Border>
 
-                <!-- WHAT THE WORLD REMEMBERS: the SMGP-universe "what really happened" almanac — the
+                <!-- WHAT THE WORLD REMEMBERS: the SMGP-universe "what really happened" almanac, the
                      fictional SEGA world's own legend of every circuit, each unlocked once the player
                      finishes that race. Shown ONLY for the replica mode (HasSmgpWorld); a normal career
                      never sees it. One panel per History tab (not per season card), since the replica is
@@ -903,7 +903,7 @@
                             <TextBlock Text="What the world remembers" Style="{StaticResource H2}" />
                         </DockPanel>
                         <TextBlock Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,4,0,10"
-                                   Text="The Super Monaco GP world's own account of every circuit — each unlocks once you finish that race." />
+                                   Text="The Super Monaco GP world's own account of every circuit, each unlocks once you finish that race." />
                         <ItemsControl ItemsSource="{Binding Races}"
                                       ItemTemplate="{StaticResource SmgpWorldRaceTemplate}" />
                     </StackPanel>
@@ -993,7 +993,7 @@
                     </Border>
 
                     <!-- FEATURED trio: a deterministic date-aware rotation from the reference data
-                         (seeded by career + calendar day in the ViewModel — holds still all day). -->
+                         (seeded by career + calendar day in the ViewModel, holds still all day). -->
                     <Border Style='{StaticResource Panel}' Margin='0,0,0,16'
                             AutomationProperties.Name='Featured from the encyclopedia'>
                         <StackPanel>
@@ -1199,7 +1199,7 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- THE RECORD BOOKS: the verified leaders — drivers, teams, circuits.
+                    <!-- THE RECORD BOOKS: the verified leaders, drivers, teams, circuits.
                          Height-bounded virtualized lists (the archive spans decades). -->
                     <Border Style='{StaticResource Panel}' Margin='0,0,0,16'>
                         <StackPanel>
@@ -1366,7 +1366,7 @@
 
                 <!-- REAL HISTORY vs THIS UNIVERSE: the unchanged historical record beside what
                      this career produced, side by side and clearly labeled. Alternate outcomes
-                     carry a chip AND a warning wash — the meaning never rides on colour alone. -->
+                     carry a chip AND a warning wash, the meaning never rides on colour alone. -->
                 <Border x:Name='DivergencePanel' Style='{StaticResource Panel}' Margin='0,0,0,18'
                         AutomationProperties.Name='Real history versus this universe'
                         Visibility='{Binding HasDivergence, Converter={StaticResource BoolVisible}, FallbackValue=Collapsed}'>
@@ -1570,13 +1570,13 @@
 
         <!-- The shared "Why?" inspector overlay (career-hub-design.md §5), mirroring StandingsView.
              Shown while an inspector is open; the scrim + Close button (mouse) and the ESC key
-             binding (keyboard) both dismiss it — locked decision 8's parity. -->
+             binding (keyboard) both dismiss it, locked decision 8's parity. -->
         <Border x:Name="InspectorScrim" Background="{DynamicResource ScrimBrush}"
                 Visibility="{Binding IsInspectorOpen, Converter={StaticResource BoolVisible}, FallbackValue=Collapsed}">
             <Border.InputBindings>
                 <KeyBinding Key="Esc" Command="{Binding CloseInspectorCommand}" />
             </Border.InputBindings>
-            <!-- proportional modal (was a fixed 520x440) — same fix as StandingsView's inspector -->
+            <!-- proportional modal (was a fixed 520x440), same fix as StandingsView's inspector -->
             <Border Margin="24" Padding="18"
                     MaxWidth="{Binding ActualWidth, ElementName=InspectorScrim,
                                Converter={StaticResource WidthFraction}, ConverterParameter=0.5|520}"

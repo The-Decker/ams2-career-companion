@@ -21,7 +21,7 @@ namespace Companion.Tests.Data;
 /// </summary>
 public sealed class SmgpMultiSeasonDnqTests : IDisposable
 {
-    private const string SeatC = "Stock Livery #3"; // team.c LEVEL C — the player's start
+    private const string SeatC = "Stock Livery #3"; // team.c LEVEL C, the player's start
     private const long Seed = 20260712;
     private const string PlayerId = Companion.Core.Grid.RoundGridResolver.SyntheticPlayerDriverId;
 

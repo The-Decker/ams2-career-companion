@@ -1,10 +1,10 @@
 namespace Companion.ViewModels.Shell;
 
 /// <summary>
-/// A team's accent COLOUR for the cinematic starting grid (and future team-coloured chrome) — the
+/// A team's accent COLOUR for the cinematic starting grid (and future team-coloured chrome), the
 /// hex string a card's position box / name accent / edge glow use. SMGP's teams get curated colours
 /// (inferred from the mode's liveries); any other team (or an unmapped one) falls back to a stable,
-/// distinct hue derived from its id, so every card is still team-coloured. Display-only — never a
+/// distinct hue derived from its id, so every card is still team-coloured. Display-only, never a
 /// fold input. Phase 2 will move the curated table to an editable data file.
 /// </summary>
 public static class TeamPalette
@@ -47,7 +47,7 @@ public static class TeamPalette
             ["team.zeroforce"] = new("#7A8896", "#7A8896"),
         };
 
-    /// <summary>The team's accent colour as a "#RRGGBB" hex string — curated where known, else a
+    /// <summary>The team's accent colour as a "#RRGGBB" hex string, curated where known, else a
     /// stable per-team hue so every card still reads as team-coloured.</summary>
     public static string For(string? teamId)
     {

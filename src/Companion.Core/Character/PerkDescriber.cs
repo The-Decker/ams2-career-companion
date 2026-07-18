@@ -18,7 +18,7 @@ public sealed record CharacterEffectLine
 /// <summary>
 /// Turns a perk's machine-readable <see cref="PerkEffect"/>s into plain-language lines, so the
 /// creator and the dossier can say what a perk actually does instead of showing opaque numbers
-/// (character depth 5). Pure and data-driven — falls back to a perk effect's authored note for any
+/// (character depth 5). Pure and data-driven, falls back to a perk effect's authored note for any
 /// lever it does not have a friendlier phrase for.
 /// </summary>
 public static class PerkDescriber
@@ -81,7 +81,7 @@ public static class PerkDescriber
     };
 
     /// <summary>One effect as a short phrase (e.g. "Stronger race pace", "Faster car (real pace)",
-    /// "Mistakes punished harder — in the wet").</summary>
+    /// "Mistakes punished harder, in the wet").</summary>
     public static string Describe(PerkEffect e)
     {
         bool up = e.Magnitude > 0;
@@ -128,7 +128,7 @@ public static class PerkDescriber
     private static string CarScalar(string? target, bool up)
     {
         // Power up, or weight/drag down, means a quicker car; the reverse is slower.
-        bool faster = target == "power" ? up : !up; // weight/drag are "hurts" — down = faster
+        bool faster = target == "power" ? up : !up; // weight/drag are "hurts", down = faster
         return (faster ? "Faster car" : "Slower car") + " (real pace)";
     }
 
@@ -162,16 +162,16 @@ public static class PerkDescriber
     private static string Condition(string? condition) => condition switch
     {
         null => "",
-        "wetRound" => " — in the wet",
-        "dryRound" => " — in the dry",
-        "longRace" => " — on long races",
-        "shortRace" => " — on short races",
-        "tierLte2" => " — in a top car",
-        "tierGte4" => " — in a weak car",
-        "eraTransition" => " — across an era change",
-        "driverErrorDnf" => " — after a mistake",
-        "ageLtPeak" => " — while young",
-        "ageGtePeak" => " — as a veteran",
+        "wetRound" => ", in the wet",
+        "dryRound" => ", in the dry",
+        "longRace" => ", on long races",
+        "shortRace" => ", on short races",
+        "tierLte2" => ", in a top car",
+        "tierGte4" => ", in a weak car",
+        "eraTransition" => ", across an era change",
+        "driverErrorDnf" => ", after a mistake",
+        "ageLtPeak" => ", while young",
+        "ageGtePeak" => ", as a veteran",
         _ => "",
     };
 }

@@ -9,14 +9,14 @@ namespace Companion.Tests.ViewModels;
 
 /// <summary>
 /// Cross-season SMGP stat/points accrual: the career card (SmgpCareerStats) must span EVERY season of
-/// the career, not just the current one — the prerequisite for a real 17-season campaign record. Drives
+/// the career, not just the current one, the prerequisite for a real 17-season campaign record. Drives
 /// a two-season carryover career over the REAL machinery (win season 1, sign on, race season 2) and
 /// asserts the player's Paddock card totals both seasons while the season card shows only the current one.
-/// A pure display projection — this never touches the fold (the sibling title-defense tests cover replay).
+/// A pure display projection, this never touches the fold (the sibling title-defense tests cover replay).
 /// </summary>
 public sealed class SmgpCrossSeasonStatsTests : IDisposable
 {
-    private const string SeatC = "Stock Livery #3"; // team.c LEVEL C — the player's start
+    private const string SeatC = "Stock Livery #3"; // team.c LEVEL C, the player's start
     private const long Seed = 20260712;
 
     private readonly string _root = Directory.CreateTempSubdirectory("companion-smgp-xseason-").FullName;
@@ -35,7 +35,7 @@ public sealed class SmgpCrossSeasonStatsTests : IDisposable
 
         using var s2 = CareerSessionService.OpenCareer(CareerPath, Environment());
 
-        // Season 2, one round in — the player wins it.
+        // Season 2, one round in, the player wins it.
         ApplyRound(s2, playerWins: true);
 
         var paddock = s2.SmgpPaddock();
@@ -55,11 +55,11 @@ public sealed class SmgpCrossSeasonStatsTests : IDisposable
         Assert.Equal(1, player.Season!.Wins);
         Assert.Equal(1, player.Season.Starts);
 
-        // The all-time totals are strictly larger than the current season — proof the prior season rolled up.
+        // The all-time totals are strictly larger than the current season, proof the prior season rolled up.
         Assert.True(player.Career.Wins > player.Season.Wins);
         Assert.True(player.Career.Points >= player.Season.Points);
 
-        // The player's OWN card has a generated bio (Mike wanted a biography for "you") — three
+        // The player's OWN card has a generated bio (Mike wanted a biography for "you"), three
         // paragraphs that reflect the live record + the 17-season campaign.
         Assert.Equal(3, player.Bio.Count);
         Assert.All(player.Bio, p => Assert.False(string.IsNullOrWhiteSpace(p)));

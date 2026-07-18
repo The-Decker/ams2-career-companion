@@ -6,7 +6,7 @@ using Companion.Tests.Career;
 
 namespace Companion.Tests.Dynasty;
 
-/// <summary>The shipped Dynasty economy tables parse, validate, and resolve exactly — every
+/// <summary>The shipped Dynasty economy tables parse, validate, and resolve exactly, every
 /// money helper is exact-rational (no drift), era scaling clamps sanely, and the authored
 /// sponsor board covers every slot tier across the whole 1950–2029 product horizon.</summary>
 public sealed class DynastyEconomyRulesTests
@@ -62,7 +62,7 @@ public sealed class DynastyEconomyRulesTests
         Assert.Equal(Rational.Parse("8000"), rules.DevelopmentCost(0, 0, 1967));
         Assert.Equal(Rational.Parse("10800"), rules.DevelopmentCost(1, 0, 1967)); // ×27/20
         Assert.Equal(Rational.Parse("14580"), rules.DevelopmentCost(2, 0, 1967)); // ×(27/20)²
-        // Staff tier 2 discounts by 2/12: 8000 × 5/6 = 20000/3 — EXACT, no rounding.
+        // Staff tier 2 discounts by 2/12: 8000 × 5/6 = 20000/3, EXACT, no rounding.
         Assert.Equal(new Rational(20000, 3), rules.DevelopmentCost(0, 2, 1967));
         // Era-scaled: the same increment in the 80s costs ×10.
         Assert.Equal(Rational.Parse("80000"), rules.DevelopmentCost(0, 0, 1983));
@@ -123,7 +123,7 @@ public sealed class DynastyEconomyRulesTests
                 Assert.True(
                     rules.Sponsors.Board.Any(d =>
                         d.TierSlot == slot && d.FromYear <= year && year <= d.ToYear),
-                    $"No '{slot}' sponsor is signable in {year} — the board has a coverage gap.");
+                    $"No '{slot}' sponsor is signable in {year}, the board has a coverage gap.");
             }
         }
     }

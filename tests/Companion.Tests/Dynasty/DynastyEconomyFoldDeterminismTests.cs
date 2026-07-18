@@ -13,8 +13,8 @@ using Companion.ViewModels.Services;
 namespace Companion.Tests.Dynasty;
 
 /// <summary>THE economy replay contract (the single most important economy test, mirroring
-/// AccidentFoldDeterminismTests): a Dynasty economy career with journaled decisions — sign a
-/// sponsor, buy development — drives two full rounds, a season end, and an era transition into
+/// AccidentFoldDeterminismTests): a Dynasty economy career with journaled decisions, sign a
+/// sponsor, buy development, drives two full rounds, a season end, and an era transition into
 /// the next pinned pack, then <see cref="ReplayService.Resimulate(CareerDatabase, ulong, ReplaySimInputs)"/>
 /// re-derives every economy row and the carried ledger BYTE-IDENTICALLY. Also proves the ledger
 /// chains exactly (every money row's balanceFrom equals the previous row's balanceTo) and that
@@ -78,7 +78,7 @@ public sealed class DynastyEconomyFoldDeterminismTests : IDisposable
         }
         Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
 
-        // Season 2 (the 1969 pack) continues in a fresh session — the app's own reopen shape.
+        // Season 2 (the 1969 pack) continues in a fresh session, the app's own reopen shape.
         using (var session = CareerSessionService.OpenCareer(careerPath, Environment()))
         {
             ApplyRound(session, playerFirst: true);
@@ -172,7 +172,7 @@ public sealed class DynastyEconomyFoldDeterminismTests : IDisposable
             }, Utc(9)));
         Assert.Contains("already has an imported result", ex.Message, StringComparison.Ordinal);
 
-        // Round 2 is still open — the next-round declaration window.
+        // Round 2 is still open, the next-round declaration window.
         long seq = ReplayService.DeclareEconomyDecision(db, seasonId, round: 2, new DynastyEconomyDecision
         {
             Kind = DynastyEconomyDecisionKind.BuyDevelopment,
