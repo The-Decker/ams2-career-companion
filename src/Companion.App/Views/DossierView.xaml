@@ -223,7 +223,7 @@
                                                         RelativeSource={RelativeSource AncestorType=UserControl},
                                                         StringFormat=+{0} level}"
                                          FontWeight="Bold" />
-                                    <Run Text=" &#x2014; choose what comes next." />
+                                    <Run Text=", choose what comes next." />
                                 </TextBlock>
                             </StackPanel>
                         </DockPanel>
@@ -311,7 +311,7 @@
                                         <TextBlock DockPanel.Dock="Right" Text="MAX" Style="{StaticResource PixelBadge}"
                                                    Foreground="{DynamicResource AccentTextBrush}" Margin="12,0,0,0" />
                                         <TextBlock FontFamily="{StaticResource DisplayFont}" FontWeight="Bold">
-                                            <Run Text="LEVEL " /><Run Text="{Binding LevelCap}" /><Run Text=" &#x2014; MAX" />
+                                            <Run Text="LEVEL " /><Run Text="{Binding LevelCap}" /><Run Text=" &#x00B7; MAX" />
                                         </TextBlock>
                                     </DockPanel>
                                 </Border>

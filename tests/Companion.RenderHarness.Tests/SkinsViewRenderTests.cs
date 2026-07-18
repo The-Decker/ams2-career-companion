@@ -95,6 +95,76 @@ public sealed class SkinsViewRenderTests
                 _stagingOverrides[liveryKey] = seatOverride;
         }
 
+        // ---------- mod ownership (the anti-strip vault) ----------
+
+        private IReadOnlyList<SkinSetOwnershipStatus> _ownership = [];
+
+        public int CaptureOwnershipCalls { get; private set; }
+        public int RepairOwnershipCalls { get; private set; }
+
+        /// <summary>When set, a repair flips the owned sets healthy, the real vault's outcome.</summary>
+        public bool RepairRestoresPayload { get; set; }
+
+        public void Own(params SkinSetOwnershipStatus[] sets) => _ownership = sets;
+
+        public IReadOnlyList<SkinSetOwnershipStatus> SkinOwnership() => _ownership;
+
+        public SkinOwnershipCaptureResult CaptureSkinOwnership()
+        {
+            CaptureOwnershipCalls++;
+            return new SkinOwnershipCaptureResult
+            {
+                Success = true,
+                Captured = ["smgp"],
+                Errors = [],
+                Message = "Captured 1 owned set into the app vault.",
+            };
+        }
+
+        public SkinOwnershipRepairResult RepairSkinOwnership()
+        {
+            RepairOwnershipCalls++;
+            if (RepairRestoresPayload)
+                _ownership = [HealthyOwnedSet()];
+            return new SkinOwnershipRepairResult
+            {
+                Success = true,
+                Repaired = ["smgp"],
+                Skipped = [],
+                Errors = [],
+                Backups = [],
+                Message = "Re-laid 1 stripped payload from the app vault.",
+            };
+        }
+
+        public static SkinSetOwnershipStatus DegradedOwnedSet() => new()
+        {
+            Key = "smgp",
+            Models =
+            [
+                new SkinModelOwnershipStatus
+                {
+                    Model = "F-Classic_Gen3",
+                    State = SkinModelOwnershipState.PayloadMissing,
+                    MissingFolders = ["formula_classic_g3m1"],
+                },
+            ],
+        };
+
+        public static SkinSetOwnershipStatus HealthyOwnedSet() => new()
+        {
+            Key = "smgp",
+            Models =
+            [
+                new SkinModelOwnershipStatus
+                {
+                    Model = "F-Classic_Gen3",
+                    State = SkinModelOwnershipState.Owned,
+                    MissingFolders = [],
+                },
+            ],
+        };
+
         public BriefingModel? CurrentBriefing() => null;
         public StageOutcome StageCurrentGrid() => new() { Success = true, Messages = [] };
         public IReadOnlyList<GridSeat> CurrentGrid() => [];
@@ -199,6 +269,108 @@ public sealed class SkinsViewRenderTests
             Assert.Empty(session.SeatStagingOverrides());
             Assert.Equal(Visibility.Collapsed,
                 Assert.IsType<Border>(view.FindName("StagingOverridesNotice")).Visibility);
+        });
+    }
+
+    [Fact]
+    public void GridPreview_OwnershipDegraded_ShowsRepairBannerAndHealsAfterRepair()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var session = new GridPreviewSession();
+            session.Own(GridPreviewSession.DegradedOwnedSet());
+            session.RepairRestoresPayload = true;
+            var vm = new SkinsViewModel(session);
+            Assert.True(vm.HasOwnedSets);
+            Assert.True(vm.HasOwnershipIssues);
+            Assert.Contains("lost payload", vm.OwnershipBanner, StringComparison.Ordinal);
+
+            var view = new SkinsView { DataContext = vm };
+            view.Measure(new Size(1180, 900));
+            view.Arrange(new Rect(0, 0, 1180, 900));
+            view.UpdateLayout();
+            WpfRenderHarness.Pump(DispatcherPriority.DataBind);
+
+            Assert.Equal(Visibility.Visible,
+                Assert.IsType<Border>(view.FindName("OwnershipPanel")).Visibility);
+            var banner = Assert.IsType<Border>(view.FindName("OwnershipDegradedBanner"));
+            Assert.Equal(Visibility.Visible, banner.Visibility);
+            Assert.Equal(Visibility.Collapsed,
+                Assert.IsType<DockPanel>(view.FindName("OwnershipHealthyStrip")).Visibility);
+            Assert.Contains(FindVisualChildren<TextBlock>(banner),
+                text => text.Text.Contains("lost payload", StringComparison.Ordinal));
+            // No action has run yet, so no inline note.
+            Assert.Equal(Visibility.Collapsed,
+                Assert.IsType<TextBlock>(view.FindName("OwnershipActionNoteText")).Visibility);
+
+            vm.RepairOwnershipCommand.Execute(null);
+            WpfRenderHarness.Pump(DispatcherPriority.DataBind);
+            view.UpdateLayout();
+
+            Assert.Equal(1, session.RepairOwnershipCalls);
+            Assert.False(vm.HasOwnershipIssues);
+            Assert.Equal(Visibility.Collapsed, banner.Visibility);
+            Assert.Equal(Visibility.Visible,
+                Assert.IsType<DockPanel>(view.FindName("OwnershipHealthyStrip")).Visibility);
+            var note = Assert.IsType<TextBlock>(view.FindName("OwnershipActionNoteText"));
+            Assert.Equal(Visibility.Visible, note.Visibility);
+            Assert.Equal("Re-laid 1 stripped payload from the app vault.", note.Text);
+        });
+    }
+
+    [Fact]
+    public void GridPreview_OwnershipHealthy_IsQuietWithCaptureAndCollapsesWithoutOwnedSets()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var session = new GridPreviewSession();
+            session.Own(GridPreviewSession.HealthyOwnedSet());
+            var vm = new SkinsViewModel(session);
+            Assert.True(vm.HasOwnedSets);
+            Assert.False(vm.HasOwnershipIssues);
+            Assert.Equal("", vm.OwnershipBanner);
+
+            var view = new SkinsView { DataContext = vm };
+            view.Measure(new Size(1180, 900));
+            view.Arrange(new Rect(0, 0, 1180, 900));
+            view.UpdateLayout();
+            WpfRenderHarness.Pump(DispatcherPriority.DataBind);
+
+            Assert.Equal(Visibility.Visible,
+                Assert.IsType<Border>(view.FindName("OwnershipPanel")).Visibility);
+            Assert.Equal(Visibility.Collapsed,
+                Assert.IsType<Border>(view.FindName("OwnershipDegradedBanner")).Visibility);
+            var healthy = Assert.IsType<DockPanel>(view.FindName("OwnershipHealthyStrip"));
+            Assert.Equal(Visibility.Visible, healthy.Visibility);
+            Assert.Contains(FindVisualChildren<TextBlock>(healthy),
+                text => text.Text.Contains("MOD PAYLOAD INTACT", StringComparison.Ordinal));
+
+            vm.CaptureOwnershipCommand.Execute(null);
+            WpfRenderHarness.Pump(DispatcherPriority.DataBind);
+            view.UpdateLayout();
+
+            Assert.Equal(1, session.CaptureOwnershipCalls);
+            var note = Assert.IsType<TextBlock>(view.FindName("OwnershipActionNoteText"));
+            Assert.Equal(Visibility.Visible, note.Visibility);
+            Assert.Equal("Captured 1 owned set into the app vault.", note.Text);
+
+            // Nothing app-owned (no vault manifests, or no install): the whole panel goes away.
+            var bareVm = new SkinsViewModel(new GridPreviewSession());
+            Assert.False(bareVm.HasOwnedSets);
+            var bareView = new SkinsView { DataContext = bareVm };
+            bareView.Measure(new Size(1180, 900));
+            bareView.Arrange(new Rect(0, 0, 1180, 900));
+            bareView.UpdateLayout();
+            WpfRenderHarness.Pump(DispatcherPriority.DataBind);
+
+            Assert.Equal(Visibility.Collapsed,
+                Assert.IsType<Border>(bareView.FindName("OwnershipPanel")).Visibility);
         });
     }
 
