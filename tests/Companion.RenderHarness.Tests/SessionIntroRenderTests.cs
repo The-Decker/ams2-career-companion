@@ -14,15 +14,14 @@ public sealed class SessionIntroRenderTests
 {
     [Theory]
     [InlineData(SessionIntroKind.Qualifying, "qualifying", "QUALIFYING", "Begin qualifying",
-        "AccentBrush", "AccentBrush")]
+        "AccentBrush")]
     [InlineData(SessionIntroKind.Race, "race", "RACE", "Start the race",
-        "ErrorBrush", "WarningBrush")]
+        "WarningBrush")]
     public void SessionIntroView_RendersBoundVariantAndContinuesOnce(
         SessionIntroKind kind,
         string artworkKey,
         string expectedTitle,
         string expectedAction,
-        string railBrushKey,
         string actionBrushKey)
     {
         if (!WpfRenderHarness.IsSupported)
@@ -49,7 +48,6 @@ public sealed class SessionIntroRenderTests
 
             var title = Assert.IsType<TextBlock>(view.FindName("SessionTitle"));
             var subtitleText = Assert.IsType<TextBlock>(view.FindName("SessionSubtitle"));
-            var rail = Assert.IsType<Border>(view.FindName("ModeRail"));
             var signal = Assert.IsType<Border>(view.FindName("ModeSignal"));
             var glyph = Assert.IsType<TextBlock>(view.FindName("ModeGlyph"));
             var button = Assert.IsType<Button>(view.FindName("ContinueButton"));
@@ -63,7 +61,6 @@ public sealed class SessionIntroRenderTests
             Assert.True(button.IsDefault);
             Assert.Same(button, FocusManager.GetFocusedElement(root));
 
-            AssertBrushMatches(rail.Background, railBrushKey);
             AssertBrushMatches(button.Background, actionBrushKey);
             AssertBrushMatches(signal.BorderBrush,
                 kind == SessionIntroKind.Race ? "WarningBrush" : "AccentBrush");
@@ -101,8 +98,8 @@ public sealed class SessionIntroRenderTests
 
             Assert.Equal(560, view.ActualWidth);
             Assert.Equal(360, view.ActualHeight);
-            Assert.True(button.ActualWidth >= 226);
-            Assert.True(button.ActualHeight >= 48);
+            Assert.True(button.ActualWidth >= 168);
+            Assert.True(button.ActualHeight >= 38);
             Assert.InRange(topLeft.X, 0, view.ActualWidth - button.ActualWidth);
             Assert.InRange(topLeft.Y, 0, view.ActualHeight - button.ActualHeight);
         });

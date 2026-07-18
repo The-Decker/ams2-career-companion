@@ -4,8 +4,8 @@
              xmlns:audio="clr-namespace:Companion.App.Audio"
              Focusable="False"
              AutomationProperties.Name="{Binding Title, StringFormat={}{0} session introduction}">
-    <!-- Display-only cinematic gate between race-loop stages. The VM owns progression; this view
-         binds its stable artwork key and command, while the generated images remain text-free. -->
+    <!-- The compact session gate: one banner, one line of context, one action. The VM owns
+         progression and the artwork key; the generated plates stay text-free. -->
     <Grid x:Name="SessionIntroRoot"
           FocusManager.IsFocusScope="True"
           FocusManager.FocusedElement="{Binding ElementName=ContinueButton}"
@@ -13,11 +13,19 @@
         <Border Background="{DynamicResource SurfaceAltBrush}"
                 BorderBrush="{DynamicResource EdgeStrongBrush}"
                 BorderThickness="1"
-                CornerRadius="18"
+                CornerRadius="12"
                 ClipToBounds="True"
+                MaxWidth="560"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
                 Effect="{StaticResource PanelElevationEffect}">
             <Grid>
-                <!-- Text-free generated key art. ArtworkKey is deliberately the only resolver key. -->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="150" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Short text-free art band; one soft fade keeps the caption readable. -->
                 <Image x:Name="SessionArtwork"
                        Stretch="UniformToFill"
                        RenderOptions.BitmapScalingMode="HighQuality"
@@ -35,209 +43,97 @@
                         </Style>
                     </Image.Style>
                 </Image>
-
-                <!-- Layered contrast treatment keeps every caption readable on both generated plates. -->
-                <Border Background="{DynamicResource ScrimBrush}" Opacity="0.34" />
-                <Border Background="{StaticResource MainMenuScrimBrush}" />
                 <Border Background="{StaticResource MainMenuBottomFadeBrush}" />
-                <Border Background="{StaticResource MainMenuVignetteBrush}" />
 
-                <!-- Racing-wire geometry: intentionally sparse, like a timing stand schematic. -->
-                <Grid IsHitTestVisible="False" Opacity="0.72">
-                    <Border Width="1" Margin="82,0,0,0" HorizontalAlignment="Left"
-                            Background="{DynamicResource OnMediaMutedBrush}" Opacity="0.22" />
-                    <Border Height="1" Margin="0,86,0,0" VerticalAlignment="Top"
-                            Background="{DynamicResource OnMediaMutedBrush}" Opacity="0.16" />
-                    <Border Width="260" Height="1" Margin="0,0,58,82"
-                            HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                            Background="{DynamicResource OnMediaMutedBrush}" Opacity="0.20" />
-                    <Border Width="92" Height="1" Margin="0,0,16,82"
-                            HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                            RenderTransformOrigin="1,0.5"
-                            Background="{DynamicResource OnMediaMutedBrush}" Opacity="0.20">
-                        <Border.RenderTransform>
-                            <RotateTransform Angle="-28" />
-                        </Border.RenderTransform>
+                <DockPanel Grid.Row="1" Margin="18,12,18,14">
+                    <Border x:Name="ModeSignal"
+                            DockPanel.Dock="Left"
+                            Width="34" Height="34" CornerRadius="17"
+                            BorderThickness="1.5" Margin="0,0,12,0">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="{DynamicResource AccentDimBrush}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ArtworkKey}" Value="race">
+                                        <Setter Property="Background" Value="{DynamicResource WarningDimBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource WarningBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock x:Name="ModeGlyph"
+                                   FontFamily="{StaticResource MonoFont}"
+                                   FontSize="13" FontWeight="Bold"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="Q" />
+                                    <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ArtworkKey}" Value="race">
+                                            <Setter Property="Text" Value="R" />
+                                            <Setter Property="Foreground" Value="{DynamicResource WarningBrush}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
                     </Border>
-                </Grid>
 
-                <Grid Margin="38,28,38,34">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <!-- Session telemetry / context header. -->
-                    <DockPanel LastChildFill="True">
-                        <Border x:Name="ModeSignal"
-                                DockPanel.Dock="Left"
-                                Width="52" Height="52" CornerRadius="26"
-                                BorderThickness="1.5" Margin="0,0,16,0">
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Setter Property="Background" Value="{DynamicResource AccentDimBrush}" />
-                                    <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ArtworkKey}" Value="race">
-                                            <Setter Property="Background" Value="{DynamicResource WarningDimBrush}" />
-                                            <Setter Property="BorderBrush" Value="{DynamicResource WarningBrush}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                            <TextBlock x:Name="ModeGlyph"
+                    <Button x:Name="ContinueButton"
+                            DockPanel.Dock="Right"
+                            MinWidth="168" MinHeight="38"
+                            Padding="16,8"
+                            IsDefault="True"
+                            VerticalAlignment="Center"
+                            Command="{Binding ContinueCommand}"
+                            audio:SoundAssist.Cue="Confirm"
+                            AutomationProperties.Name="{Binding ActionLabel}"
+                            AutomationProperties.HelpText="Continue to the session entry screen">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource AccentButton}">
+                                <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ArtworkKey}" Value="race">
+                                        <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource WarningBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <DockPanel LastChildFill="True">
+                            <TextBlock DockPanel.Dock="Right" Text="&#x2192;"
                                        FontFamily="{StaticResource MonoFont}"
-                                       FontSize="20" FontWeight="Bold"
-                                       HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Text" Value="Q" />
-                                        <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding ArtworkKey}" Value="race">
-                                                <Setter Property="Text" Value="R" />
-                                                <Setter Property="Foreground" Value="{DynamicResource WarningBrush}" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                        </Border>
+                                       FontSize="13" FontWeight="Bold" Margin="12,0,0,0"
+                                       VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding ActionLabel}"
+                                       FontFamily="{StaticResource DisplayFont}"
+                                       FontSize="11" FontWeight="Bold"
+                                       VerticalAlignment="Center" />
+                        </DockPanel>
+                    </Button>
 
-                        <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="{Binding Eyebrow}"
-                                       Style="{StaticResource Eyebrow}"
-                                       Foreground="{DynamicResource OnMediaBrush}"
-                                       FontSize="11" />
-                            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                                <TextBlock Text="ROUND CONTROL" FontFamily="{StaticResource MonoFont}"
-                                           Foreground="{DynamicResource OnMediaMutedBrush}"
-                                           FontSize="10" FontWeight="Bold" />
-                                <TextBlock Text="  /  SESSION READY" FontFamily="{StaticResource MonoFont}"
-                                           Foreground="{DynamicResource OnMediaMutedBrush}"
-                                           FontSize="10" Opacity="0.72" />
-                            </StackPanel>
-                        </StackPanel>
-                    </DockPanel>
-
-                    <!-- XAML-owned typography sits over the deliberately text-free hero art. -->
-                    <Viewbox Grid.Row="1" Stretch="Uniform" StretchDirection="DownOnly"
-                             HorizontalAlignment="Left" VerticalAlignment="Center"
-                             MaxWidth="820" Margin="44,14,0,18">
-                    <StackPanel Width="780" HorizontalAlignment="Left">
-                        <Border x:Name="AccentRail"
-                                Width="86" Height="5" CornerRadius="2.5"
-                                HorizontalAlignment="Left" Margin="0,0,0,20">
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ArtworkKey}" Value="race">
-                                            <Setter Property="Background" Value="{DynamicResource ErrorBrush}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                        </Border>
-
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Eyebrow}"
+                                   Style="{StaticResource Eyebrow}"
+                                   Foreground="{DynamicResource OnMediaMutedBrush}" />
                         <TextBlock x:Name="SessionTitle"
                                    Text="{Binding Title}"
                                    FontFamily="{StaticResource DisplayFont}"
-                                   FontSize="72" FontWeight="Black"
+                                   FontSize="26" FontWeight="Black"
                                    Foreground="{DynamicResource OnMediaBrush}"
-                                   TextWrapping="Wrap"
-                                   TextTrimming="None"
+                                   TextTrimming="CharacterEllipsis"
                                    AutomationProperties.LiveSetting="Polite" />
-
                         <TextBlock x:Name="SessionSubtitle"
                                    Text="{Binding Subtitle}"
-                                   FontFamily="{StaticResource BodyFont}"
-                                   FontSize="17" FontWeight="SemiBold"
+                                   FontSize="12"
                                    Foreground="{DynamicResource OnMediaMutedBrush}"
-                                   TextWrapping="Wrap" MaxWidth="720"
-                                   HorizontalAlignment="Left" Margin="4,14,0,0" />
+                                   TextTrimming="CharacterEllipsis"
+                                   Margin="0,3,0,0" />
                     </StackPanel>
-                    </Viewbox>
-
-                    <Grid Grid.Row="2" Margin="44,0,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <Grid VerticalAlignment="Center" Margin="0,0,14,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Border Width="8" Height="8" CornerRadius="4" Margin="0,0,10,0">
-                                <Border.Style>
-                                    <Style TargetType="Border">
-                                        <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding ArtworkKey}" Value="race">
-                                                <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Border.Style>
-                            </Border>
-                            <TextBlock Grid.Column="1" Text="PRESS ENTER OR SELECT CONTINUE"
-                                       FontFamily="{StaticResource MonoFont}"
-                                       FontSize="10" FontWeight="Bold"
-                                       Foreground="{DynamicResource OnMediaMutedBrush}"
-                                       TextWrapping="Wrap" />
-                        </Grid>
-
-                        <Button x:Name="ContinueButton"
-                                Grid.Column="1"
-                                MinWidth="226" MinHeight="48"
-                                Padding="24,12"
-                                IsDefault="True"
-                                Command="{Binding ContinueCommand}"
-                                audio:SoundAssist.Cue="Confirm"
-                                AutomationProperties.Name="{Binding ActionLabel}"
-                                AutomationProperties.HelpText="Continue to the session entry screen">
-                            <Button.Style>
-                                <Style TargetType="Button" BasedOn="{StaticResource AccentButton}">
-                                    <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
-                                    <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ArtworkKey}" Value="race">
-                                            <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
-                                            <Setter Property="BorderBrush" Value="{DynamicResource WarningBrush}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                            <DockPanel LastChildFill="True">
-                                <TextBlock DockPanel.Dock="Right" Text="&#x2192;"
-                                           FontFamily="{StaticResource MonoFont}"
-                                           FontSize="18" FontWeight="Bold" Margin="18,0,0,0"
-                                           VerticalAlignment="Center" />
-                                <TextBlock Text="{Binding ActionLabel}"
-                                           FontFamily="{StaticResource DisplayFont}"
-                                           FontSize="13" FontWeight="Bold"
-                                           VerticalAlignment="Center" />
-                            </DockPanel>
-                        </Button>
-                    </Grid>
-                </Grid>
-
-                <!-- Variant-colored timing rail anchors the visual mood without hard-coded paint. -->
-                <Border x:Name="ModeRail" Width="7" HorizontalAlignment="Left">
-                    <Border.Style>
-                        <Style TargetType="Border">
-                            <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ArtworkKey}" Value="race">
-                                    <Setter Property="Background" Value="{DynamicResource ErrorBrush}" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Border.Style>
-                </Border>
+                </DockPanel>
             </Grid>
         </Border>
     </Grid>

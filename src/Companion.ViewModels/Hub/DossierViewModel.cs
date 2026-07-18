@@ -546,6 +546,8 @@ public sealed partial class DossierViewModel : ObservableObject
         SkillPlanDirty = _pendingSkillNodeIds.Count > 0;
     }
 
+    private string? _skillTreeFingerprint;
+
     private void SetSkillTree(SkillTreeSnapshot? snapshot, string? selectedId = null)
     {
         selectedId ??= SelectedSkillNode?.Id;
@@ -554,8 +556,20 @@ public sealed partial class DossierViewModel : ObservableObject
             SkillTree = [];
             AttributeRails = [];
             SelectedSkillNode = null;
+            _skillTreeFingerprint = null;
             return;
         }
+
+        // The full 209-node rebuild + re-render only pays when the projection actually changed:
+        // identical state/cost/rail structure keeps the existing viewmodels (and their visuals)
+        // untouched, which is what makes repeat dossier opens instant.
+        string fingerprint = string.Join(";",
+            snapshot.Branches.SelectMany(branch => branch.Nodes)
+                .Select(node => $"{node.Id}:{node.State}:{node.Cost}:{node.AttributeValueAfter}"));
+        if (fingerprint == _skillTreeFingerprint && SkillTree.Count > 0)
+            return;
+
+        _skillTreeFingerprint = fingerprint;
 
         var names = snapshot.Branches.SelectMany(branch => branch.Nodes)
             .ToDictionary(node => node.Id, node => node.Name, StringComparer.Ordinal);

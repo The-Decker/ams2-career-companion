@@ -1024,8 +1024,14 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         transaction.Commit();
     }
 
+    private SkillTreeSnapshot? _skillTreeCache;
+    private ProjectionFingerprint _skillTreeFingerprint;
+    private string _skillTreePendingKey = "";
+
     /// <summary>The rules-backed skill-tree snapshot, including this season's pending development
-    /// inputs so a just-bought node immediately projects as owned.</summary>
+    /// inputs so a just-bought node immediately projects as owned. Memoized behind the same
+    /// stored-state fingerprint the newsroom uses (plus the pending-skill key), so repeated
+    /// dossier opens and no-op refreshes skip the full 209-node re-projection.</summary>
     public SkillTreeSnapshot? SkillTree()
     {
         if (_environment.RulesDirectory is null)
@@ -1034,6 +1040,17 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         if (player?.Character is not { } character)
             return null;
         var rules = _environment.Rules.Character;
+
+        string pendingKey = PendingSkillDevelopment().Count + "/" + PendingRespecs().Count + "/" + PendingSpends().Count;
+        var fingerprint = ProjectionFingerprint.Read(_database);
+        if (_skillTreeCache is not null &&
+            fingerprint == _skillTreeFingerprint &&
+            pendingKey == _skillTreePendingKey)
+        {
+            return _skillTreeCache;
+        }
+
+        SkillTreeSnapshot? result;
 
         if (character.ProgressionVersion == CharacterLevelProgression.Level300Version)
         {
@@ -1046,17 +1063,23 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                 facts.AvailableSkillPoints,
                 _environment.Rules.MasterySkills,
                 facts.MasteryCheckpointComplete);
-            return MarkPending(
+            result = MarkPending(
                 tree,
                 ActivePendingSkillEntries(actions)
                     .Select(entry => entry.NodeId));
         }
+        else
+        {
+            var projected = CharacterProgress.ApplyRespecs(character, PendingRespecs());
+            projected = CharacterProgress.ApplyAll(projected, PendingSpends(), rules);
+            result = Companion.Core.Character.SkillTree.Build(
+                projected, player.Level, AvailableCharacterCp(), rules);
+        }
 
-        var projected = CharacterProgress.ApplyRespecs(character, PendingRespecs());
-        projected = CharacterProgress.ApplyAll(projected, PendingSpends(), rules);
-        var snapshot = Companion.Core.Character.SkillTree.Build(
-            projected, player.Level, AvailableCharacterCp(), rules);
-        return snapshot;
+        _skillTreeCache = result;
+        _skillTreeFingerprint = fingerprint;
+        _skillTreePendingKey = pendingKey;
+        return result;
     }
 
     /// <summary>Version-selected development points available right now: the folded pool minus this

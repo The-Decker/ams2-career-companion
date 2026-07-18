@@ -103,8 +103,13 @@ adversarial audit) and the real gaps closed:
    `docs/LEVEL_300_BALANCE_REPORT.md` once the current sweep completes; rerunnable any time via
    `COMPANION_BALANCE_EVIDENCE=1 dotnet test --filter FullyQualifiedName~ReleaseEvidence`.
 
-## Exactly one next slice
+## Release status
 
+**SMGP-1.0-alpha CUT (2026-07-18):** release commit `c8bed3e` (v1.0.0), tag
+`smgp-1.0-alpha` pushed, RC deployed to dist (16:56, boot-verified). Both former blockers
+closed: GUI round 6 shipped (`dfc6b9b`) and the Pit Wall Command Rail passed Mike's
+acceptance (four size/scale frames reviewed and approved). Suite 2,892 logic + 246 render
+green at cut; oracle 77/77.
 **Codex GUI round 6: bind the SMGP-300 surfaces (`docs/dev/codex-gui-smgp300-brief.md`), then the
 Pit Wall Command Rail acceptance pass (blocker 3).** When both are green, refresh this ledger and
 cut the alpha RC.

@@ -55,13 +55,14 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid Width="46" Height="46">
-                    <Border CornerRadius="6" Background="{DynamicResource SurfaceAltBrush}">
+                    <Border CornerRadius="6" Background="{DynamicResource SurfaceAltBrush}"
+                            Visibility="{Binding ElementName=TeamRowLogoImage, Path=Source, Converter={StaticResource NullVisible}}">
                         <TextBlock Text="&#xE7C1;" FontFamily="{StaticResource IconFont}" FontSize="18"
                                    Foreground="{DynamicResource TextMutedBrush}" Opacity="0.45"
                                    HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <Border CornerRadius="6" ClipToBounds="True">
-                        <Image Stretch="Uniform" Margin="4"
+                        <Image x:Name="TeamRowLogoImage" Stretch="Uniform" Margin="4"
                                Style="{StaticResource TeamLogoImage}"
                                Source="{Binding LogoKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
                                Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
@@ -336,13 +337,14 @@
                         </Grid.ColumnDefinitions>
                         <Grid Width="120" Height="120" VerticalAlignment="Top"
                               ToolTip="Drop the team logo at data\ams2\smgp\logos\&lt;teamId&gt;.png">
-                            <Border CornerRadius="10" Background="{DynamicResource SurfaceAltBrush}">
+                            <Border CornerRadius="10" Background="{DynamicResource SurfaceAltBrush}"
+                                    Visibility="{Binding ElementName=TeamCardLogoImage, Path=Source, Converter={StaticResource NullVisible}}">
                                 <TextBlock Text="&#xE7C1;" FontFamily="{StaticResource IconFont}" FontSize="44"
                                            Foreground="{DynamicResource TextMutedBrush}" Opacity="0.4"
                                            HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                             <Border CornerRadius="10" ClipToBounds="True">
-                                <Image Stretch="Uniform" Margin="10"
+                                <Image x:Name="TeamCardLogoImage" Stretch="Uniform" Margin="10"
                                        Style="{StaticResource TeamLogoImage}"
                                        Source="{Binding LogoKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
                                        Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
