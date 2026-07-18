@@ -25,11 +25,11 @@ public sealed partial class StartViewModel : ObservableObject
             DisplayName = "Grand Prix Dynasty",
             Tagline = "Build a legacy through racing history.",
             Description =
-                "Begin the faithful historical championship path. The current driver career is " +
-                "playable now; owner and team management will expand in later Alpha passes.",
+                "Begin the faithful historical championship path. The driver-owner mode is in " +
+                "active development; Super Monaco GP is the finished experience this Alpha.",
             PersistenceSummary =
                 "One save follows one chronological timeline. Its installed faithful seasons are pinned when you begin.",
-            AvailabilityLabel = "PLAYABLE FIRST PASS",
+            AvailabilityLabel = "IN DEVELOPMENT",
             IsAvailable = true,
         },
         new CareerModeEntry

@@ -25,7 +25,7 @@ public sealed class CareerModeMenuTests : IDisposable
                 Assert.Equal(CareerExperienceModes.GrandPrixDynasty, dynasty.Id);
                 Assert.Equal("Grand Prix Dynasty", dynasty.DisplayName);
                 Assert.True(dynasty.IsAvailable);
-                Assert.Contains("FIRST PASS", dynasty.AvailabilityLabel, StringComparison.Ordinal);
+                Assert.Contains("IN DEVELOPMENT", dynasty.AvailabilityLabel, StringComparison.Ordinal);
             },
             smgp =>
             {
