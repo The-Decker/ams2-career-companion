@@ -105,6 +105,51 @@ public sealed partial class SkinsViewModel : ObservableObject
         Refresh();
     }
 
+    // ---------- mod ownership (the anti-strip vault) ----------
+
+    /// <summary>Ownership health of every app-owned skin set against the install (sets carrying
+    /// an <c>ownership.json</c> manifest), empty when the feature covers nothing or there is no
+    /// install. The mod-manager strip detector: a set whose payload vanished shows up here.</summary>
+    public IReadOnlyList<SkinSetOwnershipStatus> Ownership { get; private set; } = [];
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasOwnershipIssues), nameof(OwnershipBanner))]
+    private int _ownershipDegradedCount;
+
+    /// <summary>The last ownership action's outcome (capture/repair), "" until one runs.</summary>
+    [ObservableProperty]
+    private string _ownershipActionNote = "";
+
+    /// <summary>True when at least one set is app-owned (the panel shows at all).</summary>
+    public bool HasOwnedSets => Ownership.Count > 0;
+
+    /// <summary>True when any owned model lost payload, the repair affordance shows.</summary>
+    public bool HasOwnershipIssues => OwnershipDegradedCount > 0;
+
+    /// <summary>The strip banner: empty when everything is intact (nothing to show).</summary>
+    public string OwnershipBanner => OwnershipDegradedCount == 0
+        ? ""
+        : $"{OwnershipDegradedCount} owned model(s) lost payload (a mod-manager strip?). " +
+          "Repair restores them from the app vault.";
+
+    /// <summary>Adopts the install's current healthy payload into the app vault for every owned
+    /// set, the copy no mod manager can strip. Run this while everything is installed.</summary>
+    [RelayCommand]
+    private void CaptureOwnership()
+    {
+        OwnershipActionNote = _session.CaptureSkinOwnership().Message;
+        Refresh();
+    }
+
+    /// <summary>Re-lays stripped payload from the app vault (backup-first), the one-click
+    /// recovery after a mod manager wipes the mods.</summary>
+    [RelayCommand]
+    private void RepairOwnership()
+    {
+        OwnershipActionNote = _session.RepairSkinOwnership().Message;
+        Refresh();
+    }
+
     public void Refresh()
     {
         string? selectedLivery = SelectedCar?.LiveryName;
@@ -140,9 +185,13 @@ public sealed partial class SkinsViewModel : ObservableObject
 
         UpdateSelectedPositionLabel();
         StagingOverrideCount = _session.SeatStagingOverrides().Count;
+        Ownership = _session.SkinOwnership();
+        OwnershipDegradedCount = Ownership.Sum(set => set.DegradedCount);
         OnPropertyChanged(nameof(HasSelectedCar));
         OnPropertyChanged(nameof(HasDnq));
         OnPropertyChanged(nameof(DnqHeader));
+        OnPropertyChanged(nameof(Ownership));
+        OnPropertyChanged(nameof(HasOwnedSets));
     }
 
     partial void OnSelectedCarChanged(SkinRow? value) => UpdateSelectedPositionLabel();

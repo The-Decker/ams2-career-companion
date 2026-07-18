@@ -175,4 +175,62 @@ public sealed class SkinsViewModelTests
         Ams2Class = "F-Classic_Gen3",
         Assignments = assignments,
     };
+
+    // ---------- mod ownership (the anti-strip vault) ----------
+
+    [Fact]
+    public void OwnershipBanner_ShowsTheStrip_AndRepairsThroughTheSession()
+    {
+        var session = new FakeCareerSession();
+        session.OwnershipStatuses.Add(new SkinSetOwnershipStatus
+        {
+            Key = "smgp",
+            Models =
+            [
+                new SkinModelOwnershipStatus
+                {
+                    Model = "formula_classic_g3m1",
+                    State = SkinModelOwnershipState.PayloadMissing,
+                    MissingFolders = ["SMGP"],
+                },
+            ],
+        });
+
+        var vm = new SkinsViewModel(session);
+
+        Assert.True(vm.HasOwnedSets);
+        Assert.True(vm.HasOwnershipIssues);
+        Assert.Contains("1 owned model(s) lost payload", vm.OwnershipBanner);
+
+        session.OwnershipStatuses.Clear();
+        vm.RepairOwnershipCommand.Execute(null);
+
+        Assert.Equal(1, session.RepairOwnershipCalls);
+        Assert.Equal("repaired", vm.OwnershipActionNote);
+        Assert.False(vm.HasOwnershipIssues);
+        Assert.Equal("", vm.OwnershipBanner);
+    }
+
+    [Fact]
+    public void Ownership_CapturesThroughTheSession()
+    {
+        var session = new FakeCareerSession();
+        var vm = new SkinsViewModel(session);
+
+        vm.CaptureOwnershipCommand.Execute(null);
+
+        Assert.Equal(1, session.CaptureOwnershipCalls);
+        Assert.Equal("captured", vm.OwnershipActionNote);
+    }
+
+    [Fact]
+    public void Ownership_IsHidden_WhenNothingIsOwned()
+    {
+        var vm = new SkinsViewModel(new FakeCareerSession());
+
+        Assert.False(vm.HasOwnedSets);
+        Assert.False(vm.HasOwnershipIssues);
+        Assert.Equal("", vm.OwnershipBanner);
+        Assert.Equal("", vm.OwnershipActionNote);
+    }
 }

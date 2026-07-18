@@ -170,6 +170,25 @@ public interface ICareerSession
         Message = "This career session cannot switch skin seasons.",
     };
 
+    /// <summary>Ownership health of every app-owned skin set (a set carrying
+    /// <c>ownership.json</c>) against the install — the mod-manager strip detector (Mike's
+    /// "make the app OWN it" after the 2026-07-11 RCM strip). Empty when no sets are owned or no
+    /// install is found. Pure file inspection; display-only. Additive default: empty.</summary>
+    IReadOnlyList<Companion.Ams2.Skins.SkinSetOwnershipStatus> SkinOwnership() => [];
+
+    /// <summary>Adopts the install's current healthy payload into the app vault
+    /// (<c>Documents\AMS2CareerCompanion\ModVault</c>) for every owned set — the copy no mod
+    /// manager can strip. File copies only. Additive default: throws (a fake has no install).</summary>
+    Companion.Ams2.Skins.SkinOwnershipCaptureResult CaptureSkinOwnership() =>
+        throw new NotSupportedException("This career session cannot capture skin ownership.");
+
+    /// <summary>Re-lays stripped payload into the install for every owned set: the app vault
+    /// first, the recorded source archive as the re-seed fallback; the season pointer XML is
+    /// re-written backup-first when missing or different. File operations only, never the career
+    /// DB / sim / oracle. Additive default: throws.</summary>
+    Companion.Ams2.Skins.SkinOwnershipRepairResult RepairSkinOwnership() =>
+        throw new NotSupportedException("This career session cannot repair skin ownership.");
+
     /// <summary>The per-seat COSMETIC staging overrides this season still carries (renamed drivers /
     /// rebound liveries), keyed by the seat's original <c>ams2LiveryName</c> and applied only to the
     /// staged custom-AI file (never the sim). The grid EDITOR that wrote these was retired by the

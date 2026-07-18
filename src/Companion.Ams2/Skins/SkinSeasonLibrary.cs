@@ -14,6 +14,11 @@ public sealed record SkinSeasonSet
     /// <summary>Vehicle model folder name (e.g. <c>formula_retro_g3</c>) → the season's
     /// <c>&lt;model&gt;.xml</c> content.</summary>
     public required IReadOnlyDictionary<string, string> ModelXml { get; init; }
+
+    /// <summary>The app-owned payload manifest (<c>ownership.json</c> beside the pointer files):
+    /// which install-side texture folders the app vaults and can repair for each model. Null =
+    /// inspect-only set, the ownership feature does not cover it.</summary>
+    public SkinSeasonOwnership? Ownership { get; init; }
 }
 
 /// <summary>
@@ -63,6 +68,7 @@ public sealed class SkinSeasonLibrary
                 {
                     Key = Path.GetFileName(setDir),
                     ModelXml = models,
+                    Ownership = SkinSeasonOwnership.Load(setDir),
                 };
         }
         return new SkinSeasonLibrary { Sets = sets };

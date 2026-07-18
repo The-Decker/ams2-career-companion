@@ -253,6 +253,42 @@ internal sealed class FakeCareerSession : ICareerSession
 
     public Companion.Core.Career.EraThemeCatalog? EraThemeOverrides() => EraOverrides;
 
+    /// <summary>The ownership statuses surfaced through the <see cref="ICareerSession.SkinOwnership"/>
+    /// seam (empty by default = no owned sets). Lets a test drive the Skins tab's strip banner.</summary>
+    public List<Companion.Ams2.Skins.SkinSetOwnershipStatus> OwnershipStatuses { get; } = [];
+
+    public IReadOnlyList<Companion.Ams2.Skins.SkinSetOwnershipStatus> SkinOwnership() => OwnershipStatuses;
+
+    public int CaptureOwnershipCalls { get; private set; }
+
+    public Companion.Ams2.Skins.SkinOwnershipCaptureResult CaptureSkinOwnership()
+    {
+        CaptureOwnershipCalls++;
+        return new Companion.Ams2.Skins.SkinOwnershipCaptureResult
+        {
+            Success = true,
+            Captured = ["model\\folder (1 file(s))"],
+            Errors = [],
+            Message = "captured",
+        };
+    }
+
+    public int RepairOwnershipCalls { get; private set; }
+
+    public Companion.Ams2.Skins.SkinOwnershipRepairResult RepairSkinOwnership()
+    {
+        RepairOwnershipCalls++;
+        return new Companion.Ams2.Skins.SkinOwnershipRepairResult
+        {
+            Success = true,
+            Repaired = ["model: restored 1 item(s)"],
+            Skipped = [],
+            Errors = [],
+            Backups = [],
+            Message = "repaired",
+        };
+    }
+
     public Queue<StageOutcome> StageOutcomes { get; } = new();
 
     public List<ResultDraft> Applied { get; } = [];

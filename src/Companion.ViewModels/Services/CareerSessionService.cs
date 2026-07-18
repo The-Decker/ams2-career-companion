@@ -1670,6 +1670,124 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             _environment.Clock.GetUtcNow());
     }
 
+    /// <inheritdoc />
+    public IReadOnlyList<SkinSetOwnershipStatus> SkinOwnership()
+    {
+        if (_environment.LocateInstall() is null)
+            return [];
+        var roots = OverrideRoots();
+        return _environment.SkinSeasons.Sets.Values
+            .Select(set => ModOwnership.Inspect(set, roots))
+            .Where(status => status is not null)
+            .OrderBy(status => status!.Key, StringComparer.OrdinalIgnoreCase)
+            .ToArray()!;
+    }
+
+    /// <inheritdoc />
+    public SkinOwnershipCaptureResult CaptureSkinOwnership()
+    {
+        var owned = OwnedSets();
+        if (owned.Count == 0)
+        {
+            return new SkinOwnershipCaptureResult
+            {
+                Success = false,
+                Captured = [],
+                Errors = [],
+                Message = "No app-owned skin sets (no ownership.json manifests in the skin-season library).",
+            };
+        }
+
+        var roots = OverrideRoots();
+        var captured = new List<string>();
+        var errors = new List<string>();
+        foreach (var set in owned)
+        {
+            var result = ModOwnership.Capture(
+                set, roots, ModOwnership.VaultDirectoryFor(_environment.DocumentsDirectory, set.Key));
+            captured.AddRange(result.Captured);
+            errors.AddRange(result.Errors);
+        }
+
+        return new SkinOwnershipCaptureResult
+        {
+            Success = errors.Count == 0,
+            Captured = captured,
+            Errors = errors,
+            Message = errors.Count == 0
+                ? $"Captured {captured.Count} payload folder(s) into the app vault, the mod files are safe now."
+                : $"Captured {captured.Count} folder(s), {errors.Count} failed.",
+        };
+    }
+
+    /// <inheritdoc />
+    public SkinOwnershipRepairResult RepairSkinOwnership()
+    {
+        var owned = OwnedSets();
+        if (owned.Count == 0)
+        {
+            return new SkinOwnershipRepairResult
+            {
+                Success = false,
+                Repaired = [],
+                Skipped = [],
+                Errors = [],
+                Backups = [],
+                Message = "No app-owned skin sets (no ownership.json manifests in the skin-season library).",
+            };
+        }
+
+        var roots = OverrideRoots();
+        var repaired = new List<string>();
+        var skipped = new List<string>();
+        var errors = new List<string>();
+        var backups = new List<string>();
+        foreach (var set in owned)
+        {
+            var result = ModOwnership.Repair(
+                set, roots, ModOwnership.VaultDirectoryFor(_environment.DocumentsDirectory, set.Key),
+                _environment.Clock.GetUtcNow());
+            repaired.AddRange(result.Repaired);
+            skipped.AddRange(result.Skipped);
+            errors.AddRange(result.Errors);
+            backups.AddRange(result.Backups);
+        }
+
+        return new SkinOwnershipRepairResult
+        {
+            Success = errors.Count == 0,
+            Repaired = repaired,
+            Skipped = skipped,
+            Errors = errors,
+            Backups = backups,
+            Message = (errors.Count, repaired.Count) switch
+            {
+                (0, 0) => "Every app-owned mod payload is intact.",
+                (0, _) => $"Repaired {repaired.Count} model(s) from the app vault, previous files backed up.",
+                (_, 0) => $"Nothing could be repaired, {errors.Count} problem(s).",
+                _ => $"Repaired {repaired.Count} model(s), {errors.Count} failed.",
+            },
+        };
+    }
+
+    /// <summary>Every library set carrying an ownership manifest, or empty when the ownership
+    /// feature covers nothing (or there is no install to own files against).</summary>
+    private List<SkinSeasonSet> OwnedSets() =>
+        _environment.LocateInstall() is null
+            ? []
+            : _environment.SkinSeasons.Sets.Values
+                .Where(set => set.Ownership is not null)
+                .OrderBy(set => set.Key, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+    /// <summary>The override roots ownership inspects/repairs against (install-side first, the
+    /// Documents-side second), empty when no install is found.</summary>
+    private IReadOnlyList<string> OverrideRoots() =>
+        _environment.LocateInstall() is { } installation
+            ? LiveryOverrideScanner.CandidateOverrideRoots(
+                installation.InstallDirectory, _environment.DocumentsDirectory)
+            : [];
+
     /// <summary>The per-seat cosmetic staging overrides this season still carries (v4
     /// staging_override table, written by the retired grid editor; the Grid Preview now surfaces
     /// a count + clear affordance). Read-only projection over a non-journaled table, the sim
