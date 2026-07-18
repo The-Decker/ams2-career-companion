@@ -17,6 +17,14 @@ public sealed class NoEmDashGuardTests
 {
     private static readonly string EmDash = ((char)0x2014).ToString(); // the banned character, built from its code point so this file self-scans clean
 
+    private static readonly string EnDash = ((char)0x2013).ToString(); // name-pairs/ranges take a plain hyphen instead
+
+    /// <summary>The JSON escape form of either dash: a raw-text scan for the literal character
+    /// misses <c>"lore \u2014 prose"</c>, which only becomes a real em dash when the JSON parser
+    /// decodes it. This is how the SMGP season subtitles carried the banned glyph past the guard
+    /// and onto the briefing banner (owner catch, 2026-07-18).</summary>
+    private static readonly Regex EscapedDash = new(@"\\u201[34]", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
     private static readonly Regex XmlComment = new("(?s)<!--.*?-->", RegexOptions.Compiled);
 
     private static readonly Regex CsBlockComment = new("(?s)/\\*.*?\\*/", RegexOptions.Compiled);
@@ -57,8 +65,13 @@ public sealed class NoEmDashGuardTests
                 continue;
             foreach (string file in Directory.EnumerateFiles(tree, "*.json", SearchOption.AllDirectories))
             {
-                if (File.ReadAllText(file).Contains(EmDash, StringComparison.Ordinal))
+                string content = File.ReadAllText(file);
+                if (content.Contains(EmDash, StringComparison.Ordinal) ||
+                    content.Contains(EnDash, StringComparison.Ordinal) ||
+                    EscapedDash.IsMatch(content))
+                {
                     offenders.Add(Rel(root, file));
+                }
             }
         }
 
