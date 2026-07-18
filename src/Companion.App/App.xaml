@@ -49,6 +49,9 @@
             <DataTemplate DataType="{x:Type hub:PaddockViewModel}">
                 <views:PaddockView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type hub:EconomyViewModel}">
+                <views:EconomyView />
+            </DataTemplate>
             <DataTemplate DataType="{x:Type shell:HomeViewModel}">
                 <views:HomeView />
             </DataTemplate>

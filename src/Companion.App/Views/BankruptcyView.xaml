@@ -1,0 +1,256 @@
+<UserControl x:Class="Companion.App.Views.BankruptcyView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Focusable="False">
+    <!-- DB-free terminal surface, the economy's death screen (docs/dev/dynasty-tycoon-economy.md §7).
+         Its DataContext is HomeViewModel, but every content binding below intentionally stays on
+         BankruptcyScreen. An administrator's notice, not a crash screen: the ledger's last page,
+         with the career record given the same dignity as the death screen. -->
+    <DockPanel Background="{DynamicResource BgBrush}">
+        <Border DockPanel.Dock="Bottom" Padding="24,14,24,20"
+                Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="0,1,0,0">
+            <DockPanel LastChildFill="False">
+                <Button DockPanel.Dock="Right" Content="Return to main menu"
+                        Style="{StaticResource SubtleButton}" MinWidth="180" Padding="14,9"
+                        Command="{Binding DataContext.GoToStartCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                        AutomationProperties.Name="Return to main menu" />
+                <TextBlock Text="THE BOOKS ARE CLOSED" Style="{StaticResource Eyebrow}"
+                           Foreground="{DynamicResource TextMutedBrush}"
+                           VerticalAlignment="Center" />
+            </DockPanel>
+        </Border>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      Focusable="False">
+            <StackPanel MaxWidth="1040" Margin="32,28,32,38" HorizontalAlignment="Center">
+                <!-- terminal state ribbon -->
+                <Border Padding="16,7" CornerRadius="5"
+                        Background="{DynamicResource ErrorDimBrush}"
+                        BorderBrush="{DynamicResource ErrorBrush}" BorderThickness="1"
+                        HorizontalAlignment="Center">
+                    <TextBlock Text="B A N K R U P T" Style="{StaticResource PixelBadge}"
+                               FontSize="9" Foreground="{DynamicResource ErrorBrush}" />
+                </Border>
+
+                <TextBlock Text="ADMINISTRATOR'S NOTICE" FontFamily="{StaticResource DisplayFont}"
+                           FontSize="15" FontWeight="Bold"
+                           Foreground="{DynamicResource TextMutedBrush}"
+                           HorizontalAlignment="Center" Margin="0,18,0,0" />
+                <TextBlock x:Name="BankruptcyTeamName" Text="{Binding BankruptcyScreen.TeamName}"
+                           FontFamily="{StaticResource DisplayFont}" FontSize="40" FontWeight="Bold"
+                           TextAlignment="Center" TextWrapping="Wrap"
+                           HorizontalAlignment="Center" Margin="0,4,0,0" />
+                <TextBlock Style="{StaticResource Muted}" FontSize="14"
+                           HorizontalAlignment="Center" Margin="0,4,0,0">
+                    <Run Text="Owner-driver  " />
+                    <Run x:Name="BankruptcyDriverName" Text="{Binding BankruptcyScreen.DriverName, Mode=OneWay}"
+                         FontWeight="SemiBold" />
+                </TextBlock>
+
+                <WrapPanel HorizontalAlignment="Center" Margin="0,10,0,0">
+                    <Border Style="{StaticResource CompactChip}" Margin="0,0,7,7">
+                        <TextBlock Style="{StaticResource Mono}">
+                            <Run Text="SEASON  " /><Run Text="{Binding BankruptcyScreen.Year, Mode=OneWay}" FontWeight="Bold" />
+                        </TextBlock>
+                    </Border>
+                    <Border Style="{StaticResource CompactChip}" Margin="0,0,7,7"
+                            Visibility="{Binding BankruptcyScreen.Round, Converter={StaticResource NullCollapsed}}">
+                        <TextBlock Style="{StaticResource Mono}">
+                            <Run Text="ROUND  " /><Run Text="{Binding BankruptcyScreen.Round, Mode=OneWay}" FontWeight="Bold" />
+                        </TextBlock>
+                    </Border>
+                    <Border Style="{StaticResource CompactChip}" Margin="0,0,7,7"
+                            Background="{DynamicResource ErrorDimBrush}"
+                            BorderBrush="{DynamicResource ErrorBrush}">
+                        <TextBlock Style="{StaticResource Mono}" Foreground="{DynamicResource ErrorBrush}">
+                            <Run Text="FINAL BALANCE  " /><Run Text="{Binding BankruptcyScreen.FinalBalance, Mode=OneWay}" FontWeight="Bold" />
+                        </TextBlock>
+                    </Border>
+                    <Border Style="{StaticResource CompactChip}" Margin="0,0,0,7">
+                        <TextBlock Style="{StaticResource Mono}">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}DEFICIT  {0} OF {1} ROUNDS">
+                                    <Binding Path="BankruptcyScreen.DeficitRounds" />
+                                    <Binding Path="BankruptcyScreen.GraceRounds" />
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </Border>
+                </WrapPanel>
+
+                <Border Style="{StaticResource ErrorCallout}" Margin="0,14,0,0" Padding="20,13">
+                    <TextBlock FontFamily="{StaticResource DisplayFont}" FontSize="16" FontWeight="Bold"
+                               Foreground="{DynamicResource ErrorBrush}"
+                               TextAlignment="Center" TextWrapping="Wrap">
+                        <Run Text="The money ran out. The final balance settled at " />
+                        <Run Text="{Binding BankruptcyScreen.FinalBalance, Mode=OneWay}" />
+                        <Run Text=", and the administrator has wound the team up." />
+                    </TextBlock>
+                </Border>
+
+                <Border Style="{StaticResource QuoteCard}" Margin="0,14,0,0" Padding="22,18">
+                    <TextBlock Style="{StaticResource Body}" FontSize="16" FontStyle="Italic"
+                               LineHeight="25" TextAlignment="Center" TextWrapping="Wrap">
+                        <Run Text="Notice is hereby given that " />
+                        <Run Text="{Binding BankruptcyScreen.TeamName, Mode=OneWay}" />
+                        <Run Text=" has been struck from the " />
+                        <Run Text="{Binding BankruptcyScreen.Year, Mode=OneWay}" />
+                        <Run Text=" championship. The cars are sold, the garage is shuttered, and the entry list moves on without it." />
+                    </TextBlock>
+                </Border>
+
+                <!-- DB-free career record, the legacy the folded team leaves behind -->
+                <TextBlock Text="CAREER RECORD" Style="{StaticResource H2}"
+                           HorizontalAlignment="Center" Margin="0,28,0,12" />
+                <UniformGrid Columns="4" Rows="2">
+                    <Border Style="{StaticResource StatTile}">
+                        <StackPanel>
+                            <TextBlock Text="BEST FINISH" Style="{StaticResource Eyebrow}" />
+                            <TextBlock Text="{Binding BankruptcyScreen.Record.BestFinish, StringFormat=P{0}, TargetNullValue=-}"
+                                       Style="{StaticResource StatValue}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource StatTile}">
+                        <StackPanel>
+                            <TextBlock Text="WINS" Style="{StaticResource Eyebrow}" />
+                            <TextBlock Text="{Binding BankruptcyScreen.Record.Wins}" Style="{StaticResource StatValue}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource StatTile}">
+                        <StackPanel>
+                            <TextBlock Text="PODIUMS" Style="{StaticResource Eyebrow}" />
+                            <TextBlock Text="{Binding BankruptcyScreen.Record.Podiums}" Style="{StaticResource StatValue}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource StatTile}">
+                        <StackPanel>
+                            <TextBlock Text="POINTS" Style="{StaticResource Eyebrow}" />
+                            <TextBlock Text="{Binding BankruptcyScreen.Record.TotalPoints, StringFormat={}{0:0.#}}"
+                                       Style="{StaticResource StatValue}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource StatTile}">
+                        <StackPanel>
+                            <TextBlock Text="TITLES" Style="{StaticResource Eyebrow}" />
+                            <TextBlock Text="{Binding BankruptcyScreen.Record.Championships}" Style="{StaticResource StatValue}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource StatTile}">
+                        <StackPanel>
+                            <TextBlock Text="SEASONS" Style="{StaticResource Eyebrow}" />
+                            <TextBlock Text="{Binding BankruptcyScreen.Record.SeasonsRaced}" Style="{StaticResource StatValue}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource StatTile}">
+                        <StackPanel>
+                            <TextBlock Text="WIN STREAK" Style="{StaticResource Eyebrow}" />
+                            <TextBlock Text="{Binding BankruptcyScreen.Record.LongestWinStreak}" Style="{StaticResource StatValue}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource StatTile}">
+                        <StackPanel>
+                            <TextBlock Text="PODIUM STREAK" Style="{StaticResource Eyebrow}" />
+                            <TextBlock Text="{Binding BankruptcyScreen.Record.LongestPodiumStreak}" Style="{StaticResource StatValue}" />
+                        </StackPanel>
+                    </Border>
+                </UniformGrid>
+
+                <!-- compact season almanac; all values are part of BankruptcyScreen's captured model -->
+                <TextBlock Text="SEASONS RACED" Style="{StaticResource H2}"
+                           HorizontalAlignment="Center" Margin="0,24,0,12"
+                           Visibility="{Binding BankruptcyScreen.Seasons.Count, Converter={StaticResource CountVisible}}" />
+                <ItemsControl x:Name="BankruptcySeasonRecap" ItemsSource="{Binding BankruptcyScreen.Seasons}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel HorizontalAlignment="Center" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource Card}" Width="238" Margin="0,0,10,10">
+                                <StackPanel>
+                                    <DockPanel>
+                                        <TextBlock DockPanel.Dock="Right" Style="{StaticResource Mono}"
+                                                   Foreground="{DynamicResource AccentTextBrush}"
+                                                   FontWeight="Bold"
+                                                   Text="{Binding PlayerPosition, StringFormat=P{0}, TargetNullValue=-}" />
+                                        <TextBlock Text="{Binding SeasonYear}" Style="{StaticResource H2}" />
+                                    </DockPanel>
+                                    <TextBlock Style="{StaticResource Muted}" Margin="0,5,0,0">
+                                        <Run Text="Rounds  " /><Run Text="{Binding RoundsApplied, Mode=OneWay}" FontWeight="Bold" />
+                                        <Run Text=" / " /><Run Text="{Binding RoundCount, Mode=OneWay}" />
+                                    </TextBlock>
+                                    <TextBlock Text="{Binding ChampionName, StringFormat=Champion: {0}}"
+                                               Style="{StaticResource Faint}" Margin="0,5,0,0"
+                                               Visibility="{Binding ChampionName, Converter={StaticResource StringVisible}}" />
+                                    <Border Style="{StaticResource AccentCallout}" Padding="7,4" Margin="0,8,0,0"
+                                            Visibility="{Binding PlayerIsChampion, Converter={StaticResource BoolVisible}}">
+                                        <TextBlock Text="WORLD CHAMPION" Style="{StaticResource PixelBadge}"
+                                                   Foreground="{DynamicResource AccentTextBrush}" />
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- Bankruptcy never deletes the career file, so the same restore escape the Normal
+                     death screen offers applies here. The view raises a typed event; the owning Hub
+                     performs restore + shell reopen. -->
+                <Border x:Name="BankruptcyRestorePanel" Style="{StaticResource Panel}" Margin="0,24,0,0"
+                        BorderBrush="{DynamicResource WarningBrush}">
+                    <StackPanel>
+                        <TextBlock Text="A WAY BACK" Style="{StaticResource H2}"
+                                   Foreground="{DynamicResource WarningBrush}" />
+                        <TextBlock Text="The career file survives the fold. Restoring replaces the whole career with that earlier save, then reopens it from disk."
+                                   Style="{StaticResource Body}" Margin="0,5,0,0" />
+
+                        <ItemsControl x:Name="BankruptcyRestoreSlots" ItemsSource="{Binding BankruptcyScreen.RestoreSlots}"
+                                      Margin="0,14,0,0"
+                                      Visibility="{Binding BankruptcyScreen.CanRestore, Converter={StaticResource BoolVisible}}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource Callout}" Margin="0,0,0,8">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <DockPanel LastChildFill="False">
+                                                    <TextBlock Text="{Binding Label}" FontWeight="Bold" />
+                                                    <Border Style="{StaticResource CompactChip}" Margin="8,0,0,0"
+                                                            Visibility="{Binding IsAutosave, Converter={StaticResource BoolVisible}}">
+                                                        <TextBlock Text="AUTOSAVE" Style="{StaticResource PixelBadge}"
+                                                                   Foreground="{DynamicResource AccentTextBrush}" />
+                                                    </Border>
+                                                </DockPanel>
+                                                <TextBlock Style="{StaticResource Faint}" Margin="0,4,0,0">
+                                                    <Run Text="Season " /><Run Text="{Binding SeasonYear, Mode=OneWay}" />
+                                                    <Run Text="  ·  Round " /><Run Text="{Binding Round, Mode=OneWay}" />
+                                                    <Run Text="  ·  " /><Run Text="{Binding CreatedUtc, Mode=OneWay}" />
+                                                </TextBlock>
+                                            </StackPanel>
+                                            <Button Grid.Column="1" Content="Restore this save"
+                                                    Style="{StaticResource AccentButton}" Margin="14,0,0,0"
+                                                    Padding="14,8" Click="OnRestoreRequestedClicked"
+                                                    AutomationProperties.Name="Restore this career save" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <Border x:Name="BankruptcyNoRestoreCallout" Style="{StaticResource WarningCallout}" Margin="0,14,0,0"
+                                Visibility="{Binding BankruptcyScreen.CanRestore, Converter={StaticResource BoolCollapsed}}">
+                            <TextBlock Text="No restorable save exists. This career is over, but the file remains in your career archive."
+                                       Style="{StaticResource Body}" />
+                        </Border>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>
