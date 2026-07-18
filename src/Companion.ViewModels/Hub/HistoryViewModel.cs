@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Companion.Core.Career;
 using Companion.ViewModels.Services;
 
 namespace Companion.ViewModels.Hub;
@@ -11,7 +12,7 @@ namespace Companion.ViewModels.Hub;
 /// read-only projection of the whole career into per-season scrapbook cards, a lineage timeline,
 /// a records book (career bests/streaks/milestones), and every race's archived news article. All
 /// four surfaces are pure reads over <see cref="ICareerSession.CareerTimeline"/> and
-/// <see cref="ICareerSession.ReadFeed"/> — no sim, no persistence — so the History tab renders
+/// <see cref="ICareerSession.ReadFeed"/>, no sim, no persistence, so the History tab renders
 /// (and re-renders after every Apply) with zero new state cost. Refreshed in place off the new
 /// session state exactly like the Standings/News lenses.
 /// </summary>
@@ -23,8 +24,19 @@ public sealed partial class HistoryViewModel : InspectorHostViewModel
     {
         ArgumentNullException.ThrowIfNull(session);
         _session = session;
+        EraSkin = session.EraThemeOverrides()?.ForYear(session.Pack.Season.Year)
+            ?? EraThemes.ForYear(session.Pack.Season.Year);
         Refresh();
     }
+
+    /// <summary>The era skin the scrapbook chrome renders with (era-theming-assets-brief.md
+    /// Slice 0): the period medium/accent/font/texture for the career's season year, resolved
+    /// through the <c>era-themes.json</c> override when one covers the decade.</summary>
+    public IEraSkin EraSkin { get; }
+
+    /// <summary>The era medium flattened to a top-level bindable so a WPF DataTrigger can key
+    /// on it without a nested path.</summary>
+    public EraMedium EraMedium => EraSkin.Medium;
 
     // ---------- clickable numbers → the "Why?" inspector (decisions 4 + 5) ----------
 
@@ -32,28 +44,28 @@ public sealed partial class HistoryViewModel : InspectorHostViewModel
     /// scrapbook card): walks the player's whole-season journal for the card's
     /// <see cref="SeasonCardViewModel.SeasonYear"/>. Uses the season-scoped seam
     /// (<see cref="ICareerSession.JournalForSeason(string,int,int?)"/>) so ANY completed season on a
-    /// card — not just the current one — opens the inspector for that season's numbers; a year with no
+    /// card, not just the current one, opens the inspector for that season's numbers; a year with no
     /// matching season returns an empty chain and simply does not open a panel. Mouse (click the
-    /// number) and keyboard (a bound accelerator) both invoke this — decision 8's parity.</summary>
+    /// number) and keyboard (a bound accelerator) both invoke this, decision 8's parity.</summary>
     [RelayCommand]
     private void OpenSeasonInspector(int seasonYear) =>
         ShowInspector(_session.JournalForSeason("player", seasonYear));
 
-    /// <summary>One scrapbook card per season (oldest first — the lineage order). Also the
+    /// <summary>One scrapbook card per season (oldest first, the lineage order). Also the
     /// lineage timeline's row source: the view renders the same collection as a vertical
     /// timeline down the left and full cards on the right.</summary>
     public ObservableCollection<SeasonCardViewModel> Seasons { get; } = [];
 
-    /// <summary>The career records book — bests, counts, streaks. Never null.</summary>
+    /// <summary>The career records book, bests, counts, streaks. Never null.</summary>
     [ObservableProperty]
     private RecordsBookViewModel _records = RecordsBookViewModel.Empty;
 
-    /// <summary>Every archived race/season dispatch of the career, newest first — the same feed
+    /// <summary>Every archived race/season dispatch of the career, newest first, the same feed
     /// the News tab shows, preserved forever in the scrapbook (decision 18). Each expands into
     /// its full period article on click.</summary>
     public ObservableCollection<NewsItemViewModel> ArchivedArticles { get; } = [];
 
-    /// <summary>True before the first season has any applied round — the tab shows a friendly
+    /// <summary>True before the first season has any applied round, the tab shows a friendly
     /// empty state instead of a blank scrapbook.</summary>
     public bool IsEmpty => Seasons.Count == 0;
 
@@ -61,13 +73,13 @@ public sealed partial class HistoryViewModel : InspectorHostViewModel
     /// empty state independently of the season cards).</summary>
     public bool HasArticles => ArchivedArticles.Count > 0;
 
-    /// <summary>The upcoming race of the CURRENT season — a spoiler-free Race Preview (circuit map +
+    /// <summary>The upcoming race of the CURRENT season, a spoiler-free Race Preview (circuit map +
     /// track detail) shown prominently at the top of the History tab. Null when the current season is
     /// finished or no history is shipped for its year.</summary>
     [ObservableProperty]
     private HistoricalRoundViewModel? _nextRacePreview;
 
-    /// <summary>The current season's year, for the "Next race — 1988" header.</summary>
+    /// <summary>The current season's year, for the "Next race: 1988" header.</summary>
     [ObservableProperty]
     private int _nextRaceYear;
 
@@ -77,7 +89,7 @@ public sealed partial class HistoryViewModel : InspectorHostViewModel
         OnPropertyChanged(nameof(HasNextRacePreview));
 
     /// <summary>The SMGP-universe "What Really Happened" almanac (the fictional-world counterpart to the
-    /// per-card real-F1 panel) — the SEGA world's legend of every circuit, unlocked per race. Null for
+    /// per-card real-F1 panel), the SEGA world's legend of every circuit, unlocked per race. Null for
     /// every non-SMGP career; then the panel is hidden. Shown once per History tab (not per card), since
     /// the replica mode is one continuous fictional world with a fixed set of circuits.</summary>
     [ObservableProperty]
@@ -98,7 +110,7 @@ public sealed partial class HistoryViewModel : InspectorHostViewModel
         // Newest season first reads best as a scrapbook (this season at the top), while the
         // records book aggregates the whole lineage regardless of order. Each card also carries the
         // REAL historical results of its year (f1db-derived, read-only) so the player can see "what
-        // really happened" next to their own diverged season — null when none is shipped for the year.
+        // really happened" next to their own diverged season, null when none is shipped for the year.
         // A REPLICA-mode pack (SMGP) is a fictional world: revealing the real season's races round
         // by round would be nonsense there, so its cards carry no historical documents at all.
         bool fictionalSeason = string.Equals(
@@ -126,7 +138,7 @@ public sealed partial class HistoryViewModel : InspectorHostViewModel
             NextRaceYear = 0;
         }
 
-        // The SMGP-universe almanac (fictional replica mode only) — the SEGA world's "what really
+        // The SMGP-universe almanac (fictional replica mode only), the SEGA world's "what really
         // happened" per circuit. Null everywhere else, so the panel is a no-op for normal careers.
         var world = _session.SmgpWorldHistory();
         SmgpWorld = world is not null ? new SmgpWorldHistoryViewModel(world) : null;
@@ -149,24 +161,24 @@ public sealed class SmgpWorldHistoryViewModel
         Total = world.Races.Count;
     }
 
-    /// <summary>Every circuit, in the current season's round order — sealed until raced, then the legend.</summary>
+    /// <summary>Every circuit, in the current season's round order, sealed until raced, then the legend.</summary>
     public IReadOnlyList<SmgpWorldRaceViewModel> Races { get; }
 
     public int RevealedCount { get; }
 
     public int Total { get; }
 
-    /// <summary>"6 of 16 circuits unlocked" — the almanac's progress line.</summary>
+    /// <summary>"6 of 16 circuits unlocked", the almanac's progress line.</summary>
     public string ProgressText => $"{RevealedCount} of {Total} circuits unlocked";
 }
 
 /// <summary>One circuit's almanac entry. Before the player has raced it (<see cref="IsRevealed"/> =
-/// false) it is SEALED — the header shows the venue and a "sealed" tag, and expanding shows only a
+/// false) it is SEALED, the header shows the venue and a "sealed" tag, and expanding shows only a
 /// spoiler-free teaser. Once raced, expanding shows the SEGA world's full legend (title, circuit,
 /// champion of record, the story paragraphs, and lore notes).</summary>
 public sealed partial class SmgpWorldRaceViewModel : ObservableObject
 {
-    /// <summary>Whether this entry's detail is expanded (default off — the header always shows).</summary>
+    /// <summary>Whether this entry's detail is expanded (default off, the header always shows).</summary>
     [ObservableProperty]
     private bool _isExpanded;
 
@@ -186,7 +198,7 @@ public sealed partial class SmgpWorldRaceViewModel : ObservableObject
         Notes = race.Notes;
     }
 
-    /// <summary>True once the player has raced this venue — the legend is unlocked.</summary>
+    /// <summary>True once the player has raced this venue, the legend is unlocked.</summary>
     public bool IsRevealed { get; }
 
     public string RoundLabel { get; }
@@ -239,7 +251,7 @@ public sealed class SeasonCardViewModel
             if (!_card.IsComplete)
                 return _card.RoundsApplied == 0
                     ? "Season not started"
-                    : $"In progress — {_card.RoundsApplied} of {_card.RoundCount} rounds";
+                    : $"In progress, {_card.RoundsApplied} of {_card.RoundCount} rounds";
             return _card.PlayerPosition is { } p
                 ? $"Finished P{p}"
                 : "Unclassified";
@@ -253,7 +265,7 @@ public sealed class SeasonCardViewModel
 
     public bool HasChampion => _card.ChampionName is { Length: > 0 };
 
-    /// <summary>True when the player IS the champion — the card shows the crowning line.</summary>
+    /// <summary>True when the player IS the champion, the card shows the crowning line.</summary>
     public bool PlayerIsChampion => _card.PlayerIsChampion;
 
     /// <summary>The folded rep/OPI summary line for a completed season; empty otherwise.</summary>
@@ -263,7 +275,7 @@ public sealed class SeasonCardViewModel
 
     public bool HasForm => _card is { FinalReputation: not null, FinalOpi: not null };
 
-    /// <summary>The season's archived headlines (story order) — the card's scrapbook clippings.</summary>
+    /// <summary>The season's archived headlines (story order), the card's scrapbook clippings.</summary>
     public IReadOnlyList<string> Headlines => _card.Headlines;
 
     public bool HasHeadlines => _card.Headlines.Count > 0;
@@ -310,7 +322,7 @@ public sealed class RecordsBookViewModel
 /// <summary>One labelled record ("Best finish" → "P2").</summary>
 public sealed record RecordRow(string Label, string Value);
 
-/// <summary>"What really happened" — a season's REAL historical results (f1db-derived, CC BY 4.0),
+/// <summary>"What really happened", a season's REAL historical results (f1db-derived, CC BY 4.0),
 /// shown alongside the player's own diverged career. Display-only projection of
 /// <see cref="HistoricalSeason"/>; collapsed by default (opt-in per season so a multi-season
 /// scrapbook stays compact).</summary>
@@ -329,7 +341,7 @@ public sealed partial class HistoricalSeasonViewModel : ObservableObject
         Year = season.Year;
         Source = season.Source ?? "";
         // The season-level spoilers (champions + summary) reveal only once the player has finished the
-        // season in their career — before that, each race is a preview, not a result.
+        // season in their career, before that, each race is a preview, not a result.
         IsSeasonComplete = isSeasonComplete;
 
         if (season.DriversChampion is { } champ)
@@ -355,7 +367,7 @@ public sealed partial class HistoricalSeasonViewModel : ObservableObject
     /// <summary>The number of races in the season whose real result the player has unlocked (raced).</summary>
     public int RevealedCount => Rounds.Count(r => r.IsRevealed);
 
-    /// <summary>True once the whole season is done in the player's career — gates the champion +
+    /// <summary>True once the whole season is done in the player's career, gates the champion +
     /// summary spoilers.</summary>
     public bool IsSeasonComplete { get; }
 
@@ -411,7 +423,7 @@ public sealed partial class HistoricalSeasonViewModel : ObservableObject
     /// <summary>CC BY 4.0 attribution line.</summary>
     public string Source { get; }
 
-    /// <summary>"Denny Hulme · Brabham · 51 pts" — empty when unknown.</summary>
+    /// <summary>"Denny Hulme · Brabham · 51 pts", empty when unknown.</summary>
     public string DriversChampionText { get; } = "";
 
     public bool HasDriversChampion => DriversChampionText.Length > 0;
@@ -435,7 +447,7 @@ public sealed partial class HistoricalSeasonViewModel : ObservableObject
 /// HISTORICAL DOCUMENT (winner, fastest lap, and the full classified grid behind an expander).</summary>
 public sealed partial class HistoricalRoundViewModel : ObservableObject
 {
-    /// <summary>Whether this round's detail is expanded (default off — the summary line always shows).</summary>
+    /// <summary>Whether this round's detail is expanded (default off, the summary line always shows).</summary>
     [ObservableProperty]
     private bool _isExpanded;
 
@@ -450,7 +462,7 @@ public sealed partial class HistoricalRoundViewModel : ObservableObject
         Name = round.Name;
         WinnerText = round.Winner is { Length: > 0 } w
             ? (round.WinnerTeam is { Length: > 0 } team ? $"{w} · {team}" : w)
-            : "—";
+            : "-";
         FastestLapText = round.FastestLap is { Length: > 0 } fl ? $"Fastest lap: {fl}" : "";
         Results = round.Results
             .Select(x => new HistoricalResultRow(x.Pos, x.Driver, x.Team, x.Status ?? ""))
@@ -461,7 +473,7 @@ public sealed partial class HistoricalRoundViewModel : ObservableObject
         CircuitHistory = round.Circuit?.History ?? "";
     }
 
-    /// <summary>True once the player has raced this round — the real result is unlocked. False = a
+    /// <summary>True once the player has raced this round, the real result is unlocked. False = a
     /// spoiler-free Race Preview.</summary>
     public bool IsRevealed { get; }
 
@@ -471,13 +483,13 @@ public sealed partial class HistoricalRoundViewModel : ObservableObject
     /// <summary>The circuit-layout id for the map (empty when unknown).</summary>
     public string CircuitLayoutId { get; }
     public bool HasCircuit => CircuitLayoutId.Length > 0;
-    /// <summary>"Imola · 4.96 km · 22 turns · anti-clockwise circuit" — the preview detail.</summary>
+    /// <summary>"Imola · 4.96 km · 22 turns · anti-clockwise circuit", the preview detail.</summary>
     public string CircuitCaption { get; }
     /// <summary>A brief, data-grounded circuit history for the preview.</summary>
     public string CircuitHistory { get; } = "";
     public bool HasCircuitHistory => CircuitHistory.Length > 0;
 
-    /// <summary>The winner line, but only once revealed — a preview never leaks it.</summary>
+    /// <summary>The winner line, but only once revealed, a preview never leaks it.</summary>
     public string WinnerText { get; }
     public string FastestLapText { get; }
     public bool HasFastestLap => FastestLapText.Length > 0;

@@ -30,7 +30,7 @@ namespace Companion.ViewModels.Services;
 ///   opening a career rehydrates from the pinned bytes, never the mutable pack folder.
 /// - Raw result payloads are the source of truth: standings are recomputed from
 ///   round_result_raw on every query, never cached.
-/// - The current round is derived state — max(applied round) + 1 — so Apply advancing the
+/// - The current round is derived state, max(applied round) + 1, so Apply advancing the
 ///   season needs no extra bookkeeping row.
 /// - Staging is backup-first and aborts (Success=false) on any preflight ERROR; a missing
 ///   AMS2 install degrades to a failed outcome with a clear message, never a crash.
@@ -49,7 +49,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     private readonly long _seasonId;
     /// <summary>The CURRENT season's real calendar year (from its season record). Equals
     /// <c>Pack.Season.Year</c> for every ordinary season, but runs ahead of it for a CARRYOVER
-    /// season — the same car reused for a later year — so this, not the pack's nominal year, is the
+    /// season, the same car reused for a later year, so this, not the pack's nominal year, is the
     /// season's year for display and for computing the next year.</summary>
     private readonly int _seasonYear;
     private readonly int _firstSeasonYear;
@@ -73,10 +73,10 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     private readonly MortalityMode _mortality;
 
     /// <summary>Set once a Hardcore death has physically DELETED this career's file (Slice 3): the session
-    /// is then spent — the shell must show the permadeath screen and never touch the session again.</summary>
+    /// is then spent, the shell must show the permadeath screen and never touch the session again.</summary>
     private bool _careerFileDeleted;
 
-    /// <summary>The death-screen model (Slice 5), memoised on first read after a death — and, on a Hardcore
+    /// <summary>The death-screen model (Slice 5), memoised on first read after a death, and, on a Hardcore
     /// death, captured just BEFORE the file is deleted so it renders with no DB. Null while the driver
     /// lives. Immutable once the driver is dead (a dead career takes no more rounds).</summary>
     private DeathScreenModel? _deathScreen;
@@ -152,8 +152,8 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         }
         // Per-season DNQ RE-ROLL (17-season campaign): a career gated on SmgpState.PerSeasonDnq re-rolls
         // its backmarker DNQ field for season 2+ (each season a fresh seeded field, so the rotation is not
-        // frozen to season 1's pinned roll). This is a FOLD INPUT — the runtime Pack is what the live fold
-        // (Apply / PreviewFold) resolves the grid from — so the SAME transform is applied to the pinned
+        // frozen to season 1's pinned roll). This is a FOLD INPUT, the runtime Pack is what the live fold
+        // (Apply / PreviewFold) resolves the grid from, so the SAME transform is applied to the pinned
         // pack on the replay path (ReplayService.ResimulateCore), keyed by the same ordinal, and live and
         // replay agree by construction. Season 1 / legacy (flag omitted) / non-DNQ careers no-op, so they
         // stay byte-identical. The gate is read from this season's START state.
@@ -170,7 +170,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         // The scoring definition's round domain is CHAMPIONSHIP rounds (same resolution the
         // structural validator checks): best-N segments and engine round numbers use the
         // championship ordinal, not the calendar position, when the calendar mixes in
-        // non-championship events. ChampionshipCalendar is the ONE shared mapping — the
+        // non-championship events. ChampionshipCalendar is the ONE shared mapping, the
         // unified fold (ReplayService) resolves through the same code.
         _scoringDefinition = ChampionshipCalendar.ResolveScoring(pack);
     }
@@ -192,7 +192,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>1-based position of a championship calendar round among championship rounds
-    /// only — the round number the scoring engine and best-N segments operate on.</summary>
+    /// only, the round number the scoring engine and best-N segments operate on.</summary>
     private int ChampionshipOrdinal(int calendarRound) =>
         ChampionshipCalendar.Ordinal(Pack, calendarRound);
 
@@ -221,7 +221,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         }
 
         // OPT-IN alternate mod tracks (Mike's rule): swap each round with a track.alternate to that
-        // alternate ONLY when the player opted in AND every required mod is installed — otherwise the
+        // alternate ONLY when the player opted in AND every required mod is installed, otherwise the
         // season keeps its base/DLC defaults (no mod dependency). The TRANSFORMED season.json is
         // pinned, so the fold reads the alternates and replays stay byte-identical (no seed).
         if (request.UseAlternateTracks &&
@@ -234,7 +234,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         }
 
         // OPT-IN modded field (v1.4): append the mod's extra grid entries + bump the round grid
-        // sizes ONLY when the player opted in AND the required car mod is installed — otherwise the
+        // sizes ONLY when the player opted in AND the required car mod is installed, otherwise the
         // base field is pinned (no mod dependency). The TRANSFORMED files are pinned, so the fold
         // fields the fuller grid and replays stay byte-identical (no seed).
         if (request.UseModdedField &&
@@ -254,7 +254,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         }
 
         // SMGP DYNAMIC DNQ (Mike: "a random generator should determine the bottom 8 ... who stays and
-        // who goes"): the field's DNQ tail is a SEEDED PER-CAREER roll, not the pack's baked default — a
+        // who goes"): the field's DNQ tail is a SEEDED PER-CAREER roll, not the pack's baked default, a
         // random generator picks which backmarkers make each round's grid, so the rotation differs per
         // playthrough (revealed race by race via the starting-grid DNQ strip). Generated here at creation
         // and pinned into season.json, so the fold reads the seeded starters and replays stay byte-
@@ -380,7 +380,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                     request.Mortality,
                     campaign?.Plan.Mode,
                     campaign?.Plan,
-                    // The Dynasty owner economy: both halves of the gate — the pinned campaign mode
+                    // The Dynasty owner economy: both halves of the gate, the pinned campaign mode
                     // AND the creation opt-in. The rules are resolved only for an opted-in Dynasty
                     // career, so a rules-directory-free caller (most tests) never touches them; an
                     // economy career on an install missing the tables fails HERE with a clear
@@ -388,7 +388,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                     request.DynastyEconomy && campaign?.Plan.Mode == CareerExperienceModes.GrandPrixDynasty
                         ? environment.Rules.DynastyEconomy
                             ?? throw new InvalidOperationException(
-                                "The Dynasty owner economy is unavailable — data\\rules\\dynasty\\economy.json " +
+                                "The Dynasty owner economy is unavailable, data\\rules\\dynasty\\economy.json " +
                                 "is missing from this install. Reinstall the app's data folder to run an " +
                                 "economy career.")
                         : null,
@@ -433,7 +433,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         catch (IOException) when (File.Exists(careerFilePath))
         {
             throw new InvalidOperationException(
-                $"'{careerFilePath}' already exists — open it instead of creating over it.");
+                $"'{careerFilePath}' already exists, open it instead of creating over it.");
         }
     }
 
@@ -453,7 +453,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         }
     }
 
-    /// <summary>Opens a career into its CURRENT season — the LATEST season row — so a
+    /// <summary>Opens a career into its CURRENT season, the LATEST season row, so a
     /// multi-season career (M6 era transitions) always continues where the player is, never
     /// back in a finished era. Single-season careers open exactly as before.</summary>
     public static CareerSessionService OpenCareer(string careerFilePath, CareerEnvironment environment)
@@ -469,7 +469,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                     r => (Name: r.GetString(0), Seed: r.GetInt64(1), Mortality: r.GetInt32(2)))
                 .SingleOrDefault(defaultValue: default);
             if (careerRow.Name is null)
-                throw new InvalidOperationException($"'{careerFilePath}' has no career row — not a career file?");
+                throw new InvalidOperationException($"'{careerFilePath}' has no career row, not a career file?");
             (string careerName, long masterSeed, int mortalityRaw) = careerRow;
             // The mortality_mode column is guaranteed present by the migration that ran during Open.
             var mortality = (MortalityMode)mortalityRaw;
@@ -515,21 +515,21 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             {
                 // Era-transitioned career: the player's seat in the CURRENT season comes from
                 // the transition plan's start state (CareerStore.StartNextSeason persisted it);
-                // the driver id is the new pack's entry behind that livery — the seat the
+                // the driver id is the new pack's entry behind that livery, the seat the
                 // player took over, exactly like the wizard's season-1 seat pick.
                 var start = StateStore.ReadPlayerState(database, latest.Id, StateStore.StageStart)
                     ?? throw new InvalidOperationException(
-                        $"Season {latest.Id} ({latest.Year}) has no start-of-season player state — " +
+                        $"Season {latest.Id} ({latest.Year}) has no start-of-season player state, " +
                         "the career file is structurally inconsistent.");
                 playerLiveryName = start.LiveryName
                     ?? throw new InvalidOperationException(
-                        $"Season {latest.Id} ({latest.Year})'s player state has no seat livery — " +
+                        $"Season {latest.Id} ({latest.Year})'s player state has no seat livery, " +
                         "the era transition that started it was incomplete.");
                 playerDriverId = ResolvePlayerDriverId(pack, playerLiveryName);
                 baselineSource = BaselineSourcePack; // transition seasons pin pack-authored data
 
                 // The season-end pipeline ages the player by year distance from the FIRST
-                // season (ReplaySimInputs.PlayerAge contract) — derive the anchor age from
+                // season (ReplaySimInputs.PlayerAge contract), derive the anchor age from
                 // the first season's pinned pack and the wizard's seat pick.
                 var firstPack = PinnedPackEnvelope.LoadSeasonPack(
                     CareerStore.ReadPinnedPack(database, first.PackId, first.PackVersion).PackJson);
@@ -560,7 +560,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             pack.Drivers.FirstOrDefault(d => string.Equals(d.Id, playerDriverId, StringComparison.Ordinal))
                 ?.Born ?? pack.Season.Year - 30);
 
-    /// <summary>Seeds the season's stage-'start' sim-input states — the wizard facts the fold
+    /// <summary>Seeds the season's stage-'start' sim-input states, the wizard facts the fold
     /// and season end consume (docs/dev/career-sim.md): AI driver ages from the pack's Born
     /// years, team tiers from the pack's budget tiers, and the player state (tier-derived
     /// starting reputation, uncalibrated OPI/anchor, the chosen seat).</summary>
@@ -616,10 +616,10 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             GridSelection = gridSelection is { IncludesEverything: false } ? gridSelection : null,
             // Ratings Phase 3: form-reactive fold, on for new careers (false = byte-identical). Carried
             // forward each round via record `with`, so a multi-season career stays form-aware and its
-            // re-derived start states match — no rollover/transition change needed.
+            // re-derived start states match, no rollover/transition change needed.
             FormAware = formAware,
-            // The SMGP replica mode (M3): both halves of the gate — the pack's declared style AND the
-            // creation opt-in — or null, which serializes to nothing (WhenWritingNull) so every other
+            // The SMGP replica mode (M3): both halves of the gate, the pack's declared style AND the
+            // creation opt-in, or null, which serializes to nothing (WhenWritingNull) so every other
             // career is byte-identical. The player starts in the wizard-picked car.
             Smgp = smgpMode && string.Equals(
                     pack.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal)
@@ -643,7 +643,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             Mortality = mortality,
             // The Dynasty owner economy: the caller resolved rules ONLY for an opted-in Dynasty
             // career, so a non-null value IS the gate (mode + opt-in). The opening balance is
-            // pinned here from the starting team's tier, era-scaled — start state is INPUT, so a
+            // pinned here from the starting team's tier, era-scaled, start state is INPUT, so a
             // later rules edit never rewrites an existing career's opening funds. Null serializes
             // to nothing (WhenWritingNull): every other career's start blob is byte-identical.
             Economy = economyRules is null
@@ -672,7 +672,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     private static string ResolvePlayerDriverId(SeasonPack pack, string playerLiveryName)
     {
         // SMGP clean-swap model: the player is their OWN distinct driver, NOT the authored occupant of
-        // the car they pick — so that occupant is a real AI who benches while the player holds the seat
+        // the car they pick, so that occupant is a real AI who benches while the player holds the seat
         // and RETURNS the moment the player swaps to another car (Mike: "the original driver should come
         // back to that car i just left"). Every non-SMGP career keeps impersonating the seat's driver.
         if (string.Equals(pack.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal))
@@ -690,7 +690,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             return guest.DriverId;
 
         // Player-as-own-entrant: a livery matching no pack entry is a custom/non-standard skin the player
-        // chose. Instead of refusing, give them a stable synthetic driver id — the resolver seats them as
+        // chose. Instead of refusing, give them a stable synthetic driver id, the resolver seats them as
         // their own independent entrant, so a custom skin works and the career never dead-ends. Matches
         // RoundGridResolver's synthetic-seat branch (same id) so creation, staging and the fold agree.
         return RoundGridResolver.SyntheticPlayerDriverId;
@@ -726,7 +726,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>The home header's reputation + OPI trend, read from the FOLDED per-round
-    /// player states (never recomputed here — the fold is the one source of truth).</summary>
+    /// player states (never recomputed here, the fold is the one source of truth).</summary>
     private (double? Reputation, double? Opi, double? RepDelta, double? OpiDelta) PlayerTrend()
     {
         var states = StateStore.ReadRoundPlayerStates(_database, _seasonId);
@@ -745,7 +745,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>The latest folded player state (the most recent round's, or the season-start state
-    /// before any round) — the one source of the current character, level and XP.</summary>
+    /// before any round), the one source of the current character, level and XP.</summary>
     private PlayerCareerState? CurrentPlayerState()
     {
         // Once the season-end pipeline has run, its stage=end row owns the final XP/Level and
@@ -797,7 +797,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         return pending == 0 ? dossier : dossier with { CpUnspent = Math.Max(0, dossier.CpUnspent - pending) };
     }
 
-    /// <summary>Between-season spends journaled this (not-yet-transitioned) season — pending until
+    /// <summary>Between-season spends journaled this (not-yet-transitioned) season, pending until
     /// sign-and-continue applies them to the next season's character.</summary>
     private IReadOnlyList<CharacterSpend> PendingSpends() =>
         ReplayService.ReadCharacterSpends(_database, _seasonId);
@@ -1097,7 +1097,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
 
         // Derive the AUTHORITATIVE cost from the rules and never trust the caller's Cost. Otherwise a
         // crafted spend could buy a costed perk for 0 (or mint points with a negative cost), and
-        // because the row is provenance-excluded it would replay byte-for-byte — baking the exploit
+        // because the row is provenance-excluded it would replay byte-for-byte, baking the exploit
         // permanently into the career. The journaled row carries the derived cost, not spend.Cost.
         int cost;
         if (spend.Kind == "stat")
@@ -1136,7 +1136,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             double step = rules.Levels.LevelGrants.StatStepValue;
             var mods = PerkResolver.Resolve(projectedCharacter, rules);
             // One-Trick Pony's lockToOne freezes every talent stat except the one that owns the
-            // chosen specialism rating — you can only ever develop your single weapon.
+            // chosen specialism rating, you can only ever develop your single weapon.
             if (mods.LockedFlavorRating is { } locked)
             {
                 bool isTalent = rules.Stats.TalentStats.Any(s =>
@@ -1146,7 +1146,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                     && s.MapsTo.Contains(locked, StringComparer.Ordinal));
                 if (isTalent && !ownsLocked)
                     throw new InvalidOperationException(
-                        "One-Trick Pony locks development to your single specialism — that stat is frozen.");
+                        "One-Trick Pony locks development to your single specialism, that stat is frozen.");
             }
             // A statPoints/softCap perk (iron_constitution) lowers the in-career raise ceiling.
             double cap = rules.Levels.LevelGrants.StatCapPerRating + mods.StatSoftCapDelta;
@@ -1207,7 +1207,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         || rules.Stats.MetaStats.Any(s => string.Equals(s.Id, statId, StringComparison.Ordinal));
 
     /// <summary>The perks the driver can buy right now: positive-cost, not already owned or pending,
-    /// and affordable from the current pool — cheapest first. Empty with no character or no points.</summary>
+    /// and affordable from the current pool, cheapest first. Empty with no character or no points.</summary>
     public IReadOnlyList<PurchasablePerk> PurchasablePerks()
     {
         var player = CurrentPlayerState();
@@ -1333,7 +1333,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>The whole season's spoiler-free track schedule (Calendar lens) from the pinned pack +
-    /// library: each round's driven AMS2 track (after any applied alternate — the pinned pack carries
+    /// library: each round's driven AMS2 track (after any applied alternate, the pinned pack carries
     /// it), whether it is the real venue / a base stand-in / an applied mod alternate, and any alternate
     /// that exists but was not enabled.</summary>
     public IReadOnlyList<SeasonScheduleEntry> SeasonSchedule()
@@ -1349,7 +1349,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         foreach (var t in Pack.Teams) teamNameById.TryAdd(t.Id, t.Name);
 
         // Player availability per round (SMGP-300): applied rounds read the stored envelope's
-        // PlayerDidNotStart flag — an injury absence is never rewritten as participation — and
+        // PlayerDidNotStart flag, an injury absence is never rewritten as participation, and
         // future rounds project the ACTIVE suspension, so "you will miss the next 2 rounds" is
         // visible on the calendar before it happens.
         var satOutRounds = new HashSet<int>();
@@ -1369,7 +1369,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         {
             // The backmarkers the pack PINNED out of this round's grid (SMGP's per-race DNQ field),
             // fastest-first. Only entries actually ENTERED this round (whose rounds-range covers it) and
-            // de-duplicated by driver id — mirrors RoundGridResolver's covering-entry rule, so a partial-season
+            // de-duplicated by driver id, mirrors RoundGridResolver's covering-entry rule, so a partial-season
             // entrant or a mid-season team switch (historical packs) never leaks a phantom/duplicate DNQ row.
             IReadOnlyList<ScheduleDnqEntry> dnq = round.Grid is { StarterDriverIds.Count: > 0 } grid
                 ? Pack.Entries
@@ -1384,7 +1384,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                         e.Number))
                     .ToList()
                 : [];
-            // The REAL (historical) circuit per round — the shared lookup rule (authored
+            // The REAL (historical) circuit per round, the shared lookup rule (authored
             // per-round history pointer, else pack year + same round; carryover-stable), so the
             // calendar shows the ORIGINAL venue's map + facts, never the stand-in's, even on a
             // pack whose calendar runs a non-historical order (the SMGP replica).
@@ -1479,7 +1479,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             return [];
         var seats = ResolveGrid(CurrentRoundNumber).Seats;
         // Show the player's display name on their seat, not the historical driver they took over (nor,
-        // for the SMGP clean-swap player, the BENCHED AI whose car they hold). Display only — the seat's
+        // for the SMGP clean-swap player, the BENCHED AI whose car they hold). Display only, the seat's
         // DriverId (what results score under) and the staged AMS2 file (bound by livery) are untouched,
         // so nothing about the sim or the AI file changes.
         return PlayerDisplayName() is { } name
@@ -1508,8 +1508,8 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         GridPlan grid;
         try
         {
-            // The same resolve as the fold's — including the SMGP seat swaps via ResolveGrid's
-            // path — so the expectation shown is the expectation scored.
+            // The same resolve as the fold's, including the SMGP seat swaps via ResolveGrid's
+            // path, so the expectation shown is the expectation scored.
             grid = ResolveGrid(CurrentRoundNumber, applyWeekendForm: CurrentFormAware());
         }
         catch (InvalidOperationException)
@@ -1531,7 +1531,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
 
     /// <summary>The Dynasty development strength the NEXT fold will score with (economy §6):
     /// the folded level PLUS any pending buy-development decisions declared for the current
-    /// round — the fold applies those at its top, so the briefing's expected finish stays
+    /// round, the fold applies those at its top, so the briefing's expected finish stays
     /// contractually equal to the number the Setup Gamble is staked against. 0 for every
     /// non-economy career (and after bankruptcy).</summary>
     private double CurrentDynastyDevelopmentStrength(PlayerCareerState? player)
@@ -1552,7 +1552,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         return rules.Development.StrengthPerLevel * (economy.DevelopmentLevel + pendingBuys);
     }
 
-    /// <summary>What skin every car on the current round's grid will show — the read-only skin
+    /// <summary>What skin every car on the current round's grid will show, the read-only skin
     /// picture the briefing's Skins panel renders (player-own-car crib + per-AI-car status). Reads
     /// the resolved grid, the installed skin-override scan and the installed NAMeS file; writes
     /// nothing. The player's seat shows the character name (matching <see cref="CurrentGrid"/>), so
@@ -1579,7 +1579,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
 
         var result = SkinAssignmentResolver.Resolve(plan, scan.Liveries, _environment.ContentLibrary, aiNames);
 
-        // Show the player's display name on their car (as CurrentGrid does) — display only,
+        // Show the player's display name on their car (as CurrentGrid does), display only,
         // the livery NAME (the binding + what they pick in-game) is untouched.
         if (PlayerDisplayName() is { } name && result.Assignments.Any(a => a.IsPlayer))
         {
@@ -1595,13 +1595,13 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     /// <summary>Switches an inactive placeholder livery ON in its community override file. Finds the
     /// installed placeholder for the name (preferring one in this class's vehicle folders), then
     /// assigns it the next free slot via <see cref="LiveryOverrideWriter"/> (backup-first). Writes
-    /// only that community skin file; never the career DB — so the sim/fold/oracle are untouched.</summary>
+    /// only that community skin file; never the career DB, so the sim/fold/oracle are untouched.</summary>
     public LiveryActivationResult ActivateLivery(string liveryName)
     {
         var installation = _environment.LocateInstall();
         if (installation is null)
             return LiveryActivationResult.Failed(
-                "No AMS2 installation was found — cannot locate the skin files to activate.");
+                "No AMS2 installation was found, cannot locate the skin files to activate.");
 
         var scan = _environment.ScanInstalledLiveries(installation);
         var classFolders = _environment.ContentLibrary.Vehicles.Values
@@ -1613,7 +1613,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             .Where(l => string.Equals(l.Name, liveryName, StringComparison.Ordinal) && !l.IsActive)
             .ToList();
         // Prefer a placeholder in THIS class's folder; fall back to any (the content library can be
-        // stale and not know a class's folders — the scan is the ground truth either way).
+        // stale and not know a class's folders, the scan is the ground truth either way).
         var chosen = candidates.FirstOrDefault(l => classFolders.Contains(l.VehicleFolder))
             ?? candidates.FirstOrDefault();
 
@@ -1632,7 +1632,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>The library set this pack declares via <c>pack.json skinSeason</c>, with the
-    /// install's Overrides root — null when undeclared, unknown to the library, or no install.</summary>
+    /// install's Overrides root, null when undeclared, unknown to the library, or no install.</summary>
     private (SkinSeasonSet Set, string OverridesRoot)? DeclaredSkinSeason()
     {
         var set = _environment.SkinSeasons.Get(Pack.Manifest.SkinSeason);
@@ -1655,7 +1655,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
 
     /// <summary>Switches the install onto this pack's declared skin season (backup-first,
     /// all-or-nothing; unrecognized user files hold the swap behind the force gate). Skin pointer
-    /// files only — the career DB / sim / oracle are never touched.</summary>
+    /// files only, the career DB / sim / oracle are never touched.</summary>
     public SkinSeasonApplyResult ActivateSkinSeason(bool force = false)
     {
         if (DeclaredSkinSeason() is not { } declared)
@@ -1671,8 +1671,8 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>The per-seat cosmetic staging overrides this season still carries (v4
-    /// staging_override table — written by the retired grid editor; the Grid Preview now surfaces
-    /// a count + clear affordance). Read-only projection over a non-journaled table — the sim
+    /// staging_override table, written by the retired grid editor; the Grid Preview now surfaces
+    /// a count + clear affordance). Read-only projection over a non-journaled table, the sim
     /// never sees it.</summary>
     public IReadOnlyDictionary<string, SeatStagingOverride> SeatStagingOverrides() =>
         StagingOverrideStore.Read(_database, _seasonId);
@@ -1683,22 +1683,22 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         StagingOverrideStore.Set(_database, _seasonId, liveryKey, seatOverride);
 
     /// <summary>The player's driver id + display name for name-rendering screens, or null when there is
-    /// no name to show (a real-driver career with no character name — the call site falls back to the
+    /// no name to show (a real-driver career with no character name, the call site falls back to the
     /// seat's authored driver).</summary>
     public (string DriverId, string DisplayName)? PlayerIdentity() =>
         PlayerDisplayName() is { } name ? (_playerDriverId, name) : null;
 
     /// <summary>The player-facing name for the grid card / news / standings / review screens: their
-    /// chosen character name, or — for a distinct-driver player (the SMGP clean-swap / own-entrant
+    /// chosen character name, or, for a distinct-driver player (the SMGP clean-swap / own-entrant
     /// model, whose synthetic id is NOT in pack.Drivers and whose occupied car still carries the BENCHED
-    /// AI's name) — a stable default so the player never renders as that AI (or the raw id). Null for a
+    /// AI's name), a stable default so the player never renders as that AI (or the raw id). Null for a
     /// real-driver career with no character name, so callers keep the seat's authored driver (the
-    /// historical driver the player wears) — every non-distinct career stays display-identical.</summary>
+    /// historical driver the player wears), every non-distinct career stays display-identical.</summary>
     private string? PlayerDisplayName() =>
         CharacterName() ?? (IsDistinctDriverPlayer ? PlayerDefaultName : null);
 
     /// <summary>The player races as their OWN distinct entrant (SMGP clean-swap, or a custom-livery
-    /// own-entrant) rather than impersonating a pack driver — so their id is the synthetic one.</summary>
+    /// own-entrant) rather than impersonating a pack driver, so their id is the synthetic one.</summary>
     private bool IsDistinctDriverPlayer =>
         string.Equals(_playerDriverId, RoundGridResolver.SyntheticPlayerDriverId, StringComparison.Ordinal);
 
@@ -1729,13 +1729,13 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>Resolves the round grid, marking the player's seat when their entry covers
-    /// this round (an entry's rounds range may exclude it — then the grid is all-AI). When the
-    /// career carries a character, the player seat is patched from it here too — so the STAGED
+    /// this round (an entry's rounds range may exclude it, then the grid is all-AI). When the
+    /// career carries a character, the player seat is patched from it here too, so the STAGED
     /// AMS2 file gets the perk car scalars and the briefing's expectation matches the fold (the
     /// fold applies the identical patch). A character-free career resolves an unchanged grid.</summary>
     /// <param name="applyWeekendForm">Ratings Phase 3: overlay the round's per-race form (a FormAware
     /// career). ONLY the "sim's view" resolves opt in (the shown expected finish + slider), so they
-    /// equal what the fold scored. STAGING keeps this false — <c>GridStager.Build</c> applies the same
+    /// equal what the fold scored. STAGING keeps this false, <c>GridStager.Build</c> applies the same
     /// nudge to the written AMS2 file, so applying it here too would double-count.</param>
     private GridPlan ResolveGrid(
         int round,
@@ -1744,20 +1744,20 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     {
         // Resolve with the career's chosen field (v0.6.0) so the DISPLAY + staged AI file match what
         // the fold scores. Null selection = whole pack (byte-identical).
-        // ALWAYS seat the player — even on a round their car did not qualify (1988 pre-qualifying: a
+        // ALWAYS seat the player, even on a round their car did not qualify (1988 pre-qualifying: a
         // driver like Coloni's Tarquini DNQs some rounds; the resolver seats them from their own entry
         // and CapToGridSize drops the slowest peer to hold AMS2's hardcoded grid size), and even on a
         // custom/non-standard livery that matches no pack entry (the resolver seats them as their own
         // synthetic entrant). This mirrors the fold + CurrentExpectedFinish, which seat the player
         // unconditionally, so the staged AMS2 file matches what the sim scores. Existing careers on a
         // qualifying pack livery resolve byte-identically.
-        // SMGP (M3): the latest folded mode state reseats swapped drivers — display, staging and
+        // SMGP (M3): the latest folded mode state reseats swapped drivers, display, staging and
         // the fold all read the same swaps, so the car the player sees IS the car the sim scores
         // and the staged AMS2 file names the reseated drivers. Null outside the mode.
         var smgp = CurrentSmgpState();
 
         // SMGP CLEAN-SWAP model (Mike): a career created with a DISTINCT player driver id seats the
-        // player DIRECTLY on their current car (smgp.CurrentSeatLivery) as their own driver — the car's
+        // player DIRECTLY on their current car (smgp.CurrentSeatLivery) as their own driver, the car's
         // authored AI benches, everyone else keeps their home seat, and the fresh resolve is the whole
         // truth (no AI seat overrides, no cascade). The vacated car reverts to its authored AI for free.
         // Pre-change SMGP careers (player id == a pack driver) keep the old override path below.
@@ -1791,7 +1791,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     public Companion.Core.Smgp.SmgpPendingOffer? CurrentSmgpPendingOffer() =>
         CurrentSmgpState()?.PendingSwap;
 
-    /// <summary>Resolve the pending offer on the last folded round (3c-2) — the promotion screen's
+    /// <summary>Resolve the pending offer on the last folded round (3c-2), the promotion screen's
     /// accept/decline. Delegates to the atomic <see cref="ReplayService.ResolveSmgpOffer"/>.</summary>
     public void ResolveSmgpOffer(bool accept)
     {
@@ -1802,7 +1802,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         ReplayService.ResolveSmgpOffer(_database, _seasonId, Pack, round, accept, NowUtc());
 
         // The offer is now cleared: if it was deferred on the season's FINAL round, season end was
-        // held back (EnsureSeasonEnd) — fold it now, on the resolved seat, matching replay's order.
+        // held back (EnsureSeasonEnd), fold it now, on the resolved seat, matching replay's order.
         if (SeasonComplete)
             EnsureSeasonEnd();
     }
@@ -1813,7 +1813,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         CurrentSmgpState() is { } state ? TeamOfLivery(state.CurrentSeatLivery) : null;
 
     /// <summary>The rival named in the most-recently applied round (its stored <c>SmgpRival</c> call), or
-    /// null. A pure read over the persisted envelopes — never a fold input. The named rival is a per-round
+    /// null. A pure read over the persisted envelopes, never a fold input. The named rival is a per-round
     /// choice; this surfaces the LATEST for the season standings' "your rival" highlight.</summary>
     public string? CurrentSmgpRivalDriverId() =>
         ResultStore.ReadSeasonResults(_database, _seasonId)
@@ -1829,7 +1829,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             : null;
 
     /// <summary>The demotion screen (3c-3): shown when the last applied round forced the player down a
-    /// tier — the smgp team moved away from <paramref name="previousTeamId"/> with NO pending offer
+    /// tier, the smgp team moved away from <paramref name="previousTeamId"/> with NO pending offer
     /// (a promotion is deferred, so a team change without one is a forfeit / lost title defense).</summary>
     public SmgpPromotionModel? CurrentSmgpDemotion(string? previousTeamId)
     {
@@ -1878,11 +1878,11 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>The locked 17-season campaign FINALE (Mike's "final final screen"), or null. Non-null
-    /// ONLY when the current SMGP season is a COMPLETED campaign summit — the player reached the end of
+    /// ONLY when the current SMGP season is a COMPLETED campaign summit, the player reached the end of
     /// all <see cref="Companion.Core.Smgp.SmgpRules.CampaignSeasons"/> seasons without the career ending
     /// on the D-floor. A champion-of-all-17 run is flagged flawless (revealing <c>ultimate.jpg</c> over
     /// <c>special.jpg</c>). Pure DISPLAY-ONLY read over folded state (season ordinal + Titles + CareerOver):
-    /// no fold change, no journal row, no seed — the byte-identical replay gate is untouched. The secret
+    /// no fold change, no journal row, no seed, the byte-identical replay gate is untouched. The secret
     /// hero key is emitted ONLY here and ONLY when unlocked, so the art is unreachable everywhere else.</summary>
     public SmgpFinaleModel? SmgpFinale()
     {
@@ -1903,7 +1903,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             Headline = flawless ? "THE FLAWLESS EMPEROR" : "SEVENTEEN SEASONS CONQUERED",
             Subhead = flawless
                 ? "Champion of every season across the whole SEGA world. No one has driven what you have driven."
-                : "You went the distance — all seventeen seasons survived. The replica is truly beaten.",
+                : "You went the distance, all seventeen seasons survived. The replica is truly beaten.",
             IsFlawless = flawless,
             HeroImageKey = flawless ? "ultimate" : "special",
             Record =
@@ -1914,8 +1914,8 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         };
     }
 
-    /// <summary>The SMGP mode's LATEST folded state — the last folded round's, else the season
-    /// start's — or null outside the mode. Deliberately NOT cached: every folded round can move
+    /// <summary>The SMGP mode's LATEST folded state, the last folded round's, else the season
+    /// start's, or null outside the mode. Deliberately NOT cached: every folded round can move
     /// seats, and the next round's grid must show them.</summary>
     private Companion.Core.Smgp.SmgpState? CurrentSmgpState()
     {
@@ -1970,7 +1970,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         var playerSeatSeat = seats.FirstOrDefault(s => s.IsPlayer);
         string? playerTeamId = playerSeatSeat?.TeamId;
         // The CHALLENGE-TIER rule (Mike): you may only name a rival in the tier directly ABOVE you
-        // (the seat you climb toward) or ANY tier below — never two tiers up, never your own tier.
+        // (the seat you climb toward) or ANY tier below, never two tiers up, never your own tier.
         char? playerTier = playerSeatSeat is null ? null
             : Companion.Core.Smgp.SmgpRules.Tier(
                 teamsById.TryGetValue(playerSeatSeat.TeamId, out var pt) ? pt.Prestige : 3);
@@ -1989,7 +1989,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                 continue;
             teamsById.TryGetValue(seat.TeamId, out var team);
             char rivalTier = Companion.Core.Smgp.SmgpRules.Tier(team?.Prestige ?? 3);
-            // Tier gate — but the forced title-defense challenger is always namable regardless.
+            // Tier gate, but the forced title-defense challenger is always namable regardless.
             bool isForced = string.Equals(seat.DriverId, forcedChallenger, StringComparison.Ordinal);
             if (!isForced && playerTier is { } ptier &&
                 !Companion.Core.Smgp.SmgpRules.CanChallenge(ptier, rivalTier))
@@ -2043,11 +2043,11 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             prior: PriorSeasonsSmgpTotals().GetValueOrDefault(_playerDriverId));
         string seasonLine = playerSeason is { Position: { } pos } ps
             ? $"SEASON  P{pos} · {ps.Points} PTS"
-            : "SEASON  —";
+            : "SEASON  -";
         string careerLine = FormatCareerLine(playerCareer);
 
         // A forced challenger who is not actually on this round's grid (his introduction could
-        // not resolve) cannot be battled — surface a free pick instead of a lock on nothing.
+        // not resolve) cannot be battled, surface a free pick instead of a lock on nothing.
         if (forcedChallenger is not null &&
             !rivals.Any(r => string.Equals(r.DriverId, forcedChallenger, StringComparison.Ordinal)))
             forcedChallenger = null;
@@ -2086,7 +2086,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         foreach (var t in Pack.Teams)
             teamsById.TryAdd(t.Id, t);
 
-        // A driver's authored seat (team + number) from entries.json — one entry per driver.
+        // A driver's authored seat (team + number) from entries.json, one entry per driver.
         var entryByDriver = new Dictionary<string, PackEntry>(StringComparer.Ordinal);
         foreach (var e in Pack.Entries)
             entryByDriver.TryAdd(e.DriverId, e);
@@ -2095,10 +2095,10 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         // standings for points/position. The player builds their record from zero; the AI carry their
         // predetermined baseline forward. Display-only (a projection over the fold, like the standings).
         var accrued = AccrueSeasonCounts();
-        // The cross-season rollup — computed ONCE for the whole paddock (each card just looks its driver
+        // The cross-season rollup, computed ONCE for the whole paddock (each card just looks its driver
         // up), so a 17-season career card spans every season, not just the current one.
         var prior = PriorSeasonsSmgpTotals();
-        // Per-driver depth (head-to-head vs the player, per-venue bests, recent form) — one pass over the
+        // Per-driver depth (head-to-head vs the player, per-venue bests, recent form), one pass over the
         // whole career, looked up per AI card. Display-only.
         var depth = BuildDriverDepthIndex();
         var standings = CurrentStandings();
@@ -2155,7 +2155,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             .ThenBy(c => c.Name, StringComparer.Ordinal)
             .ToList();
 
-        // The player LEADS the roster — their own card, built from their current seat + live record.
+        // The player LEADS the roster, their own card, built from their current seat + live record.
         var playerSeat = complete ? null : CurrentGrid().FirstOrDefault(s => s.IsPlayer);
         string playerTeamId = playerSeat?.TeamId ?? CurrentSmgpTeamId() ?? "";
         var playerTeam = teamsById.GetValueOrDefault(playerTeamId);
@@ -2236,7 +2236,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             .ThenBy(c => c.Name, StringComparer.Ordinal)
             .ToList();
 
-        // A rotating "paddock rumor" line (Task 4) — seeded off the applied-round count so it changes as the
+        // A rotating "paddock rumor" line (Task 4), seeded off the applied-round count so it changes as the
         // career progresses yet stays stable on a re-open. DISPLAY-ONLY flavour, grounded in real grid facts.
         string leaderName = standings?.Drivers.FirstOrDefault(d => d.Position == 1) is { } lead
             ? DriverDisplayName(lead.DriverId) : "";
@@ -2256,7 +2256,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     /// <summary>The Tycoon Team Mode read-only DATA SPINE (Task 5): the player's team dashboard + every team
     /// ranked as the competitive landscape + a flavour team-of-the-season seed. Builds on <see cref="SmgpPaddock"/>
     /// (reusing its team cards' roster/sponsors/tier/history) and the live standings for a DERIVED constructors'
-    /// ranking (SMGP is driver-focused, so team points = its drivers' counted points summed — a display read,
+    /// ranking (SMGP is driver-focused, so team points = its drivers' counted points summed, a display read,
     /// not an official constructors' title). Pure DISPLAY-ONLY: no fold mechanics, so replay stays byte-identical.
     /// Null outside the mode.</summary>
     public SmgpTeamDashboard? SmgpTeamDashboard()
@@ -2327,7 +2327,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
 
         // FLAVOUR "team of the season" (seed of the future economy): the biggest over-achiever vs its prestige
         // budget (a constructors' position better than its prestige rank), else the constructors' leader. Only
-        // once a round has scored. Clearly labelled flavour — there is no real budget model yet.
+        // once a round has scored. Clearly labelled flavour, there is no real budget model yet.
         SmgpTeamOfSeasonFlavour? tos = null;
         if (teamPoints.Values.Any(p => p > 0))
         {
@@ -2359,7 +2359,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         };
     }
 
-    /// <summary>A FLAVOUR budget-tier label from a team's prestige — the seed of the future Tycoon economy,
+    /// <summary>A FLAVOUR budget-tier label from a team's prestige, the seed of the future Tycoon economy,
     /// NOT a real budget number.</summary>
     private static string BudgetTierFlavour(int prestige) => prestige switch
     {
@@ -2369,7 +2369,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         _ => "Shoestring",
     };
 
-    /// <summary>The player's OWN Paddock bio — the one card that is not authored but generated live, so
+    /// <summary>The player's OWN Paddock bio, the one card that is not authored but generated live, so
     /// it reflects who you are RIGHT NOW: your team, how far into the 17-season campaign you are, and the
     /// record you have built from zero (honestly - a blank sheet reads as a blank sheet). Grows with the
     /// career. ASCII punctuation, matching the authored bios. Display-only.</summary>
@@ -2402,18 +2402,18 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>A driver's totals accrued across ALL COMPLETED PRIOR seasons of the career (everything
-    /// before the current season) — added on top of the predetermined baseline and the live current-season
+    /// before the current season), added on top of the predetermined baseline and the live current-season
     /// tally so the SMGP career card spans the whole 17-season campaign. Display-only; a plain value with
     /// default = all-zeros (the reused per-projection Empty).</summary>
     private readonly record struct SmgpPriorTotals(
         int Starts, int Wins, int Podiums, int Poles, int Top5s, int Points, int Titles);
 
-    /// <summary>Rolls up every COMPLETED PRIOR season's SMGP counts + points + titles per driver — the
+    /// <summary>Rolls up every COMPLETED PRIOR season's SMGP counts + points + titles per driver, the
     /// term that makes the career card span all seasons (the current season stays the live delta added by
     /// <see cref="BuildDriverStats"/>). Mirrors <see cref="CareerTimeline"/>'s per-season loop: each prior
     /// season rehydrates its pinned pack + scoring, re-reads the stored envelopes, and re-derives counts
     /// (<see cref="Companion.Core.Smgp.SmgpLiveStats"/>) + final standings (<see cref="StandingsEngine"/>).
-    /// A pure read over the immutable results — never a fold input, never persisted. The player's
+    /// A pure read over the immutable results, never a fold input, never persisted. The player's
     /// per-season (possibly synthetic) id is normalized onto <c>_playerDriverId</c> so their prior seasons
     /// land on their own card. Compute ONCE per projection and pass the result into BuildDriverStats.</summary>
     private IReadOnlyDictionary<string, SmgpPriorTotals> PriorSeasonsSmgpTotals()
@@ -2481,7 +2481,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>Per-driver COUNTS (wins/poles/podiums/top-5s/starts) accrued from THIS season's folded
-    /// results — display-only, re-read from the raw envelopes like the standings. Empty before any round
+    /// results, display-only, re-read from the raw envelopes like the standings. Empty before any round
     /// is scored. The all-seasons total adds <see cref="PriorSeasonsSmgpTotals"/> on top of this.</summary>
     private IReadOnlyDictionary<string, Companion.Core.Smgp.SmgpAccruedStats> AccrueSeasonCounts()
     {
@@ -2500,7 +2500,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>Builds a driver's all-time career totals and this-season tally from the accrued counts +
-    /// the current standings. The player (<paramref name="isPlayer"/>) has no baseline — they build from
+    /// the current standings. The player (<paramref name="isPlayer"/>) has no baseline, they build from
     /// zero; an AI driver's baseline is their predetermined pre-history. A completed season adds a title
     /// to its champion. Season points/position come from the live standings.</summary>
     private (SmgpCareerStats Career, SmgpSeasonStats? Season) BuildDriverStats(
@@ -2560,16 +2560,16 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         return string.Join(" · ", parts);
     }
 
-    /// <summary>The player's career one-liner for the rival readout — the notable non-zero tallies
+    /// <summary>The player's career one-liner for the rival readout, the notable non-zero tallies
     /// (titles, wins, podiums, poles), or empty when they have nothing to show yet.</summary>
     private static string FormatCareerLine(SmgpCareerStats career) =>
         CareerTallies(career) is { Length: > 0 } tallies ? "CAREER  " + tallies : "";
 
-    /// <summary>A driver's this-season roster line — "P3 · 18 PTS", or "—" before the standing computes.</summary>
+    /// <summary>A driver's this-season roster line, "P3 · 18 PTS", or "-" before the standing computes.</summary>
     private static string SeasonLineOf(SmgpSeasonStats? season) =>
         season is { Position: { } pos }
             ? string.Create(CultureInfo.InvariantCulture, $"P{pos} · {season.Points} PTS")
-            : "—";
+            : "-";
 
     /// <summary>How many recent races the FormRecent trend keeps.</summary>
     private const int FormWindow = 6;
@@ -2578,13 +2578,13 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     /// Vivid, distinct, mid-tone so it reads on both the light and dark themes. Display-only.</summary>
     private static string TierColorHex(char tier) => tier switch
     {
-        'A' => "#E8B900", // gold — the top house
+        'A' => "#E8B900", // gold, the top house
         'B' => "#2E77D0", // blue
         'C' => "#1FA85B", // green
-        _ => "#8792A0",   // slate — the floor (D)
+        _ => "#8792A0",   // slate, the floor (D)
     };
 
-    /// <summary>The venue label a per-track record keys on: the round's own name — for the SMGP mode that
+    /// <summary>The venue label a per-track record keys on: the round's own name, for the SMGP mode that
     /// is the short arcade venue ("Monaco", "San Marino"), which reads better on a compact card than the
     /// long formal <see cref="PackTrackRef.RealVenue"/>. Always present (a required field) and stable across
     /// seasons (the calendar never changes), so it is a sound per-track key.</summary>
@@ -2621,7 +2621,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
 
     /// <summary>The player-vs-every-AI head-to-head, each AI's per-venue best finish, and their recent form,
     /// accumulated in ONE pass over every scored race of the WHOLE career (all seasons incl. the current).
-    /// A pure display-only projection over the immutable results — never a fold input. Keyed by the AI's
+    /// A pure display-only projection over the immutable results, never a fold input. Keyed by the AI's
     /// (stable, pinned-pack) driver id; the player is skipped each season by that season's
     /// <see cref="PlayerDriverIdFor"/>. The player's own best finish per venue is tracked globally so a
     /// track card can compare. The live SMGP battle streak comes from the current folded state's tally.
@@ -2714,7 +2714,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         return result;
     }
 
-    /// <summary>The (team name, prestige) a livery belongs to in a given season's pack — from its authored
+    /// <summary>The (team name, prestige) a livery belongs to in a given season's pack, from its authored
     /// entry (else a guest entry, via <see cref="PlayerTeamId"/>), mapped to the pack's team. ("", 0) when
     /// unknown. Season-parameterized (unlike <see cref="TeamOfLivery"/>, which is bound to the current pack)
     /// so a PRIOR season's seat resolves against that season's pinned roster.</summary>
@@ -2729,7 +2729,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         return (team?.Name ?? teamId, team?.Prestige ?? 0);
     }
 
-    /// <summary>The player's one-line live narrative intro above the timeline — where they stand RIGHT NOW.</summary>
+    /// <summary>The player's one-line live narrative intro above the timeline, where they stand RIGHT NOW.</summary>
     private string BuildNarrativeIntro(SmgpCareerStats? career, SmgpSeasonStats? season, string teamName)
     {
         string where = string.IsNullOrWhiteSpace(teamName) ? "the SEGA world" : teamName;
@@ -2742,9 +2742,9 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             $"racing for {where} · {standing}{tallies}");
     }
 
-    /// <summary>The player's evolving career TIMELINE (Task 2): an ordered list of milestone beats — arrived,
+    /// <summary>The player's evolving career TIMELINE (Task 2): an ordered list of milestone beats, arrived,
     /// first start/points/pole/podium/win, each promotion + demotion, each title, rivalries won/lost, floor
-    /// near-misses, season progress and the finale — detected by <see cref="Companion.Core.Smgp.SmgpCareerBeats"/>
+    /// near-misses, season progress and the finale, detected by <see cref="Companion.Core.Smgp.SmgpCareerBeats"/>
     /// from the shaped folded state. A pure display-only projection over the immutable results (mirrors
     /// <see cref="CareerTimeline"/>'s per-season loop): each season rehydrates its pinned pack + scoring, reads
     /// the stored results, the SMGP seat sequence (<c>Smgp.CurrentSeatLivery</c>, NEVER the pinned
@@ -2758,7 +2758,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>Shapes the per-season/per-round facts the milestone detector AND the living-world dispatch
-    /// feed both read (Task 2 timeline + Task 4 dispatches) — one walk over the career's seasons rehydrating
+    /// feed both read (Task 2 timeline + Task 4 dispatches), one walk over the career's seasons rehydrating
     /// each pinned pack + scoring, reading the stored results, the SMGP seat sequence and the journaled battle
     /// triggers. A pure display-only projection over the immutable results; never a fold input.</summary>
     private IReadOnlyList<Companion.Core.Smgp.SmgpNarrativeSeason> BuildSmgpNarrativeSeasons()
@@ -2864,7 +2864,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             for (int i = 0; i < snapshots.Count; i++)
             {
                 var ps = snapshots[i].Drivers.FirstOrDefault(d => string.Equals(d.DriverId, pid, StringComparison.Ordinal));
-                // GrossPoints (monotonic) for first-points detection — CountedPoints can be trimmed by
+                // GrossPoints (monotonic) for first-points detection, CountedPoints can be trimmed by
                 // dropped-scores rules late season, so its first non-zero snapshot is not the true first.
                 playerPointsAfter[champStored[i].Round] = ps?.GrossPoints.ToDouble() ?? 0.0;
             }
@@ -2934,7 +2934,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         return seasonsInput;
     }
 
-    /// <summary>The named RNG subsystem for the living-world dispatch feed — a DISPLAY-ONLY stream (never a
+    /// <summary>The named RNG subsystem for the living-world dispatch feed, a DISPLAY-ONLY stream (never a
     /// fold input), so it needs no <see cref="CareerStreams"/> registration; it just keys deterministic
     /// corpus selection off the master seed so the same career shows the same stories on every open.</summary>
     private const string DispatchStream = "smgp-dispatch";
@@ -3009,7 +3009,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             });
         }
 
-        // Chronological, then newest first — a stable, deterministic order.
+        // Chronological, then newest first, a stable, deterministic order.
         dispatches.Sort((a, b) =>
         {
             int c = a.SortSeason.CompareTo(b.SortSeason);
@@ -3022,7 +3022,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>Maps a milestone beat to its dispatch corpus key + kind. Returns a null key for a beat that
-    /// gets no dispatch (none today — every kind maps, but the null keeps the switch total).</summary>
+    /// gets no dispatch (none today, every kind maps, but the null keeps the switch total).</summary>
     private static (string? Key, Companion.Core.Smgp.SmgpDispatchKind Kind) MapBeatToDispatch(
         Companion.Core.Smgp.SmgpCareerBeat beat) => beat.Kind switch
     {
@@ -3061,7 +3061,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         {
             Companion.Core.Smgp.SmgpWorldStoryKind.RivalStreak => ("world.rival-streak",
                 Companion.Core.Smgp.SmgpDispatchKind.RivalWatch,
-                string.Create(ci, $"{s.SubjectName.ToUpperInvariant()} — {s.Number} IN A ROW")),
+                string.Create(ci, $"{s.SubjectName.ToUpperInvariant()}, {s.Number} IN A ROW")),
             Companion.Core.Smgp.SmgpWorldStoryKind.Benchmark => ("world.benchmark",
                 Companion.Core.Smgp.SmgpDispatchKind.RivalWatch, "THE BENCHMARK"),
             Companion.Core.Smgp.SmgpWorldStoryKind.LeaderChange => ("world.leader-change",
@@ -3075,7 +3075,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         };
     }
 
-    /// <summary>The dispatch corpus token dictionary — every slot a template might name, with a neutral
+    /// <summary>The dispatch corpus token dictionary, every slot a template might name, with a neutral
     /// fallback for the ones a given dispatch does not carry (so a body never prints a raw token).</summary>
     private static IReadOnlyDictionary<string, string> DispatchTokens(
         string player, string team, string rival, string venue, int season, int number,
@@ -3161,7 +3161,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>Shapes each scored CHAMPIONSHIP round of the whole career into the grid-level facts the
-    /// world-story detector reads — the race winner and the championship order after the round. Mirrors
+    /// world-story detector reads, the race winner and the championship order after the round. Mirrors
     /// <see cref="BuildSmgpNarrativeSeasons"/>'s per-season loop (rehydrate pack + scoring, re-read stored
     /// results). Each driver id is normalized onto <c>_playerDriverId</c> when it is that season's player,
     /// so the player is excluded consistently as a story subject. A pure read over immutable results.</summary>
@@ -3236,7 +3236,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         return result;
     }
 
-    /// <summary>The rival's dossier line: his OWN words for the ladder state — a first challenge,
+    /// <summary>The rival's dossier line: his OWN words for the ladder state, a first challenge,
     /// the player one win up (the seat in sight), or him one win up. Data-driven
     /// (<c>data/rules/smgp/rival-quotes.json</c>); the deadpan default when no rules folder or no
     /// authored line. Display-only, so a per-round seed just keeps the same line on a re-open.</summary>
@@ -3252,7 +3252,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         return _environment.Rules.SmgpRivalQuotes.Line(driverId, mood, QuoteSeed(driverId, round));
     }
 
-    /// <summary>A stable FNV-1a hash over (driver id, round) — picks a line without wobbling when the
+    /// <summary>A stable FNV-1a hash over (driver id, round), picks a line without wobbling when the
     /// same briefing is re-opened. The quote is never a fold input, so this seed carries no weight
     /// beyond display.</summary>
     private static uint QuoteSeed(string driverId, int round)
@@ -3286,8 +3286,8 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
 
     /// <summary>Whether this career is form-reactive (Ratings Phase 3), read once from the start state
     /// and cached (it never changes over a career). Drives the DISPLAY resolves that must equal what
-    /// the fold scored — the expected finish the Setup Gamble stakes against, and the recommended
-    /// slider — so the number shown matches the number folded. Staging keeps form OFF here because
+    /// the fold scored, the expected finish the Setup Gamble stakes against, and the recommended
+    /// slider, so the number shown matches the number folded. Staging keeps form OFF here because
     /// <c>GridStager.Build</c> applies the same nudge to the written file (no double-apply); false for
     /// a pre-Phase-3 career ⇒ byte-identical.</summary>
     private bool CurrentFormAware() =>
@@ -3387,7 +3387,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     public void DeclareCurrentRoundWeather(bool isWet)
     {
         if (SeasonComplete)
-            throw new InvalidOperationException("The season is complete — there is no round to declare.");
+            throw new InvalidOperationException("The season is complete, there is no round to declare.");
         var character = CurrentCharacterProfile();
         if (character?.ProgressionVersion != CharacterLevelProgression.Level300Version)
             throw new InvalidOperationException(
@@ -3440,7 +3440,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         };
     }
 
-    /// <summary>The player's chosen character name for this season, or null when there is none — the
+    /// <summary>The player's chosen character name for this season, or null when there is none, the
     /// display identity the news/standings use instead of the historical driver they replaced.</summary>
     private string? CharacterName()
     {
@@ -3460,7 +3460,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     public StageOutcome StageCurrentGrid() => StageCurrentGrid(force: false);
 
     /// <summary>Explicit "apply this grid to AMS2": ALWAYS writes an app-marked file (backup-first),
-    /// bypassing the diff-aware no-op and the community-file gate — so a grid the user chose is
+    /// bypassing the diff-aware no-op and the community-file gate, so a grid the user chose is
     /// verifiable on disk (the AMS2 diagnosis found the default flow wrote 0 bytes, which is why
     /// "nothing changes"). Binds every AI driver to a REAL base-game livery for the class so AMS2
     /// accepts the file and shows the drivers (confirmed in-game). This is the "Apply grid to AMS2"
@@ -3472,7 +3472,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     /// the community skin packs rotate which liveries are on the grid PER RACE by copying a round
     /// variant over each vehicle model's active override file. Discovers the .bat in the AMS2 root
     /// (the one that manages this class's custom-AI file) and applies the round's swaps backup-first.
-    /// Skin files only — never the career DB, so the sim/fold/oracle are untouched. Null when there is
+    /// Skin files only, never the career DB, so the sim/fold/oracle are untouched. Null when there is
     /// no install, no matching .bat, or the .bat has no entry for this round.</summary>
     /// <summary>
     /// When the player's chosen car is a "bubble" livery outside this round's active pool (1988 was a
@@ -3488,7 +3488,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         try
         {
             // Already in the round's LIVE active pool (a qualifier, or a bubble car on a round it
-            // qualified)? Only the model's active <model>.xml counts — a bubble car active in some OTHER
+            // qualified)? Only the model's active <model>.xml counts, a bubble car active in some OTHER
             // round's variant file must NOT look "already active", or the graft wrongly skips it.
             var scan = _environment.ScanInstalledLiveries(installation);
             if (scan.Liveries.Any(l => l.IsActive && IsLiveActiveFile(l) &&
@@ -3523,7 +3523,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                     continue;
 
                 string activeXml = File.ReadAllText(activePath);
-                // Displace the slowest SAME-MODEL active qualifier — a seated peer, never the player.
+                // Displace the slowest SAME-MODEL active qualifier, a seated peer, never the player.
                 string? displace = BubbleCarGraft.ActiveNames(activeXml)
                     .Where(n => skillByLivery.ContainsKey(n) &&
                                 !string.Equals(n, _playerLiveryName, StringComparison.Ordinal))
@@ -3539,7 +3539,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
 
                 ScenarioApplier.BackUp(activePath, _environment.Clock.GetUtcNow());
                 File.WriteAllText(activePath, grafted);
-                return $"Your car ({_playerLiveryName}) took {displace}'s grid slot for this race — " +
+                return $"Your car ({_playerLiveryName}) took {displace}'s grid slot for this race, " +
                        "its real skin is now active (pick it on the car-select screen).";
             }
             return null;
@@ -3568,7 +3568,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
 
         // The selector's season sub-menu for THIS pack's year (":1996"). A class's selector can serve
         // several years off one bat ([F1_1996-1997]…FV10G1 has both :1996 and :1997), so the year both
-        // picks the right bat and scopes BatScenarioReader to the right menu — without it a 1997 career
+        // picks the right bat and scopes BatScenarioReader to the right menu, without it a 1997 career
         // would read 1996's rounds (or none, when the default ":1988" menu is absent).
         string seasonLabel = ":" + Pack.Season.Year.ToString(CultureInfo.InvariantCulture);
 
@@ -3580,7 +3580,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                 .ToList();
             // Prefer a bat that actually carries this season's menu; fall back to the first that manages
             // the class (older single-season selectors whose menu label is not the bare year still parse
-            // — an absent menu yields no swaps and the caller falls back to the variant binder).
+            //, an absent menu yields no swaps and the caller falls back to the variant binder).
             batPath = managingClass.FirstOrDefault(f => BatHasSeasonLabel(f, seasonLabel))
                 ?? managingClass.FirstOrDefault();
         }
@@ -3604,7 +3604,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         }
     }
 
-    /// <summary>True when the batch file manages this vehicle class — it references the class's
+    /// <summary>True when the batch file manages this vehicle class, it references the class's
     /// custom-AI file name (e.g. "F-Classic_Gen2"), so it is the scenario selector for this class
     /// regardless of its own arbitrary filename.</summary>
     private static bool BatManagesClass(string batPath, string vehicleClass)
@@ -3620,7 +3620,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>True when the selector has a season sub-menu labelled <paramref name="seasonLabel"/>
-    /// (e.g. <c>:1996</c>) — how a multi-year selector like <c>[F1_1996-1997]…</c> is disambiguated to
+    /// (e.g. <c>:1996</c>), how a multi-year selector like <c>[F1_1996-1997]…</c> is disambiguated to
     /// the career's year before parsing.</summary>
     private static bool BatHasSeasonLabel(string batPath, string seasonLabel)
     {
@@ -3638,7 +3638,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     // The per-round staging buttons (Briefing "Stage" / "Stage anyway") ALSO bind to real base-game
-    // liveries so the written file is guaranteed to load in AMS2 — same as the Skins-tab "Stage grid
+    // liveries so the written file is guaranteed to load in AMS2, same as the Skins-tab "Stage grid
     // into AMS2" action. Without this, the per-round path wrote the pack's community-skin livery names
     // (e.g. "1988 Lotus #1 - N. Piquet"); if the player has not installed those skins AMS2 silently
     // reverts the whole class to stock and shows nothing. Cosmetic staging only; the resolved grid the
@@ -3651,7 +3651,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         var messages = new List<string>();
 
         if (SeasonComplete)
-            return Failed(messages, "The season is complete — there is no round left to stage.");
+            return Failed(messages, "The season is complete, there is no round left to stage.");
 
         int roundNumber = CurrentRoundNumber;
         var packRound = RoundByNumber(roundNumber);
@@ -3680,7 +3680,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             roundForm);
 
         // Guaranteed-load binding: rebind each AI driver onto a REAL base-game livery for the class
-        // (the game ships these names — from official-liveries.json — so it accepts the file and
+        // (the game ships these names, from official-liveries.json, so it accepts the file and
         // shows the drivers) instead of the pack's community-skin names the install may not have.
         // Cosmetic staging only; never touches the resolved grid the sim scores. Opt-in via the
         // explicit "Apply grid to AMS2" action.
@@ -3714,12 +3714,12 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             var scenario = ApplyScenarioForRound(roundNumber);
             if (scenario is { AnyApplied: true })
                 messages.Add(
-                    $"Activated this race's liveries — {scenario.Applied} vehicle model(s) switched to the " +
+                    $"Activated this race's liveries, {scenario.Applied} vehicle model(s) switched to the " +
                     "round's skins (your previous set was backed up).");
 
             // The same per-race swap for packs WITHOUT a scenario .bat: the big skin packs ship
             // per-race CHANGE-POINT variants for manual copying (formula_classic_g4m1_03Imola.xml
-            // = the grid from Imola on) — anchor them to the calendar and bind the set in force
+            // = the grid from Imola on), anchor them to the calendar and bind the set in force
             // at this round automatically (backup-first). Ships no variants → no-op.
             if (scenario is null or { AnyApplied: false } &&
                 _environment.LocateInstall() is { } variantInstall)
@@ -3737,14 +3737,14 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                     DeclaredSkinSeason()?.Set.ModelXml, _environment.Clock.GetUtcNow());
                 if (bound.AnyChanged)
                     messages.Add(
-                        $"Bound this race's livery variants — {bound.Swapped} vehicle model(s) switched to the " +
+                        $"Bound this race's livery variants, {bound.Swapped} vehicle model(s) switched to the " +
                         $"round's skins{(bound.Restored > 0 ? $", {bound.Restored} restored to the season base" : "")} " +
                         "(previous files backed up).");
             }
 
             // ACTIVE-SET activation (the 1985-style packs): a fixed slot budget with alternates
             // kept inside one giant comment. Do the pack's own documented copy-paste procedure
-            // automatically — lift the alternates this round's grid needs into the slots of cars
+            // automatically, lift the alternates this round's grid needs into the slots of cars
             // the round does not field (backup-first, the comment and its alternates preserved).
             // Files without commented alternates are naturally untouched.
             if (_environment.LocateInstall() is { } activeSetInstall)
@@ -3772,7 +3772,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                         var (activeNames, altNames) =
                             ActiveSetRewriter.AvailableNames(File.ReadAllText(activeSetPath));
                         if (altNames.Count == 0)
-                            continue; // no commented alternates — not a 1985-style file
+                            continue; // no commented alternates, not a 1985-style file
                         var wanted = gridLiveries
                             .Where(n => activeNames.Contains(n, StringComparer.Ordinal) ||
                                         altNames.Contains(n, StringComparer.Ordinal))
@@ -3786,21 +3786,21 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                     }
                     catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
                     {
-                        // Best-effort cosmetic pass — never blocks staging.
+                        // Best-effort cosmetic pass, never blocks staging.
                     }
                 }
                 if (activatedTotal > 0)
                     messages.Add(
-                        $"Activated {activatedTotal} alternate livery(ies) for this round's grid — " +
+                        $"Activated {activatedTotal} alternate livery(ies) for this round's grid, " +
                         "slots swapped from the pack's alternates list (previous files backed up).");
             }
 
             // FIXED FULL-SET SKIN ACTIVATION (SMGP). AMS2 loads a car model's custom liveries ONCE, at
-            // launch, and only the active (numeric-slot) ones — so a per-race rotation (park the
+            // launch, and only the active (numeric-slot) ones, so a per-race rotation (park the
             // non-qualifiers, switch the round's in) breaks: the just-switched-on skins aren't in the
             // pool AMS2 already loaded, so those cars pool-fill with random stock drivers, and it takes
             // a full game restart every round to fix. Instead, activate EVERY SMGP livery that fits each
-            // model's slot cap — ONCE, parking nothing — so the active set is STABLE: AMS2 loads it at
+            // model's slot cap, ONCE, parking nothing, so the active set is STABLE: AMS2 loads it at
             // launch and every car that fits stays painted, no per-round restart. (The pre-qualifying
             // field is display-only anyway; whatever fits the cap is always active.) Cars beyond a
             // model's cap keep a base-game livery. SMGP-only; runs before the smart binder's scan.
@@ -3824,7 +3824,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                 if (activation.AnyChanged)
                     messages.Add(
                         $"Activated {activation.Activated} SMGP skin(s) as a fixed set across " +
-                        $"{activation.ModelsChanged} car model(s) — every livery that fits is now switched on " +
+                        $"{activation.ModelsChanged} car model(s), every livery that fits is now switched on " +
                         "(previous files backed up). Fully close and reopen AMS2 (launch it DIRECTLY, not through a " +
                         "mod manager) so it loads the active skins; after that they stay put with no per-round restart.");
                 if (activation.Skipped.Count > 0)
@@ -3850,7 +3850,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             // the game always ships (guaranteed load). So an installed 1988 skin pack shows its real
             // liveries while a car whose skin the player has not installed still loads instead of
             // reverting the whole class to stock. A class spans several vehicle models (e.g.
-            // formula_classic_g2m1/2/3 + mclaren_mp44), each with its own Overrides folder — union them.
+            // formula_classic_g2m1/2/3 + mclaren_mp44), each with its own Overrides folder, union them.
             var skinScan = _environment.ScanInstalledLiveries(_environment.LocateInstall());
             var classFolders = _environment.ContentLibrary.Vehicles.Values
                 .Where(v => string.Equals(v.VehicleClass, plan.Ams2Class, StringComparison.Ordinal))
@@ -3874,7 +3874,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                           "and shows the drivers. Car paint is the game's default; install the matching " +
                           "community skins to see historical liveries."
                         : keptCommunity >= baseSeats
-                            ? $"All {baseSeats} cars are on installed community skins — AMS2 will show the real liveries."
+                            ? $"All {baseSeats} cars are on installed community skins, AMS2 will show the real liveries."
                             : $"Kept {keptCommunity} installed community skin(s) and bound the other " +
                               $"{baseSeats - keptCommunity} to base-game {file.VehicleClass} liveries so every car loads.");
             }
@@ -3882,7 +3882,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             // Zero-stock: name every LIVE-active community livery. A car whose livery is active in the
             // pool but which the grid CAP dropped (or a peer whose slot a bubble-car graft took) would
             // otherwise leave AMS2 stock-filling that slot with a made-up driver. Add it from the full
-            // (uncapped) field so every visible car shows its real driver. Cosmetic — the sim always
+            // (uncapped) field so every visible car shows its real driver. Cosmetic, the sim always
             // scores the capped grid; these extra names ride the AMS2 file only.
             try
             {
@@ -3904,15 +3904,15 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                         "the grid shows a stock/made-up driver.");
                 }
             }
-            catch (InvalidOperationException) { /* best-effort cosmetic pass — never blocks staging */ }
+            catch (InvalidOperationException) { /* best-effort cosmetic pass, never blocks staging */ }
 
             // SMGP full-coverage naming (the g3m2/g3m4 pool-fill fix). AMS2's grid generator picks
             // base-livery SLOTS per model on its own; our override + custom-AI files only paint/name a
             // slot it happens to pick, so ANY slot we do not name shows a STOCK/made-up driver. Name
-            // EVERY livery it can field: (1) all 34 SMGP customs — incl. the ones the per-race DNQ
-            // dropped (ignoreStarters enumerates the whole covering field) — and (2) every base-game
+            // EVERY livery it can field: (1) all 34 SMGP customs, incl. the ones the per-race DNQ
+            // dropped (ignoreStarters enumerates the whole covering field), and (2) every base-game
             // class livery, mapped to an SMGP driver identity (weakest-first, so a base-paint slot reads
-            // as a backmarker, not a stranger). Cosmetic staging ONLY — the sim always scores the capped
+            // as a backmarker, not a stranger). Cosmetic staging ONLY, the sim always scores the capped
             // grid, and the f1db oracle + byte-identical replay never see it. Base-slot cars keep default
             // PAINT until their slots are overridden (phase 2), but no car ever shows a stock driver.
             if (IsSmgpPack)
@@ -3955,14 +3955,14 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                             "default paint until those skins are added.");
                     }
                 }
-                catch (InvalidOperationException) { /* best-effort cosmetic pass — never blocks staging */ }
+                catch (InvalidOperationException) { /* best-effort cosmetic pass, never blocks staging */ }
             }
         }
 
         Ams2Installation? installation = _environment.LocateInstall();
         if (installation is null)
             return Failed(messages,
-                "No AMS2 installation was found — nothing was staged. Verify the game is installed " +
+                "No AMS2 installation was found, nothing was staged. Verify the game is installed " +
                 "(or configure the install folder) and try again.");
 
         // ONE aggregate line for the livery scan; the per-file unreadable list rides along
@@ -3973,7 +3973,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         var details = scan.UnreadableFiles;
 
         // PRIMARY name authority: the user's installed CustomAIDrivers class file. A name it
-        // defines is valid whatever the skin state — no false "won't bind" warning.
+        // defines is valid whatever the skin state, no false "won't bind" warning.
         var installedAiNames = _environment.ScanInstalledAiNames(installation, file.VehicleClass);
 
         var preflight = GridStager.Preflight(
@@ -3982,7 +3982,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
 
         if (preflight.HasErrors)
         {
-            messages.Add("Staging aborted — fix the preflight errors above and stage again.");
+            messages.Add("Staging aborted, fix the preflight errors above and stage again.");
             return new StageOutcome { Success = false, Messages = messages, Details = details };
         }
 
@@ -3990,13 +3990,13 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         {
             // NAMeS-primary staging ("found before overwritten"): the installed class file is
             // read before any write and, for every seat it already defines, its name + base
-            // ratings win — only this round's / the career's delta (measured against the pinned
+            // ratings win, only this round's / the career's delta (measured against the pinned
             // pack's own driver baseline) is applied over them.
             var result = GridStager.StageOrRefuse(
                 file, installation.CustomAiDriversDirectory, _environment.Clock.GetUtcNow(), force,
                 PackBaselineByLivery(),
                 // The grid editor's cosmetic per-seat overrides (rename / rebind livery), applied to
-                // the staged file only — never the resolved grid the sim scores.
+                // the staged file only, never the resolved grid the sim scores.
                 StagingOverrideStore.Read(_database, _seasonId),
                 alwaysWrite);
 
@@ -4007,7 +4007,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                 // "Overwrite anyway (backup first)" escape hatch.
                 messages.Add(
                     $"Your installed {file.VehicleClass}.xml differs from this round's grid " +
-                    "(community NAMeS file). Your installed names/AI are kept — only this round's " +
+                    "(community NAMeS file). Your installed names/AI are kept, only this round's " +
                     "grid selection and your career changes are applied. 'Overwrite anyway' takes a " +
                     "timestamped backup first.");
                 return new StageOutcome
@@ -4045,7 +4045,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>The pinned pack's OWN per-livery driver baseline (before any trackForm/aiOverride
-    /// or career effect) keyed by <c>ams2LiveryName</c> — the delta reference for NAMeS-primary
+    /// or career effect) keyed by <c>ams2LiveryName</c>, the delta reference for NAMeS-primary
     /// staging (<see cref="GridStager.MergeInstalledPrimary"/>). Each entry's livery maps to a
     /// <see cref="CustomAiDriver"/> carrying that pack driver's raw ratings/name/country, so
     /// staging can tell a genuine round/career change (generated != this baseline) from a stale
@@ -4073,7 +4073,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>Maps a pinned-pack driver's raw baseline ratings onto the custom-AI vocabulary
-    /// (no trackForm, no aiOverrides, no career drift) — the reference the staging merge diffs
+    /// (no trackForm, no aiOverrides, no career drift), the reference the staging merge diffs
     /// the generated round file against.</summary>
     private static CustomAiDriver ToBaselineDriver(string liveryName, Companion.Core.Packs.PackDriver driver) => new()
     {
@@ -4103,7 +4103,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     /// <summary>Re-backup the current class XML first, then restore the pre-season original:
     /// the newest backup NOT generated by this app (the user's own file, snapshotted before
     /// the first divergent write). When every backup is app-generated, the newest backup is
-    /// used. Restore never destroys state — the pre-restore file is always in the backups.</summary>
+    /// used. Restore never destroys state, the pre-restore file is always in the backups.</summary>
     public RestoreOutcome RestoreOriginalAiFile()
     {
         var messages = new List<string>();
@@ -4111,7 +4111,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         var installation = _environment.LocateInstall();
         if (installation is null)
         {
-            messages.Add("No AMS2 installation was found — there is nothing to restore.");
+            messages.Add("No AMS2 installation was found, there is nothing to restore.");
             return new RestoreOutcome { Success = false, Messages = messages };
         }
 
@@ -4121,7 +4121,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         if (backups.Count == 0)
         {
             messages.Add(
-                $"No backup of {vehicleClass}.xml exists — the app never overwrote it, " +
+                $"No backup of {vehicleClass}.xml exists, the app never overwrote it, " +
                 "so your installed file is already the original.");
             return new RestoreOutcome { Success = false, Messages = messages };
         }
@@ -4166,13 +4166,13 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         if (beforePlayer?.Smgp?.CareerOver == true)
             throw new InvalidOperationException(
                 "The SMGP career is over - a rival took the last seat at the LEVEL D floor.");
-        // The Dynasty bankruptcy floor is terminal too (economy §7) — a folded team takes no more
+        // The Dynasty bankruptcy floor is terminal too (economy §7), a folded team takes no more
         // rounds, exactly like the two guards above.
         if (beforePlayer?.Economy?.Bankrupt == true)
             throw new InvalidOperationException(
-                "The team is bankrupt — the Dynasty is over. Restore a save to continue, if one exists.");
+                "The team is bankrupt, the Dynasty is over. Restore a save to continue, if one exists.");
         if (SeasonComplete)
-            throw new InvalidOperationException("The season is complete — there is no round to score.");
+            throw new InvalidOperationException("The season is complete, there is no round to score.");
         // The inverse of AutoSimulateRound's fit-check: an injured driver's round is auto-simulated,
         // never entered manually. The hub already routes to the sit-out screen; this makes the rule
         // hold for EVERY caller, so no path can score an injured player or stall the healing
@@ -4180,7 +4180,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         if (beforePlayer is not null
             && (beforePlayer.RaceSuspensionRemaining > 0 || beforePlayer.SeasonEndingInjury))
             throw new InvalidOperationException(
-                "The driver is injured — this round is auto-simulated. Continue from the sit-out screen.");
+                "The driver is injured, this round is auto-simulated. Continue from the sit-out screen.");
 
         int roundNumber = CurrentRoundNumber;
         var packRound = RoundByNumber(roundNumber);
@@ -4277,40 +4277,40 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>The live path: store the round's raw-result ENVELOPE and run the unified fold
-    /// — one atomic unit via <see cref="ReplayService.ImportAndFoldRound"/>, so a stored raw
+    ///, one atomic unit via <see cref="ReplayService.ImportAndFoldRound"/>, so a stored raw
     /// result can never exist without its fold (docs/dev/m5-fix-integration.md step 3). When
     /// the final round lands, the season-end pipeline runs off the folded player state.</summary>
     public void Apply(ResultDraft draft)
     {
         if (_careerFileDeleted)
             throw new InvalidOperationException(
-                "This career has ended — the driver was killed (Hardcore) and the save was deleted.");
-        // A dead driver takes no more rounds — terminal, like the SMGP CareerOver floor. (Slice 3.)
+                "This career has ended, the driver was killed (Hardcore) and the save was deleted.");
+        // A dead driver takes no more rounds, terminal, like the SMGP CareerOver floor. (Slice 3.)
         var beforePlayer = CurrentPlayerState();
         if (beforePlayer?.Deceased == true)
             throw new InvalidOperationException(
-                "The driver has died — the career is over. In Normal mode, restore a save to continue.");
-        // The SMGP LEVEL-D floor knock-out is terminal too — a career kicked out of F1 SMGP takes no more
+                "The driver has died, the career is over. In Normal mode, restore a save to continue.");
+        // The SMGP LEVEL-D floor knock-out is terminal too, a career kicked out of F1 SMGP takes no more
         // rounds. Previously CareerOver only suppressed the battle re-fold + season-end rollover, so a floored
         // player could still enter results; this closes that (SmgpState.CareerOver's own doc promised it).
         if (beforePlayer?.Smgp?.CareerOver == true)
             throw new InvalidOperationException(
-                "The SMGP career is over — a rival took the last seat at the LEVEL D floor.");
-        // The Dynasty bankruptcy floor is terminal too (economy §7) — a folded team takes no more
+                "The SMGP career is over, a rival took the last seat at the LEVEL D floor.");
+        // The Dynasty bankruptcy floor is terminal too (economy §7), a folded team takes no more
         // rounds. All three guard sites (Preview/Apply/AutoSimulateRound) repeat this chain: a new
         // terminal state that skips one leaves a scoring hole (the SMGP floor's original bug).
         if (beforePlayer?.Economy?.Bankrupt == true)
             throw new InvalidOperationException(
-                "The team is bankrupt — the Dynasty is over. Restore a save to continue, if one exists.");
+                "The team is bankrupt, the Dynasty is over. Restore a save to continue, if one exists.");
         if (SeasonComplete)
-            throw new InvalidOperationException("The season is complete — there is no round to apply.");
+            throw new InvalidOperationException("The season is complete, there is no round to apply.");
         // Same availability gate as Preview: an injured driver's round only ever folds through
         // AutoSimulateRound (which requires the inverse), so manual scoring of an unfit player is
         // impossible at the service layer, not merely unreachable in the shipped UI.
         if (beforePlayer is not null
             && (beforePlayer.RaceSuspensionRemaining > 0 || beforePlayer.SeasonEndingInjury))
             throw new InvalidOperationException(
-                "The driver is injured — this round is auto-simulated. Continue from the sit-out screen.");
+                "The driver is injured, this round is auto-simulated. Continue from the sit-out screen.");
 
         int roundNumber = CurrentRoundNumber;
         var packRound = RoundByNumber(roundNumber);
@@ -4325,7 +4325,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         string nowUtc = NowUtc();
 
         // App-level provenance row about the entry EVENT (excluded from the replay byte-compare
-        // like every provenance row) — appended INSIDE the fold's atomic transaction, so a crash
+        // like every provenance row), appended INSIDE the fold's atomic transaction, so a crash
         // can never leave a folded round whose provenance (the news journal's dispatch source)
         // silently vanished.
         var journalDelta = new ResultAppliedDelta
@@ -4351,26 +4351,26 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                 transaction));
 
         // Character death & injury (Slice 3): detect a REAL Deceased transition this round. A Hardcore
-        // death is the ONE destructive file op — physically delete the career file + every snapshot,
+        // death is the ONE destructive file op, physically delete the career file + every snapshot,
         // guarded hard (only Hardcore, only on a genuine alive→dead transition, and NEVER on replay,
         // which runs ReplayService directly and never this path). The session is then spent.
         bool justDied = beforePlayer?.Deceased != true && CurrentPlayerState()?.Deceased == true;
         if (justDied && _mortality == MortalityMode.Hardcore)
         {
-            // Capture the death screen (Slice 5) from the intact DB BEFORE it is destroyed — the permadeath
+            // Capture the death screen (Slice 5) from the intact DB BEFORE it is destroyed, the permadeath
             // screen renders from this with no session/DB access (the DeathScreenHandoffTests contract).
             if (CurrentPlayerState() is { } deadPlayer)
                 _deathScreen = BuildDeathScreen(deadPlayer);
             _database.Dispose();
             SaveSlotStore.DeleteCareerAndAllSaves(CareerFilePath);
             _careerFileDeleted = true;
-            return; // the file is gone — the season-end pipeline must not run against it
+            return; // the file is gone, the season-end pipeline must not run against it
         }
 
-        // A dead driver (Normal) banks no title and rolls no offers — the season does not "complete";
+        // A dead driver (Normal) banks no title and rolls no offers, the season does not "complete";
         // the death screen (Slice 5) offers a restore instead. A team that JUST went bankrupt
         // (economy §7) is suppressed the same way: a folded team banks no title and rolls no
-        // offers; the bankruptcy screen (built lazily — the file survives) takes over.
+        // offers; the bankruptcy screen (built lazily, the file survives) takes over.
         bool justWentBankrupt = beforePlayer?.Economy?.Bankrupt != true
             && CurrentPlayerState()?.Economy?.Bankrupt == true;
         if (SeasonComplete && !justDied && !justWentBankrupt)
@@ -4378,7 +4378,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>The envelope stored as the round's raw payload: the mapped classification
-    /// plus the unre-derivable round context — the slider actually driven (the draft's value,
+    /// plus the unre-derivable round context, the slider actually driven (the draft's value,
     /// else the current recommendation, else neutral) and the player's DNF cause.</summary>
     /// <summary>The current round's weekend structure (null = single race). Additive read over
     /// the pinned pack round; every bundled pack reports null. (Increment 2.)</summary>
@@ -4412,7 +4412,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         };
     }
 
-    /// <summary>The AI drivers' raw DNF cause letters (v9, capture-only — the fold never reads
+    /// <summary>The AI drivers' raw DNF cause letters (v9, capture-only, the fold never reads
     /// them; display readers name AI retirements). Null when no AI retired with a cause, so
     /// such rounds serialize exactly as before.</summary>
     private IReadOnlyDictionary<string, string>? AiDnfCausesFrom(ResultDraft draft)
@@ -4433,7 +4433,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     /// <summary>The player's chosen accident severity, captured ONLY for the player's OWN accident ("a")
     /// DNF (Slice 2, §3.1). Null for every other outcome, so a non-accident round stores no severity and
     /// stays byte-identical. The value comes from the draft (the result screen defaults it to Medium when
-    /// an accident is marked). Nothing folds it yet — Slice 3 rolls the d500 off it.</summary>
+    /// an accident is marked). Nothing folds it yet, Slice 3 rolls the d500 off it.</summary>
     private AccidentSeverity? PlayerAccidentSeverityFrom(ResultDraft draft) =>
         draft.DidNotFinish.TryGetValue(_playerDriverId, out string? reason) && reason == "a"
             ? draft.PlayerAccidentSeverity
@@ -4442,8 +4442,8 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     /// <summary>Maps the result screen's reason for the PLAYER onto the sim's blame model:
     /// m(echanical) = no blame, a(ccident) = driver error, o(ther) = the fold's no-blame
     /// default UNLESS the custom detail was flagged as the driver's fault, in which case it is
-    /// driver error. The custom free text does not change blame on its own — only the explicit
-    /// attribution flag does — so "default custom-other = no-blame" holds (mandate M5 rule).</summary>
+    /// driver error. The custom free text does not change blame on its own, only the explicit
+    /// attribution flag does, so "default custom-other = no-blame" holds (mandate M5 rule).</summary>
     private DnfCause? PlayerDnfCauseFrom(ResultDraft draft) =>
         draft.DidNotFinish.TryGetValue(_playerDriverId, out string? reason)
             ? reason switch
@@ -4460,7 +4460,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     /// <summary>The rules data + wizard-fixed facts every fold and season end consumes.
     /// Deterministically re-derived from the pinned packs and the app-shipped rules files, so
     /// every session (and replay) constructs the identical inputs. PlayerAge is the FIRST
-    /// season's age per the <see cref="ReplaySimInputs"/> contract — the season-end pipeline
+    /// season's age per the <see cref="ReplaySimInputs"/> contract, the season-end pipeline
     /// offsets it by year distance itself, so era-transitioned seasons age correctly.</summary>
     private ReplaySimInputs SimInputs()
     {
@@ -4493,13 +4493,13 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             ?? throw new InvalidOperationException($"Season {_seasonId} vanished from the career file.");
         if (string.Equals(season.Status, SeasonStatus.Complete, StringComparison.Ordinal))
             return;
-        // A bankrupt team banks no title and rolls no offers (economy §7) — the single chokepoint
+        // A bankrupt team banks no title and rolls no offers (economy §7), the single chokepoint
         // that keeps every caller (Apply, AutoSimulateRound, SeasonReview) from resurrecting the
         // season end the fatal settlement suppressed. The bankruptcy takeover owns the ending.
         if (CurrentPlayerState()?.Economy?.Bankrupt == true)
             return;
         // Two-phase (3c-2): a promotion offer deferred by the final round MUST be resolved on the
-        // screen BEFORE season end folds — replay resolves it inline (inside the round fold, ahead of
+        // screen BEFORE season end folds, replay resolves it inline (inside the round fold, ahead of
         // season end), so running season end now (old seat, wrong journal order) would diverge on
         // re-simulate. Hold season end until ResolveSmgpOffer clears the pending offer.
         if (CurrentSmgpPendingOffer() is not null)
@@ -4546,14 +4546,14 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         };
     }
 
-    /// <summary>Accepts one offer (a player CHOICE — replay re-applies it, never derives it)
+    /// <summary>Accepts one offer (a player CHOICE, replay re-applies it, never derives it)
     /// and journals it as a provenance row so the replay byte-compare is unaffected.</summary>
     public void AcceptOffer(string teamId)
     {
         var offers = StateStore.ReadOffers(_database, _seasonId);
         if (!offers.Any(o => string.Equals(o.Terms.TeamId, teamId, StringComparison.Ordinal)))
             throw new InvalidOperationException(
-                $"Team '{teamId}' made no offer this season — only extended offers can be accepted.");
+                $"Team '{teamId}' made no offer this season, only extended offers can be accepted.");
 
         StateStore.SetOfferAccepted(_database, _seasonId, teamId);
         JournalStore.Append(_database, _seasonId, round: null,
@@ -4671,8 +4671,8 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>Signs the accepted offer into the discovered next pack: builds the era
-    /// transition plan from the persisted season-end states — the exact inputs replay's
-    /// transition verification re-derives, so live and replay agree by construction — and
+    /// transition plan from the persisted season-end states, the exact inputs replay's
+    /// transition verification re-derives, so live and replay agree by construction, and
     /// starts the new season atomically via <see cref="CareerStore.StartNextSeason"/>.
     /// This session keeps pointing at the finished season afterwards; the shell reopens the
     /// career file, which now lands in the new season (<see cref="OpenCareer"/>).</summary>
@@ -4681,29 +4681,29 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         ArgumentException.ThrowIfNullOrWhiteSpace(teamId);
         if (!SeasonComplete)
             throw new InvalidOperationException(
-                "The season is not complete — finish every round before signing for the next era.");
+                "The season is not complete, finish every round before signing for the next era.");
         EnsureSeasonEnd();
 
         var campaign = ActiveBoundedCampaign();
 
         var next = NextSeason()
             ?? throw new InvalidOperationException(
-                "This career has no next season — the campaign is complete.");
+                "This career has no next season, the campaign is complete.");
 
         var accepted = StateStore.ReadOffers(_database, _seasonId).FirstOrDefault(o => o.Accepted);
         if (accepted is null)
             throw new InvalidOperationException(
-                "No offer is accepted — accept an offer letter before signing for the next season.");
+                "No offer is accepted, accept an offer letter before signing for the next season.");
         if (!string.Equals(accepted.Terms.TeamId, teamId, StringComparison.Ordinal))
             throw new InvalidOperationException(
-                $"The accepted offer is from '{accepted.Terms.TeamId}', not '{teamId}' — " +
+                $"The accepted offer is from '{accepted.Terms.TeamId}', not '{teamId}', " +
                 "sign the offer you accepted.");
 
         var driversEnd = StateStore.ReadDriverStates(_database, _seasonId, StateStore.StageEnd);
         var teamsEnd = StateStore.ReadTeamStates(_database, _seasonId, StateStore.StageEnd);
         var playerEnd = StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageEnd)
             ?? throw new InvalidOperationException(
-                "The season-end player state is missing — the season-end pipeline never ran.");
+                "The season-end player state is missing, the season-end pipeline never ran.");
         var simInputs = SimInputs();
         // The spends journaled this season develop the character as it rolls into next year —
         // applied identically on the live and replay paths so the evolving driver re-derives.
@@ -4715,7 +4715,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         {
             // Same car, next year: seat the player at the accepted team's seat in THIS pack, then
             // roll the (already aged / retired / market-filled) end states forward. Same-pack, so
-            // replay re-derives through SeasonRollover — byte-identical by construction.
+            // replay re-derives through SeasonRollover, byte-identical by construction.
             string? livery = EraTransition.ResolveSeatLivery(Pack, teamId) ?? playerEnd.LiveryName;
             var startStates = SeasonRollover.Derive(
                 playerEnd, driversEnd, teamsEnd, teamId, livery,
@@ -4783,7 +4783,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     /// newest first. Each race dispatch carries the Why? chip's plain sentence AND a full
     /// period-voiced <see cref="NewsDispatch.Body"/> generated by the data-driven article
     /// grammar (<see cref="NewsArticleBank"/>) from that round's facts. Pure read-only
-    /// projection over the folded journal + standings snapshots — no new persistence, and the
+    /// projection over the folded journal + standings snapshots, no new persistence, and the
     /// body is DETERMINISTIC (seeded on <c>masterSeed</c> + the round), so the same career
     /// renders byte-identical articles on every call and on replay.</summary>
     public IReadOnlyList<NewsDispatch> ReadFeed()
@@ -4802,7 +4802,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         // Richer race facts the thin race.result row lacks: winner + field size (from the raw
         // envelope) and the player's championship position/delta/leader (from the snapshots).
         // Materialized lazily so an empty feed (no headline rows) touches neither the raw store
-        // nor the rules data — a quiet paddock does no work and forces no rules load.
+        // nor the rules data, a quiet paddock does no work and forces no rules load.
         Dictionary<int, StoredRoundResult>? rawByRound = null;
         Dictionary<int, StandingsSnapshot>? snapshotsByOrdinal = null;
         NewsArticleBank? articles = null;
@@ -4831,7 +4831,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                      && string.Equals(row.Cause, "season-digest", StringComparison.Ordinal))
             {
                 // The season-in-review article: the season-digest headline (round-less) hangs a
-                // period-voiced "champion crowned / final standing" body. Read-side only — the body
+                // period-voiced "champion crowned / final standing" body. Read-side only, the body
                 // is derived deterministically from the seed + final standings, nothing is folded.
                 snapshotsByOrdinal ??= AllSnapshots().ToDictionary(s => s.AfterRound);
                 articles ??= _environment.Rules.NewsArticles;
@@ -4855,12 +4855,12 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>The SMGP replica mode routes its news to the fictional-world "smgp" corpus (the
-    /// SEGA universe — its own teams, the rival ladder, the D.P. readout) rather than the
+    /// SEGA universe, its own teams, the rival ladder, the D.P. readout) rather than the
     /// historical 1990s outlet the 1990 career year would otherwise select. Null for every other
     /// career, which resolves its era by year as before.</summary>
     private string? SmgpNewsEra => IsSmgpPack ? Companion.Core.Smgp.SmgpRules.CareerStyle : null;
 
-    /// <summary>True for the SMGP replica mode (pack manifest careerStyle == "smgp") — gates the
+    /// <summary>True for the SMGP replica mode (pack manifest careerStyle == "smgp"), gates the
     /// per-race skin activation, the rival panel, the world almanac, and the news outlet.</summary>
     private bool IsSmgpPack => string.Equals(
         Pack.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal);
@@ -4868,7 +4868,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     /// <summary>Projects one race round's facts for the news grammar from already-folded state:
     /// the player's expected/actual finish + cause (the <c>race.result</c> row), the field's
     /// winner + size (the raw envelope), and the player's championship standing after the round
-    /// (the snapshot for its championship ordinal). Every fact is optional — a template only
+    /// (the snapshot for its championship ordinal). Every fact is optional, a template only
     /// fills the slots it names, so a thin round still yields a complete body.</summary>
     private NewsFacts NewsFactsFor(
         int round,
@@ -4896,7 +4896,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         }
         catch (JsonException)
         {
-            // A malformed delta simply leaves the finish facts null — the body degrades.
+            // A malformed delta simply leaves the finish facts null, the body degrades.
         }
 
         // Winner + field size from the raw envelope's race classification.
@@ -4970,7 +4970,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>Display name for a driver id in a resolved grid, falling back to the pack's
-    /// driver table then the raw id — so a name is always available for {winner}/{champLeader}.</summary>
+    /// driver table then the raw id, so a name is always available for {winner}/{champLeader}.</summary>
     /// <summary>Projects the season's closing facts for the <c>season.digest</c> article from the
     /// final standings snapshot: who took the title, and where the player finished the year. The
     /// cause splits the corpus into a celebratory <c>player-champion</c> body and a reflective
@@ -5015,7 +5015,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     private string DriverDisplayName(GridPlan grid, string driverId)
     {
         // The distinct-driver player (SMGP clean-swap) sits in a car whose seat still carries the BENCHED
-        // occupant's authored name, and the synthetic id isn't in pack.Drivers — so resolving it the
+        // occupant's authored name, and the synthetic id isn't in pack.Drivers, so resolving it the
         // normal way would credit the AI the player displaced (a player win reported under "Ayrton Senna").
         // Render the player's own name instead. Every real-driver id resolves exactly as before.
         if (string.Equals(driverId, RoundGridResolver.SyntheticPlayerDriverId, StringComparison.Ordinal))
@@ -5038,7 +5038,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             bool dnf = root.TryGetProperty("dnf", out var d) && d.ValueKind == JsonValueKind.True;
 
             if (dnf)
-                return expected is { } exd ? $"You retired — the car was expected to finish P{exd}." : "You retired.";
+                return expected is { } exd ? $"You retired, the car was expected to finish P{exd}." : "You retired.";
 
             int? actual = root.TryGetProperty("actualFinish", out var a) && a.ValueKind == JsonValueKind.Number
                 ? a.GetInt32() : null;
@@ -5062,7 +5062,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     /// walks this season's journal rows for <paramref name="entity"/> (narrowed to
     /// <paramref name="round"/> when given) and projects each relevant row's <c>deltaJson</c> into a
     /// labelled contribution row. Pure read-only projection over <see cref="JournalStore.ReadSeason"/>
-    /// — no new persistence — and DETERMINISTIC: rows are read in journal <c>seq</c> order and every
+    ///, no new persistence, and DETERMINISTIC: rows are read in journal <c>seq</c> order and every
     /// comparison is <see cref="StringComparer.Ordinal"/>, so the chain is byte-stable and identical
     /// on replay. The ordered-row shape is the format designed to accept perk/stat rows later
     /// (decision 5); it generalises the thin <see cref="WhyFromResult"/> chip into a full breakdown.</summary>
@@ -5071,7 +5071,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
 
     /// <summary>The season-scoped walk (career-hub-design.md §4/§5, decision 18): resolves the season
     /// row whose year is <paramref name="seasonYear"/> and runs the SAME projection as the current-season
-    /// <see cref="JournalFor(string,int?)"/> over THAT season's journal — resolving the entity name and
+    /// <see cref="JournalFor(string,int?)"/> over THAT season's journal, resolving the entity name and
     /// player seat against that season's pinned pack, so a finished earlier season's numbers read
     /// correctly. When the year is the current season this is byte-identical to the current-season walk.
     /// No matching season year returns the empty chain (a graceful no-op, never a throw). A DISTINCT
@@ -5082,7 +5082,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         if (string.IsNullOrEmpty(entity))
             return JournalChain.Empty;
 
-        // First (oldest) season row matching the year — years are unique per career in v1, but
+        // First (oldest) season row matching the year, years are unique per career in v1, but
         // guard deterministically anyway (ReadSeasons is ordered by id, oldest first).
         var season = CareerStore.ReadSeasons(_database)
             .FirstOrDefault(s => s.Year == seasonYear);
@@ -5098,7 +5098,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     /// (so they cannot drift): walks <paramref name="seasonId"/>'s journal rows for
     /// <paramref name="entity"/> (narrowed to <paramref name="round"/> when given), projecting each into
     /// a labelled contribution row. Pure read-only projection over <see cref="JournalStore.ReadSeason"/>
-    /// — no new persistence — and DETERMINISTIC: rows are read in journal <c>seq</c> order and every
+    ///, no new persistence, and DETERMINISTIC: rows are read in journal <c>seq</c> order and every
     /// comparison is <see cref="StringComparer.Ordinal"/>, so the chain is byte-stable and identical on
     /// replay. <paramref name="seasonPack"/> + <paramref name="playerDriverId"/> resolve the panel title
     /// and entity name against THAT season's pinned pack. The ordered-row shape is the format designed to
@@ -5110,7 +5110,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         if (string.IsNullOrEmpty(entity))
             return JournalChain.Empty;
 
-        // Ordered by seq already (ReadSeason's ORDER BY seq) — the deterministic walk order.
+        // Ordered by seq already (ReadSeason's ORDER BY seq), the deterministic walk order.
         var rows = JournalStore.ReadSeason(_database, seasonId)
             .Where(r => string.Equals(r.Entity, entity, StringComparison.Ordinal)
                         && !DataJournalPhases.IsProvenance(r.Phase)
@@ -5170,7 +5170,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                     bool dnf = root.TryGetProperty("dnf", out var d)
                                && d.ValueKind is JsonValueKind.True or JsonValueKind.String;
                     string detail = dnf
-                        ? (expected is { } ex ? $"Retired — the car was expected to finish P{ex}." : "Retired.")
+                        ? (expected is { } ex ? $"Retired, the car was expected to finish P{ex}." : "Retired.")
                         : (actual is { } a && expected is { } e
                             ? $"Finished P{a} against an expected P{e}."
                             : "Race result recorded.");
@@ -5208,7 +5208,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                     string detail = champPos is { } cp
                         ? $"Season-final reputation (championship P{cp})."
                         : beatTeammate
-                            ? "Reputation moved this round — you beat your teammate."
+                            ? "Reputation moved this round, you beat your teammate."
                             : "Reputation moved this round.";
                     return NumericRow("Reputation", rep.From, rep.To, row.Seq, "0.#", signed: false, detail);
                 }
@@ -5220,7 +5220,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                         return null;
                     int? slider = IntOrNull(root, "recommendedSlider");
                     string detail = slider is { } s
-                        ? $"Pace anchor recalibrated — next round's suggested Opponent Skill {s}%."
+                        ? $"Pace anchor recalibrated, next round's suggested Opponent Skill {s}%."
                         : "Pace anchor recalibrated from your race pace.";
                     return NumericRow("Pace anchor", anchor.From, anchor.To, row.Seq, "0.###", signed: false, detail);
                 }
@@ -5364,10 +5364,10 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     {
         string who = InspectorEntityName(entity, seasonPack, playerDriverId);
         if (round is not { } r)
-            return $"Why — {who}, {seasonPack.Season.Year}";
+            return $"Why, {who}, {seasonPack.Season.Year}";
 
         // For a single-round player walk, lead with the finishing position if the race.result row
-        // carries one — the number the user most likely clicked.
+        // carries one, the number the user most likely clicked.
         var resultRow = rows.FirstOrDefault(x =>
             string.Equals(x.Phase, JournalPhases.RaceResult, StringComparison.Ordinal));
         if (resultRow is not null)
@@ -5377,20 +5377,20 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                 using var doc = JsonDocument.Parse(resultRow.DeltaJson);
                 var el = doc.RootElement;
                 if (el.TryGetProperty("dnf", out var d) && d.ValueKind == JsonValueKind.True)
-                    return $"Why DNF — {who}, Round {r}";
+                    return $"Why DNF, {who}, Round {r}";
                 if (IntOrNull(el, "actualFinish") is { } actual)
-                    return $"Why P{actual} — {who}, Round {r}";
+                    return $"Why P{actual}, {who}, Round {r}";
             }
             catch (JsonException)
             {
                 // Fall through to the plain round title.
             }
         }
-        return $"Why — {who}, Round {r}";
+        return $"Why, {who}, Round {r}";
     }
 
     /// <summary>Resolves a journal entity id to a display name: the player's own seat, else the
-    /// season pack's driver or team table, else the raw id — so the inspector never shows a bare id.
+    /// season pack's driver or team table, else the raw id, so the inspector never shows a bare id.
     /// The season's pinned pack + player driver id keep a finished season's names correct (that
     /// season's seat, that season's roster).</summary>
     private static string InspectorEntityName(string entity, SeasonPack seasonPack, string playerDriverId)
@@ -5406,7 +5406,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>The chain's plain-language summary: the player's race.result sentence when the walk
-    /// covers a player round, else empty — the rows carry the rest. Reuses the shipped
+    /// covers a player round, else empty, the rows carry the rest. Reuses the shipped
     /// <see cref="WhyFromResult"/> chip for a classified finish, and adds the retirement sentence the
     /// chip omits (the chip predates the enum-string DNF cause), so a DNF walk still reads plainly
     /// without changing the existing News chip's output.</summary>
@@ -5432,7 +5432,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                        && d.ValueKind is JsonValueKind.True or JsonValueKind.String;
             if (dnf)
                 return IntOrNull(root, "expectedFinish") is { } expected
-                    ? $"You retired — the car was expected to finish P{expected}."
+                    ? $"You retired, the car was expected to finish P{expected}."
                     : "You retired.";
         }
         catch (JsonException)
@@ -5447,7 +5447,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     /// <summary>The total-recall History projection (career-hub-design.md §4 / decision 18): a
     /// lineage-aware card per season plus a records book aggregated across every season's
     /// per-race classification. Pure read-only projection over the SAME stored raw results,
-    /// folded player states and journal every other lens reads — no new persistence, and
+    /// folded player states and journal every other lens reads, no new persistence, and
     /// re-derivable byte-identically. A multi-season career (M6 era transitions) walks every
     /// <c>season</c> row in career order, resolving each season's pinned pack, player seat,
     /// standings and headlines independently.</summary>
@@ -5455,16 +5455,16 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
 
     /// <summary>The real historical results for a season (f1db-derived, CC BY 4.0), loaded on demand
     /// from the app-shipped <c>data/history/&lt;year&gt;.json</c> and cached. Read-only reference
-    /// content the History tab shows next to the player's own career — the sim/fold never reads it.</summary>
+    /// content the History tab shows next to the player's own career, the sim/fold never reads it.</summary>
     public HistoricalSeason? HistoricalSeason(int year) =>
         (_historicalSeasons ??= new HistoricalSeasonStore(_environment.HistoryDirectory)).ForYear(year);
 
-    /// <summary>The SMGP-universe "What Really Happened" almanac — the SEGA world's own legend of every
+    /// <summary>The SMGP-universe "What Really Happened" almanac, the SEGA world's own legend of every
     /// circuit on THIS season's calendar (venue-keyed off <see cref="Pack"/>, so season 2+ variety still
     /// resolves each place), each unlocked once the player has raced the venue. A circuit reveals when
     /// its round position is at or below the current season's applied rounds, and every circuit stays
     /// unlocked once ANY season is complete (by then the player has raced them all). Read-only reference
-    /// content — the sim/fold never reads it. Null for non-SMGP packs and when no almanac is shipped.</summary>
+    /// content, the sim/fold never reads it. Null for non-SMGP packs and when no almanac is shipped.</summary>
     public SmgpWorldHistory? SmgpWorldHistory()
     {
         if (!string.Equals(Pack.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal))
@@ -5526,7 +5526,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             int roundsApplied = storedResults.Count;
             int championshipRounds = seasonPack.Season.Rounds.Count(r => r.Championship);
 
-            // Per-race player classification (finishing position + status) — the records-book
+            // Per-race player classification (finishing position + status), the records-book
             // source. Ordered by round so streaks are chronological across seasons.
             foreach (var stored in storedResults.OrderBy(r => r.Round))
             {
@@ -5537,7 +5537,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                     line is { Status: FinishStatus.Classified, Position: { } p } ? p : null));
             }
 
-            // The per-round standings snapshots (championship rounds in order) — reused for both the final
+            // The per-round standings snapshots (championship rounds in order), reused for both the final
             // standings AND the per-round breakdown (Task 3.3), so there is only ONE scoring pass.
             var orderedStored = storedResults.OrderBy(r => r.Round).ToList();
             IReadOnlyList<StandingsSnapshot> snapshots = orderedStored.Count == 0
@@ -5740,7 +5740,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
 
         var sessions = new List<SessionResult>(raceCount)
         {
-            // Bind a per-session table ONLY when the round actually scores per session — a
+            // Bind a per-session table ONLY when the round actually scores per session, a
             // single race keeps the null table so its per-round selection (incl. the 1961
             // constructors override) is byte-identical to the shipped path.
             RaceSession(draft.Classified, draft.DidNotFinish, draft.Disqualified, teamByDriver,
@@ -5765,7 +5765,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <summary>The authored points table for race index <paramref name="index"/> from the round's
-    /// weekend (<c>null</c> when the round runs no weekend or leaves the race's table unset — then
+    /// weekend (<c>null</c> when the round runs no weekend or leaves the race's table unset, then
     /// the engine's per-round selection applies).</summary>
     private static string? PerSessionTable(IReadOnlyList<PackWeekendRace>? races, int index) =>
         races is not null && index < races.Count ? races[index].PointsTable : null;
@@ -5849,7 +5849,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         }
     }
 
-    /// <summary>Every distinct driver named across all of the round's races — one entry per driver
+    /// <summary>Every distinct driver named across all of the round's races, one entry per driver
     /// for the confirm screen's round-points list, even when they appear in both races.</summary>
     private static IEnumerable<string> DraftParticipants(ResultDraft draft) =>
         draft.Classified
@@ -5922,7 +5922,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     /// <inheritdoc />
     public PlayerMortalityStatus PlayerMortality()
     {
-        // After a Hardcore death the file is gone — report the terminal status WITHOUT touching the DB.
+        // After a Hardcore death the file is gone, report the terminal status WITHOUT touching the DB.
         if (_careerFileDeleted)
             return new PlayerMortalityStatus
             {
@@ -5947,7 +5947,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     /// <inheritdoc />
     public DeathScreenModel? DeathScreen()
     {
-        // Hardcore permadeath: the file is gone — return the snapshot captured just before deletion. DB-free
+        // Hardcore permadeath: the file is gone, return the snapshot captured just before deletion. DB-free
         // by construction, mirroring the PlayerMortality guard (the shell must not touch the DB here).
         if (_careerFileDeleted)
             return _deathScreen;
@@ -5955,14 +5955,14 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         var player = CurrentPlayerState();
         if (player?.Deceased != true)
             return null;
-        // Normal (or a not-yet-deleted) death: build live from the intact DB — this also covers reopening a
+        // Normal (or a not-yet-deleted) death: build live from the intact DB, this also covers reopening a
         // dead-but-restorable Normal career. Memoised: a dead career takes no more rounds, so it never changes.
         return _deathScreen ??= BuildDeathScreen(player);
     }
 
     /// <summary>Assemble the death-screen model from the folded journal + state: the fatal
     /// <c>player.accident</c> row (severity + venue), the whole career record, and (Normal) the restore
-    /// slots. A pure read — no fold change, no new persistence, so replay stays byte-identical. Called with
+    /// slots. A pure read, no fold change, no new persistence, so replay stays byte-identical. Called with
     /// the DB still open (live, or on the Hardcore path just before the file is deleted).</summary>
     private DeathScreenModel BuildDeathScreen(PlayerCareerState player)
     {
@@ -5970,7 +5970,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         int? fatalRound = null;
         string? venue = null;
 
-        // The fatal accident is always in the current season (a death is terminal — the career never advances
+        // The fatal accident is always in the current season (a death is terminal, the career never advances
         // past it). Take the last death-outcome player.accident row, mirroring the headline read-back pattern.
         var fatal = JournalStore.ReadSeason(_database, _seasonId)
             .LastOrDefault(r =>
@@ -5997,7 +5997,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     public BankruptcyScreenModel? BankruptcyScreen()
     {
         if (_careerFileDeleted)
-            return null; // a Hardcore death outranks the ledger — the death screen owns the ending
+            return null; // a Hardcore death outranks the ledger, the death screen owns the ending
         var player = CurrentPlayerState();
         if (player?.Economy?.Bankrupt != true)
             return null;
@@ -6007,7 +6007,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
 
     /// <summary>Assemble the bankruptcy-screen model from the folded journal + state: the terminal
     /// <c>economy.bankruptcy</c> row (round, final balance, the grace that ran out), the whole
-    /// career record, and any restore slots. A pure read — no fold change, no new persistence,
+    /// career record, and any restore slots. A pure read, no fold change, no new persistence,
     /// so replay stays byte-identical. Mirrors <see cref="BuildDeathScreen"/>.</summary>
     private BankruptcyScreenModel BuildBankruptcyScreen(PlayerCareerState player)
     {
@@ -6055,7 +6055,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         };
     }
 
-    /// <summary>The venue label for a round of the CURRENT season pack — the real historical venue when the
+    /// <summary>The venue label for a round of the CURRENT season pack, the real historical venue when the
     /// track carries one, else the round's display name.</summary>
     private string? VenueForRound(int round)
     {
@@ -6105,14 +6105,14 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             {
                 RaceSuspensionRemaining = 0,
                 SeasonEnding = true,
-                Headline = "SEASON OVER — recovering",
+                Headline = "SEASON OVER, recovering",
             };
         if (player.RaceSuspensionRemaining > 0)
             return new SitOutStatus
             {
                 RaceSuspensionRemaining = player.RaceSuspensionRemaining,
                 SeasonEnding = false,
-                Headline = $"INJURED — auto-simulating round ({player.RaceSuspensionRemaining} remaining)",
+                Headline = $"INJURED, auto-simulating round ({player.RaceSuspensionRemaining} remaining)",
             };
         return null;
     }
@@ -6125,7 +6125,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
 
         // Walk this season's journaled player.xp rows in fold order: the level BEFORE the round is
         // the last journaled level ahead of it (or the season-start snapshot), the movement is the
-        // row's own from→to — the fold's audit record, never recomputed.
+        // row's own from→to, the fold's audit record, never recomputed.
         var seasonStart = StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageStart);
         int previousLevel = seasonStart?.Level > 0 ? seasonStart.Level : 1;
         foreach (var row in JournalStore.ReadSeason(_database, _seasonId))
@@ -6170,7 +6170,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         if (horizon == 0)
             return [];
 
-        // Sat-out rounds per season come from the (cached) event spine — the timeline never
+        // Sat-out rounds per season come from the (cached) event spine, the timeline never
         // rewrites an injury absence as participation.
         var satOutOrdinals = NewsroomEvents()
             .Where(e => e.Kind == Companion.Core.Newsroom.NewsEventKind.SatOutRound)
@@ -6178,10 +6178,17 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             .ToHashSet();
 
         // A season's authored identity (title/era) is revealed ONLY once it is reached: the current
-        // season and completed ones carry it, LOCKED future seasons carry NOTHING — no title, no
-        // era, no year — so no surface can spoil what is coming. The campaign is never previewed
+        // season and completed ones carry it, LOCKED future seasons carry NOTHING, no title, no
+        // era, no year, so no surface can spoil what is coming. The campaign is never previewed
         // ahead of the player; they meet each season when they arrive at it.
         var lore = IsSmgpPack ? _environment.Rules?.SmgpSeasonLore : null;
+
+        // Dynasty is the deliberate opposite of the SMGP spoiler rule: historical years are
+        // real-world known, so a LOCKED future season carries its pack-level preview (year, era,
+        // series, venues, teams). The gate is about playing in order, not hiding (Piece 1).
+        bool isDynasty = plan?.Mode == CareerExperienceModes.GrandPrixDynasty;
+        IReadOnlyList<CampaignSeasonPreview>? previews =
+            isDynasty ? DynastySeasonPreviews(plan!) : null;
 
         var entries = new List<CampaignTimelineEntry>(horizon);
         for (int ordinal = 1; ordinal <= horizon; ordinal++)
@@ -6204,17 +6211,67 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             }
             else
             {
-                // Locked/future season: an anonymous placeholder only — its identity stays hidden
-                // until the player reaches it (no title, era, or year leaks the future).
+                // Locked/future season. SMGP: an anonymous placeholder only, its identity stays
+                // hidden until the player reaches it (no title, era, or year leaks the future).
+                // Dynasty: the pack-level preview shows what history already knows is coming.
                 entries.Add(new CampaignTimelineEntry
                 {
                     Ordinal = ordinal,
                     State = CampaignSeasonState.Locked,
+                    Preview = previews is not null && ordinal - 1 < previews.Count
+                        ? previews[ordinal - 1]
+                        : null,
                 });
             }
         }
 
+        // The Formula Junior prologue slot heads a Dynasty timeline that starts at the beginning
+        // of the playable timeline: a labelled pre-championship stretch, shown as coming-soon
+        // until content exists, so the timeline starts where the story should even though play
+        // starts at 1967 (Piece 1). Synthetic ordinal 0; never playable.
+        if (isDynasty && plan!.StartYear <= 1967)
+        {
+            entries.Insert(0, new CampaignTimelineEntry
+            {
+                Ordinal = 0,
+                State = CampaignSeasonState.Locked,
+                Title = "Formula Junior → 1967",
+                Era = "Pre-championship prologue, coming soon",
+                IsPrologue = true,
+            });
+        }
+
         return entries;
+    }
+
+    private IReadOnlyList<CampaignSeasonPreview>? _dynastySeasonPreviews;
+
+    /// <summary>The pack-level previews of a Dynasty plan's pinned seasons, built once per
+    /// session from the pre-pinned bytes (immutable by construction, so no invalidation is
+    /// needed). Display-only; the previews never become a play path.</summary>
+    private IReadOnlyList<CampaignSeasonPreview> DynastySeasonPreviews(CampaignProgressionPlan plan)
+    {
+        if (_dynastySeasonPreviews is { } cached && cached.Count == plan.TotalSeasons)
+            return cached;
+
+        var previews = new List<CampaignSeasonPreview>(plan.TotalSeasons);
+        foreach (var occurrence in plan.PinnedSeasonSequence)
+        {
+            var pack = LoadPlannedPack(plan, occurrence);
+            var rounds = pack.Season.Rounds.Where(r => r.Championship).ToArray();
+            previews.Add(new CampaignSeasonPreview
+            {
+                Year = pack.Season.Year,
+                SeriesName = pack.Season.SeriesName,
+                EraLabel = $"{pack.Season.Year / 10 * 10}s",
+                RoundCount = rounds.Length,
+                Venues = rounds.Select(r => r.Track.RealVenue ?? r.Name).ToArray(),
+                Teams = pack.Teams.Select(t => t.Name).ToArray(),
+            });
+        }
+
+        _dynastySeasonPreviews = previews;
+        return previews;
     }
 
     /// <inheritdoc />
@@ -6224,12 +6281,16 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             return null;
         // Reconcile the authored lore with the player's REAL seat: fill {playerTeam} with the team
         // they are actually on, then drop any line narrating the driver they replaced (that driver
-        // is benched — off the grid — so the lore must not show them racing). Both are per-career
+        // is benched, off the grid, so the lore must not show them racing). Both are per-career
         // display projections; the authored lore is untouched.
         return lore.ForOrdinal(CareerStore.ReadSeasons(_database).Count)
             ?.WithPlayerTeam(CurrentPlayerTeamName())
             .WithoutReplacedDriver(ReplacedDriverSurname());
     }
+
+    /// <inheritdoc />
+    public Companion.Core.Career.EraThemeCatalog? EraThemeOverrides() =>
+        _environment.RulesDirectory is null ? null : _environment.Rules.EraThemes;
 
     /// <summary>The surname of the canon driver whose car the player currently occupies (they were
     /// benched when the player took the seat), or null when the seat maps to no authored driver.
@@ -6284,7 +6345,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                     MissRaces = miss,
                     Label = outcome switch
                     {
-                        "minorInjury" => miss == 1 ? "Injured — missed 1 race" : $"Injured — missed {miss} races",
+                        "minorInjury" => miss == 1 ? "Injured, missed 1 race" : $"Injured, missed {miss} races",
                         "seasonEnding" => "Season-ending injury",
                         _ => "Fatal accident",
                     },
@@ -6300,26 +6361,26 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     public void AutoSimulateRound()
     {
         if (_careerFileDeleted)
-            throw new InvalidOperationException("This career has ended — the driver was killed (Hardcore).");
+            throw new InvalidOperationException("This career has ended, the driver was killed (Hardcore).");
         var player = CurrentPlayerState();
         if (player?.Deceased == true)
-            throw new InvalidOperationException("The driver has died — the career is over.");
+            throw new InvalidOperationException("The driver has died, the career is over.");
         if (player?.Smgp?.CareerOver == true)
             throw new InvalidOperationException(
-                "The SMGP career is over — a rival took the last seat at the LEVEL D floor.");
-        // The Dynasty bankruptcy floor is terminal here too — the third of the three guard sites.
+                "The SMGP career is over, a rival took the last seat at the LEVEL D floor.");
+        // The Dynasty bankruptcy floor is terminal here too, the third of the three guard sites.
         if (player?.Economy?.Bankrupt == true)
             throw new InvalidOperationException(
-                "The team is bankrupt — the Dynasty is over. Restore a save to continue, if one exists.");
+                "The team is bankrupt, the Dynasty is over. Restore a save to continue, if one exists.");
         if (SeasonComplete)
-            throw new InvalidOperationException("The season is complete — there is no round to simulate.");
+            throw new InvalidOperationException("The season is complete, there is no round to simulate.");
         if (player is null || (player.RaceSuspensionRemaining == 0 && !player.SeasonEndingInjury))
-            throw new InvalidOperationException("The driver is fit — enter this round's result manually.");
+            throw new InvalidOperationException("The driver is fit, enter this round's result manually.");
 
         var beforeEconomy = player?.Economy;
         int roundNumber = CurrentRoundNumber;
         var packRound = RoundByNumber(roundNumber);
-        // The AI field races the round the injured player sits out — a deterministic classification with
+        // The AI field races the round the injured player sits out, a deterministic classification with
         // the player EXCLUDED (DNS). The order is generated now and STORED (so the championship advances
         // for the AI); the fold reads the PlayerDidNotStart flag to keep the player OPI-neutral + heal.
         var aiOrder = AutoRaceModel.ClassifiedOrder(
@@ -6364,7 +6425,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                 transaction));
 
         // The sat-out round still settles the books (SettleEconomy runs on the DNS path), so it CAN
-        // fold the team — a Dynasty owner earning nothing while injured marches into the deficit
+        // fold the team, a Dynasty owner earning nothing while injured marches into the deficit
         // floor. Suppress the season end on that fatal settlement exactly as Apply does (a folded
         // team banks no title and rolls no offers); the bankruptcy takeover then owns the ending.
         bool justWentBankrupt = beforeEconomy?.Bankrupt != true
@@ -6382,7 +6443,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     {
         if (!SavesEnabled)
             throw new InvalidOperationException(
-                $"Saving is available only in Normal mode — this career is {_mortality}.");
+                $"Saving is available only in Normal mode, this career is {_mortality}.");
 
         string chosenLabel = string.IsNullOrWhiteSpace(label)
             ? $"Season {_seasonYear} · Round {CurrentRoundNumber}"
@@ -6398,14 +6459,14 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     {
         if (!SavesEnabled)
             throw new InvalidOperationException(
-                $"Restoring is available only in Normal mode — this career is {_mortality}.");
+                $"Restoring is available only in Normal mode, this career is {_mortality}.");
         // Validate the target BEFORE tearing down the live DB, so an unknown/stale slot id fails cleanly
         // without spending the session (matching the disabled-mode guard's fail-without-side-effects).
         if (!SaveSlotStore.SnapshotExists(CareerFilePath, slotId))
             throw new InvalidOperationException($"Save slot '{slotId}' has no snapshot to restore.");
 
         // Release the working file (Dispose clears the pool, so the file becomes replaceable), then
-        // swap the snapshot in. THIS SESSION IS SPENT afterwards — the shell must reopen the career
+        // swap the snapshot in. THIS SESSION IS SPENT afterwards, the shell must reopen the career
         // file to land at the restored point (the same reopen contract as an era transition).
         _database.Dispose();
         SaveSlotStore.Restore(CareerFilePath, slotId);
@@ -6441,11 +6502,11 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
         {
-            // Autosave is best-effort — never let a snapshot failure abort create/open.
+            // Autosave is best-effort, never let a snapshot failure abort create/open.
         }
     }
 
-    /// <summary>The next free <c>manual-NNN</c> slot id (a stable, deterministic ordinal — no clock or
+    /// <summary>The next free <c>manual-NNN</c> slot id (a stable, deterministic ordinal, no clock or
     /// RNG in the id, so tests are reproducible).</summary>
     private string NextManualSlotId()
     {

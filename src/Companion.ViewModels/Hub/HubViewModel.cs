@@ -15,7 +15,7 @@ namespace Companion.ViewModels.Hub;
 /// the shipped career loop. Increment 1 composes the existing <see cref="HomeViewModel"/>
 /// VERBATIM as the always-present <b>Race</b> tab (so the loop, its keyboard grammar and its
 /// tests are untouched), and adds always-present <b>Standings</b> and <b>News</b> lens tabs.
-/// The Race tab auto-selects on open and after every Apply — the anti-burial rule: the player
+/// The Race tab auto-selects on open and after every Apply, the anti-burial rule: the player
 /// is never stranded on a management tab. Owns the career session's lifetime through the Home.
 /// </summary>
 public sealed partial class HubViewModel : ObservableObject, IDisposable
@@ -42,7 +42,8 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
         ArgumentNullException.ThrowIfNull(session);
         _session = session;
         _settings = settings;
-        Era = EraThemes.ForYear(session.Pack.Season.Year);
+        Era = session.EraThemeOverrides()?.ForYear(session.Pack.Season.Year)
+            ?? EraThemes.ForYear(session.Pack.Season.Year);
 
         Home = new HomeViewModel(session, stagedFileWatcher, clock, settings);
         Home.NextSeasonStarted += OnHomeNextSeasonStarted;
@@ -74,41 +75,41 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
             Tabs.Insert(2, new HubTabViewModel(DriverTabKey, "Driver", "", Dossier));
 
         // The Paddock (driver/team preview) tab is present only for an SMGP career with the reference
-        // data loaded — it fields the whole SEGA-world grid's bios + predetermined stats + team stories.
+        // data loaded, it fields the whole SEGA-world grid's bios + predetermined stats + team stories.
         if (Paddock.HasPaddock)
             Tabs.Insert(Tabs.Count - 1, new HubTabViewModel(PaddockTabKey, "Paddock", "", Paddock));
 
         // The Team Ledger (Dynasty owner economy, economy §9) is present only for a career
-        // carrying the folded economy state — the driver-owner's money side of the same loop.
+        // carrying the folded economy state, the driver-owner's money side of the same loop.
         if (Economy.HasEconomy)
             Tabs.Insert(Tabs.Count - 1, new HubTabViewModel(EconomyTabKey, "Team Ledger", "", Economy));
 
         SelectTab(Tabs[0]); // auto-select Race on open
     }
 
-    /// <summary>The shipped career loop, unchanged — the Race tab's content.</summary>
+    /// <summary>The shipped career loop, unchanged, the Race tab's content.</summary>
     public HomeViewModel Home { get; }
 
     /// <summary>The News feed (also the source for the future right-dock ticker).</summary>
     public NewsViewModel News { get; }
 
     /// <summary>The History / Scrapbook lens (per-season cards, lineage timeline, records
-    /// book, archived articles) — refreshed in place after every Apply like the other lenses.</summary>
+    /// book, archived articles), refreshed in place after every Apply like the other lenses.</summary>
     public HistoryViewModel History { get; }
 
     /// <summary>The Calendar lens: the season's full track schedule (venues + AMS2 tracks + applied
     /// alternate swaps), visible up front. Refreshed in place after every Apply.</summary>
     public CalendarViewModel Calendar { get; }
 
-    /// <summary>The Driver dossier lens — the player's character, stats, perks and level/XP as the
+    /// <summary>The Driver dossier lens, the player's character, stats, perks and level/XP as the
     /// career unfolds. Present as a tab only when the career has a character (depth 3).</summary>
     public DossierViewModel Dossier { get; }
 
-    /// <summary>The Paddock lens (SMGP driver/team preview) — the whole grid's bios + predetermined
+    /// <summary>The Paddock lens (SMGP driver/team preview), the whole grid's bios + predetermined
     /// career stats + team stories. Present as a tab only for an SMGP career with reference data.</summary>
     public PaddockViewModel Paddock { get; }
 
-    /// <summary>The Team Ledger lens (Dynasty owner economy §9) — balance, statement, sponsors,
+    /// <summary>The Team Ledger lens (Dynasty owner economy §9), balance, statement, sponsors,
     /// development, staff and the decision commands. Present only for an economy career.</summary>
     public EconomyViewModel Economy { get; }
 
@@ -116,9 +117,18 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
     /// Always present (every career has a grid); refreshed per round.</summary>
     public SkinsViewModel Skins { get; }
 
-    /// <summary>The period skin resolved from the pack's decade (telegram/fax/email) — drives
-    /// the hub's era badge now, and the full resource-dictionary swap in a later slice.</summary>
+    /// <summary>The period skin resolved from the pack's decade (telegram/fax/email), drives
+    /// the hub's era badge now, and the full resource-dictionary swap in a later slice. A
+    /// <c>data/rules/era-themes.json</c> decade override wins over the built-in table.</summary>
     public EraTheme Era { get; }
+
+    /// <summary>The era skin as the shared bind contract (era-theming-assets-brief.md Slice 0) —
+    /// the same skin as <see cref="Era"/>, typed to the interface the App binds against.</summary>
+    public IEraSkin EraSkin => Era;
+
+    /// <summary>The era medium flattened to a top-level bindable so a WPF DataTrigger can key
+    /// on it without a nested path.</summary>
+    public EraMedium EraMedium => Era.Medium;
 
     /// <summary>The immersion master switch (career-hub-design.md decision 7): when off, the hub
     /// hides its era-medium badge and falls back to neutral chrome. Reads live from settings;

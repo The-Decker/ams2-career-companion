@@ -4,8 +4,8 @@ namespace Companion.Core.Career;
 
 /// <summary>
 /// A contract offer rendered as a PERIOD DOCUMENT (career-hub-design.md, "immersive docs"): the same
-/// <c>PlayerOffer</c> facts (team, tier, salary, year) written up in the medium of the era — a 1960s
-/// telegram, an 1980s fax memo, or a modern email — so accepting a seat feels like answering a letter
+/// <c>PlayerOffer</c> facts (team, tier, salary, year) written up in the medium of the era, a 1960s
+/// telegram, an 1980s fax memo, or a modern email, so accepting a seat feels like answering a letter
 /// from the paddock rather than clicking a table row. Pure + deterministic (no dates read, no RNG):
 /// the same inputs always compose the same document, so it adds no un-seeded state.
 /// </summary>
@@ -24,9 +24,10 @@ public sealed record OfferDocument
     public required EraTheme Era { get; init; }
 
     public static OfferDocument Compose(
-        int seasonYear, string teamName, int tier, double salaryBu, string playerName)
+        int seasonYear, string teamName, int tier, double salaryBu, string playerName,
+        EraThemeCatalog? eraOverrides = null)
     {
-        var era = EraThemes.ForYear(seasonYear);
+        var era = eraOverrides?.ForYear(seasonYear) ?? EraThemes.ForYear(seasonYear);
         string driver = string.IsNullOrWhiteSpace(playerName) ? "Driver" : playerName.Trim();
         string salary = salaryBu.ToString("0.##", CultureInfo.InvariantCulture);
         string seat = SeatPhrase(tier, era.Medium);
@@ -36,7 +37,7 @@ public sealed record OfferDocument
             EraMedium.Telegram => new OfferDocument
             {
                 Era = era,
-                Letterhead = $"{teamName.ToUpperInvariant()} — RACE DEPT",
+                Letterhead = $"{teamName.ToUpperInvariant()}, RACE DEPT",
                 Dateline = $"FILED {seasonYear} {era.DatelineFlourish}".TrimEnd(),
                 Body = string.Join(" ", new[]
                 {
@@ -56,7 +57,7 @@ public sealed record OfferDocument
                     $"Dear {driver},\n\n" +
                     $"We are pleased to offer you {seat} for the {seasonYear} campaign, " +
                     $"at {salary} BU per season. Kindly confirm by return of fax.\n\n" +
-                    $"— {teamName}, Team Principal",
+                    $"- {teamName}, Team Principal",
             },
             _ => new OfferDocument
             {
@@ -66,7 +67,7 @@ public sealed record OfferDocument
                 Body =
                     $"Subject: {seasonYear} Race Seat\n\n" +
                     $"Hi {driver},\n\n" +
-                    $"We'd love to have you in {seat} for {seasonYear} — {salary} BU/season. " +
+                    $"We'd love to have you in {seat} for {seasonYear}, {salary} BU/season. " +
                     "Let us know and we'll get the paperwork over.\n\n" +
                     $"Cheers,\n{teamName}",
             },

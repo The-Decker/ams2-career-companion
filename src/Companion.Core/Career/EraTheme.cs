@@ -17,13 +17,43 @@ public enum EraMedium
 }
 
 /// <summary>
-/// The resolved period skin for a season year: which medium, the accent color, the document
-/// font stack, and the dateline flourish. Pure data — the App maps it to a resource-dictionary
-/// swap ("immersive docs, legible tools": documents + chrome age, dense tables stay legible).
-/// v1 uses the built-in table below; a <c>data/rules/era-themes.json</c> override is a later
-/// slice so community packs can declare their own era feel.
+/// The era-skin bind contract the GUI binds against (docs/dev/era-theming-assets-brief.md, Slice 0):
+/// one shared shape surfaced as a first-class property on the Hub / gallery / News / History /
+/// Offers view-models, so the App's resource-dictionary swap has a single stable surface to key on.
+/// Implemented by <see cref="EraTheme"/>; WPF binds to the members, never to the concrete type.
 /// </summary>
-public sealed record EraTheme
+public interface IEraSkin
+{
+    /// <summary>The period medium (telegram / fax / email), also surfaced flattened on the
+    /// view-models so a WPF DataTrigger can key on it without a nested path.</summary>
+    EraMedium Medium { get; }
+
+    /// <summary>Short uppercase medium label ("TELEGRAM" / "FAX" / "EMAIL").</summary>
+    string Label { get; }
+
+    /// <summary>Era accent color as a "#RRGGBB" hex string.</summary>
+    string AccentHex { get; }
+
+    /// <summary>Comma-separated font stack for period documents.</summary>
+    string DocumentFontStack { get; }
+
+    /// <summary>The dateline flourish ("STOP" for the telegram era, "" otherwise).</summary>
+    string DatelineFlourish { get; }
+
+    /// <summary>Opaque key for the period paper/thermal texture the App maps to a brush/resource
+    /// ("" = a clean, texture-less surface). Never a file path, the App owns the actual art.</summary>
+    string PaperTextureKey { get; }
+}
+
+/// <summary>
+/// The resolved period skin for a season year: which medium, the accent color, the document
+/// font stack, the dateline flourish, and the paper-texture key. Pure data, the App maps it to
+/// a resource-dictionary swap ("immersive docs, legible tools": documents + chrome age, dense
+/// tables stay legible). The built-in table below is the fallback; a
+/// <c>data/rules/era-themes.json</c> override (<see cref="EraThemeCatalog"/>) lets community
+/// packs declare their own era feel per decade.
+/// </summary>
+public sealed record EraTheme : IEraSkin
 {
     public required EraMedium Medium { get; init; }
 
@@ -39,10 +69,14 @@ public sealed record EraTheme
 
     /// <summary>The dateline flourish ("STOP" for the telegram era, "" otherwise).</summary>
     public required string DatelineFlourish { get; init; }
+
+    /// <summary>Opaque key for the period paper/thermal texture ("" = clean surface). Defaulted so
+    /// existing constructions are unchanged; presentation-only, never persisted.</summary>
+    public string PaperTextureKey { get; init; } = "";
 }
 
 /// <summary>
-/// Resolves a season year to its <see cref="EraTheme"/>. Pure and deterministic — the same year
+/// Resolves a season year to its <see cref="EraTheme"/>. Pure and deterministic, the same year
 /// always maps to the same skin, so presentation introduces no un-seeded state. Boundaries follow
 /// the design's decade framing (telegram 60s–70s, fax 80s–early 90s, email mid-90s+); they are the
 /// one taste knob here and are easy to retune (or move to JSON later).
@@ -56,6 +90,7 @@ public static class EraThemes
         AccentHex = "#C8922E", // ochre wire paper
         DocumentFontStack = "Consolas, Courier New, monospace",
         DatelineFlourish = "STOP",
+        PaperTextureKey = "ochre-wire",
     };
 
     public static readonly EraTheme Fax = new()
@@ -65,6 +100,7 @@ public static class EraThemes
         AccentHex = "#5E7A8C", // slate thermal
         DocumentFontStack = "Cascadia Mono, Consolas, monospace",
         DatelineFlourish = "",
+        PaperTextureKey = "thermal-grain",
     };
 
     public static readonly EraTheme Email = new()
@@ -74,6 +110,7 @@ public static class EraThemes
         AccentHex = "#3B7DD8", // clean inbox blue
         DocumentFontStack = "Segoe UI, Arial, sans-serif",
         DatelineFlourish = "",
+        PaperTextureKey = "",
     };
 
     /// <summary>The era skin for a season year. Telegram ≤1979, Fax 1980–1993, Email ≥1994.</summary>
@@ -85,7 +122,7 @@ public static class EraThemes
     };
 
     /// <summary>The era skin implied by any text containing a 4-digit year (e.g. a career name
-    /// like "Formula One 1967" — the wizard defaults names to "&lt;series&gt; &lt;year&gt;"); null
+    /// like "Formula One 1967", the wizard defaults names to "&lt;series&gt; &lt;year&gt;"); null
     /// when no plausible 19xx/20xx year is present. Lets the career gallery colour a card by era
     /// without opening the career file.</summary>
     public static EraTheme? FromText(string? text)

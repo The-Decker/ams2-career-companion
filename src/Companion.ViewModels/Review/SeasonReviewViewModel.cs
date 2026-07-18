@@ -8,7 +8,7 @@ using Companion.ViewModels.Standings;
 
 namespace Companion.ViewModels.Review;
 
-/// <summary>One offer letter of the review screen — the offer's facts plus a period-document
+/// <summary>One offer letter of the review screen, the offer's facts plus a period-document
 /// rendering of it (telegram / fax / email by era), so signing feels like answering the paddock.</summary>
 public sealed partial class OfferLetterViewModel : ObservableObject
 {
@@ -36,6 +36,14 @@ public sealed partial class OfferLetterViewModel : ObservableObject
     /// <summary>The period-document form of this offer (era medium, letterhead, dateline, body).</summary>
     public OfferDocument Document { get; }
 
+    /// <summary>The era skin this letter renders with, the shared bind contract
+    /// (era-theming-assets-brief.md Slice 0), surfaced first-class so the App's reusable era
+    /// DataTemplate keys off the letter, not the screen.</summary>
+    public IEraSkin EraSkin => Document.Era;
+
+    /// <summary>The era medium flattened to a top-level bindable for DataTrigger keying.</summary>
+    public EraMedium EraMedium => Document.Era.Medium;
+
     public string MediumLabel => Document.Era.Label;
 
     public string AccentHex => Document.Era.AccentHex;
@@ -60,7 +68,7 @@ public sealed record DevStatViewModel(string Id, string Label, double Value)
 }
 
 /// <summary>One buyable perk row of the review's development block: what it is, what it costs, and —
-/// in plain language — what it does, for a Buy button that spends banked points.</summary>
+/// in plain language, what it does, for a Buy button that spends banked points.</summary>
 public sealed record PurchasablePerkViewModel(PurchasablePerk Perk)
 {
     public string Id => Perk.Id;
@@ -101,12 +109,14 @@ public sealed partial class SeasonReviewViewModel : ObservableObject
         Headlines = Review?.Headlines ?? [];
 
         // Render each offer as a period document (telegram / fax / email) for the season's era,
-        // addressed to the driver by their character name.
+        // addressed to the driver by their character name. A data/rules/era-themes.json decade
+        // override restyles the document skin; the built-in table is the fallback.
         int seasonYear = Review?.SeasonYear ?? session.Pack.Season.Year;
         string driverName = session.PlayerIdentity()?.DisplayName ?? "";
         Offers = new ObservableCollection<OfferLetterViewModel>(
             (Review?.Offers ?? []).Select(o => new OfferLetterViewModel(
-                o, OfferDocument.Compose(seasonYear, o.TeamName, o.Tier, o.SalaryBu, driverName))));
+                o, OfferDocument.Compose(seasonYear, o.TeamName, o.Tier, o.SalaryBu, driverName,
+                    session.EraThemeOverrides()))));
         _acceptedTeamId = Review?.AcceptedTeamId;
         CanRestoreAiFile = session is IAiFileRestore;
         NextSeason = session.NextSeason();
@@ -149,7 +159,7 @@ public sealed partial class SeasonReviewViewModel : ObservableObject
         }
         catch (InvalidOperationException)
         {
-            return; // unaffordable or at the cap — the button just does nothing
+            return; // unaffordable or at the cap, the button just does nothing
         }
         RefreshDevelopment();
     }
@@ -169,7 +179,7 @@ public sealed partial class SeasonReviewViewModel : ObservableObject
         }
         catch (InvalidOperationException)
         {
-            return; // unaffordable / already owned — the button just does nothing
+            return; // unaffordable / already owned, the button just does nothing
         }
         RefreshDevelopment();
     }
@@ -208,7 +218,7 @@ public sealed partial class SeasonReviewViewModel : ObservableObject
             if (Review is null)
                 return "";
             string position = Review.PlayerPosition is { } p ? $"P{p} in the championship" : "unclassified";
-            return $"You finished {position} — reputation {Review.FinalReputation:0.#}, " +
+            return $"You finished {position}, reputation {Review.FinalReputation:0.#}, " +
                    $"OPI {Review.FinalOpi:+0.00;-0.00;0.00}.";
         }
     }
@@ -274,7 +284,7 @@ public sealed partial class SeasonReviewViewModel : ObservableObject
     {
         { IsCarryover: true } next =>
             $"No {next.SeasonYear} season pack is installed, so your career carries on in the same car " +
-            $"and liveries — the grid ages, retires and refills around you. Accept an offer above, then " +
+            $"and liveries, the grid ages, retires and refills around you. Accept an offer above, then " +
             $"sign to take your age, reputation and form into {next.SeasonYear}. Drop a later-year pack " +
             "in the packs folder and the car switches over when that season arrives.",
         { } next =>
@@ -283,7 +293,7 @@ public sealed partial class SeasonReviewViewModel : ObservableObject
         _ => "This season is complete.",
     };
 
-    /// <summary>The bridge note when the next pack skips years, e.g. "1968 has no pack — your
+    /// <summary>The bridge note when the next pack skips years, e.g. "1968 has no pack, your
     /// career bridges through it." Null for consecutive seasons (or no next pack).</summary>
     public string? BridgeNote
     {
@@ -293,8 +303,8 @@ public sealed partial class SeasonReviewViewModel : ObservableObject
                 return null;
             var years = next.BridgedYears;
             return years.Count == 1
-                ? $"{years[0]} has no pack — your career bridges through it."
-                : $"{years[0]}–{years[^1]} have no packs — your career bridges through them.";
+                ? $"{years[0]} has no pack, your career bridges through it."
+                : $"{years[0]}–{years[^1]} have no packs, your career bridges through them.";
         }
     }
 
@@ -307,12 +317,12 @@ public sealed partial class SeasonReviewViewModel : ObservableObject
     /// <summary>Signing requires both player inputs: an accepted offer and a next pack.</summary>
     public bool CanSign => OfferAccepted && HasNextSeason;
 
-    /// <summary>Transition problems the user must see (the plan's validation errors — e.g.
+    /// <summary>Transition problems the user must see (the plan's validation errors, e.g.
     /// the accepted team does not exist in the next pack).</summary>
     [ObservableProperty]
     private string? _transitionError;
 
-    /// <summary>Raised after the next season has been started and persisted — the shell
+    /// <summary>Raised after the next season has been started and persisted, the shell
     /// reopens the career file, which now lands in the new season's round 1 briefing.</summary>
     public event EventHandler? SeasonSigned;
 

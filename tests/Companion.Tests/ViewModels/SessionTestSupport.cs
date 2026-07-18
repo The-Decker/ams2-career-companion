@@ -25,7 +25,7 @@ internal static class ViewModelTestData
     public static SeasonPack RealPack() => SeasonPackFiles.Read(RealPackDirectory).Parse();
 
     /// <summary>The real career rules data (aging curves, archetypes, headlines) copied into
-    /// the test output — the same files the published exe ships beside itself.</summary>
+    /// the test output, the same files the published exe ships beside itself.</summary>
     public static string RulesDirectory => Path.Combine(AppContext.BaseDirectory, "Fixtures", "rules");
 
     public static CareerEnvironment Environment(
@@ -43,7 +43,7 @@ internal static class ViewModelTestData
         HistoryDirectory = historyDirectory,
     };
 
-    /// <summary>A library that knows nothing — every class/track/vehicle check fails.</summary>
+    /// <summary>A library that knows nothing, every class/track/vehicle check fails.</summary>
     public static Ams2ContentLibrary EmptyLibrary() => new()
     {
         ExtractedFrom = "in-memory empty test library",
@@ -246,6 +246,13 @@ internal sealed class FakeCareerSession : ICareerSession
     public HistoricalSeason? HistoricalSeason(int seasonYear) =>
         HistoryByYear.GetValueOrDefault(seasonYear);
 
+    /// <summary>The era-skin override table surfaced through the
+    /// <see cref="ICareerSession.EraThemeOverrides"/> seam (null by default = every era resolves
+    /// from the built-in table). Lets a test drive the era-skin bind contract with a catalog.</summary>
+    public Companion.Core.Career.EraThemeCatalog? EraOverrides { get; set; }
+
+    public Companion.Core.Career.EraThemeCatalog? EraThemeOverrides() => EraOverrides;
+
     public Queue<StageOutcome> StageOutcomes { get; } = new();
 
     public List<ResultDraft> Applied { get; } = [];
@@ -273,7 +280,7 @@ internal sealed class FakeCareerSession : ICareerSession
 
     public int? CurrentExpectedFinish() => ExpectedFinish;
 
-    /// <summary>The confirm model this fake previews (null = the default empty one) — lets a test
+    /// <summary>The confirm model this fake previews (null = the default empty one), lets a test
     /// drive the confirm screen's points / movement name rendering.</summary>
     public ConfirmModel? PreviewModel { get; set; }
 
@@ -284,7 +291,7 @@ internal sealed class FakeCareerSession : ICareerSession
         Headline = "fake headline",
     };
 
-    /// <summary>When set, an Apply flips <see cref="Summary"/>.SeasonComplete true — so a wiring test
+    /// <summary>When set, an Apply flips <see cref="Summary"/>.SeasonComplete true, so a wiring test
     /// can drive the shell into the season-complete branch (season review / campaign finale).</summary>
     public bool CompletesSeasonOnApply { get; set; }
 
@@ -476,14 +483,14 @@ internal sealed class FakeCareerSession : ICareerSession
 
     public SmgpPromotionModel? CurrentSmgpPromotion() => Promotion;
 
-    /// <summary>The demotion screen this fake surfaces (null = none) — returned by
+    /// <summary>The demotion screen this fake surfaces (null = none), returned by
     /// <see cref="CurrentSmgpDemotion"/> regardless of the previous team, for wiring tests.</summary>
     public SmgpPromotionModel? Demotion { get; set; }
 
     public SmgpPromotionModel? CurrentSmgpDemotion(string? previousTeamId) => Demotion;
 
     /// <summary>The 17-season campaign finale this fake surfaces once the season completes (null = none),
-    /// returned by <see cref="SmgpFinale"/> — for the finale wiring tests.</summary>
+    /// returned by <see cref="SmgpFinale"/>, for the finale wiring tests.</summary>
     public SmgpFinaleModel? Finale { get; set; }
 
     public SmgpFinaleModel? SmgpFinale() => Finale;
@@ -493,7 +500,7 @@ internal sealed class FakeCareerSession : ICareerSession
 
     public string? CurrentSmgpTeamId() => SmgpTeamId;
 
-    /// <summary>Every ResolveSmgpOffer decision, in order — the promotion screen's accept/decline.</summary>
+    /// <summary>Every ResolveSmgpOffer decision, in order, the promotion screen's accept/decline.</summary>
     public List<bool> ResolvedOffers { get; } = [];
 
     public void ResolveSmgpOffer(bool accept)
@@ -510,7 +517,7 @@ internal sealed class FakeCareerSession : ICareerSession
     /// <summary>Every accepted economy decision, in order.</summary>
     public List<Companion.Core.Dynasty.DynastyEconomyDecision> EconomyDecisions { get; } = [];
 
-    /// <summary>When set, DeclareEconomyDecision throws it instead of recording — the
+    /// <summary>When set, DeclareEconomyDecision throws it instead of recording, the
     /// injectable-throw pattern for error-path tests.</summary>
     public Exception? DeclareEconomyDecisionThrows { get; set; }
 
