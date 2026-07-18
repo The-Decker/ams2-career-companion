@@ -32,7 +32,11 @@ A **Windows desktop app (WPF, .NET 10, single self‑contained exe `AMS2CareerCo
 
 - **Grand Prix Dynasty** (`grandPrixDynasty`, working display name) — the driver-owner historical World Championship simulator, with a product horizon of 1960–2020. Every playable year remains a faithful single-season pack; unavailable years are never synthesized or mixed.
 - **Super Monaco GP** (`smgp`) — the SEGA *Super Monaco GP* replica career (`packs/smgp-1`, `careerStyle:"smgp"`). Rival ladder, two-wins seat swaps, title defense, a 17-season campaign, DNQ field, the Paddock, and dispatches. **A. Senna is the permanent OP benchmark, never nerfed or dropped.** SMGP remains a separate career entity.
-- **Racing Passport** (`racingPassport`, working display name) — one persistent character with multiple independently saved historical or SMGP career threads. The player may switch after an atomic race checkpoint; global XP/skills advance across the ordered portfolio while standings, seats, age, injury, death, and mode-specific state remain thread-local.
+- **Racing Passport** (`racingPassport`, working display name) — the pure-racing open historical
+  experience (the 2026-07-18 decision): choose any installed faithful season, replace one driver,
+  optionally rename them, and race the complete year. Each Passport season is an independent
+  self-contained save with NO XP, SP, DNA, skills, or owner economy. See
+  `docs/dev/racing-passport-pure-racing.md`.
 
 The stable IDs/save boundaries are locked; display names may still change. Full contract: `docs/dev/career-modes-alpha1.md`.
 
@@ -251,7 +255,7 @@ The rework must preserve the exact determinism contract: unlocks ride the existi
 `docs/dev/character-progression-v2.md` (2026‑07‑12) is the first-wave contract for new progression-version-2 careers. It preserves v0/v1 behavior and defines:
 - a deterministic integer level curve through **L300**, plus campaign-pinned XP normalization and a 499-SP lifetime pool paced to the career horizon;
 - SMGP mastery by the season-16 review so season 17 can be driven with a complete build, and proportional pacing across historical starts through 2020;
-- mode-specific scaling for Grand Prix Dynasty, SMGP, and the Racing Passport portfolio without changing the universal L300 curve or 499-SP mastery budget;
+- mode-specific scaling for Grand Prix Dynasty and SMGP without changing the universal L300 curve or 499-SP mastery budget (Racing Passport is pure racing and seeds NO progression at all);
 - **30 immutable Racing DNA identities** (`character-progression-v2-dna-catalog.md`);
 - **90 mastery skills**, exactly 10 in each of Pace, Racecraft, Physical, Mental, Business, Weather, Team, Media, and Era Flavor (`character-progression-v2-skill-catalog.md`);
 - a real wiring-diagram tree with prerequisite connectors, node details, a pending purchase plan, and atomic Confirm;
@@ -409,7 +413,7 @@ All VMs are CommunityToolkit.Mvvm partial `ObservableObject` with `[ObservablePr
 - **CoreJson canonical serialization** (camelCase, Rational as strings) is what makes byte‑comparison meaningful — don't change it.
 - **PowerShell‑authored JSON:** write `UTF8Encoding(false)` + validate via `System.Text.Json` (mojibake lesson).
 - **Lane discipline:** CODE never edits `src/Companion.App/**`; GUI never edits `Core`/`ViewModels`/`Data`/`tests` except the render‑harness stand‑ins. Slice‑0 stub commits unblock the parallel lane.
-- **SMGP-1.0 milestone:** a fresh SMGP career playable end-to-end with every shipped mechanic visible in the RC exe. **Product Alpha 1.0** now means the three-mode contract in `docs/dev/career-modes-alpha1.md`; the historical driver-owner and Passport work remain substantial implementation, not already-shipped behavior. Mike's default: **build maximally, don't stop to ask.**
+- **SMGP-1.0 milestone:** a fresh SMGP career playable end-to-end with every shipped mechanic visible in the RC exe. **Product Alpha 1.0** now means the three-mode contract in `docs/dev/career-modes-alpha1.md`; the historical driver-owner economy backend is shipped (Dynasty slices 0-9), Dynasty gating and pure-racing Passport are shipped (2026-07-17/18), and the remaining Alpha work is the GUI surfacing + acceptance. Mike's default: **build maximally, don't stop to ask.**
 - **Still post-alpha unless separately promoted:** life-sim event deck, morale/form, negotiation minigame, Formula Junior 1960 prologue, shared-memory auto-capture (`docs/dev/auto-capture.md` — manual entry stays first-class). Historical driver-owner/tycoon mode itself is now an Alpha 1.0 target per `docs/dev/career-modes-alpha1.md`.
 
 ---

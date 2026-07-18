@@ -69,10 +69,11 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             ?? Path.Combine(environment.DocumentsDirectory, "AMS2CareerCompanion", "Careers");
         _seedSource = seedSource ?? Random.Shared;
         if (experienceMode is not null &&
-            experienceMode is not (CareerExperienceModes.GrandPrixDynasty or CareerExperienceModes.Smgp))
+            experienceMode is not (CareerExperienceModes.GrandPrixDynasty or
+                CareerExperienceModes.Smgp or CareerExperienceModes.RacingPassport))
         {
             throw new ArgumentException(
-                "This single-career wizard supports only Grand Prix Dynasty or SMGP v2 creation.",
+                "This single-career wizard supports only Grand Prix Dynasty, SMGP, or Racing Passport creation.",
                 nameof(experienceMode));
         }
         _explicitExperienceMode = experienceMode;
@@ -84,10 +85,76 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
 
     public event EventHandler<CareerCreatedEventArgs>? CareerCreated;
 
+    /// <summary>True when this wizard runs the Racing Passport pure-racing route (the 2026-07-18
+    /// product decision): SeasonPick → Verification → SeatPick → Confirm, no character creator,
+    /// no custom grid editor, no progression or economy surfaces.</summary>
+    public bool IsRacingPassport => _explicitExperienceMode == CareerExperienceModes.RacingPassport;
+
+    /// <summary>Alias of <see cref="IsRacingPassport"/> for the view's mode-keyed visibility.</summary>
+    public bool IsPureRacingMode => IsRacingPassport;
+
+    /// <summary>False for Passport: the faithful pack field is used whole, the custom grid
+    /// editor never appears. True for the other routes (subject to the pack's own locks).</summary>
+    public bool HasGridStep => !IsRacingPassport;
+
+    /// <summary>False for Passport: no XP, SP, mastery, or campaign pacing is ever summarized.</summary>
+    public bool ShowsProgressionSummary => !IsRacingPassport;
+
+    /// <summary>False for Passport: mortality is Off and no picker is offered.</summary>
+    public bool ShowsMortalityChoice => !IsRacingPassport;
+
+    /// <summary>False for Passport: the owner economy cannot activate here.</summary>
+    public bool ShowsDynastyEconomyChoice => !IsRacingPassport;
+
+    /// <summary>The Passport route's one-line season summary ("1991 · FIA Formula One World
+    /// Championship"), empty for the other routes or before a pack parses.</summary>
+    public string PassportSeasonSummary => IsRacingPassport && Pack is { } pack
+        ? $"{pack.Season.Year} · {pack.Season.SeriesName}"
+        : "";
+
+    /// <summary>The Passport route's one-line seat summary ("Brabham-Repco · replacing N. Piquet
+    /// · #1"), empty until a seat is chosen.</summary>
+    public string PassportSeatSummary
+    {
+        get
+        {
+            if (!IsRacingPassport || SelectedSeat is null)
+                return "";
+            string number = string.IsNullOrWhiteSpace(SelectedSeat.Number) ? "" : $" · #{SelectedSeat.Number}";
+            return $"{SelectedSeat.TeamName} · replacing {SelectedSeat.DriverName}{number}";
+        }
+    }
+
+    /// <summary>The Passport confirm screen's honest summary block (the 2026-07-18 decision):
+    /// series, year, team, replaced driver, display name, one faithful season, and the explicit
+    /// NO-progression / NO-management lines. Empty for the other routes.</summary>
+    public IReadOnlyList<string> PassportConfirmLines
+    {
+        get
+        {
+            if (!IsRacingPassport || Pack is not { } pack)
+                return [];
+            string driver = ResolvedPlayerDisplayName ?? "the seat's authored driver";
+            return
+            [
+                "RACING PASSPORT",
+                $"Series: {pack.Season.SeriesName}",
+                $"Season: {pack.Season.Year}",
+                $"Team: {SelectedSeat?.TeamName ?? "?"}",
+                $"Seat: {PassportSeatSummary}",
+                $"Driver: {driver}",
+                "Career format: One complete faithful season",
+                "Progression: None, pure racing",
+                "Team management: None",
+                "Field: Historical season grid locked to the selected pack",
+            ];
+        }
+    }
+
     /// <summary>The Alpha mode selected explicitly by a mode entry, or inferred by the production
     /// single-career entry from the parsed pack: SMGP packs become <c>smgp</c>, every historical pack
     /// becomes <c>grandPrixDynasty</c>. Direct callers retain the exact legacy path unless they opt
-    /// into either seam. Racing Passport owns a different container wizard.</summary>
+    /// into either seam. Racing Passport runs this same wizard on its pure-racing route.</summary>
     public string? ExperienceMode => _explicitExperienceMode ??
         (_inferExperienceModeFromPack && Pack is not null
             ? IsSmgpPack
@@ -186,9 +253,10 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             ? WizardStep.Verification
             : WizardStep.SeasonPick;
 
-    /// <summary>The character step exists only when character rules are available (the app always
-    /// ships perks.json; a rules-less environment, some tests, skips from verification to seat pick).</summary>
-    public bool HasCharacterStep => _environment.RulesDirectory is not null;
+    /// <summary>The character step exists only when character rules are available AND the route owns
+    /// one. Racing Passport is pure racing: no character creator ever appears (the 2026-07-18
+    /// product decision). A rules-less environment skips the step for every route.</summary>
+    public bool HasCharacterStep => !IsRacingPassport && _environment.RulesDirectory is not null;
 
     [RelayCommand(CanExecute = nameof(CanGoNext))]
     private void Next()
@@ -224,8 +292,18 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
                 break;
 
             case WizardStep.SeatPick:
-                BuildGridChoices();
-                Step = WizardStep.Grid;
+                if (IsRacingPassport)
+                {
+                    // Pure racing: the faithful pack field is used whole, the custom grid editor
+                    // never runs, so SeatPick leads straight to Confirm.
+                    PrepareConfirm();
+                    Step = WizardStep.Confirm;
+                }
+                else
+                {
+                    BuildGridChoices();
+                    Step = WizardStep.Grid;
+                }
                 break;
 
             case WizardStep.Grid:
@@ -245,10 +323,12 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         if (!CanGoBack)
             return;
         // A rules-less environment skips Character on the way forward, so SeatPick must skip it on
-        // the way back as well. Every other step follows the enum's visual order.
+        // the way back as well. Passport skips the grid editor both directions (SeatPick ↔ Confirm).
+        // Every other step follows the enum's visual order.
         Step = Step switch
         {
             WizardStep.SeatPick => HasCharacterStep ? WizardStep.Character : WizardStep.Verification,
+            WizardStep.Confirm when IsRacingPassport => WizardStep.SeatPick,
             _ => Step - 1,
         };
     }
@@ -396,7 +476,8 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             OnPropertyChanged(nameof(ExperienceMode));
             OnPropertyChanged(nameof(HasResolvedExperienceMode));
             OnPropertyChanged(nameof(ExperienceModeLabel));
-            if (ExperienceMode is { } mode && !PackStructuralValidator.Validate(Pack).HasErrors)
+            if (ExperienceMode is { } mode && mode != CareerExperienceModes.RacingPassport &&
+                !PackStructuralValidator.Validate(Pack).HasErrors)
             {
                 var selected = PreparedCampaignPack.From(files, Pack);
                 SetResolvedCampaignPlan(
@@ -668,12 +749,6 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         }
     }
 
-    /// <summary>The player's chosen driver name (the character step, defaulting to the seat driver
-    /// until edited), replaces the AI driver's name on the player's own Season's-Grid card. Null
-    /// (character-less / empty) leaves the card on the seat driver's name.</summary>
-    private string? PlayerDisplayName =>
-        Character?.Name?.Trim() is { Length: > 0 } n ? n : null;
-
     /// <summary>Optional escape hatch from the pack seats: type the exact name of a custom AMS2 livery
     /// you have installed and race as your OWN independent entrant (the player-as-own-entrant path, a
     /// stable synthetic driver, a neutral car, character-shaped ratings), added to the grid rather than
@@ -687,9 +762,44 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
 
     /// <summary>True when the player typed a custom livery, they race as their own entrant instead of
     /// taking a pack seat.</summary>
-    /// <summary>Own-entrant never applies to the SMGP replica, a custom livery holds no seat on
-    /// the ladder, so the mode's swaps and the title defense could never reach it.</summary>
-    public bool IsOwnEntrant => !IsSmgpPack && !string.IsNullOrWhiteSpace(CustomLiveryName);
+    /// <summary>Own-entrant never applies to the SMGP replica (a custom livery holds no seat on the
+    /// ladder) nor to Racing Passport, which is defined by choosing an existing championship seat.</summary>
+    public bool IsOwnEntrant => !IsRacingPassport && !IsSmgpPack && !string.IsNullOrWhiteSpace(CustomLiveryName);
+
+    /// <summary>False for Passport: its whole point is replacing one authored driver, not
+    /// inventing a seat. The view hides the custom-livery box.</summary>
+    public bool ShowsOwnEntrant => !IsRacingPassport && !IsSmgpPack;
+
+    /// <summary>Racing Passport's one identity field: the optional custom display name for the
+    /// player driver. Trimmed at creation; empty keeps the replaced driver's authored name.
+    /// NOT a character, no profile, no stats, no progression.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(PlayerDisplayNameError), nameof(ResolvedPlayerDisplayName))]
+    private string _playerDisplayName = "";
+
+    public const int MaxPlayerDisplayNameLength = 40;
+
+    /// <summary>The name-field validation message, empty when valid. A blank value is VALID (the
+    /// authored driver name shows); an over-long value is not.</summary>
+    public string PlayerDisplayNameError
+    {
+        get
+        {
+            string trimmed = PlayerDisplayName.Trim();
+            return trimmed.Length > MaxPlayerDisplayNameLength
+                ? $"Keep it to {MaxPlayerDisplayNameLength} characters or fewer."
+                : "";
+        }
+    }
+
+    /// <summary>The player's chosen display name: the explicit Passport input when set, else the
+    /// character's name (the character step, defaulting to the seat driver until edited), else
+    /// null so the seat driver's authored name shows. Used on the player's own Season's-Grid card
+    /// and handed to creation for the pure-racing route.</summary>
+    private string? ResolvedPlayerDisplayName =>
+        PlayerDisplayName.Trim() is { Length: > 0 } passportName ? passportName
+        : Character?.Name?.Trim() is { Length: > 0 } characterName ? characterName
+        : null;
 
     /// <summary>The livery the player will drive: the typed custom livery (own entrant) when present,
     /// otherwise the selected pack seat's livery. Null only before either is chosen (the Next gate
@@ -820,7 +930,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
                 // The player REPLACES this seat's driver, their own (locked) card shows the PLAYER's
                 // chosen name, not the AI driver whose car they took. Every other card keeps its
                 // driver. (In-career the resolver does the same swap by IsPlayer; this is the wizard.)
-                DriverName = locked && PlayerDisplayName is { } playerName
+                DriverName = locked && ResolvedPlayerDisplayName is { } playerName
                     ? playerName
                     : driversById[entry.DriverId].Name,
                 TeamName = teamsById[entry.TeamId].Name,
@@ -1041,6 +1151,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         (SelectedSeat is not null || IsOwnEntrant) &&
         RacingDnaContextError is null &&
         (!HasCharacterStep || Character?.IsValid == true) &&
+        PlayerDisplayNameError.Length == 0 &&
         !string.IsNullOrWhiteSpace(CareerName) &&
         long.TryParse(MasterSeedText, out _);
 
@@ -1201,10 +1312,14 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             CommunityBaselineSourcePath = importBaseline ? InstalledAiFilePath : null,
             ExperienceMode = ExperienceMode,
             Character = character,
+            // Racing Passport's one identity field (null when blank, the seat's authored driver
+            // name then shows; NOT a character, just a display name).
+            PlayerDisplayName = IsRacingPassport ? ResolvedPlayerDisplayName : null,
             // The SMGP ladder needs the WHOLE authored field, its seat chains reference every
             // team's car, and a narrowed grid would make demotion/introduction targets unresolvable
             // (the resolver would then refuse the moves round after round). Mode on → whole pack.
-            GridSelection = smgpMode ? null : BuildGridSelection(),
+            // Racing Passport also races the whole faithful field (null), never a narrowed grid.
+            GridSelection = smgpMode || IsRacingPassport ? null : BuildGridSelection(),
             // Ratings Phase 3: every new career is form-reactive, the sim's field reacts to who is
             // hot each weekend (the pinned pack's per-race form). Existing careers stay form-inert.
             FormAware = true,

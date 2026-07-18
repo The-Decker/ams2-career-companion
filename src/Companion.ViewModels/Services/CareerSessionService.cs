@@ -378,14 +378,17 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                     request.Character, request.GridSelection, request.FormAware,
                     request.SmgpMode || request.ExperienceMode == CareerExperienceModes.Smgp,
                     request.Mortality,
-                    campaign?.Plan.Mode,
+                    // The bounded modes carry their mode on the plan; a pure-racing Passport has
+                    // no plan, so the request's explicit mode is the fallback (null for legacy).
+                    campaign?.Plan?.Mode ?? request.ExperienceMode,
+                    request.PlayerDisplayName,
                     campaign?.Plan,
                     // The Dynasty owner economy: both halves of the gate, the pinned campaign mode
                     // AND the creation opt-in. The rules are resolved only for an opted-in Dynasty
                     // career, so a rules-directory-free caller (most tests) never touches them; an
                     // economy career on an install missing the tables fails HERE with a clear
                     // message rather than seeding an economy it cannot fold.
-                    request.DynastyEconomy && campaign?.Plan.Mode == CareerExperienceModes.GrandPrixDynasty
+                    request.DynastyEconomy && campaign?.Plan?.Mode == CareerExperienceModes.GrandPrixDynasty
                         ? environment.Rules.DynastyEconomy
                             ?? throw new InvalidOperationException(
                                 "The Dynasty owner economy is unavailable, data\\rules\\dynasty\\economy.json " +
@@ -576,6 +579,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         bool smgpMode,
         MortalityMode mortality,
         string? experienceMode,
+        string? customDisplayName,
         CampaignProgressionPlan? campaignProgressionPlan,
         Companion.Core.Dynasty.DynastyEconomyRules? economyRules,
         SqliteTransaction transaction)
@@ -610,6 +614,9 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             Character = character,
             Level = character is null ? 0 : 1,
             ExperienceMode = experienceMode,
+            // The pure-racing identity field (null = the seat's authored driver name shows, and
+            // every pre-feature save stays byte-identical): NOT a character, just a display name.
+            CustomDisplayName = customDisplayName,
             CampaignProgressionPlan = campaignProgressionPlan,
             // The chosen season field (null = whole pack → byte-identical). Carried forward each
             // round; the fold resolves the grid to exactly this field.
@@ -1811,9 +1818,11 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     /// model, whose synthetic id is NOT in pack.Drivers and whose occupied car still carries the BENCHED
     /// AI's name), a stable default so the player never renders as that AI (or the raw id). Null for a
     /// real-driver career with no character name, so callers keep the seat's authored driver (the
-    /// historical driver the player wears), every non-distinct career stays display-identical.</summary>
+    /// historical driver the player wears), every non-distinct career stays display-identical. A
+    /// pure-racing <see cref="PlayerCareerState.CustomDisplayName"/> (Racing Passport's one
+    /// identity field) resolves ahead of the authored name when the player chose one.</summary>
     private string? PlayerDisplayName() =>
-        CharacterName() ?? (IsDistinctDriverPlayer ? PlayerDefaultName : null);
+        CharacterName() ?? CurrentPlayerState()?.CustomDisplayName ?? (IsDistinctDriverPlayer ? PlayerDefaultName : null);
 
     /// <summary>The player races as their OWN distinct entrant (SMGP clean-swap, or a custom-livery
     /// own-entrant) rather than impersonating a pack driver, so their id is the synthetic one.</summary>
@@ -4757,6 +4766,11 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         if (!SeasonComplete)
             return null;
 
+        // A Racing Passport career IS one complete faithful season: there is no next season to
+        // offer, no discovery, and no rollover target. The final review is the whole arc.
+        if (CurrentPlayerState()?.ExperienceMode == CareerExperienceModes.RacingPassport)
+            return null;
+
         if (ActiveBoundedCampaign() is { } campaign)
         {
             if (_seasonOrdinal >= campaign.PinnedSeasonSequence.Count)
@@ -4800,6 +4814,9 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         if (!SeasonComplete)
             throw new InvalidOperationException(
                 "The season is not complete, finish every round before signing for the next era.");
+        if (CurrentPlayerState()?.ExperienceMode == CareerExperienceModes.RacingPassport)
+            throw new InvalidOperationException(
+                "A Racing Passport career is one complete faithful season, there is no next season to sign for.");
         EnsureSeasonEnd();
 
         var campaign = ActiveBoundedCampaign();

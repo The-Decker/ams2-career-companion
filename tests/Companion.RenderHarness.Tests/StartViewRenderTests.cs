@@ -124,7 +124,7 @@ public sealed class StartViewRenderTests
 
             Assert.True(modeButtons[0].IsEnabled);
             Assert.True(modeButtons[1].IsEnabled);
-            Assert.False(modeButtons[2].IsEnabled);
+            Assert.True(modeButtons[2].IsEnabled); // Racing Passport is playable now (pure racing)
 
             Button smgpButton = Assert.Single(modeButtons, static button =>
                 button.DataContext is CareerModeEntry { Id: "smgp" });

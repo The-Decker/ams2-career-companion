@@ -1081,15 +1081,25 @@ public sealed class CharacterWizardTests : IDisposable
     }
 
     [Fact]
-    public void SingleCareerWizardRejectsPassportModeUntilItsContainerExists()
+    public void SingleCareerWizardAcceptsPassportModeOnThePureRacingRoute()
     {
         var environment = ViewModelTestData.Environment(
             documentsDirectory: Path.Combine(_root, "docs"),
             library: TestPackBuilder.Library());
 
-        Assert.Throws<ArgumentException>(() => new NewCareerWizardViewModel(
+        var wizard = new NewCareerWizardViewModel(
             environment, new FakeCareerFactory(),
-            experienceMode: CareerExperienceModes.RacingPassport));
+            experienceMode: CareerExperienceModes.RacingPassport);
+
+        Assert.True(wizard.IsRacingPassport);
+        Assert.True(wizard.IsPureRacingMode);
+        Assert.False(wizard.HasCharacterStep);
+        Assert.False(wizard.HasGridStep);
+        Assert.False(wizard.ShowsProgressionSummary);
+        Assert.False(wizard.ShowsMortalityChoice);
+        Assert.False(wizard.ShowsDynastyEconomyChoice);
+        Assert.False(wizard.ShowsOwnEntrant);
+        Assert.Equal(WizardStep.SeasonPick, wizard.Step);
     }
 }
 

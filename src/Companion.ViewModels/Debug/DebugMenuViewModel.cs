@@ -294,8 +294,9 @@ public sealed partial class DebugMenuViewModel : ObservableObject
 
     // ---------- Tier 2: non-persistent previews (never write a .ams2career) ----------
 
-    /// <summary>Racing Passport is unbuildable (IsAvailable=false AND throws at creation), so it is
-    /// reachable ONLY as a Tier-2 preview.</summary>
+    /// <summary>Racing Passport is a real, buildable mode now (pure racing, 2026-07-18). This
+    /// preview remains as the instant no-save look at its hub shape; a REAL Passport career is
+    /// one click away via the ordinary creation flow (or Tier 1 below).</summary>
     [RelayCommand]
     private void PreviewRacingPassport() =>
         Preview(DebugPreviews.RacingPassport(DebugPreviewPack.Build(1967)));

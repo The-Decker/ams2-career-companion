@@ -74,6 +74,13 @@ public sealed record SeasonEndContext
     /// <see cref="Companion.Core.Dynasty.DynastyEconomyState"/>; null (or a non-economy career)
     /// runs the exact pre-economy pipeline, byte-identical.</summary>
     public Companion.Core.Dynasty.DynastyEconomyRules? EconomyRules { get; init; }
+
+    /// <summary>Pure-racing season (Racing Passport, 2026-07-18 decision): when true the
+    /// career-ladder steps are skipped — no aging, no retirements, no AI seat market, no player
+    /// offers, no tier drift — while final standings, the reputation/OPI finals, headlines, and
+    /// the season digest are produced normally (a completed Passport season still crowns its
+    /// champion and stays reviewable). Default false; every other career folds byte-identically.</summary>
+    public bool PureRacingSeason { get; init; }
 }
 
 public sealed record SeasonEndResult
@@ -451,29 +458,37 @@ public static class SeasonEndPipeline
         }
 
         // ---- step 3: aging -------------------------------------------------------------
+        // Pure-racing seasons skip the career-ladder steps: the field does not age.
         var agedDrivers = new List<DriverCareerState>(context.Drivers.Count);
-        foreach (var driver in context.Drivers)
+        if (context.PureRacingSeason)
         {
-            if (driver.Retired)
+            agedDrivers.AddRange(context.Drivers);
+        }
+        else
+        {
+            foreach (var driver in context.Drivers)
             {
-                agedDrivers.Add(driver);
-                continue;
-            }
-
-            var aged = AgeOneSeason(driver, packDriversById, curve, context.Streams, year);
-            agedDrivers.Add(aged);
-            events.Add(new JournalEvent
-            {
-                Phase = JournalPhases.DriverAging,
-                Entity = driver.DriverId,
-                DeltaJson = CareerJson.Serialize(new
+                if (driver.Retired)
                 {
-                    age = aged.Age,
-                    raceSkillDelta = Round4(aged.RaceSkillDelta),
-                    qualifyingSkillDelta = Round4(aged.QualifyingSkillDelta),
-                }),
-                Cause = "aging",
-            });
+                    agedDrivers.Add(driver);
+                    continue;
+                }
+
+                var aged = AgeOneSeason(driver, packDriversById, curve, context.Streams, year);
+                agedDrivers.Add(aged);
+                events.Add(new JournalEvent
+                {
+                    Phase = JournalPhases.DriverAging,
+                    Entity = driver.DriverId,
+                    DeltaJson = CareerJson.Serialize(new
+                    {
+                        age = aged.Age,
+                        raceSkillDelta = Round4(aged.RaceSkillDelta),
+                        qualifyingSkillDelta = Round4(aged.QualifyingSkillDelta),
+                    }),
+                    Cause = "aging",
+                });
+            }
         }
 
         // ---- step 4: retirements (canon + hazard) with seeded foreshadowing -----------
@@ -483,8 +498,15 @@ public static class SeasonEndPipeline
         // are wired today).
         var retiredNow = new HashSet<string>(StringComparer.Ordinal);
         var finalDrivers = new List<DriverCareerState>(agedDrivers.Count);
-        foreach (var driver in agedDrivers)
+        if (context.PureRacingSeason)
         {
+            // Pure-racing: nobody retires, the faithful field is the whole story.
+            finalDrivers.AddRange(agedDrivers);
+        }
+        else
+        {
+            foreach (var driver in agedDrivers)
+            {
             if (driver.Retired)
             {
                 finalDrivers.Add(driver);
@@ -548,9 +570,13 @@ public static class SeasonEndPipeline
                 }
             }
         }
+        }
 
         // ---- step 5: AI seat market ----------------------------------------------------
+        // Pure-racing seasons have no seat market: no vacancies open, nobody is hired.
         var teams = context.Teams.ToList();
+        if (!context.PureRacingSeason)
+        {
         var seatMap = BuildSeatMap(pack, player.LiveryName);
         var vacancies = seatMap
             .Where(s => retiredNow.Contains(s.DriverId))
@@ -632,8 +658,13 @@ public static class SeasonEndPipeline
                 });
             }
         }
+        }
 
         // ---- step 6: player offers ------------------------------------------------------
+        // Pure-racing seasons extend no contract offers: the season ends at the flag.
+        IReadOnlyList<PlayerOffer> offers = [];
+        if (!context.PureRacingSeason)
+        {
         double salaryAsk = context.PlayerSalaryAskBu ?? Math.Max(1.0, finalRep / 10.0);
         // Durability (a meta-stat) shifts the driver's EFFECTIVE age in the offer market: a tough
         // driver is courted as if a few years younger (races ~3 yrs longer at 1.0), a fragile one as
@@ -667,7 +698,7 @@ public static class SeasonEndPipeline
             });
         }
 
-        var offers = scored
+        offers = scored
             .OrderByDescending(o => o.Score)
             .ThenBy(o => o.TeamId, StringComparer.Ordinal)
             .Take(context.Archetypes.MaxOffers)
@@ -688,10 +719,11 @@ public static class SeasonEndPipeline
                 Cause = "player-offer",
             });
         }
+        }
 
         // ---- step 7: tier drift ----------------------------------------------------------
         var driftedTiers = new Dictionary<string, int>(StringComparer.Ordinal);
-        if (final.Constructors is { } table)
+        if (!context.PureRacingSeason && final.Constructors is { } table)
         {
             var expectedRanks = teams
                 .OrderByDescending(t => t.Tier)

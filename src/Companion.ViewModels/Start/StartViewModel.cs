@@ -47,14 +47,15 @@ public sealed partial class StartViewModel : ObservableObject
         {
             Id = CareerExperienceModes.RacingPassport,
             DisplayName = "Racing Passport",
-            Tagline = "One driver. Many racing timelines.",
+            Tagline = "Choose a season. Take a seat. Go racing.",
             Description =
-                "Create one persistent driver, then start and resume independent historical or " +
-                "Super Monaco GP careers from a shared portfolio.",
+                "Choose any installed faithful historical series, replace one driver, and race " +
+                "the complete season.",
             PersistenceSummary =
-                "Driver progression is global; standings, seats, age, injuries and death stay local to each timeline.",
-            AvailabilityLabel = "COMING IN A LATER ALPHA PASS",
-            IsAvailable = false,
+                "Each Passport season is an independent save focused on racing, results, standings, " +
+                "and championship history.",
+            AvailabilityLabel = "PLAYABLE NOW",
+            IsAvailable = true,
         },
     ]);
 

@@ -6,8 +6,9 @@ development; Racing Passport activates and holds the historical seasons as threa
 Dynasty tycoon economy in parallel (`docs/dev/fable-tycoon-brief.md`) — this doc is the mode
 infrastructure around it (Claude's lane: Core/ViewModels/Data)._
 
-> **Status (2026-07-17):** Piece 2 (debug menu) SHIPPED + deployed. Piece 1 (Dynasty gating)
-> SHIPPED. **Piece 3 (Racing Passport) is the one open piece** — the largest of the three.
+> **Status (2026-07-18):** Piece 2 (debug menu) SHIPPED + deployed. Piece 1 (Dynasty gating)
+> SHIPPED. **Piece 3 SHIPPED AS PURE RACING** — the shared-progression Passport design was
+> superseded by the product-owner decision of 2026-07-18 (see below). All three pieces are done.
 
 ## Content reality (drives the gating)
 
@@ -57,26 +58,48 @@ non-persistent preview sessions. Every command routes the same session/fold seam
 
 ---
 
-## Piece 3 — Racing Passport activation (OPEN — the largest piece)
+## Piece 3 — Racing Passport — SHIPPED AS PURE RACING (2026-07-18)
 
-**Goal:** turn on `racingPassport` (currently fail-closed at
-`CampaignCreationPlanner.cs:90` — "requires its portfolio activity ledger and cannot be created as a
-single career file yet"). Passport holds the **historical seasons as independent threads** — the
-"original" historical careers, now under one persistent character.
+**The shared-progression Passport design below this status line was SUPERSEDED by the
+product-owner decision of 2026-07-18** (`docs/dev/racing-passport-pure-racing.md`): Racing Passport
+is a PURE-RACING mode — no XP, no levels, no SP, no DNA, no skills, no mastery, no owner economy,
+no threads, no portfolio ledger, no shared progression profile. The container/ledger model
+(`RacingPassportSave`, root character, activity ledger, credited-experience keys, child seeds,
+thread switching) is retired and must not be built; it survives only in git history.
 
-Implements career-modes-alpha1.md §5 (read it fully — the model is already specified):
-- One SQLite DB, one **root Passport character** (global XP/level/SP/mastery/DNA), many
-  **career threads** (thread-local seat/standings/injury/news), an **activity ledger** (authoritative
-  order), and the **portfolio progression** (creditedExperienceKeys, `creditedReferenceProgress`,
-  `portfolioPool` gate to 499 SP over 16 credited season-equivalents — the exact math in
-  `CharacterProgressionV2Math`/`character-progression-v2.md` §5.4).
-- Thread switching only at atomic checkpoints (before a result, or after a result + all derived rows
-  commit — never mid-decision).
-- Anti-double-credit: a re-simulated or cloned thread records its local result but never awards the
-  same global XP credit twice (the credited-key set is the guard).
-- This is the largest of the three (cross-thread ledger + switching + one-DB multi-thread) and must
-  keep the byte-identical-replay contract per thread.
-- Tests: create root + a 1967 thread + an SMGP thread; switch at checkpoints; global XP advances once
-  per credited activity; each thread replays byte-identically; no double credit on resim.
+What shipped instead (branch `mission/racing-passport-pure-racing`):
 
-The debug menu (Piece 2) is the sanctioned way to exercise Passport threads without grinding.
+- **The mode is live:** the start-screen card is available ("PLAYABLE NOW"); the wizard accepts
+  `racingPassport` and runs SeasonPick → Verification → SeatPick → Confirm (no character creator,
+  no custom grid editor, no mortality picker, no economy choice; the optional driver display name
+  is the one identity field).
+- **Creation:** `CampaignCreationPlanner.PrepareRacingPassport` — one faithful season pinned at
+  creation (exact bytes/version/hash), no v2 character required, no bounded plan; contradictory
+  input (a character, `DynastyEconomy`, `SmgpMode`, an SMGP pack) is REJECTED. The save is an
+  ordinary self-contained `.ams2career` with `experienceMode = "racingPassport"` persisted on the
+  start player state.
+- **The season:** the ordinary deterministic fold, staging, standings, news, history, and review,
+  all reused unchanged. `SeasonEndContext.PureRacingSeason` gates the career-ladder season-end
+  steps (aging, retirements, seat market, player offers, tier drift) off while standings,
+  headlines, records, and the digest are produced normally. `NextSeason()` is null and
+  `StartNextSeason` throws: one season IS the campaign; the completed save stays
+  reopenable/reviewable and replays byte-identically.
+- **Player name without progression:** additive `CareerCreationRequest.PlayerDisplayName` →
+  `PlayerCareerState.CustomDisplayName` (`WhenWritingNull`, legacy blobs byte-identical), resolved
+  ahead of the seat's authored name through the existing `PlayerIdentity()` channel. No journal
+  row, no profile, no fake identity.
+- **Tests:** `RacingPassportTests` (10) + the replaced menu/wizard assertions
+  (`CareerModeMenuTests`, `CharacterWizardTests`, `CampaignProgressionCreationTests` member data).
+- **Docs:** `career-modes-alpha1.md` §5 rewritten as pure racing (§§6-7 of the old design
+  removed); the GUI handoff is `docs/dev/racing-passport-pure-racing-gui-handoff.md`.
+
+<details><summary>The retired Piece 3 sketch (history only, do not build)</summary>
+
+**Goal (RETIRED):** turn on `racingPassport` as a shared-progression mode — one SQLite DB, one
+root Passport character (global XP/level/SP/mastery/DNA), many career threads (thread-local
+seat/standings/injury/news), an activity ledger (authoritative order), and portfolio progression
+(creditedExperienceKeys, `creditedReferenceProgress`, `portfolioPool` gate to 499 SP over 16
+credited season-equivalents). Thread switching only at atomic checkpoints. Anti-double-credit via
+the credited-key set. Per-thread byte-identical replay.
+
+</details>
