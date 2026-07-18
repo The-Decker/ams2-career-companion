@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\Companion.Core\Companion.Core.csproj" />
@@ -101,6 +101,7 @@
     <None Include="..\..\data\ams2\cars\**\*.*" Link="data\ams2\cars\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
     <None Include="..\..\data\ams2\portraits\**\*.*" Link="data\ams2\portraits\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
     <None Include="..\..\data\ams2\smgp\**\*.*" Link="data\ams2\smgp\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+    <None Include="..\..\data\ams2\grid-cars\**\*.*" Link="data\ams2\grid-cars\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
     <None Include="..\..\data\rules\*.json" Link="data\rules\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- Real historical results (f1db-derived, CC BY 4.0) the History tab shows as reference — shipped
          beside the exe, read-only (the sim never scores them). Regenerate with tools/derive_history.cs
