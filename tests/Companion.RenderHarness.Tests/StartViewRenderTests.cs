@@ -19,7 +19,12 @@ public sealed class StartViewRenderTests
 {
     private sealed class FakeRecentStore : IRecentCareersStore
     {
-        private readonly List<RecentCareer> _careers =
+        private readonly List<RecentCareer> _careers;
+
+        public FakeRecentStore(params RecentCareer[] careers) =>
+            _careers = careers.Length > 0 ? [.. careers] : [.. DefaultCareers()];
+
+        public static RecentCareer[] DefaultCareers() =>
         [
             new()
             {
@@ -84,6 +89,83 @@ public sealed class StartViewRenderTests
                 badge => AutomationProperties.GetName(badge) == "CAREER OVER");
             Assert.All(badges, badge => Assert.Equal(Visibility.Visible, badge.Visibility));
         });
+    }
+
+    [Fact]
+    public void StartView_CareerGarageBadgesEveryTerminalVariant_AndLeavesALiveCareerClean()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var vm = new StartViewModel(new FakeRecentStore(
+                new RecentCareer
+                {
+                    Path = @"C:\c\a.ams2career", CareerName = "Formula One 1967",
+                    LastOpenedUtc = DateTimeOffset.UnixEpoch, SeasonYear = 1967,
+                    TerminalState = "deceased",
+                },
+                new RecentCareer
+                {
+                    Path = @"C:\c\b.ams2career", CareerName = "Super Monaco GP",
+                    LastOpenedUtc = DateTimeOffset.UnixEpoch, SeasonYear = 1988,
+                    CareerStyle = "smgp", TerminalState = "careerOver",
+                },
+                new RecentCareer
+                {
+                    Path = @"C:\c\c.ams2career", CareerName = "Grand Prix Dynasty 1994",
+                    LastOpenedUtc = DateTimeOffset.UnixEpoch, SeasonYear = 1994,
+                    TerminalState = "bankrupt",
+                },
+                new RecentCareer
+                {
+                    Path = @"C:\c\d.ams2career", CareerName = "Formula One 1979",
+                    LastOpenedUtc = DateTimeOffset.UnixEpoch, SeasonYear = 1979,
+                }));
+            var view = new StartView { DataContext = vm };
+            Arrange(view, 1920, 1080);
+
+            var garageButton = Assert.IsType<Button>(view.FindName("ModeCareerGarageButton"));
+            garageButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            WpfRenderHarness.Pump();
+            view.UpdateLayout();
+
+            var gallery = Assert.IsType<ListBox>(view.FindName("CareerGalleryList"));
+            Assert.Equal(4, gallery.Items.Count);
+            gallery.UpdateLayout();
+
+            ListBoxItem[] cards = Enumerable.Range(0, gallery.Items.Count)
+                .Select(index => Assert.IsType<ListBoxItem>(
+                    gallery.ItemContainerGenerator.ContainerFromIndex(index)))
+                .ToArray();
+            // Every card, memorial or live, stays openable: the archive is viewable.
+            Assert.All(cards, card => Assert.True(card.IsEnabled));
+
+            (RecentCareer Career, Border Badge)[] badges = cards
+                .Select(card => (
+                    Career: Assert.IsType<RecentCareer>(card.DataContext),
+                    Badge: Assert.Single(Descendants<Border>(card),
+                        border => border.Name == "TerminalCareerBadge")))
+                .ToArray();
+
+            AssertBadge(badges, "deceased", "IN MEMORIAM");
+            AssertBadge(badges, "careerOver", "CAREER OVER");
+            AssertBadge(badges, "bankrupt", "BANKRUPT");
+
+            // A live career shows nothing: its badge is collapsed, never a ghost chip.
+            var live = Assert.Single(badges, entry => entry.Career.TerminalState is null);
+            Assert.Equal(Visibility.Collapsed, live.Badge.Visibility);
+        });
+    }
+
+    private static void AssertBadge(
+        (RecentCareer Career, Border Badge)[] badges, string terminalState, string label)
+    {
+        var entry = Assert.Single(badges, pair => pair.Career.TerminalState == terminalState);
+        Assert.Equal(Visibility.Visible, entry.Badge.Visibility);
+        TextBlock text = Assert.Single(Descendants<TextBlock>(entry.Badge));
+        Assert.Equal(label, text.Text);
     }
 
     [Fact]
