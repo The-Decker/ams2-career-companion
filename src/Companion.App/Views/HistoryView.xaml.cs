@@ -20,6 +20,13 @@ public partial class HistoryView : UserControl
         Loaded += OnLoaded;
     }
 
+    /// <summary>The campaign timeline strip is a self-contained control with its own namescope;
+    /// forward <c>FindName</c> into it so the History-level render contract
+    /// (CampaignTimelinePanel / CampaignTimelineSlots / CampaignTimelineScroll) still resolves
+    /// from this view exactly as it did when the strip was inline XAML.</summary>
+    public new object? FindName(string name) =>
+        base.FindName(name) ?? CampaignTimelineStrip.FindName(name);
+
     private void OnLoaded(object sender, RoutedEventArgs e) =>
         SoundAssist.SetSuppressWhen(OpenNewsButton, ResolveHub() is null);
 
