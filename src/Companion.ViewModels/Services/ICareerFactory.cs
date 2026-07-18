@@ -91,6 +91,14 @@ public sealed record CareerCreationRequest
     /// wizard sets it for new Dynasty careers. On any other mode the flag is ignored, the mode is
     /// the other half of the gate (a legacy/SMGP/Passport career can never gain the economy).</summary>
     public bool DynastyEconomy { get; init; }
+
+    /// <summary>The player's custom display name (Racing Passport's one identity field,
+    /// 2026-07-18): trimmed at validation, persisted on the start player state
+    /// (<see cref="Companion.Core.Career.PlayerCareerState.CustomDisplayName"/>), and resolved
+    /// ahead of the seat's authored driver name everywhere the synthetic player name shows.
+    /// Null (default) keeps the replaced driver's authored name, and every existing caller's
+    /// behavior byte-identical. NOT a character: no profile, no stats, no progression.</summary>
+    public string? PlayerDisplayName { get; init; }
 }
 
 /// <summary>

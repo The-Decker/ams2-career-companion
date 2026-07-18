@@ -102,8 +102,15 @@ public sealed record PlayerCareerState
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string? ExperienceMode { get; init; }
 
-    /// <summary>Creation-pinned bounded campaign horizon and rational XP scale. Passport uses its
-    /// own portfolio state instead, so this is null there and on every legacy save.</summary>
+    /// <summary>The player's custom display name (Racing Passport's one identity field): persisted
+    /// at creation, shown ahead of the seat's authored driver name everywhere the synthetic player
+    /// name renders. Null = no customization, the replaced driver's authored name shows, and every
+    /// pre-feature save's blob stays byte-identical. NOT a character: no profile, no progression.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string? CustomDisplayName { get; init; }
+
+    /// <summary>Creation-pinned bounded campaign horizon and rational XP scale. Null on every
+    /// legacy save and on every pure-racing Passport save (one faithful season, no horizon).</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public CampaignProgressionPlan? CampaignProgressionPlan { get; init; }
 
