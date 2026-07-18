@@ -1,0 +1,102 @@
+{
+  "$comment": "Season dossier pack S11, The Craftsman's Year (Safety Reckoning act). Season-scoped coverage keyed to craft: the workbench, the drawn line, patience as a virtue, honest admissions. Voice: restraint and respect, incident copy always serious. Ids are stable rendezvous keys, never rename. Read-side only.",
+  "version": 1,
+  "templates": [
+    {
+      "id": "s11.season-started.the-workbench",
+      "event": "seasonStarted",
+      "eras": ["smgp"],
+      "seasons": [11],
+      "headline": "THE CRAFTSMAN'S YEAR: the season of careful hands begins",
+      "deck": "Sixteen rounds for the men who build it right",
+      "summary": "Season eleven opens as the craftsman's year, when the paddock prizes patience and honest work.",
+      "sections": {
+        "lead": "{pool:dateline} The garage doors went up this morning on the year the paddock has started calling the craftsman's year. After a season spent writing down what it owed, the sport turns to the people who pay it: the panel beaters, the engine men, the drivers who treat a racing car as something entrusted to them.",
+        "context": "The loud years are over. What wins now is preparation: the car that arrives correct, the driver who has done the thinking before the thinking is needed. The big board is unimpressed by intentions; it has only ever counted finished work. {pool:swBoard}",
+        "close": "Sixteen rounds, and the trophy goes to whoever builds the best season, piece by piece."
+      }
+    },
+    {
+      "id": "s11.race-won.built-by-hand",
+      "event": "raceWon",
+      "eras": ["smgp"],
+      "seasons": [11],
+      "headline": "{subject} wins[[?venue: at {venue}]], a victory built by hand",
+      "deck": "Weeks of work, two hours of proof",
+      "summary": "{subject} won[[?venue: at {venue}]][[?round: in round {round}]].",
+      "sections": {
+        "lead": "{pool:dateline} This win did not happen today. It happened across a workbench over the last weeks, in a hundred small decisions nobody applauded, and today {subject} simply cashed it in. The craftsman's year knows the difference between a win and a lucky afternoon, and it files this one under the former. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: The championship account stands at {ord:champPosition} for {subject}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s11.podium.the-tradesmans-signature",
+      "event": "podiumFinish",
+      "eras": ["smgp"],
+      "seasons": [11],
+      "headline": "{subject} on the podium[[?venue: at {venue}]], the tradesman's signature",
+      "deck": "Good work, signed in champagne",
+      "summary": "{subject} finished on the podium[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} A craftsman signs finished work, and the podium is where this sport signs its. {subject} earned the rostrum with the kind of drive that looks simple from the fence and is anything but: every gear change where it belonged, every braking marker respected. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: Championship: {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s11.pole.the-drawn-line",
+      "event": "polePosition",
+      "eras": ["smgp"],
+      "seasons": [11],
+      "headline": "POLE for {subject}[[?venue: at {venue}]], the lap drawn with a ruler",
+      "deck": "Not a corner out of place",
+      "summary": "{subject} took pole position[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} Some pole laps are shouted. This one was drafted. {subject} put a lap together[[?venue: at {venue}]] the way a draughtsman lays down a line: once, cleanly, with nothing to erase. The stopwatch, which has seen every style there is, recorded its approval. {pool:swBoard}",
+        "close": "The race will test the drawing. The best plans still have to survive Sunday."
+      }
+    },
+    {
+      "id": "s11.lead-taken.the-careful-ledger",
+      "event": "championshipLeadTaken",
+      "eras": ["smgp"],
+      "seasons": [11],
+      "headline": "{subject} leads the craftsman's year, entry by careful entry",
+      "deck": "A championship account kept in a steady hand",
+      "summary": "{subject} took the championship lead in season eleven.",
+      "sections": {
+        "lead": "{pool:dateline} The championship account has a new name at the top, and it got there the way this season prefers: entry by entry, nothing borrowed, nothing fluked. {subject} leads the craftsman's year, and the ledger underneath the lead is as tidy as the driving that built it. {pool:swBoard}",
+        "stats": "{pool:rrStatLine}",
+        "close": "The lead is good work so far. In this year, that is the highest compliment going."
+      }
+    },
+    {
+      "id": "s11.retired-mechanical.back-to-the-bench",
+      "event": "retiredMechanical",
+      "eras": ["smgp"],
+      "seasons": [11],
+      "headline": "{subject} stops[[?venue: at {venue}]], and the car goes back to the bench",
+      "deck": "Failure is tuition in the craftsman's year",
+      "summary": "{subject} retired with mechanical failure[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The car gave out under {subject}[[?venue: at {venue}]], and a careful day's work ended early on the grass verge. No excuses were offered in the garage and none were needed. The machine goes back to the bench, where the men who built it will find the part that lied and answer it. {pool:wrenchNote}",
+        "close": "The craftsman's year does not curse its failures. It dismantles them."
+      }
+    },
+    {
+      "id": "s11.retired-driver-error.the-admitted-error",
+      "event": "retiredDriverError",
+      "eras": ["smgp"],
+      "seasons": [11],
+      "headline": "{subject} in the barriers[[?venue: at {venue}]], and no excuses offered",
+      "deck": "The honest admission is worth more than the alibi",
+      "summary": "{subject} crashed out[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} {subject} got it wrong[[?venue: at {venue}]]: one corner's worth of ambition too many, and the barrier did the arithmetic. The driver walked to the medical car unaided, and in the debrief the admission came without varnish. In the craftsman's year, that honesty is not a small thing. It is the job.",
+        "context": "The car can be remade. The lesson, admitted properly, does not need repeating. {pool:swCrowd}",
+        "close": "A written-off chassis, an unhurt driver, and a notebook entry that will be read again before the next round."
+      }
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "$comment": "Season dossier pack S17, The Crown of Crowns (Golden Circus finale). Season-scoped coverage for the summit campaign: the last gate of the whole seventeen-season climb, the championship staged as coronation, the final reckoning every career points at. Ids are stable rendezvous keys, never rename. Read-side only.",
+  "version": 1,
+  "templates": [
+    {
+      "id": "s17.season-started.last-gate",
+      "event": "seasonStarted",
+      "eras": ["smgp"],
+      "seasons": [17],
+      "headline": "THE CROWN OF CROWNS: the last gate of the ladder stands open",
+      "deck": "Seventeen summers of climbing end here",
+      "summary": "The campaign's final season opens, sixteen rounds staged as chapters of one coronation.",
+      "sections": {
+        "lead": "{pool:dateline} Beyond this season there is no next rung. The governing office has proclaimed the crown of crowns, sixteen rounds run as chapters of a single finale, and whoever stands tallest at the end of it is named champion of the age. Every career on the ladder has been pointing here, whether it knew it or not.",
+        "context": "The whole climb lies behind the field: the iron years, the horsepower wars, the reckoning, the golden age. What lies ahead is one gate, and the board above it has room for exactly one name. {pool:swLadder}",
+        "close": "Sixteen chapters, one crown, no second edition. The last flag falls at the crown jewel."
+      }
+    },
+    {
+      "id": "s17.race-won.chapter-won",
+      "event": "raceWon",
+      "eras": ["smgp"],
+      "seasons": [17],
+      "headline": "{subject} wins[[?venue: at {venue}]], a chapter of the coronation",
+      "deck": "One more page of the summit season, written at full speed",
+      "summary": "{subject} won[[?venue: at {venue}]][[?round: in round {round}]].",
+      "sections": {
+        "lead": "{pool:dateline} Every round of the crown of crowns is a chapter in the same book, and {subject} just wrote one in ink. In the season where everything counts double, this win counts triple. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: The coronation ledger: {subject} at {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s17.podium.regalia",
+      "event": "podiumFinish",
+      "eras": ["smgp"],
+      "seasons": [17],
+      "headline": "{subject} on the podium[[?venue: at {venue}]], one step nearer the throne",
+      "deck": "The summit season counts every rostrum like regalia",
+      "summary": "{subject} finished on the podium[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} In any other year a podium is a podium. In the crown of crowns it is regalia: {subject} stood on the rostrum today, and the whole paddock quietly re-measured the distance between this driver and the throne. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: Championship: {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s17.pole.claim-staked",
+      "event": "polePosition",
+      "eras": ["smgp"],
+      "seasons": [17],
+      "headline": "POLE for {subject}[[?venue: at {venue}]], a claim staked at the summit",
+      "deck": "Fastest when the whole age is watching",
+      "summary": "{subject} took pole position[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} There is no such thing as a quiet pole in the summit season. {subject} took the top spot[[?venue: at {venue}]] with the entire age looking on, and the lap reads like a declaration: the crown is not decided yet. {pool:swBoard}",
+        "close": "Tomorrow the claim gets cross-examined for the full distance. The summit allows no soft answers."
+      }
+    },
+    {
+      "id": "s17.lead-taken.coronation-favourite",
+      "event": "championshipLeadTaken",
+      "eras": ["smgp"],
+      "seasons": [17],
+      "headline": "{subject} leads the crown of crowns: the coronation has a favourite",
+      "deck": "The last gate is in sight, and one name stands nearest it",
+      "summary": "{subject} took the championship lead in the campaign's final season.",
+      "sections": {
+        "lead": "{pool:dateline} The biggest board the circus has ever raised has a name at the top, and it is {subject}. Leading the crown of crowns is not a standing, it is a position in history, and every garage on the ladder knows what the name at the summit becomes if it is still there at the last flag. {pool:swBoard}",
+        "stats": "{pool:rrStatLine}",
+        "close": "Champion of the age: two words, one gate, and a whole season of rivals between here and it."
+      }
+    },
+    {
+      "id": "s17.retired-mechanical.summit-tax",
+      "event": "retiredMechanical",
+      "eras": ["smgp"],
+      "seasons": [17],
+      "headline": "The machine fails {subject}[[?venue: at {venue}]], and the summit season takes its tax",
+      "deck": "In the crown of crowns, even silence is expensive",
+      "summary": "{subject} retired with mechanical failure[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The cruellest sound of the summit season is a great engine going quiet. {subject} coasted to a stop[[?venue: at {venue}]] with a car full of nothing, and in a campaign with no next year the cost needs no calculator. {pool:wrenchNote}",
+        "context": "The crew will answer with the only tools left: the night, the lamps, and everything they know. {pool:swLadder}",
+        "close": "The book stays open. The pages just got fewer."
+      }
+    },
+    {
+      "id": "s17.retired-driver-error.no-refund",
+      "event": "retiredDriverError",
+      "eras": ["smgp"],
+      "seasons": [17],
+      "headline": "{subject} in the wall[[?venue: at {venue}]], the summit punishes a misstep",
+      "deck": "The last ladder has the hardest rungs",
+      "summary": "{subject} crashed out[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The crown of crowns permits no borrowed courage. {subject} spent more than the corner held[[?venue: at {venue}]], and the wall, indifferent to the occasion, ended the afternoon. The driver walked away from the wreck; the reckoning walks with them. {pool:swCrowd}",
+        "close": "There is no next season to promise a refund. What remains of this one just mattered more."
+      }
+    }
+  ]
+}

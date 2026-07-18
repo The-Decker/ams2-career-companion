@@ -1,0 +1,102 @@
+{
+  "$comment": "Season dossier pack S16, The Silver Jubilee (Golden Circus). Season-scoped coverage for the twenty-fifth running: heritage colours, the almanac read aloud, record-keeping, celebration conducted at full speed. Ids are stable rendezvous keys, never rename. Read-side only.",
+  "version": 1,
+  "templates": [
+    {
+      "id": "s16.season-started.quarter-century",
+      "event": "seasonStarted",
+      "eras": ["smgp"],
+      "seasons": [16],
+      "headline": "THE SILVER JUBILEE: twenty-five seasons, and the bunting is up",
+      "deck": "The circus honours itself the only way it knows: at speed",
+      "summary": "Season sixteen opens the championship's silver jubilee, a quarter-century celebrated flat out.",
+      "sections": {
+        "lead": "{pool:dateline} The bunting is up, the heritage paint is out, and the almanac men have been rehearsing all winter. The circus turns twenty-five seasons old this year, and it intends to celebrate the only way it has ever known: sixteen rounds, flat out, with the past waving from every grandstand.",
+        "context": "Every garage wears a piece of its own history this season, and the old champions take their bows between sessions. But the jubilee is no exhibition lap: the grid has never been tighter, and the big board keeps score the way it always has. {pool:swBoard}",
+        "close": "A quarter-century of noise behind it, and the loudest season may be the one just starting."
+      }
+    },
+    {
+      "id": "s16.race-won.for-the-almanac",
+      "event": "raceWon",
+      "eras": ["smgp"],
+      "seasons": [16],
+      "headline": "{subject} wins[[?venue: at {venue}]], a victory for the almanac",
+      "deck": "The jubilee year files another page",
+      "summary": "{subject} won[[?venue: at {venue}]][[?round: in round {round}]].",
+      "sections": {
+        "lead": "{pool:dateline} In a season where every round is staged as history, {subject} went and made some. The almanac will file this one the way it files all the genuine articles: date, circuit, name, no asterisk. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: The jubilee account: {subject} at {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s16.podium.twenty-five-flags",
+      "event": "podiumFinish",
+      "eras": ["smgp"],
+      "seasons": [16],
+      "headline": "{subject} on the podium[[?venue: at {venue}]], under twenty-five years of flags",
+      "deck": "A celebration the record book countersigns",
+      "summary": "{subject} finished on the podium[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} {subject} climbed the rostrum beneath the whole wardrobe of jubilee flags, and the champagne counted double: once for the day, once for the anniversary that framed it. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: Championship: {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s16.pole.timed-forever",
+      "event": "polePosition",
+      "eras": ["smgp"],
+      "seasons": [16],
+      "headline": "POLE for {subject}[[?venue: at {venue}]], a lap for the record board",
+      "deck": "The jubilee's stopwatch keeps everything",
+      "summary": "{subject} took pole position[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The silver jubilee keeps count of everything, and today it counts {subject} fastest of all. Pole in the anniversary year goes into the ledger beside twenty-five seasons of the quickest men the circus has produced. {pool:swBoard}",
+        "close": "The record board keeps the lap forever. Tomorrow's race merely keeps the points."
+      }
+    },
+    {
+      "id": "s16.lead-taken.silver-standard",
+      "event": "championshipLeadTaken",
+      "eras": ["smgp"],
+      "seasons": [16],
+      "headline": "{subject} leads the silver jubilee: the standard flies",
+      "deck": "Top of the board in the year the circus measures itself",
+      "summary": "{subject} took the championship lead in season sixteen.",
+      "sections": {
+        "lead": "{pool:dateline} Every jubilee needs a standard-bearer, and the big board has chosen: {subject} leads the twenty-fifth running. The whole anniversary now has a name to measure itself against. {pool:swBoard}",
+        "stats": "{pool:rrStatLine}",
+        "close": "Twenty-five seasons of champions know what this position costs. The meter is running."
+      }
+    },
+    {
+      "id": "s16.retired-mechanical.heritage-postponed",
+      "event": "retiredMechanical",
+      "eras": ["smgp"],
+      "seasons": [16],
+      "headline": "{subject} parks it[[?venue: at {venue}]], heritage postponed",
+      "deck": "The almanac's only entry today is a tow truck",
+      "summary": "{subject} retired with mechanical failure[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The jubilee year has a cruel sense of occasion: {subject}'s machine chose the anniversary spotlight to go silent[[?venue: at {venue}]]. The heritage paint survived unmarked, which is all the consolation on offer tonight. {pool:wrenchNote}",
+        "context": "The crew works under lamps older than some of the mechanics. {pool:swLadder}",
+        "close": "The board logs a stoppage. The garage logs a promise."
+      }
+    },
+    {
+      "id": "s16.retired-driver-error.no-parade",
+      "event": "retiredDriverError",
+      "eras": ["smgp"],
+      "seasons": [16],
+      "headline": "{subject} in the barriers[[?venue: at {venue}]], no parade for this one",
+      "deck": "The jubilee's armco takes its place in the records too",
+      "summary": "{subject} crashed out[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The anniversary season archives everything, including the afternoons its participants would rather lose. {subject} met the barriers[[?venue: at {venue}]] and became a footnote the driver will not be framing. Unhurt, unamused, and already thinking about the next round. {pool:swCrowd}",
+        "close": "Twenty-five seasons have seen worse and filed it the same way. The climb resumes."
+      }
+    }
+  ]
+}

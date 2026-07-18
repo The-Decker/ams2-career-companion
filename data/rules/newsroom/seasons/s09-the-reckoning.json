@@ -1,0 +1,101 @@
+{
+  "$comment": "Season dossier pack S09, The Reckoning (Horsepower War finale). Season-scoped coverage for the year the bill came due: record attrition, speed outgrowing the circuits, and the circus rewriting its own law. Register: sober under the spectacle. Ids are stable rendezvous keys, never rename. Read-side only: editing this file changes display, never replay.",
+  "version": 1,
+  "templates": [
+    {
+      "id": "s09.season-started.the-bill",
+      "event": "seasonStarted",
+      "eras": ["smgp"],
+      "seasons": [9],
+      "headline": "THE RECKONING: the fastest grid ever built, and a bill coming due",
+      "deck": "Five years of horsepower, sixteen rounds of answers",
+      "summary": "Season nine opens with the fastest machines in the circus's history and an uneasy feeling nobody will name.",
+      "sections": {
+        "lead": "{pool:dateline} The entry list for this season is the fastest the circus has ever assembled, and the paddock knows it the way it knows weather. Five years of the horsepower war have piled speed onto circuits drawn for gentler iron, and the old hands have started saying out loud that the sums no longer add up. They are calling it the reckoning before a wheel has turned.",
+        "context": "The lap records will fall everywhere this year; everyone is certain of it, and nobody is entirely proud of it. The big board will flash the numbers the way it always has. {pool:swBoard}",
+        "close": "Sixteen rounds to decide a champion, and to decide what the sport is willing to pay for one."
+      }
+    },
+    {
+      "id": "s09.race-won.foreground",
+      "event": "raceWon",
+      "eras": ["smgp"],
+      "seasons": [9],
+      "headline": "{subject} WINS[[?venue: at {venue}]], racing in the foreground of a bigger story",
+      "deck": "A flag won while the circus counts its frights",
+      "summary": "{subject} won[[?venue: at {venue}]][[?round: in round {round}]].",
+      "sections": {
+        "lead": "{pool:dateline} The fastest field ever built went racing, and {subject} beat it fair, first to the flag[[?venue: at {venue}]] with nothing given. Even in a season holding its breath, the win is the win, and this one was driven beautifully. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: The board reads {ord:champPosition} for {subject}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s09.podium.standing-tall",
+      "event": "podiumFinish",
+      "eras": ["smgp"],
+      "seasons": [9],
+      "headline": "{subject} on the podium[[?venue: at {venue}]], standing tall in a sober season",
+      "deck": "The champagne still sprays, the paddock still counts",
+      "summary": "{subject} finished on the podium[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The rostrum still works the way it always has: three drivers, one anthem, and the noise of a grandstand that came to be lifted. {subject} earned the view[[?venue: at {venue}]] in a season where simply finishing has become an achievement. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: Championship: {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s09.pole.past-projection",
+      "event": "polePosition",
+      "eras": ["smgp"],
+      "seasons": [9],
+      "headline": "POLE for {subject}[[?venue: at {venue}]], past every projection",
+      "deck": "Another lap record falls, another line in the ledger",
+      "summary": "{subject} took pole position[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The engineers drew a ceiling for these cars years ago, and {subject} just drove through it. Pole[[?venue: at {venue}]] with a number the circuit was not drawn to hold, and the timing sheet reads like the argument the whole paddock is having. {pool:swBoard}",
+        "close": "The lap is a masterpiece and a memo at the same time. Both will be filed."
+      }
+    },
+    {
+      "id": "s09.lead-taken.summit-above-it-all",
+      "event": "championshipLeadTaken",
+      "eras": ["smgp"],
+      "seasons": [9],
+      "headline": "{subject} leads the reckoning, above the argument",
+      "deck": "The summit while the sport rewrites its own law",
+      "summary": "{subject} took the championship lead in season nine.",
+      "sections": {
+        "lead": "{pool:dateline} The championship has a leader and the sport has a debate, and tonight {subject} sits at the top of both stories. Leading the reckoning means holding the summit while the ground under the whole circus is being re-surveyed. {pool:swBoard}",
+        "stats": "{pool:rrStatLine}",
+        "close": "The title will be settled by speed. What the speed costs is being settled elsewhere, and everyone knows it."
+      }
+    },
+    {
+      "id": "s09.retired-mechanical.itemised-bill",
+      "event": "retiredMechanical",
+      "eras": ["smgp"],
+      "seasons": [9],
+      "headline": "{subject} parks it[[?venue: at {venue}]], the bill itemised in parts",
+      "deck": "Record attrition adds one more line",
+      "summary": "{subject} retired with mechanical failure[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} Another silhouette on the grass, another engine carted home in pieces. {subject} parked it[[?venue: at {venue}]] and walked back with the particular calm of a driver whose season keeps ending in other people's workshops. Attrition this year is not bad luck; it is arithmetic. {pool:wrenchNote}",
+        "close": "The parts trucks make another run. Somewhere, the men drafting the sport's future add the wreck to the evidence."
+      }
+    },
+    {
+      "id": "s09.retired-driver-error.armco-evidence",
+      "event": "retiredDriverError",
+      "eras": ["smgp"],
+      "seasons": [9],
+      "headline": "{subject} into the armco[[?venue: at {venue}]], the evidence mounts",
+      "deck": "The driver walked away; the photograph stays",
+      "summary": "{subject} crashed out[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} {subject} lost it at speed[[?venue: at {venue}]] and met the armco, and the paddock exhaled only when the driver climbed out. Every shunt this season is photographed, filed, and read by men who have stopped laughing at the wreckers' bills. {pool:swCrowd}",
+        "close": "The barrier will be re-bolted by morning. The argument about why it needed to be is already ahead of schedule."
+      }
+    }
+  ]
+}

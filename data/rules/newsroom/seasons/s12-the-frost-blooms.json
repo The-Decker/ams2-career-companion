@@ -1,0 +1,102 @@
+{
+  "$comment": "Season dossier pack S12, The Frost Blooms (Safety Reckoning act). Season-scoped coverage keyed to cold: frost on the pit lane, clarity like winter glass, grief carried with dignity. Voice: cold, still, respectful, incident copy always serious. Ids are stable rendezvous keys, never rename. Read-side only.",
+  "version": 1,
+  "templates": [
+    {
+      "id": "s12.season-started.first-frost",
+      "event": "seasonStarted",
+      "eras": ["smgp"],
+      "seasons": [12],
+      "headline": "THE FROST BLOOMS: the coldest year opens on a white pit lane",
+      "deck": "Sixteen rounds in the cold, clear air",
+      "summary": "Season twelve opens in frost, the year the paddock walks carefully and speaks quietly.",
+      "sections": {
+        "lead": "{pool:dateline} Frost sat on the pit lane this morning like it had every right to be there, and perhaps it has. They call this season the frost blooms: the year the sport moves carefully, speaks a little more quietly, and remembers what the loud years cost it. The engines will still sing. The people listening have changed.",
+        "context": "Cold air is honest air. Engines breathe it eagerly, tyres forgive nothing in it, and drivers feel the whole car through their fingertips. The board does not care about the temperature; it will count what it always counts. {pool:swBoard}",
+        "close": "Sixteen rounds in the cold. The men who keep their warmth will be the ones left at the end."
+      }
+    },
+    {
+      "id": "s12.race-won.warmth-in-the-cold",
+      "event": "raceWon",
+      "eras": ["smgp"],
+      "seasons": [12],
+      "headline": "{subject} wins[[?venue: at {venue}]], warmth carried through a cold afternoon",
+      "deck": "One car kept its heat when it mattered",
+      "summary": "{subject} won[[?venue: at {venue}]][[?round: in round {round}]].",
+      "sections": {
+        "lead": "{pool:dateline} The cold took its usual toll today: tyres that would not wake, brakes that stayed asleep, rivals who never found their temperature. {subject} found it, kept it, and turned it into a win. In the frost season, warmth is a skill, and today it was the winning one. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: The championship account stands at {ord:champPosition} for {subject}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s12.podium.still-air",
+      "event": "podiumFinish",
+      "eras": ["smgp"],
+      "seasons": [12],
+      "headline": "{subject} on the podium[[?venue: at {venue}]], in the still, cold air",
+      "deck": "A quiet rostrum, properly earned",
+      "summary": "{subject} finished on the podium[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The champagne mist hung in the cold a moment longer than usual, and {subject} stood in it with the composure this season rewards. Nothing about the drive was borrowed: place by place, lap by lap, a podium assembled in full view. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: Championship: {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s12.pole.winter-glass",
+      "event": "polePosition",
+      "eras": ["smgp"],
+      "seasons": [12],
+      "headline": "POLE for {subject}[[?venue: at {venue}]], a lap clear as winter glass",
+      "deck": "Nothing between the driver and the road",
+      "summary": "{subject} took pole position[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} Cold air makes an engine honest and a lap legible, and the lap {subject} laid down[[?venue: at {venue}]] could be read from the fence: no correction wasted, no apex missed. Pole, in the frost, by the clearest of margins. {pool:swBoard}",
+        "close": "Tomorrow the glass gets traffic on it. The lap says {subject} will not mind."
+      }
+    },
+    {
+      "id": "s12.lead-taken.keeping-warm",
+      "event": "championshipLeadTaken",
+      "eras": ["smgp"],
+      "seasons": [12],
+      "headline": "{subject} leads the frost season, and keeps the account warm",
+      "deck": "The steadiest hands hold the top line",
+      "summary": "{subject} took the championship lead in season twelve.",
+      "sections": {
+        "lead": "{pool:dateline} The top line of the board changes hands in the coldest year, and it goes to the steadiest pair of hands available. {subject} leads the championship now, and the way the lead was taken, patiently, round by round, is exactly how a frost season asks to be led. {pool:swBoard}",
+        "stats": "{pool:rrStatLine}",
+        "close": "Cold years punish the hasty. The new leader has not been hasty once."
+      }
+    },
+    {
+      "id": "s12.retired-mechanical.the-cold-gets-in",
+      "event": "retiredMechanical",
+      "eras": ["smgp"],
+      "seasons": [12],
+      "headline": "{subject} coasts to a stop[[?venue: at {venue}]], the cold gets into the machine",
+      "deck": "Silence on the verge, breath in the air",
+      "summary": "{subject} retired with mechanical failure[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The engine note died under {subject}[[?venue: at {venue}]], and the silence afterward had the particular stillness only a cold day can lend it. The driver stood by the car with the marshals, breath showing, waiting for the truck. Nothing to be done. Some days the frost wins the small arguments. {pool:wrenchNote}",
+        "close": "The crew will warm the garage tonight and find what the cold found first."
+      }
+    },
+    {
+      "id": "s12.retired-driver-error.what-the-frost-keeps",
+      "event": "retiredDriverError",
+      "eras": ["smgp"],
+      "seasons": [12],
+      "headline": "{subject} out[[?venue: at {venue}]], a mistake in the cold, taken seriously",
+      "deck": "The frost keeps what it is owed, no more",
+      "summary": "{subject} crashed out[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} {subject} lost the car[[?venue: at {venue}]] on tyres that had not said yes to the corner, and the barriers ended the argument. The report here is short because the facts are: the driver is unhurt, the car is not, and the mistake has been owned. This season has no appetite for dressing the moment up, and no need to.",
+        "context": "The medical crew were beside the car before it finished sliding. That is the era doing its work, and it is worth one quiet sentence of its own. {pool:swCrowd}",
+        "close": "The flatbed left with the car. The driver left with the lesson. The frost keeps neither longer than it should."
+      }
+    }
+  ]
+}
