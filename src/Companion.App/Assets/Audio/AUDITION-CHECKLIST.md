@@ -205,7 +205,8 @@ rg -n 'audio:SoundAssist\.Cue=' src\Companion.App -g '*.xaml'
 
 ### Interaction WAV acceptance
 
-Exactly these nine deterministic masters ship in source:
+Exactly these 21 deterministic masters ship in source: nine era-neutral cues plus twelve era-medium
+voicings of the four immersive cues.
 
 | File | Duration | Target sample peak |
 |---|---:|---:|
@@ -218,6 +219,10 @@ Exactly these nine deterministic masters ship in source:
 | `warning.wav` | 0.520 s | -10.0 dBFS |
 | `destructive.wav` | 0.720 s | -9.5 dBFS |
 | `skill-unlock.wav` | 0.900 s | -9.5 dBFS |
+| `navigate-telegram.wav`, `navigate-fax.wav`, `navigate-email.wav` | 0.090 s | -13.0 dBFS |
+| `commit-telegram.wav`, `commit-fax.wav`, `commit-email.wav` | 0.320 s | -10.5 dBFS |
+| `seat-confirm-telegram.wav`, `seat-confirm-fax.wav`, `seat-confirm-email.wav` | 0.480 s | -10.0 dBFS |
+| `back-telegram.wav`, `back-fax.wav`, `back-email.wav` | 0.280 s | -11.0 dBFS |
 
 - [ ] Each file is mono PCM, 48,000 Hz, 16-bit, with no clipped sample.
 - [ ] File count and names are exact; no retired outcome/milestone cue is present.
@@ -231,6 +236,7 @@ $audit = Join-Path $env:TEMP ("ams2-sfx-audit-" + [guid]::NewGuid())
 .\tools\generate_sfx.ps1 -OutputDirectory $audit
 & .\src\Companion.App\Audio\Generation\generate-seat-confirm.ps1 `
     -OutputPath (Join-Path $audit 'seat-confirm.wav')
+& .\src\Companion.App\Audio\Generation\generate-era-sfx.ps1 -OutputDirectory $audit
 $source = 'src\Companion.App\Assets\Audio\Sfx'
 Get-ChildItem -LiteralPath $source -Filter '*.wav' | Sort-Object Name | ForEach-Object {
     $generated = Join-Path $audit $_.Name
@@ -243,7 +249,7 @@ Get-ChildItem -LiteralPath $source -Filter '*.wav' | Sort-Object Name | ForEach-
 }
 ```
 
-All nine rows must report `Match = True`. The generators' reports must also show the expected duration,
+All 21 rows must report `Match = True`. The generators' reports must also show the expected duration,
 peak, and a finite RMS for every cue.
 
 ### Music-mastering acceptance
@@ -287,7 +293,8 @@ dotnet test tests\Companion.RenderHarness.Tests\Companion.RenderHarness.Tests.cs
 
 - [ ] Build completes with no errors.
 - [ ] Logic suite passes, including the untouched 77/77 f1db oracle and news corpus guards.
-- [ ] Render/audio suite passes, including playlist order/trims, exact nine-cue inventory, transport,
+- [ ] Render/audio suite passes, including playlist order/trims, exact 21-master inventory, era-skin
+      voicing selection and fallback, transport,
       missing-file recovery, focus/mute, duck timing, SoundAssist routing, silent music controls, and
       the source-level cue coverage contract.
 - [ ] `git diff -- src/Companion.App/Assets/Audio src/Companion.App/Audio src/Companion.App/Views`

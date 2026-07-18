@@ -1,4 +1,5 @@
 using System.IO;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -72,6 +73,12 @@ public partial class App : Application
                 recentCareers,
                 stagedFileWatcherFactory: static () => new FileSystemFileWatcher(),
                 settings: settings);
+
+            // Era-skin push (era-theming-assets-brief.md Workstream B), the same one-way push
+            // model as the settings application above: on every navigation the App reads the
+            // shell's era token and TELLS the audio controller the skin. The controller never
+            // observes navigation or career state itself.
+            _shell.PropertyChanged += OnShellEraMediumChanged;
 
             // Audio is presentation-only and deliberately sits at the composition root. Music is
             // controlled solely by the persistent manual player; navigation only emits explicitly
@@ -162,9 +169,27 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        if (_shell is not null)
+            _shell.PropertyChanged -= OnShellEraMediumChanged;
         DisposeAudio();
         _shell?.Dispose();
         base.OnExit(e);
+    }
+
+    /// <summary>Forwards the shell's era-skin token one-way to the audio controller on every
+    /// navigation (Workstream B: the controller is TOLD the skin, like a theme, and never observes
+    /// the shell, navigation, or career state itself). A null token is the era-neutral base set.</summary>
+    private void OnShellEraMediumChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (_audio is null || _shell is null ||
+            (e.PropertyName?.Length > 0 &&
+             !string.Equals(
+                 e.PropertyName,
+                 nameof(ShellViewModel.ActiveCareerEraMedium),
+                 StringComparison.Ordinal)))
+            return;
+
+        _audio.SetEraSkin(_shell.ActiveCareerEraMedium);
     }
 
     private void TryInitializeAudio(ISettingsService settings)
@@ -178,6 +203,9 @@ public partial class App : Application
             // audio = null`, and SoundAssist correctly swallowed that decorative-audio exception.
             Action<SoundEffectCue, object?> effectPlayer = audio.PlayEffect;
             SoundAssist.Connect(effectPlayer);
+            // Push the current era skin to the fresh controller (null on the start gallery, the
+            // era-neutral base set); OnShellEraMediumChanged keeps it told on every navigation.
+            audio.SetEraSkin(_shell?.ActiveCareerEraMedium);
             Activated += OnApplicationActivated;
             Deactivated += OnApplicationDeactivated;
 

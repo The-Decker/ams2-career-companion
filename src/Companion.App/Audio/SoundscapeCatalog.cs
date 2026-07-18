@@ -1,3 +1,5 @@
+using Companion.Core.Career;
+
 namespace Companion.App.Audio;
 
 internal enum AudioBus
@@ -65,18 +67,37 @@ internal sealed record SoundEffectDefinition(
     string DedupeGroup,
     TimeSpan DedupeWindow,
     double MusicDuck = 1.0,
-    TimeSpan DuckDuration = default);
+    TimeSpan DuckDuration = default)
+{
+    /// <summary>Optional era re-voicings of this cue keyed by period medium (era-theming-assets
+    /// brief, Workstream B: timbre only, never triggering). The base <see cref="Variants"/> list
+    /// stays the era-neutral default and the fallback for any medium without its own set. Gain,
+    /// cooldown, dedupe, and duck policy are shared by every voicing of the cue.</summary>
+    public IReadOnlyDictionary<EraMedium, IReadOnlyList<SoundscapeTrack>> EraVariants { get; init; } =
+        new Dictionary<EraMedium, IReadOnlyList<SoundscapeTrack>>();
+
+    /// <summary>The variant set for the pushed era skin: the medium's own voicings when present,
+    /// otherwise the era-neutral base set (null skin = menus, gallery, no active career).</summary>
+    internal IReadOnlyList<SoundscapeTrack> VariantsFor(EraMedium? skin) =>
+        skin is { } medium &&
+        EraVariants.TryGetValue(medium, out IReadOnlyList<SoundscapeTrack>? variants) &&
+        variants.Count > 0
+            ? variants
+            : Variants;
+}
 
 /// <summary>The canonical manual playlist and opt-in interaction-SFX map. Music order is stable,
 /// starts with The Long Climb, and has no relationship to the current screen. Per-song playback
 /// trims preserve the authored MP3s while bringing the audited program near -14.5 LUFS and keeping
-/// decoded peaks at or below the mastering ceiling.</summary>
+/// decoded peaks at or below the mastering ceiling. The four immersive cues also carry per-medium
+/// era voicings selected by the pushed era skin; the catalog never observes navigation or career
+/// state to learn that skin, the controller passes it in.</summary>
 internal sealed class SoundscapeCatalog
 {
     private const string MusicRoot = "Assets/Audio/Music";
     private const string SfxRoot = "Assets/Audio/Sfx";
 
-    private readonly Dictionary<SoundEffectCue, int> _nextEffectVariant = [];
+    private readonly Dictionary<(SoundEffectCue Cue, EraMedium? Skin), int> _nextEffectVariant = [];
 
     internal static IReadOnlyList<MusicPlaylistTrack> Playlist { get; } =
     [
@@ -108,10 +129,21 @@ internal sealed class SoundscapeCatalog
     private static readonly IReadOnlyDictionary<SoundEffectCue, SoundEffectDefinition> Effects =
         new Dictionary<SoundEffectCue, SoundEffectDefinition>
         {
-            [SoundEffectCue.Navigate] = Sfx("navigate.wav", .50, 24, "navigation", 12),
-            [SoundEffectCue.Confirm] = Sfx("commit.wav", .60, 90, "action", 45),
-            [SoundEffectCue.SeatConfirm] = Sfx("seat-confirm.wav", .62, 120, "seat", 60),
-            [SoundEffectCue.Back] = Sfx("back.wav", .50, 90, "navigation", 45),
+            // The immersive cues carry per-medium era voicings (timbre only); the base master stays
+            // the era-neutral default. Warning/Destructive/SkillUnlock are cross-era consequence
+            // signals and Bucket* is result-entry tooling: they deliberately stay era-neutral.
+            [SoundEffectCue.Navigate] = EraSfx(
+                "navigate.wav", "navigate-telegram.wav", "navigate-fax.wav", "navigate-email.wav",
+                .50, 24, "navigation", 12),
+            [SoundEffectCue.Confirm] = EraSfx(
+                "commit.wav", "commit-telegram.wav", "commit-fax.wav", "commit-email.wav",
+                .60, 90, "action", 45),
+            [SoundEffectCue.SeatConfirm] = EraSfx(
+                "seat-confirm.wav", "seat-confirm-telegram.wav", "seat-confirm-fax.wav", "seat-confirm-email.wav",
+                .62, 120, "seat", 60),
+            [SoundEffectCue.Back] = EraSfx(
+                "back.wav", "back-telegram.wav", "back-fax.wav", "back-email.wav",
+                .50, 90, "navigation", 45),
             [SoundEffectCue.BucketPickup] = Sfx("bucket-pickup.wav", .40, 45, "bucket", 25),
             [SoundEffectCue.BucketPlace] = Sfx("bucket-place.wav", .46, 55, "bucket", 30),
             [SoundEffectCue.Warning] = Sfx("warning.wav", .70, 420, "outcome", 140,
@@ -125,11 +157,25 @@ internal sealed class SoundscapeCatalog
     internal bool TryGetEffect(SoundEffectCue cue, out SoundEffectDefinition definition) =>
         Effects.TryGetValue(cue, out definition!);
 
-    internal SoundscapeTrack NextEffect(SoundEffectCue cue, SoundEffectDefinition definition)
+    /// <summary>Round-robin over the cue's era-neutral base variants (the pre-era contract,
+    /// equivalent to a null skin).</summary>
+    internal SoundscapeTrack NextEffect(SoundEffectCue cue, SoundEffectDefinition definition) =>
+        NextEffect(cue, definition, skin: null);
+
+    /// <summary>Round-robin over the variant set for the pushed era skin, falling back to the base
+    /// set when the medium has no voicing for this cue. Rotation is tracked per cue and skin, so a
+    /// skin change never reshuffles another skin's rotation; mix and anti-chatter policy live on the
+    /// definition and are identical for every voicing.</summary>
+    internal SoundscapeTrack NextEffect(
+        SoundEffectCue cue,
+        SoundEffectDefinition definition,
+        EraMedium? skin)
     {
-        int index = _nextEffectVariant.GetValueOrDefault(cue);
-        _nextEffectVariant[cue] = (index + 1) % definition.Variants.Count;
-        return definition.Variants[index % definition.Variants.Count];
+        IReadOnlyList<SoundscapeTrack> variants = definition.VariantsFor(skin);
+        (SoundEffectCue Cue, EraMedium? Skin) key = (cue, skin);
+        int index = _nextEffectVariant.GetValueOrDefault(key);
+        _nextEffectVariant[key] = (index + 1) % variants.Count;
+        return variants[index % variants.Count];
     }
 
     internal static SoundscapeTrack MusicTrack(MusicPlaylistTrack track) =>
@@ -137,7 +183,8 @@ internal sealed class SoundscapeCatalog
 
     internal static IReadOnlyCollection<string> DeclaredRelativePaths => Playlist
         .Select(static track => track.RelativePath)
-        .Concat(Effects.Values.SelectMany(static effect => effect.Variants)
+        .Concat(Effects.Values.SelectMany(static effect => effect.Variants
+                .Concat(effect.EraVariants.Values.SelectMany(static variants => variants)))
             .Select(static track => track.RelativePath))
         .Distinct(StringComparer.OrdinalIgnoreCase)
         .ToArray();
@@ -145,6 +192,10 @@ internal sealed class SoundscapeCatalog
     private static MusicPlaylistTrack Song(string title, string fileName, double gainDecibels) =>
         new(title, $"{MusicRoot}/{fileName}", gainDecibels);
 
+    private static SoundscapeTrack Track(string fileName, double gain) =>
+        new($"{SfxRoot}/{fileName}", AudioBus.Effects, Gain: gain);
+
+    /// <summary>An era-neutral cue definition: one base variant set and no era voicings.</summary>
     private static SoundEffectDefinition Sfx(
         string fileName,
         double gain,
@@ -154,10 +205,31 @@ internal sealed class SoundscapeCatalog
         double musicDuck = 1.0,
         int duckMilliseconds = 0) =>
         new(
-            [new SoundscapeTrack($"{SfxRoot}/{fileName}", AudioBus.Effects, Gain: gain)],
+            [Track(fileName, gain)],
             TimeSpan.FromMilliseconds(cooldownMilliseconds),
             dedupeGroup,
             TimeSpan.FromMilliseconds(dedupeMilliseconds),
             Math.Clamp(musicDuck, 0, 1),
             TimeSpan.FromMilliseconds(duckMilliseconds));
+
+    /// <summary>An immersive cue with one re-voiced master per period medium. The base master stays
+    /// the era-neutral default; every voicing shares the cue's gain and anti-chatter policy.</summary>
+    private static SoundEffectDefinition EraSfx(
+        string fileName,
+        string telegramFileName,
+        string faxFileName,
+        string emailFileName,
+        double gain,
+        int cooldownMilliseconds,
+        string dedupeGroup,
+        int dedupeMilliseconds) =>
+        Sfx(fileName, gain, cooldownMilliseconds, dedupeGroup, dedupeMilliseconds) with
+        {
+            EraVariants = new Dictionary<EraMedium, IReadOnlyList<SoundscapeTrack>>
+            {
+                [EraMedium.Telegram] = [Track(telegramFileName, gain)],
+                [EraMedium.Fax] = [Track(faxFileName, gain)],
+                [EraMedium.Email] = [Track(emailFileName, gain)],
+            },
+        };
 }

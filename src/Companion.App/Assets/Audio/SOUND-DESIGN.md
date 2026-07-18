@@ -7,7 +7,7 @@
 **Runtime contract:** music is a manual top-bar player; SFX respond only to deliberate button
 clicks and explicit result-entry bucket drags
 
-This is the durable creative brief for app audio. The implementation remains authoritative for exact behavior: `Audio/SoundscapeCatalog.cs`, `Audio/MusicPlayerViewModel.cs`, `Audio/AppAudioController.cs`, `Audio/SoundAssist.cs`, `Audio/WpfAudioEngine.cs`, `Views/MusicPlayerControl.xaml`, and `tools/generate_sfx.ps1`. Asset provenance lives in `LICENSES.md`; measured music trims live in `MASTERING.md`.
+This is the durable creative brief for app audio. The implementation remains authoritative for exact behavior: `Audio/SoundscapeCatalog.cs`, `Audio/MusicPlayerViewModel.cs`, `Audio/AppAudioController.cs`, `Audio/SoundAssist.cs`, `Audio/WpfAudioEngine.cs`, `Views/MusicPlayerControl.xaml`, `tools/generate_sfx.ps1`, and `Audio/Generation/generate-era-sfx.ps1`. Asset provenance lives in `LICENSES.md`; measured music trims live in `MASTERING.md`.
 
 ## 1. Mechanical Memory / Pitwall 98
 
@@ -29,7 +29,10 @@ consequence. Decaying FM partials keep the result recognizably digital without b
 
 Sound follows a user's meaningful click or an explicit result-entry drag. It does not follow the
 pointer, keyboard focus, a bound property, navigation state, or a career outcome. Cue names describe
-intent rather than a screen, so the same action carries the same meaning everywhere.
+intent rather than a screen, so the same action carries the same meaning everywhere. The era skin
+changes none of this: the audio layer is told the active career's period medium as a one-way push
+and never observes state to learn it, so era color affects how a cue is voiced, never when or
+whether it fires.
 
 ### Pillar 4: silence is part of the design
 
@@ -41,9 +44,11 @@ successful drop changes a bucket or order.
 
 The player chooses if and when music plays. A title may suggest tension, reflection, triumph, or loss, but the app never assigns that track to the matching event. Music accompanies the user's session; it does not score the app's screens.
 
-### Pillar 6: one original identity across every era
+### Pillar 6: one original identity, era color per medium
 
-The app spans historical careers and the separate SMGP replica career. Mechanical Memory supplies one original identity across them. Period color is welcome; copied game audio, broadcasts, team radio, and unlicensed third-party material are not.
+The app spans historical careers and the separate SMGP replica career. Mechanical Memory supplies one original identity across them, tinted per period medium. Inside a career the immersive cues (Navigate, Confirm, Back, SeatConfirm) are voiced for that career's medium: a telegram relay/telegraph-key tick with a small bell, a fax thermal-print chirp with a handshake warble, or a soft email FM chime. Menus, the gallery, and the cross-era consequence (Warning, Destructive, SkillUnlock) and result-entry tooling (BucketPickup, BucketPlace) cues stay on the era-neutral base set. The skin is received, never observed: the shell pushes it one-way to the audio controller, like a theme. Period color is welcome; copied game audio, broadcasts, team radio, and unlicensed third-party material are not.
+
+*Decision record (signed by Mike, 2026-07-18): this amendment is the gate for era-aware interaction SFX (era-theming-assets-brief.md, Workstream B). Era color is timbre only: meanings, trigger rules, mix, ducking, anti-chatter, and the silence zones are exactly as before, and asset or playback failure still degrades to silence.*
 
 ## 2. Broad-appeal music composition brief
 
@@ -89,7 +94,7 @@ There is no screen-to-track map or career-state observer. Menus, tabs, briefings
 
 ## 4. Nine-cue interaction language
 
-All shipping cues are deterministic **48 kHz, 16-bit mono PCM WAV** masters from tracked generators: `tools/generate_sfx.ps1` plus `Audio/Generation/generate-seat-confirm.ps1`. Runtime gain follows Effects and Master. Button cooldown/dedupe history is source-scoped, so it prevents one control chattering without swallowing a rapid click on another control. High-attention cues reduce music temporarily, followed by a 260 ms release (or earlier release when the audible cue ends).
+All shipping cues are deterministic **48 kHz, 16-bit mono PCM WAV** masters from tracked generators: `tools/generate_sfx.ps1`, `Audio/Generation/generate-seat-confirm.ps1`, and `Audio/Generation/generate-era-sfx.ps1` (the era-medium voicings). Runtime gain follows Effects and Master. Button cooldown/dedupe history is source-scoped, so it prevents one control chattering without swallowing a rapid click on another control. High-attention cues reduce music temporarily, followed by a 260 ms release (or earlier release when the audible cue ends).
 
 | Semantic cue | Asset/master and design | Runtime mix / anti-chatter |
 |---|---|---|
@@ -104,6 +109,10 @@ All shipping cues are deterministic **48 kHz, 16-bit mono PCM WAV** masters from
 | **SkillUnlock** | `skill-unlock.wav`; 900 ms; -9.5 dBFS. A four-stage rising digital arpeggio. | Gain 0.72; 750 ms cooldown; `progression` dedupe 300 ms; music multiplier 0.70 up to 800 ms. |
 
 `SoundEffectCue.Confirm` deliberately resolves to `commit.wav`: **Confirm** is the semantic API; **commit** describes the asset. Views request meanings, never filenames.
+
+### Era-medium voicings
+
+Inside a career the four immersive cues (Navigate, Confirm, Back, SeatConfirm) select a per-medium voicing through the pushed era skin; every other cue, and every menu or gallery screen, stays on the base master. Each era master keeps its cue's duration, peak, gain, cooldown, dedupe, and duck policy; only the timbre changes. They ship as `<cue>-telegram.wav`, `<cue>-fax.wav`, and `<cue>-email.wav` from the tracked `Audio/Generation/generate-era-sfx.ps1` generator: telegram is a relay/telegraph-key tick with a small bell, fax is a thermal-print chirp with a handshake warble, email is a soft FM chime. The melodic contour of each base cue is preserved so the meaning reads identically in every era.
 
 ## 5. Sounded and silent interaction zones
 

@@ -11,6 +11,7 @@ using System.Windows.Threading;
 using System.Xml.Linq;
 using Companion.App.Audio;
 using Companion.App.Views;
+using Companion.Core.Career;
 using Companion.ViewModels.Settings;
 
 namespace Companion.RenderHarness.Tests;
@@ -137,7 +138,7 @@ public sealed class SettingsAudioRenderTests
     }
 
     [Fact]
-    public void SoundscapeCatalog_DeclaresOrderedPlaylistAndNineTypedInteractionWavs()
+    public void SoundscapeCatalog_DeclaresOrderedPlaylistAndTypedInteractionWavsWithEraVoicings()
     {
         (string Title, string Path, double GainDecibels)[] expectedPlaylist =
         [
@@ -176,6 +177,18 @@ public sealed class SettingsAudioRenderTests
             "Assets/Audio/Sfx/warning.wav",
             "Assets/Audio/Sfx/destructive.wav",
             "Assets/Audio/Sfx/skill-unlock.wav",
+            "Assets/Audio/Sfx/navigate-telegram.wav",
+            "Assets/Audio/Sfx/navigate-fax.wav",
+            "Assets/Audio/Sfx/navigate-email.wav",
+            "Assets/Audio/Sfx/commit-telegram.wav",
+            "Assets/Audio/Sfx/commit-fax.wav",
+            "Assets/Audio/Sfx/commit-email.wav",
+            "Assets/Audio/Sfx/seat-confirm-telegram.wav",
+            "Assets/Audio/Sfx/seat-confirm-fax.wav",
+            "Assets/Audio/Sfx/seat-confirm-email.wav",
+            "Assets/Audio/Sfx/back-telegram.wav",
+            "Assets/Audio/Sfx/back-fax.wav",
+            "Assets/Audio/Sfx/back-email.wav",
         ];
 
         Assert.Equal(expectedPlaylist.Length, SoundscapeCatalog.Playlist.Count);
@@ -192,12 +205,13 @@ public sealed class SettingsAudioRenderTests
                 precision: 12);
         }
 
-        Assert.Equal(32, SoundscapeCatalog.DeclaredRelativePaths.Count);
+        Assert.Equal(44, SoundscapeCatalog.DeclaredRelativePaths.Count);
         Assert.Equal(23, SoundscapeCatalog.DeclaredRelativePaths.Count(path =>
             path.StartsWith("Assets/Audio/Music/", StringComparison.Ordinal) &&
             path.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase)));
+        // Nine era-neutral cues plus twelve era-medium voicings of the four immersive cues.
         Assert.Equal(
-            Enum.GetValues<SoundEffectCue>().Length - 1,
+            (Enum.GetValues<SoundEffectCue>().Length - 1) + 12,
             SoundscapeCatalog.DeclaredRelativePaths.Count(path =>
                 path.StartsWith("Assets/Audio/Sfx/", StringComparison.Ordinal) &&
                 path.EndsWith(".wav", StringComparison.OrdinalIgnoreCase)));
@@ -230,6 +244,18 @@ public sealed class SettingsAudioRenderTests
             ["skill-unlock.wav"] = (43_200, -9.5),
             ["bucket-pickup.wav"] = (6_720, -12.5),
             ["bucket-place.wav"] = (10_560, -11.5),
+            ["navigate-telegram.wav"] = (4_320, -13.0),
+            ["navigate-fax.wav"] = (4_320, -13.0),
+            ["navigate-email.wav"] = (4_320, -13.0),
+            ["commit-telegram.wav"] = (15_360, -10.5),
+            ["commit-fax.wav"] = (15_360, -10.5),
+            ["commit-email.wav"] = (15_360, -10.5),
+            ["seat-confirm-telegram.wav"] = (23_040, -10.0),
+            ["seat-confirm-fax.wav"] = (23_040, -10.0),
+            ["seat-confirm-email.wav"] = (23_040, -10.0),
+            ["back-telegram.wav"] = (13_440, -11.0),
+            ["back-fax.wav"] = (13_440, -11.0),
+            ["back-email.wav"] = (13_440, -11.0),
         };
         string sfxRoot = Path.Combine(
             FindRepositoryRoot(), "src", "Companion.App", "Assets", "Audio", "Sfx");
@@ -309,6 +335,202 @@ public sealed class SettingsAudioRenderTests
             Assert.Equal(item.Duck, definition.MusicDuck, precision: 12);
             Assert.Equal(TimeSpan.FromMilliseconds(item.HoldMs), definition.DuckDuration);
         }
+    }
+
+    [Fact]
+    public void SoundscapeCatalog_EraVoicingsSelectPerMediumSetsWithBaseFallback()
+    {
+        (SoundEffectCue Cue, string BaseName)[] immersive =
+        [
+            (SoundEffectCue.Navigate, "navigate"),
+            (SoundEffectCue.Confirm, "commit"),
+            (SoundEffectCue.SeatConfirm, "seat-confirm"),
+            (SoundEffectCue.Back, "back"),
+        ];
+        var catalog = new SoundscapeCatalog();
+
+        foreach ((SoundEffectCue cue, string baseName) in immersive)
+        {
+            Assert.True(catalog.TryGetEffect(cue, out SoundEffectDefinition definition));
+            Assert.Equal(3, definition.EraVariants.Count);
+            Assert.Equal(
+                $"Assets/Audio/Sfx/{baseName}.wav",
+                catalog.NextEffect(cue, definition).RelativePath);
+            Assert.Equal(
+                $"Assets/Audio/Sfx/{baseName}.wav",
+                catalog.NextEffect(cue, definition, null).RelativePath);
+            Assert.Equal(
+                $"Assets/Audio/Sfx/{baseName}-telegram.wav",
+                catalog.NextEffect(cue, definition, EraMedium.Telegram).RelativePath);
+            Assert.Equal(
+                $"Assets/Audio/Sfx/{baseName}-fax.wav",
+                catalog.NextEffect(cue, definition, EraMedium.Fax).RelativePath);
+            Assert.Equal(
+                $"Assets/Audio/Sfx/{baseName}-email.wav",
+                catalog.NextEffect(cue, definition, EraMedium.Email).RelativePath);
+            Assert.All(
+                definition.EraVariants.Values.SelectMany(static variants => variants),
+                track => Assert.Equal(definition.Variants[0].Gain, track.Gain, precision: 12));
+        }
+
+        // Consequence and result-entry tooling cues stay era-neutral under every skin.
+        foreach (SoundEffectCue cue in new[]
+        {
+            SoundEffectCue.BucketPickup, SoundEffectCue.BucketPlace, SoundEffectCue.Warning,
+            SoundEffectCue.Destructive, SoundEffectCue.SkillUnlock,
+        })
+        {
+            Assert.True(catalog.TryGetEffect(cue, out SoundEffectDefinition definition));
+            Assert.Empty(definition.EraVariants);
+            SoundscapeTrack baseTrack = catalog.NextEffect(cue, definition);
+            Assert.Equal(
+                baseTrack.RelativePath,
+                catalog.NextEffect(cue, definition, EraMedium.Telegram).RelativePath);
+            Assert.Equal(
+                baseTrack.RelativePath,
+                catalog.NextEffect(cue, definition, EraMedium.Fax).RelativePath);
+            Assert.Equal(
+                baseTrack.RelativePath,
+                catalog.NextEffect(cue, definition, EraMedium.Email).RelativePath);
+        }
+    }
+
+    [Fact]
+    public void EraSkin_ReVoicesTheImmersiveCues_AndNullRestoresTheBaseSet()
+    {
+        var engine = new FakeAudioEngine();
+        var clock = new ManualTimeProvider();
+        using var controller = new AppAudioController(
+            new FakeSettingsService(new AppSettings()),
+            engine,
+            clock: clock);
+
+        // The default skin is the era-neutral base set.
+        controller.PlayEffect(SoundEffectCue.Navigate);
+        Assert.Equal("Assets/Audio/Sfx/navigate.wav", engine.Effects[^1].Track.RelativePath);
+
+        clock.Advance(TimeSpan.FromSeconds(1));
+        controller.SetEraSkin(EraMedium.Telegram);
+        controller.PlayEffect(SoundEffectCue.Navigate);
+        Assert.Equal("Assets/Audio/Sfx/navigate-telegram.wav", engine.Effects[^1].Track.RelativePath);
+
+        clock.Advance(TimeSpan.FromSeconds(1));
+        controller.PlayEffect(SoundEffectCue.Confirm);
+        Assert.Equal("Assets/Audio/Sfx/commit-telegram.wav", engine.Effects[^1].Track.RelativePath);
+
+        clock.Advance(TimeSpan.FromSeconds(1));
+        controller.PlayEffect(SoundEffectCue.SeatConfirm);
+        Assert.Equal("Assets/Audio/Sfx/seat-confirm-telegram.wav", engine.Effects[^1].Track.RelativePath);
+
+        clock.Advance(TimeSpan.FromSeconds(1));
+        controller.PlayEffect(SoundEffectCue.Back);
+        Assert.Equal("Assets/Audio/Sfx/back-telegram.wav", engine.Effects[^1].Track.RelativePath);
+
+        clock.Advance(TimeSpan.FromSeconds(1));
+        controller.SetEraSkin(EraMedium.Fax);
+        controller.PlayEffect(SoundEffectCue.Navigate);
+        Assert.Equal("Assets/Audio/Sfx/navigate-fax.wav", engine.Effects[^1].Track.RelativePath);
+
+        clock.Advance(TimeSpan.FromSeconds(1));
+        controller.SetEraSkin(EraMedium.Email);
+        controller.PlayEffect(SoundEffectCue.Back);
+        Assert.Equal("Assets/Audio/Sfx/back-email.wav", engine.Effects[^1].Track.RelativePath);
+
+        // The cross-era consequence and tooling cues never take a skin.
+        controller.PlayEffect(SoundEffectCue.Warning);
+        Assert.Equal("Assets/Audio/Sfx/warning.wav", engine.Effects[^1].Track.RelativePath);
+        controller.PlayEffect(SoundEffectCue.BucketPickup);
+        Assert.Equal("Assets/Audio/Sfx/bucket-pickup.wav", engine.Effects[^1].Track.RelativePath);
+
+        // Null (career closed, back to menus) restores the base set.
+        clock.Advance(TimeSpan.FromSeconds(1));
+        controller.SetEraSkin(null);
+        controller.PlayEffect(SoundEffectCue.Navigate);
+        Assert.Equal("Assets/Audio/Sfx/navigate.wav", engine.Effects[^1].Track.RelativePath);
+    }
+
+    [Fact]
+    public void EraSkin_CooldownDedupeAndDuckingAreUnchangedUnderASkin()
+    {
+        var engine = new FakeAudioEngine();
+        var clock = new ManualTimeProvider();
+        using var controller = new AppAudioController(
+            new FakeSettingsService(new AppSettings()),
+            engine,
+            clock: clock);
+        controller.SetEraSkin(EraMedium.Fax);
+
+        // Same-cue cooldown still suppresses chatter under a skin.
+        controller.PlayEffect(SoundEffectCue.Navigate);
+        controller.PlayEffect(SoundEffectCue.Navigate);
+        clock.Advance(TimeSpan.FromMilliseconds(23));
+        controller.PlayEffect(SoundEffectCue.Navigate);
+        Assert.Single(engine.Effects);
+
+        clock.Advance(TimeSpan.FromMilliseconds(1));
+        controller.PlayEffect(SoundEffectCue.Navigate);
+        Assert.Equal(2, engine.Effects.Count);
+        Assert.Equal("Assets/Audio/Sfx/navigate-fax.wav", engine.Effects[^1].Track.RelativePath);
+
+        // The shared navigation dedupe group still links Navigate and Back.
+        controller.PlayEffect(SoundEffectCue.Back);
+        Assert.Equal(2, engine.Effects.Count);
+
+        clock.Advance(TimeSpan.FromMilliseconds(46));
+        controller.PlayEffect(SoundEffectCue.Back);
+        Assert.Equal(3, engine.Effects.Count);
+        Assert.Equal("Assets/Audio/Sfx/back-fax.wav", engine.Effects[^1].Track.RelativePath);
+
+        // Duck parameters pass through untouched by the skin.
+        controller.PlayEffect(SoundEffectCue.Warning);
+        Assert.Equal(4, engine.Effects.Count);
+        Assert.Equal("Assets/Audio/Sfx/warning.wav", engine.Effects[^1].Track.RelativePath);
+        Assert.Equal(.8, engine.Effects[^1].MusicDuck, precision: 12);
+        Assert.Equal(TimeSpan.FromMilliseconds(500), engine.Effects[^1].DuckDuration);
+
+        // A rejected request still does not consume the next audible click's cooldown.
+        engine.PlayEffectResult = false;
+        clock.Advance(TimeSpan.FromSeconds(1));
+        controller.PlayEffect(SoundEffectCue.Navigate);
+        controller.PlayEffect(SoundEffectCue.Navigate);
+        Assert.Equal(6, engine.Effects.Count);
+
+        engine.PlayEffectResult = true;
+        controller.PlayEffect(SoundEffectCue.Navigate);
+        controller.PlayEffect(SoundEffectCue.Navigate);
+        Assert.Equal(7, engine.Effects.Count);
+    }
+
+    [Fact]
+    public void AppAudioComposition_PushesTheShellEraSkinTokenOneWayToTheController()
+    {
+        string appPath = Path.Combine(
+            FindRepositoryRoot(), "src", "Companion.App", "App.xaml.cs");
+        string source = File.ReadAllText(appPath);
+
+        // Startup push of the current token (null on the gallery) to the fresh controller.
+        Assert.Contains(
+            "audio.SetEraSkin(_shell?.ActiveCareerEraMedium);",
+            source,
+            StringComparison.Ordinal);
+        // The one-way forwarding on every later navigation, keyed on the token's change
+        // notification, plus symmetric teardown.
+        Assert.Contains(
+            "_shell.PropertyChanged += OnShellEraMediumChanged;",
+            source,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "_shell.PropertyChanged -= OnShellEraMediumChanged;",
+            source,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "_audio.SetEraSkin(_shell.ActiveCareerEraMedium);",
+            source,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "nameof(ShellViewModel.ActiveCareerEraMedium)",
+            source,
+            StringComparison.Ordinal);
     }
 
     [Fact]
@@ -876,6 +1098,8 @@ public sealed class SettingsAudioRenderTests
             ["ConfirmView.xaml"] = ["Back", "Confirm"],
             ["DossierView.xaml"] =
                 ["Confirm", "Back", "SkillUnlock", "SkillUnlock", "Destructive", "Back", "Destructive", "SkillUnlock", "Destructive"],
+            ["EconomyView.xaml"] =
+                ["Destructive", "Confirm", "Confirm", "Confirm", "Confirm", "Confirm"],
             ["HistoryView.xaml"] = ["Navigate", "Navigate", "Back"],
             ["HubView.xaml"] =
                 ["Navigate", "Navigate", "Navigate", "Back", "Navigate", "Navigate", "Back"],
