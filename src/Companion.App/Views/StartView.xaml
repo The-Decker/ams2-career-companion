@@ -145,18 +145,12 @@
                         <StackPanel VerticalAlignment="Center">
                             <Border Width="216" Height="5" HorizontalAlignment="Left"
                                     Background="{StaticResource SmgpCheckeredBrush}" Margin="0,0,0,10" />
-                            <TextBlock Text="A MOTORSPORT CAREER EXPERIENCE"
-                                       FontFamily="{StaticResource DisplayFont}" FontSize="9.5"
-                                       FontWeight="Bold" Foreground="{DynamicResource AccentTextBrush}" />
                             <TextBlock Text="AMS2" FontFamily="{StaticResource DisplayFont}"
                                        FontSize="35" FontWeight="Bold"
                                        Foreground="{DynamicResource OnMediaBrush}" />
                             <TextBlock Text="CAREER COMPANION" FontFamily="{StaticResource DisplayFont}"
                                        FontSize="19" FontWeight="Bold"
                                        Foreground="{DynamicResource OnMediaBrush}" Margin="0,-4,0,0" />
-                            <TextBlock Text="THREE WAYS TO BUILD YOUR RACING LEGACY"
-                                       FontFamily="{StaticResource MonoFont}" FontSize="8.5"
-                                       Foreground="{DynamicResource OnMediaMutedBrush}" Margin="0,5,0,0" />
                         </StackPanel>
 
                         <StackPanel Grid.Row="1" Margin="0,14,0,0">
@@ -234,10 +228,6 @@
                                    FontWeight="Bold" Foreground="{DynamicResource OnMediaBrush}" />
                         <TextBlock Text="Choose a career structure, then build your driver."
                                    FontSize="9.5" Foreground="{DynamicResource OnMediaMutedBrush}" />
-                        <TextBlock Text="L300  &#xB7;  30 RACING DNA  &#xB7;  90 MASTERY SKILLS"
-                                   FontFamily="{StaticResource MonoFont}" FontSize="8"
-                                   Foreground="{DynamicResource OnMediaMutedBrush}"
-                                   TextWrapping="Wrap" Margin="0,2,0,0" />
                     </StackPanel>
 
                     <ItemsControl x:Name="CareerModeList" Grid.Row="2" Margin="18,0,18,0"
