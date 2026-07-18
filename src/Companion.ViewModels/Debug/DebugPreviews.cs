@@ -13,9 +13,9 @@ namespace Companion.ViewModels.Debug;
 /// </summary>
 public static class DebugPreviews
 {
-    /// <summary>Racing Passport, <see cref="CareerExperienceModes.RacingPassport"/> is
-    /// <c>IsAvailable=false</c> in the menu AND throws at creation, so it is genuinely unbuildable.
-    /// This is the ONLY way to look at it: a preview hub labelled as a Passport preview.</summary>
+    /// <summary>Racing Passport, <see cref="CareerExperienceModes.RacingPassport"/> — a real,
+    /// buildable pure-racing mode since 2026-07-18. This canned preview remains as the instant
+    /// no-save look at the hub shape; the real creation flow is one menu card away.</summary>
     public static PreviewCareerSession RacingPassport(SeasonPack pack)
     {
         var session = new PreviewCareerSession(pack, new CareerSummary
