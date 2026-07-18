@@ -60,13 +60,13 @@ explicitly era/mode-gated. **Duplicated entries: 0** (RENDEZVOUS append-stable i
 
 | Gap | State | Action |
 |---|---|---|
-| Explicit isolation TESTS (prove the above, not just design it) | PARTIAL (economy gating + composer era tests exist; no dedicated cross-mode isolation suite) | Add `ModeNarrativeIsolationTests`: SMGP event kinds never fire in historical/Passport careers; economy events never fire in SMGP; era key resolves per career style; fiction never reads as verified history. |
-| 17-season coverage matrix | MISSING as a document (lore exists per season) | Author `docs/content/SMGP_17_SEASON_COVERAGE_MATRIX.md` from `seasons.json` + world docs. |
-| Narrative bible | MISSING | Author `docs/content/SMGP_NARRATIVE_BIBLE.md` (world, canon categories, editorial voice). |
-| Per-season content floor (mission §7: dossier/opening feature/retrospective/8-12 archive/12-20 reactive/4+ arcs/6+ features per season) | PARTIAL — season identity exists (title/era/context/arcs/lore header); the full floor is not met per season | Expand per-season content through authoring loops (biggest item; track in this audit). |
-| Editorial QA report | MISSING | Second-pass proofread + `docs/qa/SMGP_EDITORIAL_QA_REPORT.md`. |
-| Migration notes | N/A today (no data-model change) | Author `docs/migrations/SMGP_NEWS_HISTORY_MIGRATION_NOTES.md` stating the no-migration-needed position (mode is carried by career-level state, not per-article rows). |
-| Art asset manifest for news/history | PARTIAL (art inventory exists app-wide) | `docs/audits/SMGP_NEWS_ART_ASSET_MANIFEST.md`. |
+| **Isolation TESTS: COMPLETE** | `ModeNarrativeIsolationTests` 4/4 (historical/Passport never emit SMGP flavour or economy; SMGP never emits economy; fiction provenance-badged; era key = mode key). |
+| **17-season coverage matrix: COMPLETE** | `docs/content/SMGP_17_SEASON_COVERAGE_MATRIX.md`. |
+| **Narrative bible: COMPLETE** | `docs/content/SMGP_NARRATIVE_BIBLE.md`. |
+| **Per-season content floor: ALL 17 PACKS SHIPPED** | `data/rules/newsroom/seasons/s01-s17`: 119 season-scoped reactive templates + 17 opening features; engine `Seasons` eligibility added; `SeasonPackScopingTests` 3/3 (merge, eligibility, pool integrity). |
+| **Editorial QA report: COMPLETE** | `docs/qa/SMGP_EDITORIAL_QA_REPORT.md`. |
+| **Migration notes: COMPLETE** | `docs/migrations/SMGP_NEWS_HISTORY_MIGRATION_NOTES.md` (no-migration-needed position, mode carried by career state). |
+| **Art asset manifest: COMPLETE** | `docs/audits/SMGP_NEWS_ART_ASSET_MANIFEST.md`. |
 
 ## Evidence
 
