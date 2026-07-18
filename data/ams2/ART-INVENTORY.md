@@ -25,7 +25,7 @@ Regenerate the present/expected counts any time:
 
 | Category | Present | Expected | Status |
 |---|---|---|---|
-| **era-art** (`<year>.jpg` / `smgp.jpg`) | 20 | 20 (one per pack) | ✅ complete |
+| **era-art** (`<year>.jpg` / `smgp.jpg` / `<medium>.jpg`) | 25 | 25 (22 packs + 3 medium fallbacks) | ✅ complete |
 | **driver portraits** (`driver.<id>.jpg`) | 34 | 34 (SMGP roster) | ✅ complete |
 | **per-team player images** (`player.<team>.jpg`) | 24 | 24 (SMGP teams) | ✅ complete |
 | **car previews** (`cars/<driverId>.png`) | 34 | 34 | ✅ complete; extractor writes directly to canonical `dist` |
@@ -42,11 +42,11 @@ Regenerate the present/expected counts any time:
 | **track-art** (`<trackId>.jpg`) | 0 | optional (one per AMS2 track id) | ○ none — optional drop-in, clean fallback |
 | **history-art** (`<year>.jpg`) | 0 | optional (one per season year) | ○ none — optional drop-in, clean fallback |
 
-## era-art — ✅ 20/20
+## era-art: 22 year photos + 3 era-medium fallbacks (25 total)
 
-One per pack, keyed by year (`smgp-1` → `smgp.jpg`). All present:
-1967, 1969, 1974, 1978, 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1995, 1997, 2000, 2005, 2006,
-2008, 2016, 2020, smgp.
+One per pack, keyed by year (`smgp-1` → `smgp.jpg`), plus the three era-medium fallbacks the resolver uses for any season year without its own photo (`EraArtResolver`: a year file wins, then the medium file for the year's era, telegram ≤ 1979, fax 1980-1993, email 1994+). All present:
+1967, 1969, 1974, 1978, 1983, 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1995, 1997, 2000, 2005,
+2006, 2008, 2010, 2016, 2020, smgp, telegram, fax, email. The three medium fallbacks (`telegram.jpg` / `fax.jpg` / `email.jpg`, 1280×720, subject centered) are original generated flat-art compositions (telegraph key on ochre wire paper, thermal sheet out of a fax slot, an envelope over inbox rows), no external or copyrighted source material.
 
 ## Driver portraits — ✅ 34/34
 

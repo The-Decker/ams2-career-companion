@@ -1224,3 +1224,28 @@ public sealed class CandidatesVisibilityConverter : IMultiValueConverter
     public object[] ConvertBack(object? value, Type[] targetTypes, object? parameter, CultureInfo culture) =>
         throw new NotSupportedException();
 }
+
+
+/// <summary>The era-theming immersion gate for the document-surface swap
+/// (era-theming-assets-brief.md A2): answers "is era skinning on here?" for a MultiBinding whose
+/// sources are, in order, the hosting Hub view's <c>EraThemingEnabled</c> (the in-career shell)
+/// and the hosting window's <c>Tag.EraThemingEnabled</c> (pop-out companion windows and render
+/// hosts carry the hub there). The first source that RESOLVES to a bool wins; when none resolves
+/// (a standalone surface with no career shell above it) the gate defaults ON, matching
+/// <c>AppSettings.EraThemingEnabled</c>'s default. Off = neutral chrome: every era document
+/// trigger resets to the base face, and the toggle re-evaluates live via property change.</summary>
+public sealed class EraThemingGateConverter : IMultiValueConverter
+{
+    public object Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)
+    {
+        foreach (object? value in values)
+        {
+            if (value is bool enabled)
+                return enabled;
+        }
+        return true;
+    }
+
+    public object[] ConvertBack(object? value, Type[] targetTypes, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
