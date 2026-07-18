@@ -1,0 +1,101 @@
+{
+  "$comment": "Season dossier pack S02, The Protest Year (Iron Circus act). Season-scoped coverage with the controversy register: appeals, arguments, and racing inside them. Ids are stable rendezvous keys, never rename. Read-side only.",
+  "version": 1,
+  "templates": [
+    {
+      "id": "s02.season-started.protest-weather",
+      "event": "seasonStarted",
+      "eras": ["smgp"],
+      "seasons": [2],
+      "headline": "THE PROTEST YEAR: the paddock arrives angry",
+      "deck": "The tenth summer's arguments followed everyone home",
+      "summary": "Season two opens with grievances filed, positions defended, and a championship to settle on track.",
+      "sections": {
+        "lead": "{pool:dateline} The trucks had barely parked before the first envelope reached the stewards' office. They are calling it the protest year before a wheel has turned, and the men with the loudest voices intend to prove their points with lap times instead.",
+        "context": "The paddock divides between those who argue with officials and those who argue with the stopwatch. The stopwatch side is shorter staffed but better armed. {pool:paddockBuzz}",
+        "close": "Sixteen rounds to settle it the clean way: out front, in the open, at full speed."
+      }
+    },
+    {
+      "id": "s02.race-won.answer-on-track",
+      "event": "raceWon",
+      "eras": ["smgp"],
+      "seasons": [2],
+      "headline": "{subject} wins[[?venue: at {venue}]], the answer no appeal can overturn",
+      "deck": "Settled at speed, not in the stewards' room",
+      "summary": "{subject} won[[?venue: at {venue}]][[?round: in round {round}]].",
+      "sections": {
+        "lead": "{pool:dateline} In a year of envelopes and objections, {subject} chose the oldest rebuttal in the sport: be first across the line and make the paperwork irrelevant. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: The board reads {ord:champPosition} for {subject}, and no protest moves it.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s02.podium.defended",
+      "event": "podiumFinish",
+      "eras": ["smgp"],
+      "seasons": [2],
+      "headline": "{subject} on the podium[[?venue: at {venue}]], helmet up, chin out",
+      "deck": "A result the whole paddock saw with its own eyes",
+      "summary": "{subject} finished on the podium[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} {subject} took the podium and dared anyone to object to it. In the protest year, the cleanest results are the loudest statements. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: Championship: {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s02.pole.no-argument",
+      "event": "polePosition",
+      "eras": ["smgp"],
+      "seasons": [2],
+      "headline": "POLE for {subject}[[?venue: at {venue}]], a number nobody can protest",
+      "deck": "The stopwatch takes no appeals",
+      "summary": "{subject} took pole position[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} You can protest a result, a ruling, a rival's rear wing. You cannot protest the clock. {subject} holds pole[[?venue: at {venue}]] and the number is the whole argument. {pool:swBoard}",
+        "close": "The race will test the number. That is what races are for."
+      }
+    },
+    {
+      "id": "s02.lead-taken.charge-sheet",
+      "event": "championshipLeadTaken",
+      "eras": ["smgp"],
+      "seasons": [2],
+      "headline": "{subject} leads the championship, and the objections begin",
+      "deck": "Top of the board in the protest year",
+      "summary": "{subject} took the championship lead in season two.",
+      "sections": {
+        "lead": "{pool:dateline} The board has a new leader and the paddock has a new target. {subject} heads the championship, and by sundown the first questions had been raised about everything except the driving. {pool:swBoard}",
+        "stats": "{pool:rrStatLine}",
+        "close": "The defense of the lead runs on the road, not in the office."
+      }
+    },
+    {
+      "id": "s02.retired-mechanical.protest-of-another-kind",
+      "event": "retiredMechanical",
+      "eras": ["smgp"],
+      "seasons": [2],
+      "headline": "{subject} parks it[[?venue: at {venue}]], no appeal on this one",
+      "deck": "The machine overruled everyone",
+      "summary": "{subject} retired with mechanical failure[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} {subject} slowed, parked, and climbed out[[?venue: at {venue}]]. In the year of objections there is nothing to object to here: metal failed, plainly, in public. {pool:wrenchNote}",
+        "close": "The crew starts the long night. The stewards, for once, get an evening off."
+      }
+    },
+    {
+      "id": "s02.retired-driver-error.red-mist",
+      "event": "retiredDriverError",
+      "eras": ["smgp"],
+      "seasons": [2],
+      "headline": "{subject} crashes out[[?venue: at {venue}]], anger costs dear",
+      "deck": "The protest year's temper claims another",
+      "summary": "{subject} crashed out[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} Maybe it was the year, maybe it was the corner, maybe it was the argument {subject} was still having three corners later. The wall does not care about any of them. {pool:swCrowd}",
+        "close": "The driver walks back with the wreckage of the afternoon behind him. The paddock will talk about the why all week."
+      }
+    }
+  ]
+}

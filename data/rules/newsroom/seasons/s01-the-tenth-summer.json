@@ -1,0 +1,118 @@
+{
+  "$comment": "Season dossier pack S01, The Tenth Summer (Iron Circus act). Season-scoped reactive coverage for the SMGP campaign's first year: the big board era's raw establishment. Voice: arcade-caps exuberance with honest reportage under it. Ids are stable rendezvous keys, never rename. Read-side only: editing this file changes display, never replay.",
+  "version": 1,
+  "templates": [
+    {
+      "id": "s01.season-started.curtain-raiser",
+      "event": "seasonStarted",
+      "eras": ["smgp"],
+      "seasons": [1],
+      "headline": "THE TENTH SUMMER BEGINS, and the big board is blank",
+      "deck": "Thirty-four drivers, sixteen rounds, one ladder",
+      "summary": "The first season of the campaign opens with every name on the board and nothing decided.",
+      "sections": {
+        "lead": "{pool:dateline} The tenth summer of the championship dawns hot and flat, and every one of the thirty-four names on the entry list believes the big board was built for them. Nobody has scored. Nobody has crashed. Nobody has anything to say for themselves yet, and it will not stay that way past the first corner of the year.",
+        "context": "The ladder is the law of this paddock: LEVEL A for the crown, LEVEL D for the floor, and a queue of ambitious men between them. {pool:swLadder}",
+        "close": "Sixteen rounds decide everything. The board keeps the score; the drivers do the rest."
+      }
+    },
+    {
+      "id": "s01.race-won.big-board-debut",
+      "event": "raceWon",
+      "eras": ["smgp"],
+      "seasons": [1],
+      "headline": "{subject} WINS[[?venue: at {venue}]], and the board learns a name",
+      "deck": "The first summer has a first answer",
+      "summary": "{subject} won[[?venue: at {venue}]][[?round: in round {round}]].",
+      "sections": {
+        "lead": "{pool:dateline} The big board flashes it in letters ten feet tall: {subject}, a winner of the tenth summer. In this paddock a first season win is not a result, it is an introduction. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: The championship account opens with {subject} at {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s01.first-win.arrival",
+      "event": "firstWin",
+      "eras": ["smgp"],
+      "seasons": [1],
+      "headline": "A FIRST CAREER WIN for {subject}, and the paddock sits up",
+      "deck": "From the queue to the winner's circle in one summer",
+      "summary": "{subject} took a first career victory in the debut season.",
+      "sections": {
+        "lead": "{pool:dateline} Somewhere between the garage and the podium a driver stopped being a prospect. {subject} has a first career win, and the tenth summer has its new name on the board. {pool:swCrowd}",
+        "context": "The veterans know what a first win does to a young career in this place. The ladder hears it before the champagne is poured. {pool:swLadder}",
+        "close": "The record book opens its first page on {subject} tonight."
+      }
+    },
+    {
+      "id": "s01.podium.first-rung",
+      "event": "podiumFinish",
+      "eras": ["smgp"],
+      "seasons": [1],
+      "headline": "{subject} on the podium[[?venue: at {venue}]]: the ladder notices",
+      "deck": "A rung is a rung, and this one is real",
+      "summary": "{subject} finished on the podium[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} {subject} stood on the podium and the tenth summer took note. In the first season of a climb, a podium is not a consolation, it is proof of concept. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: The board now reads {ord:champPosition} for {subject}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s01.pole.statement",
+      "event": "polePosition",
+      "eras": ["smgp"],
+      "seasons": [1],
+      "headline": "POLE for {subject}[[?venue: at {venue}]]: fastest in the new year",
+      "deck": "The stopwatch speaks first in the tenth summer",
+      "summary": "{subject} took pole position[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} Before the wheel turns in anger, the stopwatch gets its say, and this week it says {subject}. Pole position in the debut season is a warning shot at the whole ladder.",
+        "context": "The grid is set by speed alone here, and speed is the one currency nobody can argue with. {pool:swBoard}",
+        "close": "Tomorrow the race decides if the number meant anything."
+      }
+    },
+    {
+      "id": "s01.lead-taken.board-flip",
+      "event": "championshipLeadTaken",
+      "eras": ["smgp"],
+      "seasons": [1],
+      "headline": "THE BOARD FLIPS: {subject} leads the tenth summer",
+      "deck": "A new name on top of the biggest list in racing",
+      "summary": "{subject} took the championship lead in the debut season.",
+      "sections": {
+        "lead": "{pool:dateline} The big board has a new name at the top, and it is {subject}. The tenth summer has its first leader, and every garage in the paddock just re-read the standings twice. {pool:swBoard}",
+        "stats": "{pool:rrStatLine}",
+        "close": "The lead is a lease, not a deed. The season is young."
+      }
+    },
+    {
+      "id": "s01.retired-mechanical.cruel-lesson",
+      "event": "retiredMechanical",
+      "eras": ["smgp"],
+      "seasons": [1],
+      "headline": "The machine betrays {subject}[[?venue: at {venue}]]",
+      "deck": "A lesson the tenth summer teaches early",
+      "summary": "{subject} retired with mechanical failure[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The car died under {subject}[[?venue: at {venue}]], and in this paddock that is a particular kind of heartbreak: the driver did nothing wrong and loses anyway. {pool:wrenchNote}",
+        "context": "Machines in the Iron Circus era are honest but temperamental. The mechanics will work tonight. {pool:swLadder}",
+        "close": "The board only records that it happened. The crew remembers why."
+      }
+    },
+    {
+      "id": "s01.retired-driver-error.wall-lesson",
+      "event": "retiredDriverError",
+      "eras": ["smgp"],
+      "seasons": [1],
+      "headline": "{subject} in the wall[[?venue: at {venue}]]: the summer's first hard lesson",
+      "deck": "Ambition met the armco, the armco won",
+      "summary": "{subject} crashed out[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} {subject} found the limit[[?venue: at {venue}]] the hard way, and the armco collected its due. The driver walked away; the lesson will keep longer than the bruises.",
+        "context": "Every career in this paddock has one of these afternoons in it. The good ones bank them. {pool:swCrowd}",
+        "close": "The car goes on the flatbed. The education continues."
+      }
+    }
+  ]
+}

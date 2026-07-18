@@ -1,0 +1,101 @@
+{
+  "$comment": "Season dossier pack S04, The Closing Door Opens (Iron Circus finale). Season-scoped coverage for the last Iron Circus year: the old order ending, the horsepower era audible next door. Ids are stable rendezvous keys, never rename. Read-side only.",
+  "version": 1,
+  "templates": [
+    {
+      "id": "s04.season-started.door-ajar",
+      "event": "seasonStarted",
+      "eras": ["smgp"],
+      "seasons": [4],
+      "headline": "THE CLOSING DOOR OPENS: one era ends, another clears its throat",
+      "deck": "The last Iron Circus summer begins",
+      "summary": "Season four opens as the closing chapter of the old order, and everyone in the paddock can hear the new one warming up.",
+      "sections": {
+        "lead": "{pool:dateline} There is a door at the back of this paddock, and this is the year it swings. The Iron Circus gets one more summer to be itself: raw, loud, honest, and fast. After that, the sport changes volume for good.",
+        "context": "The veterans can feel the shift coming: bigger numbers, bigger ambitions, bigger everything. The board will keep score the same way it always has. {pool:swBoard}",
+        "close": "Sixteen rounds remain of the old way. The men who win them own the era's ending."
+      }
+    },
+    {
+      "id": "s04.race-won.end-of-an-era-win",
+      "event": "raceWon",
+      "eras": ["smgp"],
+      "seasons": [4],
+      "headline": "{subject} wins[[?venue: at {venue}]], a victory from the old book",
+      "deck": "The Iron Circus way, one more time",
+      "summary": "{subject} won[[?venue: at {venue}]][[?round: in round {round}]].",
+      "sections": {
+        "lead": "{pool:dateline} {subject} won today the way the old era taught everyone to win: outbrake, outlast, outfight. Somewhere behind the celebration you could hear the future warming its engines, but today belonged to the present. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: The board reads {ord:champPosition} for {subject}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s04.podium.old-guard",
+      "event": "podiumFinish",
+      "eras": ["smgp"],
+      "seasons": [4],
+      "headline": "{subject} on the podium[[?venue: at {venue}]], the old guard holds on",
+      "deck": "One more celebration before the door swings",
+      "summary": "{subject} finished on the podium[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} {subject} stood on the podium and the old era stood a little straighter. These are the last celebrations of the Iron Circus, and nobody up there was pretending otherwise. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: Championship: {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s04.pole.last-call",
+      "event": "polePosition",
+      "eras": ["smgp"],
+      "seasons": [4],
+      "headline": "POLE for {subject}[[?venue: at {venue}]], the era's fast answer",
+      "deck": "Speed was always the era's first language",
+      "summary": "{subject} took pole position[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} Say what the future holds, the Iron Circus still owns the stopwatch today. {subject} takes pole[[?venue: at {venue}]] with a lap that had the whole pit wall nodding. {pool:swBoard}",
+        "close": "One more Sunday at full speed in the old style. The door can wait."
+      }
+    },
+    {
+      "id": "s04.lead-taken.closing-chapter",
+      "event": "championshipLeadTaken",
+      "eras": ["smgp"],
+      "seasons": [4],
+      "headline": "{subject} leads the closing chapter of the Iron Circus",
+      "deck": "The last name on top of the old era's board",
+      "summary": "{subject} took the championship lead in season four.",
+      "sections": {
+        "lead": "{pool:dateline} The final summer of the Iron Circus has a leader, and it is {subject}. Whoever holds this spot when the door closes carries the era's last word into the next one. {pool:swBoard}",
+        "stats": "{pool:rrStatLine}",
+        "close": "The ending will be written at speed, like everything else in this era."
+      }
+    },
+    {
+      "id": "s04.retired-mechanical.old-bones",
+      "event": "retiredMechanical",
+      "eras": ["smgp"],
+      "seasons": [4],
+      "headline": "{subject} parks it[[?venue: at {venue}]], the era shows its age",
+      "deck": "Even the machines know the door is closing",
+      "summary": "{subject} retired with mechanical failure[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} {subject} coasted to a stop[[?venue: at {venue}]] with the machine gone quiet underneath. The old era's hardware is fast, honest, and tired, and this afternoon it was simply tired. {pool:wrenchNote}",
+        "close": "The crew patches it one more time. Next year the problem may be somebody else's."
+      }
+    },
+    {
+      "id": "s04.retired-driver-error.door-slams",
+      "event": "retiredDriverError",
+      "eras": ["smgp"],
+      "seasons": [4],
+      "headline": "{subject} in the wall[[?venue: at {venue}]], a hard end to the run",
+      "deck": "The old era does not go quietly for everyone",
+      "summary": "{subject} crashed out[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} {subject} carried the corner one mile an hour too much hope and the armco collected, as it always collects. The driver walked. The lesson about the old era's limits came free with the bruises. {pool:swCrowd}",
+        "close": "The flatbed takes the car. The driver takes the note about how much the door is actually open."
+      }
+    }
+  ]
+}

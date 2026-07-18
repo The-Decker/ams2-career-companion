@@ -119,6 +119,7 @@
          (docs/dev/newsroom-authoring.md). Loose beside the exe like every other rules file —
          absent packs degrade the feed to empty, so shipping them here is what turns it on. -->
     <None Include="..\..\data\rules\newsroom\*.json" Link="data\rules\newsroom\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\data\rules\newsroom\seasons\*.json" Link="data\rules\newsroom\seasons\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- SMGP replica-mode rules subtree (the dispatch corpus, sponsors, driver/team profiles + stats,
          rival quotes, what-really-happened). Previously only reached the deployed dist via a manual copy;
          copied beside the exe so a dev/publish run also loads them (else SmgpDispatchCorpus etc. fall back). -->
