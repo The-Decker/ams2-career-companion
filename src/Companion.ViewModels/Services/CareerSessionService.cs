@@ -382,6 +382,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                     // no plan, so the request's explicit mode is the fallback (null for legacy).
                     campaign?.Plan?.Mode ?? request.ExperienceMode,
                     request.PlayerDisplayName,
+                    request.PlayerCountryCode,
                     campaign?.Plan,
                     // The Dynasty owner economy: both halves of the gate, the pinned campaign mode
                     // AND the creation opt-in. The rules are resolved only for an opted-in Dynasty
@@ -580,6 +581,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         MortalityMode mortality,
         string? experienceMode,
         string? customDisplayName,
+        string? customCountryCode,
         CampaignProgressionPlan? campaignProgressionPlan,
         Companion.Core.Dynasty.DynastyEconomyRules? economyRules,
         SqliteTransaction transaction)
@@ -617,6 +619,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             // The pure-racing identity field (null = the seat's authored driver name shows, and
             // every pre-feature save stays byte-identical): NOT a character, just a display name.
             CustomDisplayName = customDisplayName,
+            CustomCountryCode = customCountryCode,
             CampaignProgressionPlan = campaignProgressionPlan,
             // The chosen season field (null = whole pack → byte-identical). Carried forward each
             // round; the fold resolves the grid to exactly this field.
@@ -1496,7 +1499,8 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
 
     /// <summary>Display-only authored nationality. The profile is the same folded start/current
     /// identity replay reads; no grid, rating, or staging input is derived from this accessor.</summary>
-    public string? CurrentPlayerCountryCode() => CurrentCharacterProfile()?.CountryCode;
+    public string? CurrentPlayerCountryCode() =>
+        CurrentCharacterProfile()?.CountryCode ?? CurrentPlayerState()?.CustomCountryCode;
 
     /// <summary>Display-only car-art identity for a fixed SMGP livery. The lookup is captured from
     /// the pinned authored pack before runtime driver reshuffles, so promotions and later seasons

@@ -602,6 +602,21 @@
                                    Foreground="{DynamicResource ErrorBrush}" TextWrapping="Wrap" Margin="0,5,0,0"
                                    Text="{Binding PlayerDisplayNameError}"
                                    Visibility="{Binding PlayerDisplayNameError, Converter={StaticResource StringVisible}}" />
+                        <TextBlock Text="NATIONALITY (OPTIONAL)" Style="{StaticResource Eyebrow}" Margin="0,12,0,0" />
+                        <DockPanel Margin="0,6,0,0">
+                            <Button DockPanel.Dock="Right" Content="Clear" VerticalAlignment="Center"
+                                    Margin="8,0,0,0" Padding="8,2" FontSize="12"
+                                    Command="{Binding ClearPassportCountryCommand}"
+                                    ToolTip="Keep the seat's authored country instead"
+                                    AutomationProperties.Name="Clear nationality pick" />
+                            <ComboBox x:Name="PassportCountryPicker"
+                                      ItemsSource="{Binding PassportCountryOptions}"
+                                      SelectedItem="{Binding SelectedPassportCountry, Mode=TwoWay}"
+                                      DisplayMemberPath="Name" FontSize="14"
+                                      AutomationProperties.Name="Nationality (optional)" />
+                        </DockPanel>
+                        <TextBlock Style="{StaticResource Faint}" Margin="0,5,0,0" TextWrapping="Wrap"
+                                   Text="Pick a nationality for your driver, or leave it unset to keep the seat's authored country." />
                     </StackPanel>
                 </Border>
                 <!-- ...or race as your own independent entrant (a custom AMS2 livery). Takes precedence

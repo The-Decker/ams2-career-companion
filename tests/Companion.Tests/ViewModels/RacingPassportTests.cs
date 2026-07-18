@@ -357,6 +357,57 @@ public sealed class RacingPassportTests : IDisposable
         Assert.Null(session.PlayerIdentity());
     }
 
+    // ---------- nationality (the optional identity field) ----------
+
+    [Fact]
+    public void Creation_PersistsAndResolvesTheChosenNationality()
+    {
+        WriteHistoricalPack(1967);
+        string careerPath = CareerPath("nationality");
+
+        using (var session = CareerSessionService.CreateCareer(
+                   PassportRequest(careerPath, countryCode: "BRA"), Environment()))
+        {
+            Assert.Equal("BRA", session.CurrentPlayerCountryCode());
+        }
+
+        using var db = CareerDatabase.Open(careerPath);
+        long seasonId = CareerStore.ReadSeasons(db).Single().Id;
+        var start = StateStore.ReadPlayerState(db, seasonId, StateStore.StageStart)!;
+        Assert.Equal("BRA", start.CustomCountryCode);
+
+        // No pick: the field stays empty and the session resolves null, so the seat's authored
+        // country shows, exactly like a career with no nationality at all.
+        using var plainSession = CareerSessionService.CreateCareer(
+            PassportRequest(CareerPath("no-nationality")), Environment());
+        Assert.Null(plainSession.CurrentPlayerCountryCode());
+    }
+
+    [Fact]
+    public void Wizard_ExposesTheNationalityPicker_AndShowsItInTheConfirm()
+    {
+        WriteHistoricalPack(1991);
+        var wizard = PassportWizard();
+
+        Assert.NotEmpty(wizard.PassportCountryOptions);
+        Assert.Equal("", wizard.PassportNationalitySummary); // no pick = the authored country
+
+        var brazil = Assert.Single(wizard.PassportCountryOptions, o => o.Code == "BRA");
+        wizard.SelectedPassportCountry = brazil;
+        Assert.Contains("BRA", wizard.PassportNationalitySummary);
+
+        wizard.SelectedPack = Assert.Single(wizard.Packs);
+        wizard.NextCommand.Execute(null);
+        if (wizard.HasWarnings) wizard.ProceedAnyway = true;
+        wizard.NextCommand.Execute(null);
+        wizard.SelectedSeat = wizard.Seats.First(seat => seat.LiveryName == TestPackBuilder.StockLivery2);
+        wizard.NextCommand.Execute(null);
+
+        Assert.Contains(wizard.PassportConfirmLines,
+            line => line.StartsWith("Nationality:", StringComparison.Ordinal) &&
+                    line.Contains("BRA", StringComparison.Ordinal));
+    }
+
     // ---------- scaffolding ----------
 
     private NewCareerWizardViewModel PassportWizard() => new(
@@ -377,7 +428,7 @@ public sealed class RacingPassportTests : IDisposable
     }
 
     private CareerCreationRequest PassportRequest(
-        string careerPath, int year = 1967, string? playerName = null) => new()
+        string careerPath, int year = 1967, string? playerName = null, string? countryCode = null) => new()
     {
         PackDirectory = Path.Combine(PacksRoot, year.ToString()),
         CareerFilePath = careerPath,
@@ -387,6 +438,7 @@ public sealed class RacingPassportTests : IDisposable
         PlayerLiveryName = TestPackBuilder.StockLivery2,
         Character = null,
         PlayerDisplayName = playerName,
+        PlayerCountryCode = countryCode,
     };
 
     private void WriteHistoricalPack(int year)

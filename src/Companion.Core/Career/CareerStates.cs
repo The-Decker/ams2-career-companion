@@ -109,6 +109,14 @@ public sealed record PlayerCareerState
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string? CustomDisplayName { get; init; }
 
+    /// <summary>The player's custom nationality (Racing Passport's optional identity field):
+    /// persisted at creation as an ISO 3-letter code, resolved by
+    /// <c>ICareerSession.CurrentPlayerCountryCode()</c> when no character owns one. Null = the
+    /// replaced driver's authored country shows, and every pre-feature save's blob stays
+    /// byte-identical.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string? CustomCountryCode { get; init; }
+
     /// <summary>Creation-pinned bounded campaign horizon and rational XP scale. Null on every
     /// legacy save and on every pure-racing Passport save (one faithful season, no horizon).</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]

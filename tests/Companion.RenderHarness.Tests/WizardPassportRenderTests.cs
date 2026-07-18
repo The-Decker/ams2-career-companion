@@ -1,7 +1,9 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Threading;
 using Companion.App.Views;
 using Companion.ViewModels.Wizard;
@@ -86,6 +88,39 @@ public sealed class WizardPassportRenderTests
     }
 
     [Fact]
+    public void WizardView_PassportSeatPick_NationalityPickerBindsAndClears()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var host = new PassportHost { Step = WizardStep.SeatPick };
+            var view = Render(host);
+
+            var picker = (ComboBox)view.FindName("PassportCountryPicker");
+            Assert.Equal(Visibility.Visible, picker.Visibility);
+            Assert.Null(host.SelectedPassportCountry); // unset = the seat's authored country
+            Assert.Equal("", host.PassportNationalitySummary);
+
+            // Pick Brazil: the selection flows to the wizard and the confirm summary shows it.
+            object brazil = Assert.Single(host.PassportCountryOptions, option => option.Code == "BRA");
+            picker.SelectedItem = brazil;
+            WpfRenderHarness.Pump(DispatcherPriority.DataBind);
+            Assert.Equal(brazil, host.SelectedPassportCountry);
+            Assert.Contains("BRA", host.PassportNationalitySummary);
+
+            // The Clear affordance returns to the authored-country default.
+            var clear = Descendants<Button>(view).Single(button =>
+                AutomationProperties.GetName(button) == "Clear nationality pick");
+            clear.Command.Execute(null);
+            WpfRenderHarness.Pump(DispatcherPriority.DataBind);
+            Assert.Null(host.SelectedPassportCountry);
+            Assert.Equal("", host.PassportNationalitySummary);
+        });
+    }
+
+    [Fact]
     public void WizardView_PassportConfirm_RendersHonestSummaryWithoutMortality()
     {
         if (!WpfRenderHarness.IsSupported)
@@ -164,6 +199,19 @@ public sealed class WizardPassportRenderTests
         return view;
     }
 
+    private static IEnumerable<T> Descendants<T>(DependencyObject root) where T : DependencyObject
+    {
+        int count = VisualTreeHelper.GetChildrenCount(root);
+        for (int index = 0; index < count; index++)
+        {
+            DependencyObject child = VisualTreeHelper.GetChild(root, index);
+            if (child is T typed)
+                yield return typed;
+            foreach (T descendant in Descendants<T>(child))
+                yield return descendant;
+        }
+    }
+
     /// <summary>Stand-in for <see cref="NewCareerWizardViewModel"/> exposing exactly the Passport
     /// bind contract: the mode gates, the step-chrome flags, the name field with its validation,
     /// and the confirm lines. <see cref="IsRacingPassportMode"/> flips it to the Dynasty route.</summary>
@@ -173,6 +221,20 @@ public sealed class WizardPassportRenderTests
         private string _playerDisplayName = "";
 
         public const int MaxPlayerDisplayNameLength = 40;
+
+        public PassportHost()
+        {
+            ClearPassportCountryCommand = new DelegateCommand(() => SelectedPassportCountry = null);
+        }
+
+        public System.Windows.Input.ICommand ClearPassportCountryCommand { get; }
+
+        private sealed class DelegateCommand(Action execute) : System.Windows.Input.ICommand
+        {
+            public event EventHandler? CanExecuteChanged;
+            public bool CanExecute(object? parameter) => true;
+            public void Execute(object? parameter) => execute();
+        }
 
         public bool IsRacingPassportMode { get; init; } = true;
 
@@ -216,6 +278,31 @@ public sealed class WizardPassportRenderTests
             PlayerDisplayName.Trim().Length > MaxPlayerDisplayNameLength
                 ? $"Keep it to {MaxPlayerDisplayNameLength} characters or fewer."
                 : "";
+
+        public IReadOnlyList<Companion.ViewModels.Wizard.CharacterCountryOption> PassportCountryOptions { get; } =
+        [
+            new("BRA", "Brazil", "bra"),
+            new("GBR", "United Kingdom", "gbr"),
+            new("ITA", "Italy", "ita"),
+        ];
+
+        private Companion.ViewModels.Wizard.CharacterCountryOption? _selectedPassportCountry;
+
+        public Companion.ViewModels.Wizard.CharacterCountryOption? SelectedPassportCountry
+        {
+            get => _selectedPassportCountry;
+            set
+            {
+                if (Equals(_selectedPassportCountry, value))
+                    return;
+                _selectedPassportCountry = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(PassportNationalitySummary));
+            }
+        }
+
+        public string PassportNationalitySummary =>
+            SelectedPassportCountry is { } country ? $"{country.Name} ({country.Code})" : "";
 
         public IReadOnlyList<string> PassportConfirmLines => IsRacingPassportMode
             ?

@@ -99,6 +99,12 @@ public sealed record CareerCreationRequest
     /// Null (default) keeps the replaced driver's authored name, and every existing caller's
     /// behavior byte-identical. NOT a character: no profile, no stats, no progression.</summary>
     public string? PlayerDisplayName { get; init; }
+
+    /// <summary>The player's custom nationality (Racing Passport's optional identity field):
+    /// an ISO 3-letter country code persisted on the start player state
+    /// (<see cref="Companion.Core.Career.PlayerCareerState.CustomCountryCode"/>). Null (default)
+    /// keeps the replaced driver's authored country.</summary>
+    public string? PlayerCountryCode { get; init; }
 }
 
 /// <summary>

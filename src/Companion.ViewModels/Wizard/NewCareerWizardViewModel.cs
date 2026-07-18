@@ -135,19 +135,22 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             if (!IsRacingPassport || Pack is not { } pack)
                 return [];
             string driver = ResolvedPlayerDisplayName ?? "the seat's authored driver";
-            return
-            [
+            var lines = new List<string>
+            {
                 "RACING PASSPORT",
                 $"Series: {pack.Season.SeriesName}",
                 $"Season: {pack.Season.Year}",
                 $"Team: {SelectedSeat?.TeamName ?? "?"}",
                 $"Seat: {PassportSeatSummary}",
                 $"Driver: {driver}",
-                "Career format: One complete faithful season",
-                "Progression: None, pure racing",
-                "Team management: None",
-                "Field: Historical season grid locked to the selected pack",
-            ];
+            };
+            if (SelectedPassportCountry is not null)
+                lines.Add($"Nationality: {PassportNationalitySummary}");
+            lines.Add("Career format: One complete faithful season");
+            lines.Add("Progression: None, pure racing");
+            lines.Add("Team management: None");
+            lines.Add("Field: Historical season grid locked to the selected pack");
+            return lines;
         }
     }
 
@@ -770,6 +773,26 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     /// inventing a seat. The view hides the custom-livery box.</summary>
     public bool ShowsOwnEntrant => !IsRacingPassport && !IsSmgpPack;
 
+    /// <summary>The nationality choices for Passport's optional identity field (the full offline
+    /// AMS2 flag set), shown on the seat step. Null selection keeps the seat's authored country.</summary>
+    public IReadOnlyList<CharacterCountryOption> PassportCountryOptions =>
+        CharacterCountryCatalog.Available;
+
+    /// <summary>Passport's optional nationality pick (null = the replaced driver's authored
+    /// country shows). NOT a character: just the flag/country beside the player name.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(PassportNationalitySummary))]
+    private CharacterCountryOption? _selectedPassportCountry;
+
+    /// <summary>The Passport nationality summary for the confirm block ("Brazil (BRA)"), empty
+    /// when the authored country is kept.</summary>
+    public string PassportNationalitySummary =>
+        SelectedPassportCountry is { } country ? $"{country.Name} ({country.Code})" : "";
+
+    /// <summary>Clears the nationality pick, back to keeping the seat's authored country.</summary>
+    [RelayCommand]
+    private void ClearPassportCountry() => SelectedPassportCountry = null;
+
     /// <summary>Racing Passport's one identity field: the optional custom display name for the
     /// player driver. Trimmed at creation; empty keeps the replaced driver's authored name.
     /// NOT a character, no profile, no stats, no progression.</summary>
@@ -1315,6 +1338,8 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             // Racing Passport's one identity field (null when blank, the seat's authored driver
             // name then shows; NOT a character, just a display name).
             PlayerDisplayName = IsRacingPassport ? ResolvedPlayerDisplayName : null,
+            // Racing Passport's optional nationality (null = the seat's authored country).
+            PlayerCountryCode = IsRacingPassport ? SelectedPassportCountry?.Code : null,
             // The SMGP ladder needs the WHOLE authored field, its seat chains reference every
             // team's car, and a narrowed grid would make demotion/introduction targets unresolvable
             // (the resolver would then refuse the moves round after round). Mode on → whole pack.
