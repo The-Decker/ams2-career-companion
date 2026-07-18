@@ -1563,6 +1563,9 @@ public static class ReplayService
         CharacterRules = inputs.CharacterRules,
         MasterySkills = inputs.MasterySkills,
         EconomyRules = inputs.DynastyEconomy,
+        // Pure-racing (Racing Passport): the career-ladder season-end steps are gated off by the
+        // player's persisted mode, so the live and resim paths gate identically by construction.
+        PureRacingSeason = player.ExperienceMode == Companion.Core.Career.CareerExperienceModes.RacingPassport,
     };
 
     /// <summary>Re-derives a follow-on season's start states from the previous season's
