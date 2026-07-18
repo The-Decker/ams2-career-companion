@@ -134,62 +134,73 @@
                                 </StackPanel>
                             </DockPanel>
 
-                            <!-- sectioned checklist: outer = Race-Day sections (Event / Practice /
-                                 Qualifying / Race / Rules), inner = the tickable rows. Grouping is done in
-                                 the viewmodel (Sections), so this is a plain nested ItemsControl with no
-                                 grouping CollectionViewSource. (Render-test thread-safety comes from the
-                                 harness's DisableTestParallelization, not from this structure.)
-                                 Label column is shared-size Auto so long labels never clip at 130% scale. -->
-                            <ItemsControl ItemsSource="{Binding Sections}" Grid.IsSharedSizeScope="True">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel>
-                                            <!-- section header; collapses for an ungrouped (empty-title) section -->
-                                            <TextBlock Text="{Binding Title}" Style="{StaticResource Faint}"
-                                                       FontSize="11" FontWeight="SemiBold" Margin="0,8,0,1"
-                                                       ToolTip="AMS2 custom-race screen section"
-                                                       Visibility="{Binding Title, Converter={StaticResource StringVisible}}" />
-                                            <ItemsControl ItemsSource="{Binding Items}">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <!-- the whole row is the toggle hit-target -->
-                                                        <CheckBox IsChecked="{Binding IsChecked}" Margin="0,0"
-                                                                  HorizontalContentAlignment="Stretch"
-                                                                  ToolTip="Click to tick this setting off (ticks reset each round)">
-                                                            <Grid Margin="8,1,0,1">
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="Auto" MinWidth="130" SharedSizeGroup="ChecklistLabel" />
-                                                                    <ColumnDefinition Width="*" />
-                                                                </Grid.ColumnDefinitions>
-                                                                <TextBlock Grid.Column="0" Text="{Binding Label}" Margin="0,0,12,0"
-                                                                           Style="{StaticResource Muted}" VerticalAlignment="Center" />
-                                                                <!-- big glanceable value; read-only TextBox keeps it selectable -->
-                                                                <TextBox Grid.Column="1" Text="{Binding Value, Mode=OneWay}"
-                                                                         IsReadOnly="True" IsTabStop="False"
-                                                                         BorderThickness="0" Background="Transparent" Padding="0"
-                                                                         FontFamily="{StaticResource MonoFont}" FontSize="15" FontWeight="SemiBold"
-                                                                         VerticalAlignment="Center" TextWrapping="Wrap"
-                                                                         ToolTip="Selectable, but AMS2 can't paste it; use the tick instead">
-                                                                    <TextBox.Style>
-                                                                        <Style TargetType="TextBox">
-                                                                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
-                                                                            <Style.Triggers>
-                                                                                <DataTrigger Binding="{Binding IsChecked}" Value="True">
-                                                                                    <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
-                                                                                </DataTrigger>
-                                                                            </Style.Triggers>
-                                                                        </Style>
-                                                                    </TextBox.Style>
-                                                                </TextBox>
-                                                            </Grid>
-                                                        </CheckBox>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+                            <!-- sectioned checklist as compact cards: outer = Race-Day sections
+                                 (Event / Practice / Qualifying / Race / Rules) flowed two-up by a
+                                 wrap panel so the list reads in columns instead of one tall scroll,
+                                 inner = the tickable rows. Grouping is done in the viewmodel
+                                 (Sections), so this stays a plain nested ItemsControl with no
+                                 grouping CollectionViewSource. Label column is shared-size Auto so
+                                 long labels never clip at 130% scale. -->
+                            <Grid Grid.IsSharedSizeScope="True">
+                                <ItemsControl ItemsSource="{Binding Sections}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border MinWidth="290" MaxWidth="380" Margin="0,0,12,10" Padding="12,8"
+                                                    Background="{DynamicResource SurfaceAltBrush}" CornerRadius="6">
+                                                <StackPanel>
+                                                    <!-- section header; collapses for an ungrouped (empty-title) section -->
+                                                    <TextBlock Text="{Binding Title}" Style="{StaticResource Faint}"
+                                                               FontSize="10.5" FontWeight="SemiBold" Margin="0,0,0,3"
+                                                               ToolTip="AMS2 custom-race screen section"
+                                                               Visibility="{Binding Title, Converter={StaticResource StringVisible}}" />
+                                                    <ItemsControl ItemsSource="{Binding Items}">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <!-- the whole row is the toggle hit-target -->
+                                                                <CheckBox IsChecked="{Binding IsChecked}" Margin="0,0"
+                                                                          HorizontalContentAlignment="Stretch"
+                                                                          ToolTip="Click to tick this setting off (ticks reset each round)">
+                                                                    <Grid Margin="4,0,0,0">
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="Auto" MinWidth="104" SharedSizeGroup="ChecklistLabel" />
+                                                                            <ColumnDefinition Width="*" />
+                                                                        </Grid.ColumnDefinitions>
+                                                                        <TextBlock Grid.Column="0" Text="{Binding Label}" Margin="0,0,10,0"
+                                                                                   Style="{StaticResource Muted}" FontSize="12.5" VerticalAlignment="Center" />
+                                                                        <!-- big glanceable value; read-only TextBox keeps it selectable -->
+                                                                        <TextBox Grid.Column="1" Text="{Binding Value, Mode=OneWay}"
+                                                                                 IsReadOnly="True" IsTabStop="False"
+                                                                                 BorderThickness="0" Background="Transparent" Padding="0"
+                                                                                 FontFamily="{StaticResource MonoFont}" FontSize="13.5" FontWeight="SemiBold"
+                                                                                 VerticalAlignment="Center" TextWrapping="Wrap"
+                                                                                 ToolTip="Selectable, but AMS2 can't paste it; use the tick instead">
+                                                                            <TextBox.Style>
+                                                                                <Style TargetType="TextBox">
+                                                                                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+                                                                                    <Style.Triggers>
+                                                                                        <DataTrigger Binding="{Binding IsChecked}" Value="True">
+                                                                                            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+                                                                                        </DataTrigger>
+                                                                                    </Style.Triggers>
+                                                                                </Style>
+                                                                            </TextBox.Style>
+                                                                        </TextBox>
+                                                                    </Grid>
+                                                                </CheckBox>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
 
                             <WrapPanel Margin="0,12,0,0">
                                 <Button Content="Copy summary" Margin="0,0,10,8"

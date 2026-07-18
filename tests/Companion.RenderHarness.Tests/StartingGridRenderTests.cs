@@ -235,23 +235,23 @@ public sealed class StartingGridRenderTests
             var positionMarker = Assert.IsType<Border>(
                 firstSlot.ContentTemplate.FindName("SmgpPositionMarker", firstSlot));
             Assert.True(firstSlot.ActualWidth >= 175);
-            Assert.Equal(148, card.ActualHeight);
+            Assert.Equal(190, card.ActualHeight);
             Assert.Equal(new Thickness(3, 3, 3, 67), card.Margin);
-            Assert.Equal(62, portrait.ActualWidth);
-            Assert.Equal(62, portrait.ActualHeight);
+            Assert.Equal(84, portrait.ActualWidth);
+            Assert.Equal(84, portrait.ActualHeight);
             Assert.Equal(new Thickness(3), portraitOutline.BorderThickness);
             Assert.Equal(90, visuals.ColumnDefinitions[0].ActualWidth);
             Assert.Equal(0, Grid.GetColumn(portrait));
             Assert.Equal(2, Grid.GetColumn(carBay));
-            Assert.Equal(170, carBayOutline.MaxWidth);
+            Assert.Equal(208, carBayOutline.MaxWidth);
             Assert.Equal(HorizontalAlignment.Stretch, carBayOutline.HorizontalAlignment);
             Assert.True(carBay.ActualWidth >= 85,
                 $"Expected a usable compact car bay, measured {carBay.ActualWidth:0.##}px in a {firstSlot.ActualWidth:0.##}px slot.");
             Assert.True(carBay.ActualWidth <= firstSlot.ActualWidth);
             var rotation = Assert.IsType<RotateTransform>(car.LayoutTransform);
             Assert.Equal(0, rotation.Angle);
-            Assert.Equal(108, car.Width);
-            Assert.Equal(158, car.Height);
+            Assert.Equal(150, car.Width);
+            Assert.Equal(220, car.Height);
             var carCenterX = car.TranslatePoint(new Point(car.ActualWidth / 2, 0), carBay).X;
             var outlineCenterX = carBayOutline.TranslatePoint(
                 new Point(carBayOutline.ActualWidth / 2, 0), carBay).X;
@@ -261,8 +261,8 @@ public sealed class StartingGridRenderTests
             AssertTeamAccent(timingCard.BorderBrush, vm.Slots[0].TeamColor, vm.Slots[0].TeamSecondaryColor);
             AssertTeamAccent(positionMarker.Background, vm.Slots[0].TeamColor, vm.Slots[0].TeamSecondaryColor);
             Assert.NotNull(logo.Source);
-            Assert.Equal(12.5, driverName.FontSize);
-            Assert.Equal(10.5, teamName.FontSize);
+            Assert.Equal(15, driverName.FontSize);
+            Assert.Equal(12.5, teamName.FontSize);
             Assert.True(positionMarker.ActualWidth >= 56);
             Assert.Equal(44, flag.ActualWidth);
             Assert.Equal(30, flag.ActualHeight);
@@ -276,8 +276,8 @@ public sealed class StartingGridRenderTests
             var portraitTop = portrait.TranslatePoint(new Point(0, 0), visuals).Y;
             var flagTop = flag.TranslatePoint(new Point(0, 0), visuals).Y;
             Assert.InRange(positionTop, -0.5, 0.5);
-            Assert.InRange(portraitTop, 31.5, 32.5);
-            Assert.InRange(flagTop, 99.5, 100.5);
+            Assert.InRange(portraitTop, 37.5, 38.5);
+            Assert.InRange(flagTop, 131.5, 132.5);
             Assert.True(positionTop + positionMarker.ActualHeight < portraitTop,
                 "The position card must sit above the portrait without overlap.");
             Assert.True(portraitTop + portrait.ActualHeight < flagTop,
@@ -291,7 +291,7 @@ public sealed class StartingGridRenderTests
             var secondStagger = Assert.IsType<TranslateTransform>(secondSlot.RenderTransform);
             Assert.Equal(130, secondStagger.Y);
             Assert.InRange(secondTop - firstTop, 129.5, 130.5);
-            Assert.InRange(thirdTop - firstTop, 217.5, 218.5);
+            Assert.InRange(thirdTop - firstTop, 259.5, 260.5);
 
             var playerSlot = Assert.IsType<ContentPresenter>(slots.ItemContainerGenerator.ContainerFromIndex(19));
             var playerFlag = Assert.IsAssignableFrom<FrameworkElement>(
@@ -427,12 +427,12 @@ public sealed class StartingGridRenderTests
                 firstSlot.ContentTemplate.FindName("SmgpCarBay", firstSlot));
             var carBayOutline = Assert.IsType<Border>(
                 firstSlot.ContentTemplate.FindName("SmgpGridBayOutline", firstSlot));
-            Assert.InRange(carBayOutline.ActualWidth, 169.5, 170.5);
+            Assert.InRange(carBayOutline.ActualWidth, 207.5, 208.5);
             var originalOutlineCap = carBay.MaxWidth
                                      - carBayOutline.Margin.Left
                                      - carBayOutline.Margin.Right;
             var configuredReduction = 1 - carBayOutline.MaxWidth / originalOutlineCap;
-            Assert.InRange(configuredReduction, 0.31, 0.34);
+            Assert.InRange(configuredReduction, 0.34, 0.36);
         });
     }
 

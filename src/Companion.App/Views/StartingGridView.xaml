@@ -78,7 +78,7 @@
         <!-- One live overlay slot. The venue is one authored background plate; this template keeps
              every changing element (box, portrait, car, flag, number and name) crisp and data-bound. -->
         <DataTemplate x:Key="SmgpGridSlot">
-            <Border x:Name="SmgpGridSlotCard" Height="148" Margin="3,3,3,67" CornerRadius="4"
+            <Border x:Name="SmgpGridSlotCard" Height="190" Margin="3,3,3,67" CornerRadius="4"
                     UseLayoutRounding="True" RenderOptions.BitmapScalingMode="NearestNeighbor">
                 <Border.Style>
                     <Style TargetType="Border">
@@ -89,7 +89,7 @@
 
                     <Grid x:Name="SmgpDriverVisuals" Margin="2">
                     <Grid.ColumnDefinitions>
-                        <!-- The 62px portrait grows to 65px for YOU. Keep the whole transformed
+                        <!-- The 84px portrait grows to 88px for YOU. Keep the whole transformed
                              frame inside its own rail so the right edge is never clipped. -->
                         <ColumnDefinition Width="90" />
                         <ColumnDefinition Width="6" />
@@ -98,8 +98,8 @@
 
                     <!-- The classic open-bottom grid marking with its short centre cap. -->
                     <Grid x:Name="SmgpCarBay" Grid.Column="2" Margin="0,0,2,0"
-                          MaxWidth="260" HorizontalAlignment="Stretch">
-                        <Border x:Name="SmgpGridBayOutline" Margin="4,1,4,2" MaxWidth="170"
+                          MaxWidth="330" HorizontalAlignment="Stretch">
+                        <Border x:Name="SmgpGridBayOutline" Margin="5,1,5,2" MaxWidth="208"
                                 HorizontalAlignment="Stretch" CornerRadius="2,2,0,0">
                             <Border.Style>
                                 <Style TargetType="Border">
@@ -119,7 +119,7 @@
 
                         <!-- Grid-only overhead sprites live beside the other SMGP presentation art;
                              the shared cars/ folder remains the original side-view preview set. -->
-                        <Image x:Name="SmgpCarImage" Width="108" Height="158" Margin="0,-12,0,6"
+                        <Image x:Name="SmgpCarImage" Width="150" Height="220" Margin="0,-18,0,10"
                                Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"
                                RenderOptions.BitmapScalingMode="NearestNeighbor"
                                Source="{Binding CarKey, Mode=OneWay, Converter={StaticResource AssetImage}, ConverterParameter=smgp/grid-cars|cars}"
@@ -144,16 +144,16 @@
                                     <ColumnDefinition Width="60" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Image x:Name="SmgpTeamLogoImage" Width="40" Height="40"
+                                <Image x:Name="SmgpTeamLogoImage" Width="52" Height="52"
                                        Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,4,0"
                                        Style="{StaticResource TeamLogoImage}"
                                        Source="{Binding TeamId, Mode=OneWay, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
                                        Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                     <TextBlock x:Name="SmgpDriverName" Text="{Binding DriverNameUpper, Mode=OneWay}"
-                                               FontWeight="Bold" FontSize="12.5"
+                                               FontWeight="Bold" FontSize="15"
                                                TextTrimming="CharacterEllipsis" ToolTip="{Binding DriverName, Mode=OneWay}" />
-                                    <TextBlock x:Name="SmgpTeamName" Text="{Binding TeamNameUpper, Mode=OneWay}" FontSize="10.5"
+                                    <TextBlock x:Name="SmgpTeamName" Text="{Binding TeamNameUpper, Mode=OneWay}" FontSize="12.5"
                                                FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}"
                                                TextTrimming="CharacterEllipsis" ToolTip="{Binding TeamName, Mode=OneWay}" />
                                 </StackPanel>
@@ -175,8 +175,8 @@
 
                     <!-- Portraits carry the human hierarchy beside the larger horizontal car. The
                          player's frame gets one further scale step so YOU reads before the machinery. -->
-                    <Grid x:Name="SmgpPortraitFrame" Width="62" Height="62" Grid.Column="0"
-                           Margin="0,32,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
+                    <Grid x:Name="SmgpPortraitFrame" Width="84" Height="84" Grid.Column="0"
+                           Margin="0,38,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
                            RenderTransformOrigin="0,0" Panel.ZIndex="4">
                         <Grid.Style>
                             <Style TargetType="Grid">
@@ -237,7 +237,7 @@
                     <!-- AI nationality remains driver-keyed; the player receives their immutable
                          country flag key. Legacy/null keys collapse only after asset resolution. -->
                     <Grid x:Name="SmgpFlagFrame" Grid.Column="0" Width="44" Height="30"
-                          Margin="0,100,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
+                          Margin="0,132,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
                           Visibility="{Binding ElementName=SmgpFlagImage, Path=Source, Mode=OneWay, Converter={StaticResource NullCollapsed}}">
                         <Image x:Name="SmgpFlagImage" Stretch="Uniform"
                                RenderOptions.BitmapScalingMode="NearestNeighbor"
