@@ -83,8 +83,81 @@ driver-facing surface must therefore resolve team identity from the CURRENT seat
 
 ## 4. Inventory
 
-Filled from the four audit lanes (data files, code consumers, lore content,
-docs/tests). Tables use: Location | System | Current value | Correct canonical
-value | Problem type | Severity | Required action | Migration risk | Status.
+Four audit lanes (data files, code consumers, lore content, docs/tests) completed
+2026-07-18. The findings below drive the implementation lanes; the Status column is
+kept current as lanes finish.
 
-PENDING: lane results.
+### 4.1 Identity sources and registries
+
+| Location | System | Current value | Canonical value | Severity | Action | Status |
+|---|---|---|---|---|---|---|
+| packs/smgp-1/teams.json | Pack roster | 24 teams, ids team.<name>, display names, vehicles | Matches canon 24/24 | - | None; parity pinned by SmgpCanonLockTests | Verified |
+| packs/smgp-1/entries.json | Grid assignments | 34 entries (driver/team/number/livery) | Unchanged (season-1 seats) | - | None; reshuffle permutes by design | Verified |
+| data/rules/car-specs.json | Car-spec cards | "MP4/5B"/"Honda V10" row backing team.iris + team.azalea; 4 generic Type G3-Mx rows for 22 teams | Canon names via registry overlay | C1 | CarSpecCatalog.WithSmgpCanon overlay (real-F1 rows kept for real-F1 careers) | Fixed |
+| data/rules/smgp/canon.json | Canon registry | Created this mission: 24 teams, 17 engines, aliases, smgp-24-v1 | Is the registry | - | SmgpCanon model + Validate() + CareerRulesData wiring | Verified |
+| data/rules/newsroom/038-smgp-canon.json | Divergence cards | "Canon" in the venue-legend sense, not identity | Unrelated | - | None | Verified |
+| tools/author_smgp.cs, docs/PROJECT.md:274, packs/smgp-1/pack.json notes | Authoring/docs | "22 teams" (SEGA base) wording | "22 SEGA-base + 2 Kobra Fleetworks = 24" | C8 | Reword at docs lane | Open |
+
+### 4.2 Contamination scan (SMGP scope)
+
+| Location | Finding | Severity | Action | Status |
+|---|---|---|---|---|
+| data/rules/smgp/dispatches.json:111 | "out of F1 SMGP" in user-facing copy | C4 | Reworded to "out of the SMGP World Championship" | Fixed |
+| data/rules/smgp/car-specs.json consumers | Real-world MP4/5B + Honda V10 shown on SMGP dossier cards | C1 | Canon overlay | Fixed |
+| Lotus / Azelia / Azalia / Azaleah in data/packs SMGP scope | ZERO hits (Lotus hits are all packs/f1-* + liveries.json real-world, untouched by policy) | - | Alias normalization still lands for loads/imports/saves | In lane |
+| Real-driver surnames / Ferrari / McLaren / Williams / FIA in SMGP lore prose | ZERO hits (fictional A. Senna is canon and stays) | - | None | Verified |
+| packs/smgp-1/season.json realVenue fields | Real circuit names by design (Imola etc); Imola's full name contains "Ferrari" | - | By design (track mapping, not constructor lore) | Verified |
+| packs/smgp-1 teams.json mclaren_mp45b vehicle ids | Technical AMS2 binding for Iris/Azalea, by design | - | None | Verified |
+
+### 4.3 Driver-swap alignment map (the triggering bug)
+
+Aligned today (verified, no work): paddock card TeamId/TeamName and car art
+(a52e6b9), paddock team rosters, driver + constructor standings (persisted
+ConstructorId folded from the reshuffled grid), starting grid (GridCarArtKeyForLivery),
+result entry, calendar DNQ, wizard (season-1 authored, correct by definition),
+promotion/demotion screen, season review offers, rival option lists, depth/stats
+builders (driverId-keyed), persisted SmgpState (livery strings + driver ids, no
+display names), debug season advance (normal fold path), history archive player
+identity (explicitly current-team by design, labelled as such).
+
+| Surface | File:line | Problem | Severity | Action | Status |
+|---|---|---|---|---|---|
+| Driver bios + quotes (34/34 name teams, colors, numbers, tiers, teammates as present-tense static prose; 28/34 quotes too) | data/rules/smgp/driver-profiles.json -> CareerSessionService.cs:2281-2283 -> PaddockView.xaml:152,299,319,550 | Season-1 seat asserted as current identity next to the reshuffled team label | C4 | Lore lane: time-stable rewrite (origin/personality framing, no present-tense seat claims) + card gains a live current-status line from state | In lane |
+| Team histories name canon drivers as the house's drivers (Senna x24, Ceara x26 mentions) | data/rules/smgp/team-profiles.json -> SmgpTeamCard | Season-1 roster asserted as timeless | C4 | Reframe as season-1 opening canon in copy; roster block already live | In lane |
+| Season lore AI pairings ("Bruno Salgado's wet-brave purple Iris") literal by design | data/rules/smgp/seasons.json + SmgpSeasonLore.cs:74-78 | Contradicts reshuffled seats wherever long-form lore surfaces | C4 | Opening-canon framing where surfaced; narrative bible already sanctions season-1 truth | In lane |
+| Rival quotes name season-1 teams (12 hits) | data/rules/smgp/rival-quotes.json | Same class | C4 | Lore lane rewrite | In lane |
+| Milestone dispatch {team} always names the CURRENT team, even for past-season beats (26 templates) | CareerSessionService.cs:3122,3141 | First-win-in-season-1 story in season 3 names the season-3 team | C4 | Fill {team} from the beat's per-round SeatTeamName | Open |
+| World-story + newsroom AI-winner teams for PAST seasons resolve via the pinned season-1 pack | CareerSessionService.cs:3340-3347,3384,3396; CareerSessionService.Newsroom.cs:425-438 | Past-season team names/art season-1-static even when the driver moved | C4 | Resolve from the stored envelope entry's ConstructorId (folded truth) | Open |
+| Skins view car art follows the reshuffled driverId (cars/<driverId>.png) | SkinsViewModel.cs:286-300 + SkinsView.xaml:318,389 | Same physical-car bug class as the paddock fix | C4 | Route through GridCarArtKeyForLivery | Open |
+| Dossier TeamLine / PlayerTeamName() / PlayerCarSpec() | DossierViewModel.cs:508-511; CareerSessionService.cs:1863-1883 | CurrentTeamId updates only at season boundaries; stale after a mid-season seat swap | C4 | Resolve the team line from the live SMGP seat livery in SMGP careers | Open |
+
+### 4.4 Content inventory (lore lane)
+
+- 34/34 driver bios are 3-paragraph, finished, no placeholders; team-name mentions
+  universal (2-8 teams per bio), colors/car numbers/tiers/teammates hard-coded.
+- 24/24 team profiles: motto + 5-paragraph history (avg ~525 words) + 4 quotes; no
+  roster field (joined live). Canon driver names inside histories.
+- 17/17 season identities: title/subtitle/era/overview/preseason/technical/safety/
+  themes/timeline/arcs/hooks/contenders/milestones; ~22.5k words; {playerTeam} token
+  with WithPlayerTeam projection. Gen-3/G3Mx chassis vocabulary only; zero
+  car/engine canon names (greenfield before this mission).
+- what-really-happened.json: 16 venue almanac entries, pre-career historical fiction,
+  aligned by design.
+- News: smgp.json era corpus (8 pools, 10 body keys, smgp+default variants),
+  dispatches.json (24 template groups), newsroom packs (264 templates, era-switched
+  pools, no mode field; routing via PreferredEra="smgp" sentinel years 9000-9099;
+  ModeNarrativeIsolationTests guard separation).
+- Placeholders: none anywhere in SMGP content (only legitimate isPlaceholder round
+  flags for 3 reproduced circuits).
+- Car dossiers / engine dossiers / 408 team-season capsules: DO NOT EXIST yet.
+  Greenfield authoring lanes.
+
+### 4.5 Tests and docs state
+
+- SmgpWorldCompletenessTests pins 24 teams/34 drivers/34 entries/16 rounds + art.
+  SmgpCanonLockTests (this mission) pins the 408 identity lock, exactness rules,
+  alias normalization, pack parity, registry Validate().
+- Lane rules (docs/dev/codex-head-of-coding.md / codex-head-of-gui.md): logic in
+  Core/ViewModels/Data, presentation in App. This mission runs under direct owner
+  instruction with both lanes coordinated here, as with the playtest batch.
+- docs/reports/ created for the final report.
