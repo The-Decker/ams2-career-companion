@@ -109,6 +109,124 @@ public sealed class SmgpMultiSeasonDnqTests : IDisposable
     }
 
     [Fact]
+    public void MilestoneDispatches_NameTheBeatTimeTeam_NotTheCurrentTeam()
+    {
+        string packDirectory = Path.Combine(PacksRoot, "smgp-dnq-ladder");
+        TestPackBuilder.Write(DnqLadderPack(), packDirectory);
+
+        using (var session = CareerSessionService.CreateCareer(new CareerCreationRequest
+        {
+            PackDirectory = packDirectory,
+            CareerFilePath = CareerPath,
+            CareerName = "Dispatch Teams",
+            MasterSeed = Seed,
+            PlayerLiveryName = SeatC,
+            SmgpMode = true,
+        }, Environment()))
+        {
+            // Two wins over driver.a, then accept the deferred offer on the promotion screen:
+            // the player leaves team.c for team.a (SeatA) mid-season, the clean two-wins swap.
+            ApplyPlayerFirst(session, new SmgpRivalCall { RivalDriverId = "driver.a" });
+            ApplyPlayerFirst(session, new SmgpRivalCall { RivalDriverId = "driver.a" });
+            Assert.NotNull(session.CurrentSmgpPendingOffer());
+            session.ResolveSmgpOffer(accept: true);
+            Assert.Equal("team.a", session.CurrentSmgpTeamId());
+
+            while (!session.Summary.SeasonComplete)
+                ApplyRound(session);
+            var review = session.SeasonReview();
+            Assert.NotNull(review);
+            session.AcceptOffer(review!.Offers[0].TeamId);
+            var vm = new SeasonReviewViewModel(session);
+            vm.SignAndContinueCommand.Execute(null);
+            Assert.Null(vm.TransitionError);
+        }
+        Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+
+        using var s2 = CareerSessionService.OpenCareer(CareerPath, Environment());
+        Assert.Equal("team.a", s2.CurrentSmgpTeamId());
+
+        // The season-1 early beats (first start, first points, the win) keep team.c, the seat
+        // raced at the time; the promotion beat names the destination, team.a. None of it is
+        // rewritten to the current team on a season-2 read.
+        var seasonOneMilestones = s2.SmgpDispatches()
+            .Where(d => d.Kind == SmgpDispatchKind.Milestone &&
+                        d.WhenLabel.Contains("Season 1", StringComparison.Ordinal))
+            .ToList();
+        Assert.NotEmpty(seasonOneMilestones);
+        Assert.Contains(seasonOneMilestones,
+            d => d.Body.Contains("team.c", StringComparison.Ordinal) &&
+                 !d.Body.Contains("team.a", StringComparison.Ordinal));
+        Assert.Contains(seasonOneMilestones, d => d.Body.Contains("team.a", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void SeasonThree_WorldFeed_CreditsTheFoldTimeTeam_ForReshuffledDrivers()
+    {
+        SeasonPack pinned = PlaySeasonOneAndSign();
+        PlaySeasonTwoAndSign();
+
+        using var s3 = CareerSessionService.OpenCareer(CareerPath, Environment());
+
+        // Fold-time truth for season 2: the stored envelopes' ConstructorId per driver. At least
+        // one season-2 starter must sit somewhere other than the pinned pack's authored seat,
+        // or the scenario proves nothing about the reshuffle.
+        var foldedTeam = new Dictionary<string, string>(StringComparer.Ordinal);
+        using (var db = CareerDatabase.Open(CareerPath))
+        {
+            long seasonTwoId = CareerStore.ReadSeasons(db)[1].Id;
+            foreach (var stored in ResultStore.ReadSeasonResults(db, seasonTwoId))
+            {
+                var envelope = stored.ToEnvelope();
+                var race = envelope.Result.Sessions
+                    .FirstOrDefault(x => x.Kind == SessionKind.Race)
+                    ?? envelope.Result.Sessions.FirstOrDefault();
+                foreach (var entry in race?.Entries ?? [])
+                    if (entry.ConstructorId is { Length: > 0 } cid)
+                        foldedTeam[entry.DriverId] = cid;
+            }
+        }
+        var authoredTeam = pinned.Entries
+            .GroupBy(e => e.DriverId, StringComparer.Ordinal)
+            .ToDictionary(g => g.Key, g => g.First().TeamId, StringComparer.Ordinal);
+        Assert.Contains(foldedTeam, kv =>
+            authoredTeam.TryGetValue(kv.Key, out string? authored) && authored != kv.Value);
+
+        var seasonTwoWorld = s3.SmgpDispatches()
+            .Where(d => d.SortSeason == 2 && d.TeamArtKey.Length > 0)
+            .ToList();
+        Assert.NotEmpty(seasonTwoWorld);
+        foreach (var dispatch in seasonTwoWorld)
+        {
+            string subjectId = dispatch.DriverArtKey;
+            Assert.True(foldedTeam.TryGetValue(subjectId, out string? expected),
+                $"world dispatch subject '{subjectId}' has no folded season-2 team");
+            Assert.Equal(expected, dispatch.TeamArtKey);
+        }
+    }
+
+    [Fact]
+    public void SeasonTwo_SkinsRows_ShowThePhysicalCar_NotTheReshuffledDriversOldCar()
+    {
+        SeasonPack pinned = PlaySeasonOneAndSign();
+
+        using var s2 = CareerSessionService.OpenCareer(CareerPath, Environment());
+        var authoredDriverByLivery = pinned.Entries
+            .GroupBy(e => e.Ams2LiveryName, StringComparer.Ordinal)
+            .ToDictionary(g => g.Key, g => g.First().DriverId, StringComparer.Ordinal);
+        var moved = s2.Pack.Entries.FirstOrDefault(e =>
+            authoredDriverByLivery.TryGetValue(e.Ams2LiveryName, out string? authored) &&
+            !string.Equals(authored, e.DriverId, StringComparison.Ordinal));
+        Assert.NotNull(moved); // the winter reshuffle must really move someone
+
+        var vm = new Companion.ViewModels.Hub.SkinsViewModel(s2);
+        var row = Assert.Single(vm.Cars, c =>
+            string.Equals(c.LiveryName, moved!.Ams2LiveryName, StringComparison.Ordinal));
+        Assert.Equal(authoredDriverByLivery[moved!.Ams2LiveryName], row.CarKey);
+        Assert.NotEqual(moved.DriverId, row.CarKey);
+    }
+
+    [Fact]
     public void LegacyCareer_WithoutStandingsReshuffle_KeepsAuthoredEntries_AndReplaysByteIdentical()
     {
         string packDirectory = Path.Combine(PacksRoot, "smgp-dnq-ladder");
@@ -454,6 +572,29 @@ public sealed class SmgpMultiSeasonDnqTests : IDisposable
         return pinned;
     }
 
+    /// <summary>Plays season 2 of the save PlaySeasonOneAndSign leaves behind, then signs the
+    /// season-3 offer, so the career reopens into season 3 with two folded seasons behind it.</summary>
+    private void PlaySeasonTwoAndSign()
+    {
+        using (var session = CareerSessionService.OpenCareer(CareerPath, Environment()))
+        {
+            while (!session.Summary.SeasonComplete)
+                ApplyRound(session);
+
+            var review = session.SeasonReview();
+            Assert.NotNull(review);
+            Assert.NotEmpty(review!.Offers);
+            var next = session.NextSeason();
+            Assert.NotNull(next);
+            session.AcceptOffer(review.Offers[0].TeamId);
+
+            var vm = new SeasonReviewViewModel(session);
+            vm.SignAndContinueCommand.Execute(null);
+            Assert.Null(vm.TransitionError);
+        }
+        Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+    }
+
     /// <summary>Applies one round in resolved-grid order (the DNQ field determines who is present;
     /// the player is always cap-protected).</summary>
     private static void ApplyRound(ICareerSession session)
@@ -478,6 +619,23 @@ public sealed class SmgpMultiSeasonDnqTests : IDisposable
             Classified = classified,
             DidNotFinish = new Dictionary<string, string>(),
             Disqualified = [],
+        });
+    }
+
+    /// <summary>Applies one round with the player first and an optional rival call attached, the
+    /// two-wins ladder driver.</summary>
+    private static void ApplyPlayerFirst(ICareerSession session, SmgpRivalCall? rival)
+    {
+        var others = session.CurrentGrid()
+            .Select(s => s.DriverId)
+            .Where(id => !string.Equals(id, PlayerId, StringComparison.Ordinal))
+            .ToList();
+        session.Apply(new ResultDraft
+        {
+            Classified = new List<string> { PlayerId }.Concat(others).ToList(),
+            DidNotFinish = new Dictionary<string, string>(),
+            Disqualified = [],
+            SmgpRival = rival,
         });
     }
 

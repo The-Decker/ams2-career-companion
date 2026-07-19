@@ -422,18 +422,23 @@ public sealed partial class CareerSessionService
                 bool scoredThisRound = grossNow > previousGross;
                 previousGross = grossNow;
 
-                // Winner identity + team (entry covering this calendar round wins attribution).
+                // Winner identity + team. The stored envelope entry's ConstructorId is the
+                // fold-time truth (the fold ran on that season's grid), so a winter-reshuffled
+                // winner is credited to the team they actually drove for; the pack entries
+                // (season-1-authored for past seasons) are only the fallback.
                 var winnerRow = entries.FirstOrDefault(e => e.Status == FinishStatus.Classified && e.Position == 1);
                 string winnerId = winnerRow?.DriverId ?? "";
                 string winnerTeamId = "";
                 if (winnerId.Length > 0)
                 {
-                    winnerTeamId = seasonPack.Entries.FirstOrDefault(e =>
-                            string.Equals(e.DriverId, winnerId, StringComparison.Ordinal)
-                            && RoundsRange.TryParse(e.Rounds, out var range) && range.Contains(s.Round))?.TeamId
-                        ?? seasonPack.Entries.FirstOrDefault(e =>
-                            string.Equals(e.DriverId, winnerId, StringComparison.Ordinal))?.TeamId
-                        ?? "";
+                    winnerTeamId = winnerRow?.ConstructorId is { Length: > 0 } foldedTeam
+                        ? foldedTeam
+                        : seasonPack.Entries.FirstOrDefault(e =>
+                                string.Equals(e.DriverId, winnerId, StringComparison.Ordinal)
+                                && RoundsRange.TryParse(e.Rounds, out var range) && range.Contains(s.Round))?.TeamId
+                            ?? seasonPack.Entries.FirstOrDefault(e =>
+                                string.Equals(e.DriverId, winnerId, StringComparison.Ordinal))?.TeamId
+                            ?? "";
                 }
                 var winnerTeam = winnerTeamId.Length > 0 ? teamsById.GetValueOrDefault(winnerTeamId) : null;
 

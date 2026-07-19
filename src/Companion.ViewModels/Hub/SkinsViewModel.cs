@@ -158,7 +158,7 @@ public sealed partial class SkinsViewModel : ObservableObject
 
         Cars.Clear();
         foreach (var assignment in plan.Assignments)
-            Cars.Add(ToRow(assignment, authoredDriversByLivery));
+            Cars.Add(ToRow(assignment, authoredDriversByLivery, _session.GridCarArtKeyForLivery));
 
         int currentRound = _session.Summary.CurrentRound;
         DidNotQualify.Clear();
@@ -219,6 +219,10 @@ public sealed partial class SkinsViewModel : ObservableObject
         SelectedPositionLabel = index < 0 ? "" : $"CAR {index + 1} OF {Cars.Count}";
     }
 
+    /// <summary>Fallback art map for non-SMGP careers: the CURRENT occupant of each livery this
+    /// round. In an SMGP career the runtime pack is reshuffled, so this is NOT the authored
+    /// physical-car map; SMGP rows resolve through <see cref="ICareerSession.GridCarArtKeyForLivery"/>
+    /// first (the pre-reshuffle livery map) and only unmapped liveries land here.</summary>
     private IReadOnlyDictionary<string, string> BuildAuthoredDriversByLivery()
     {
         int round = _session.Summary.CurrentRound;
@@ -234,7 +238,8 @@ public sealed partial class SkinsViewModel : ObservableObject
 
     private static SkinRow ToRow(
         SkinAssignment assignment,
-        IReadOnlyDictionary<string, string> authoredDriversByLivery)
+        IReadOnlyDictionary<string, string> authoredDriversByLivery,
+        Func<string, string?> carArtKeyForLivery)
     {
         var (label, tone, detail) = assignment.Status switch
         {
@@ -279,14 +284,22 @@ public sealed partial class SkinsViewModel : ObservableObject
             PortraitKey = assignment.IsPlayer
                 ? GridSeatChoice.PlayerImageKey(assignment.TeamId)
                 : string.IsNullOrEmpty(assignment.DriverId) ? null : assignment.DriverId,
-            CarKey = ResolveCarKey(assignment, authoredDriversByLivery),
+            CarKey = ResolveCarKey(assignment, authoredDriversByLivery, carArtKeyForLivery),
         };
     }
 
+    /// <summary>Car art follows the physical livery, never the active driver: the SMGP winter
+    /// reshuffle moves drivers between cars, so a row's image is the car itself (the same
+    /// display-only pre-reshuffle mapping the starting grid and paddock use). The reshuffled
+    /// driver id and the current-occupant map are only the non-SMGP fallbacks.</summary>
     private static string? ResolveCarKey(
         SkinAssignment assignment,
-        IReadOnlyDictionary<string, string> authoredDriversByLivery)
+        IReadOnlyDictionary<string, string> authoredDriversByLivery,
+        Func<string, string?> carArtKeyForLivery)
     {
+        if (carArtKeyForLivery(assignment.LiveryName) is { } fixedCarKey)
+            return fixedCarKey;
+
         if (!string.IsNullOrEmpty(assignment.DriverId) &&
             !string.Equals(
                 assignment.DriverId,

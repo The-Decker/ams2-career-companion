@@ -1859,10 +1859,12 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     /// <summary>Shown for a distinct-driver player who left the wizard's pre-seeded name blank.</summary>
     private const string PlayerDefaultName = "You";
 
-    /// <summary>The name of the team the player currently drives for, or null when unknown.</summary>
+    /// <summary>The name of the team the player currently drives for, or null when unknown.
+    /// Inside SMGP the live seat wins (seat swaps move the player mid-season while the folded
+    /// CurrentTeamId only catches up at season boundaries); every other career reads the fold.</summary>
     public string? PlayerTeamName()
     {
-        string? teamId = CurrentPlayerState()?.CurrentTeamId;
+        string? teamId = CurrentSmgpTeamId() ?? CurrentPlayerState()?.CurrentTeamId;
         if (string.IsNullOrEmpty(teamId))
             return null;
         return Pack.Teams.FirstOrDefault(t => string.Equals(t.Id, teamId, StringComparison.Ordinal))?.Name ?? teamId;
@@ -1872,7 +1874,9 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     {
         if (_environment.RulesDirectory is null)
             return null;
-        string? teamId = CurrentPlayerState()?.CurrentTeamId;
+        // Same seat-first rule as PlayerTeamName: a mid-season SMGP swap must not leave the
+        // dossier's MACHINE block on the previous team.
+        string? teamId = CurrentSmgpTeamId() ?? CurrentPlayerState()?.CurrentTeamId;
         if (string.IsNullOrEmpty(teamId))
             return null;
         string? vehicle = Pack.Teams
@@ -3131,14 +3135,27 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         int milestoneSeq = 1_000_000, worldSeq = 0;
 
         // --- Player milestone dispatches (reuse the Task-2 beat detector; render a news body per beat) ---
-        foreach (var beat in Companion.Core.Smgp.SmgpCareerBeats.Detect(BuildSmgpNarrativeSeasons()))
+        var narrativeSeasons = BuildSmgpNarrativeSeasons();
+        foreach (var beat in Companion.Core.Smgp.SmgpCareerBeats.Detect(narrativeSeasons))
         {
             var (key, kind) = MapBeatToDispatch(beat);
             if (key is null)
                 continue;
             string venue = VenueFromWhenLabel(beat.WhenLabel);
             string rivalName = beat.SubjectId is { Length: > 0 } rid ? DriverDisplayName(rid) : "";
-            var tokens = DispatchTokens(playerName, playerTeam, rivalName, venue, beat.Season, 0,
+            // {team} names the team the player raced FOR at that beat, never today's seat: a
+            // maiden-win story from season 1 keeps its season-1 colours when read in season 4.
+            // Round beats take the round's seat; season-level beats (arrival, openers) take the
+            // season-start seat; the current team is only the fallback.
+            string beatTeam = playerTeam;
+            if (narrativeSeasons.FirstOrDefault(s => s.Ordinal == beat.Season) is { } beatSeason)
+            {
+                beatTeam = beatSeason.Rounds.FirstOrDefault(r => r.Round == beat.Round)?.SeatTeamName
+                    ?? beatSeason.StartSeatTeamName;
+                if (string.IsNullOrWhiteSpace(beatTeam))
+                    beatTeam = playerTeam;
+            }
+            var tokens = DispatchTokens(playerName, beatTeam, rivalName, venue, beat.Season, 0,
                 subject: "", other: "", leader: leaderName, benchmark: benchmarkName);
             var stream = factory.CreateStream(DispatchStream, beat.Season, beat.Round, key + "|" + beat.SubjectId);
             string body = corpus.Render(key, tokens, stream, fallback: beat.Detail);
@@ -3352,6 +3369,33 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                 .ToList();
             if (champStored.Count == 0)
                 continue;
+
+            // Fold-time team truth: every stored envelope entry carries ConstructorId, and the fold
+            // ran on THAT season's grid, so a driver who moved in a winter reshuffle is shown with
+            // the team they actually raced for that season (pack entries are season-1-authored for
+            // past seasons, so they are only the fallback for a driver with no stored entries).
+            var seasonTeam = new Dictionary<string, string>(StringComparer.Ordinal);
+            var roundTeam = new Dictionary<int, Dictionary<string, string>>();
+            foreach (var storedRound in champStored)
+            {
+                var env = storedRound.ToEnvelope();
+                var storedRace = env.Result.Sessions.FirstOrDefault(x => x.Kind == Companion.Core.Scoring.SessionKind.Race)
+                    ?? env.Result.Sessions.FirstOrDefault();
+                if (storedRace is null)
+                    continue;
+                var map = new Dictionary<string, string>(StringComparer.Ordinal);
+                foreach (var entry in storedRace.Entries)
+                    if (entry.ConstructorId is { Length: > 0 } constructorId)
+                    {
+                        map[entry.DriverId] = constructorId;
+                        seasonTeam[entry.DriverId] = constructorId;
+                    }
+                roundTeam[storedRound.Round] = map;
+            }
+            string TeamOf(string driverId, int round) =>
+                (roundTeam.GetValueOrDefault(round)?.GetValueOrDefault(driverId))
+                ?? seasonTeam.GetValueOrDefault(driverId)
+                ?? entryTeam.GetValueOrDefault(driverId, "");
             var scoring = ChampionshipCalendar.ResolveScoring(pack);
             var snapshots = StandingsEngine.ComputeSeason(scoring, champStored.Select(r => r.ToRoundResult()).ToList()).Snapshots;
             var snapByRound = snapshots.ToDictionary(s => s.AfterRound);
@@ -3381,7 +3425,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                             DriverId = Key(d.DriverId),
                             Name = WorldName(d.DriverId),
                             Points = (int)Math.Round(d.CountedPoints.ToDouble()),
-                            TeamId = entryTeam.GetValueOrDefault(d.DriverId, ""),
+                            TeamId = TeamOf(d.DriverId, r.Round),
                         });
 
                 result.Add(new Companion.Core.Smgp.SmgpWorldRound
@@ -3393,7 +3437,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                     SeasonRounds = champStored.Count,
                     WinnerId = winnerOrig is null ? null : Key(winnerOrig),
                     WinnerName = winnerOrig is null ? "" : WorldName(winnerOrig),
-                    WinnerTeamId = winnerOrig is not null ? entryTeam.GetValueOrDefault(winnerOrig, "") : "",
+                    WinnerTeamId = winnerOrig is not null ? TeamOf(winnerOrig, r.Round) : "",
                     Standings = standings,
                 });
             }
