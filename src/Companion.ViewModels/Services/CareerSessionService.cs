@@ -2420,9 +2420,11 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                     })
                     .ToList(),
                 Machine = machine,
-                // The seventeen-season arc (SMGP-024 capsules): the base universe's record of this
-                // team, one line per season, empty when no capsule data is installed.
+                // The seventeen-season arc (SMGP-024 capsules), revealed as the career plays:
+                // a season's capsule unlocks only AFTER that season is completed (Mike's rule:
+                // the future must not be spoiled at career start). Empty on a fresh season 1.
                 SeasonArc = _environment.Rules.SmgpSeasonCapsules.ForTeam(t.Id)
+                    .Where(entry => entry.Season <= _seasonOrdinal - (SeasonComplete ? 0 : 1))
                     .Select(entry => new SmgpTeamSeasonArcLine
                     {
                         Season = entry.Season,

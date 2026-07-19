@@ -69,8 +69,10 @@ current team or frame season-1 seats as origin, never as present fact.
   law to the Charter, Bullets-Dardan war to the handshake, Serga's
   whip-round, Blanche's champagne, Zeroforce's toast), no champion ever
   declared, the player never present.
-- Surfaces: paddock team card MACHINE section + THE SEVENTEEN SEASONS arc
-  (all 408 capsules reachable across the 24 team cards).
+- Surfaces: paddock team card MACHINE section + THE SEVENTEEN SEASONS arc.
+  Reveal rule (owner, 2026-07-19): a season's capsule unlocks only after the
+  career completes that season, so the 17-season story is never spoiled at
+  career start; the full 408 become reachable as the campaign plays out.
 
 ## Files added
 
@@ -136,9 +138,10 @@ spelling differences never create teams.
 
 ## Remaining known limitations (precise)
 
-1. The History tab has no dedicated per-season capsule view; all 408
-   capsules ARE reachable via the 24 paddock team cards' SEVENTEEN SEASONS
-   arc. A History-tab surface would be additive UI, not missing content.
+1. The History tab has no dedicated per-season capsule view; the capsules
+   reveal through the 24 paddock team cards' SEVENTEEN SEASONS arc as the
+   career completes each season (owner rule: no future spoilers). A
+   History-tab surface would be additive UI, not missing content.
    Not release-blocking.
 2. Season lore long-form prose (seasons.json) keeps canon driver/team
    pairings literal BY DESIGN (season-1 opening canon per the narrative

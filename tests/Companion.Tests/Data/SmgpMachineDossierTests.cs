@@ -54,12 +54,28 @@ public sealed class SmgpMachineDossierTests : IDisposable
             Assert.False(string.IsNullOrWhiteSpace(machine.EngineCharacter), $"{team.TeamId}: empty engine character");
             Assert.Equal(3, machine.EngineHistory.Count);
 
-            // The seventeen-season arc (SMGP-024 capsules) rides the same card.
-            Assert.Equal(17, team.SeasonArc.Count);
-            Assert.Equal(Enumerable.Range(1, 17), team.SeasonArc.Select(line => line.Season));
-            foreach (var line in team.SeasonArc)
-                Assert.False(string.IsNullOrWhiteSpace(line.Summary),
-                    $"{team.TeamId} s{line.Season}: empty arc summary");
+            // The seventeen-season arc reveals as the career completes seasons (Mike's rule):
+            // a fresh season-1 career shows no capsules yet, the future stays unspoiled.
+            Assert.Empty(team.SeasonArc);
+        }
+
+        // Play season 1 out: exactly one capsule line (S01) unlocks per team, no more.
+        while (!session.Summary.SeasonComplete)
+        {
+            var grid = session.CurrentGrid().Select(s => s.DriverId).ToList();
+            session.Apply(new ResultDraft
+            {
+                Classified = grid,
+                DidNotFinish = new Dictionary<string, string>(),
+                Disqualified = [],
+            });
+        }
+
+        foreach (var team in session.SmgpPaddock()!.Teams)
+        {
+            var arc = Assert.Single(team.SeasonArc);
+            Assert.Equal(1, arc.Season);
+            Assert.False(string.IsNullOrWhiteSpace(arc.Summary));
         }
     }
 
