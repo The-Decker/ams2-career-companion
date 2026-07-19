@@ -89,11 +89,30 @@ public sealed record CareerRulesData
     /// DISPLAY-ONLY, never a fold input; empty when the file is absent (the card then collapses).</summary>
     public required CarSpecCatalog CarSpecs { get; init; }
 
+    /// <summary>The SMGP car dossiers (<c>data\rules\smgp\car-dossiers.json</c>): each permanent
+    /// car's tagline, naming note, character paragraph, 3-paragraph history and quotes, keyed by
+    /// canon car id. DISPLAY-ONLY, never a fold input; empty when the file is absent (the dossier
+    /// surfaces then simply omit the car story).</summary>
+    public required SmgpCarDossiers SmgpCarDossiers { get; init; }
+
     /// <summary>The SMGP canonical identity registry (<c>data\rules\smgp\canon.json</c>): the ONE
     /// authoritative source for the 24 teams' permanent car and engine names across all 17 seasons
     /// (mission SMGP-024 canon lock). DISPLAY-ONLY reference data, never a fold input; empty when
     /// the file is absent (canon-aware surfaces then fall back to their legacy sources).</summary>
     public required Companion.Core.Smgp.SmgpCanon SmgpCanon { get; init; }
+
+    /// <summary>The SMGP engine dossiers (<c>data\rules\smgp\engine-dossiers.json</c>): each
+    /// permanent engine specification's tagline, naming note, character paragraph, 3-paragraph
+    /// history and quotes, keyed by canon engine id (shared engines carry one dossier each).
+    /// DISPLAY-ONLY, never a fold input; empty when the file is absent (the dossier surfaces then
+    /// simply omit the engine story).</summary>
+    public required SmgpEngineDossiers SmgpEngineDossiers { get; init; }
+
+    /// <summary>The SMGP team-season history capsules (<c>data\rules\smgp\capsules\sNN.json</c>):
+    /// the base universe's record of each team in each season (24 x 17 = 408), the world's own
+    /// arc with no player and no declared champions. DISPLAY-ONLY, never a fold input; empty when
+    /// the directory is absent.</summary>
+    public required Companion.Core.Smgp.SmgpSeasonCapsules SmgpSeasonCapsules { get; init; }
 
     /// <summary>The Grand Prix Dynasty owner-economy balance tables
     /// (<c>data\rules\dynasty\economy.json</c>), an OPTIONAL-MODE fold input: required for an
@@ -144,7 +163,10 @@ public sealed record CareerRulesData
             SmgpDispatchCorpus = SmgpDispatchCorpus.Load(rulesDirectory),
             DynastyEconomy = Companion.Core.Dynasty.DynastyEconomyRules.Load(rulesDirectory),
             CarSpecs = CarSpecCatalog.Load(rulesDirectory).WithSmgpCanon(smgpCanon),
+            SmgpCarDossiers = SmgpCarDossiers.Load(rulesDirectory),
             SmgpCanon = smgpCanon,
+            SmgpEngineDossiers = SmgpEngineDossiers.Load(rulesDirectory),
+            SmgpSeasonCapsules = Companion.Core.Smgp.SmgpSeasonCapsules.Load(rulesDirectory),
             NewsroomCorpus = Companion.Core.Newsroom.NewsroomCorpus.LoadDirectory(
                 Path.Combine(rulesDirectory, "newsroom")),
             NewsDesks = Companion.Core.Newsroom.NewsDesks.Load(

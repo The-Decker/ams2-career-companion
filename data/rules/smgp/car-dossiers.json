@@ -1,0 +1,389 @@
+{
+  "$comment": "SMGP-world car dossiers (tagline + naming note + character paragraph + 3-paragraph history + quotes), keyed by canon car id (madonna-456). DISPLAY-ONLY (never a fold input, exactly like team-profiles/driver-profiles/rival-quotes): shown on the SMGP dossier surfaces. Fully fictional SEGA universe. Canon (mission SMGP-024): the 24 permanent REGISTERED PROGRAM NAMES from canon.json; each name is the team's enduring program identity across all 17 seasons, spanning every chassis generation (the Gen-3 family, the frozen final spec, the Gen-4 horsepower dispensation) with annual development packages recorded separately, never a rename, never a suffix. The Gen-3 homologation freeze arc is respected: seasonal lore describes aero packages, reliability campaigns and setup craft, never new models. ASCII punctuation, no em dashes, authored to docs/content/SMGP_NARRATIVE_BIBLE.md voice.",
+  "cars": {
+    "madonna-456": {
+      "name": "MADONNA 456",
+      "team": "team.madonna",
+      "tagline": "THE CROWN IN METAL, FIRST AND FLAWLESS.",
+      "naming": "When the championship first opened its registry, the royal house entered its machine as program 456 in the founding ledger, and it has carried that number ever since. Kings do not renumber their thrones.",
+      "character": "The MADONNA 456 is the reference the whole grid is measured against, a car with no temperament at all, which in this paddock is the most expensive temperament there is. The aero platform is benign at every ride height, the mechanical grip deep and predictable, the brakes exact on lap one and identical on lap sixty. It is kind to its tyres without ever being slow, measured on fuel, over-engineered in cooling, and so tolerant of setup error that the garage's true work is done weeks before the circuit. In the wet it is serene, at high speed planted, through slow corners crisp, and it hands a driver the rarest confidence in the sport, the certainty that the machine will never be the reason he loses.",
+      "history": [
+        "The 456 was born with the house itself, the establishment team of the Super Monaco circuit, and from its first green flag it was built to a doctrine no rival has ever managed to copy: nothing on the car is new on race day. Every panel, every spring, every development package is proven in private until it is boring, and only then bolted onto the royal machine. The design philosophy is not speed but inevitability; the car is built to remove arguments, not to win them.",
+        "Its triumphs are the sport's furniture: six crowns and counting in the king's hands, wins filed away with a clerk's regularity, whole seasons where the only drama was the margin. Its crises are famous precisely because there are so few: the one alpine winter Elssler interrupted the dynasty, the sodden afternoons of the Wet Season when standing water made even the yellow-and-red machine look mortal, and the single mechanical cough in a decade that ran on the front page above the results. Defeat, in this garage, is treated as a clerical error, and corrected by the next hairpin.",
+        "Across all seventeen seasons the car has worn one registered name, MADONNA 456, recorded in the championship ledger as the house's permanent program identity while the machinery beneath it marched through the generations: the early Gen-3 line, the frozen final specification the whole era saluted at Monaco, and the horsepower dispensation that followed. Each winter's development package is filed against the same entry, the annual work of keeping a legend current. Rivals rename; the crown simply continues."
+      ],
+      "quotes": [
+        "The garage chief, wiping a spotless nose cone: 'Everyone else prepares a race car. We prepare the 456, and the stopwatch does the rest. When this machine coughs once in a decade it makes the front page; that is what preparation buys you.'",
+        "A rival principal, down the pit lane: 'You do not beat that car, you merely postpone it. It has no mood, no weakness, no bad morning. Racing the 456 is like arguing with the tide.'"
+      ]
+    },
+    "firenze-500": {
+      "name": "FIRENZE 500",
+      "team": "team.firenze",
+      "tagline": "THE SECOND THRONE, TURNED OUT LIKE A JEWEL.",
+      "naming": "The house counted five hundred families in the old merchant charter it still keeps in the trophy room, and the car carries their number the way it carries the heraldic lily, as lineage, not decoration.",
+      "character": "The FIRENZE 500 is a connoisseur's instrument, balanced like a duet and finished like a reliquary. On tight, twisting rounds it is the class of the world, all steering feel and patience, tyres nursed like jewels and brakes finessed rather than bludgeoned. On the power cathedrals the garage trims the wing to nothing and runs the famous low-drag gamble, which is glorious when it holds and expensive when the road runs out of room. It is quick in the wet with a brave man aboard, though it prefers a dry line and a clean floor; at high speed it is daring rather than planted, and its one cruelty is that the limit arrives with opera-house drama and very little warning.",
+      "history": [
+        "The 500 predates the ladder it sits on: the house was winning before the sport had a name for winning, and the car has always been treated less as equipment than as a masterpiece under continuous restoration. Its design philosophy is elegance as engineering, that a machine turned out perfectly will run perfectly, and that breeding is a performance part no wind tunnel can measure.",
+        "Its triumphs are the tight-circuit masterclasses, pole minted on Saturday and track position hoarded on Sunday, Germi's festival wins that emptied wine into the aisles, and above all the one alpine winter Elssler carried the wine-dark jewel all the way to a title, the single crown the eternal second house is not supposed to be able to steal. Its failures are equally storied: the low-drag gambles that speared into the scenery for want of an ounce more downforce, and the perennial agony of finishing the season one serene length behind the crown.",
+        "The registered name FIRENZE 500 has never changed across the seventeen seasons, an enduring program identity recorded in the championship ledger while the generations turned beneath it, from the early Gen-3 line through the frozen final specification and into the horsepower era. The house files each year's development package against the same entry and would consider a rename a kind of death; aristocrats do not change their names, they inherit them."
+      ],
+      "quotes": [
+        "The Firenze garage, polishing the lily on the cowl: 'We do not build this car, signori, we restore it, every winter, forever. Give the 500 a clean floor and a fast lap and it will make the whole grid weep.'",
+        "A Madonna pit-wall voice, dryly: 'The most beautiful thing in our mirrors, season after season. We do so enjoy the view of it behind us.'"
+      ]
+    },
+    "millions-189": {
+      "name": "MILLIONS 189",
+      "team": "team.millions",
+      "tagline": "THE FASTEST THING A CHEQUEBOOK CAN INVOICE.",
+      "naming": "Purchase order 189 was the first invoice the founding fortune ever wrote to the sport, framed now in the team lobby in gold leaf. The car wears the number because, at Millions, even the identity was bought and paid for.",
+      "character": "The MILLIONS 189 is the deepest pockets on the grid made visible, every component the finest that can be purchased and several that had to be invented first. The engine is ferocious, the brakes immense, the aero whatever the sharpest bought minds said was fastest this month. It is genuinely quick everywhere, though it drinks fuel when driven at full volume, runs hot when chased, and has a reputation for arriving at the sharp end of a season with more parts than patience. In the wet it is fast but unconvinced; at high speed it is a serious weapon; through slow corners it is clean rather than inspired, and it flatters a confident driver right up until the moment it asks him a question money cannot answer.",
+      "history": [
+        "The 189 was never developed so much as acquired: the sharpest engineers, the deepest tunnel hours, the finest of everything, wheeled in on a tide of cash and bolted into a rolling statement of net worth. The design philosophy is procurement. If a part can win a race, Millions buys it, then buys the next one too, so nobody else can have it.",
+        "Its triumphs are real: front rows invoiced and delivered, race wins taken at full roar, and one genuine crown, Alberti's, the afternoon the chequebook finally cleared against the one title money is not supposed to reach. Its failures are louder: the certain results thrown into the barriers with the chrome still warm, the afternoons the tank ran dry at full volume, and the recurring humiliation of being out-raced by a backstreet Bullets that costs less than the 189's wheel nuts. The winter raids on Firenze's drawing office bought people, not peace.",
+        "Yet for seventeen seasons the name has never changed: MILLIONS 189, registered once and kept, the one thing in the whole empire nobody was allowed to replace. Even new money learned that a permanent program identity buys what cash cannot, a place in the ledger that does not depreciate. The generations underneath have marched from the g3-M3 days through the freeze and into the horsepower era, every annual development package filed, with some irony, against purchase order 189."
+      ],
+      "quotes": [
+        "The Millions principal, at the motorhome bar: 'You want our development philosophy? We find the fastest thing money can buy, then we buy the second-fastest too. The 189 is not a car, it is an invoice that does three hundred.'",
+        "A Bullets mechanic, wiping his hands: 'Lovely machine. Costs more than our whole street. Funny thing about all that chrome, it still has to stop for the same hairpin we do.'"
+      ]
+    },
+    "bestowal-167": {
+      "name": "BESTOWAL 167",
+      "team": "team.bestowal",
+      "tagline": "GIVEN EVERYTHING, BUILT TO OWE NOTHING.",
+      "naming": "The founding bequest was recorded as entry 167 in the benefactor's gift registry, a number the house keeps because it does not speak the donor's name aloud. The car is, quite literally, the gift, catalogued.",
+      "character": "The BESTOWAL 167 is engineered rather than built, a gunmetal argument for correctness. Its sealed VAPOR DN delivers a wall of mid-range force that makes it the terror of the long straights and the power cathedrals, where the car is stable, planted and practically unshakeable at full speed. The brakes are strong, the aero efficient, the cooling and fuel discipline industrial. Its compromises are honest ones: it is heavy, less nimble in the slow, twisting stuff, and in the wet it is correct rather than inspired, a car that posts the right lap instead of the brave one. It gives a driver total confidence at two hundred and very little romance at forty, which suits the house exactly.",
+      "history": [
+        "The 167 arrived the way the team did, bestowed, fully funded and already expected to shine, and its design philosophy has never wavered: engineer out the surprise. Nothing on the car is there for beauty; every gram answers to a tolerance, and the stopwatch is left to do all the bragging the house considers necessary.",
+        "Its triumphs came in a rush when the Horsepower War opened: with bigger engines under lighter rules, the 167 was suddenly the class of the field at the cathedrals, Blume's metronome and Picos's warm precision converting straight-line violence into silverware. Its crises are the quiet kind the house hates most: seasons where the arithmetic never panicked but never quite added up either, a handful of wins against a mountain of correct top-fives, and the public indignity of an insurgent from LEVEL C naming the number 7 seat out loud as the softest chair in the aristocracy.",
+        "Through all seventeen seasons the registered name has stayed exactly as the benefactor's registry recorded it: BESTOWAL 167, one permanent program identity spanning the Gen-3 generations, the frozen final specification, and the Gen-4 dispensation that made the car famous. The house files its annual development packages against the same entry and has never once considered a rename; a gift is not renegotiated, it is honoured."
+      ],
+      "quotes": [
+        "The Bestowal garage, torque wrench clicking: 'Senna's car has flair. Firenze's has fire. The 167 has tolerances. It leaves this garage correct to the thousandth, and correctness is what we were given to win with.'",
+        "A rival engineer, arms folded at the fence: 'Nobody knows what is inside that sealed engine, and nobody at Bestowal is telling. Whatever it is, down a straight it is the most correct violence on the calendar.'"
+      ]
+    },
+    "blanche-582": {
+      "name": "BLANCHE 582",
+      "team": "team.blanche",
+      "tagline": "SPOTLESS METAL, ONE PASS FROM THE CROWN.",
+      "naming": "The founder's original preparation card listed 582 checks, every one ticked before a wheel could turn. The card is long lost; the number still goes on the car, because a checklist that thorough deserves a memorial.",
+      "character": "The BLANCHE 582 is a surgeon's blade among sledgehammers: clean aero, minimal drag, and a consistency that borders on the supernatural. It is gentle on its tyres, honest on fuel, cooled with margin to spare, and its brakes are the most communicative in the midfield, all feel and no theatre. The whitecoats tune it for repeatability rather than heroics, so it rarely wins the lottery of a wet gamble but almost never throws a result away. It is slippery and calm at high speed, precise rather than aggressive in slow corners, forgiving of a driver and exacting of his craft, and its confidence is the quiet sort: sixteen flawless rounds in a row, each one filed, cleaned and forgotten.",
+      "history": [
+        "The 582 was born of one obsession, that a race car should cross the finish line exactly as spotless as it left the garage, and its design philosophy has never drifted from it: discipline is speed. The white cars refuse sponsors' clutter, refuse theatrics and refuse shortcuts, and the garage treats every weekend like surgery and every mistake like a stain that must never appear twice.",
+        "Its triumphs are the near things done perfectly: podiums, poles and long spotless seasons at the top of LEVEL B, the kind of campaign that has rivals quietly stopping their laughter by midsummer. Its famous failures are the mirror image, the promotions missed by a tenth, by a budget, by the gravity of the establishment above, and the wet afternoons when a braver, muddier car simply gambled better. Blanche files each defeat, cleans the car, and returns a fraction sharper; the crisis in this garage is never chaos, only the maddening proximity of a door that will not open.",
+        "For seventeen seasons the registered name has been BLANCHE 582, one permanent program identity in the championship ledger, spanning the Gen-3 generations, the frozen final specification and the Gen-4 dispensation alike. Every annual development package is recorded against the same spotless entry. The whitecoat logic is simple: the door to LEVEL A opens only for whoever is spotless when it finally swings, and the name on the car will be the same one they have been polishing all along."
+      ],
+      "quotes": [
+        "The Blanche garage, floor mopped between sessions: 'Gloves on. Every bolt logged. When the 582 comes home without a mark on it, that is the whitecoats signing their work.'",
+        "A Tyrant voice, spitting: 'All that spotless paint and not one scratch, because they never dare a move hard enough to earn one. Pretty, though. I will give the 582 that much before I dent it.'"
+      ]
+    },
+    "tyrant-548": {
+      "name": "TYRANT 548",
+      "team": "team.tyrant",
+      "tagline": "BUILT TO HOLD ONE LAP LONGER THAN YOUR NERVE.",
+      "naming": "Lot 548 was the bankruptcy-auction number of the collapsed backmarker whose wreckage the founding crew bought for scrap money. They bolted the lot number onto the nose so the car would never forget it was rescued from a hammer.",
+      "character": "The TYRANT 548 is a weapon built around a single component: the brakes. It dives a heartbeat deeper than sense allows, turns in like a punch, and on the crossover bridges and wall-lined chicanes it is the nastiest knife in the midfield. The suspension is hard, the aero blunt, the tyres worked like debtors, and on hot afternoons the cooling runs as angry as the pit wall. At high speed it is edgy and physical, in slow corners it is a threat with a steering wheel, and in the wet it simply enjoys the fight. It is not kind, not subtle and not reliable in the gentle sense, but it is strong in the way iron is strong, and it gives a hard man the confidence that the other fellow will lift first.",
+      "history": [
+        "The 548 was seized rather than founded: a floundering LEVEL D wreck bought for scrap, the old name torn off the nose and the new one bolted on in raw iron letters. The design philosophy arrived with the enforcers: the road owes you nothing, so the car is built to take. Everything after that, the brakes, the menace, the boot-camp setup, is just that creed made mechanical.",
+        "Its triumphs are raids, not reigns: Hamano owning the bridge on his home day, reading the crossover like his own pulse, Gould stealing the island in the very shadow of the wall of kings, and a long catalogue of LEVEL A noses bloodied at the hairpin. Its failures are the seasons the numbers refused to add up, when all that menace produced nothing but fourth places and the bolt stayed thrown on the door above. The iron fist has flattened the whole of LEVEL C for sport and still never once been let into the drawing room, and nothing on this earth enrages the garage more.",
+        "Through all seventeen seasons the car has kept its registered name, TYRANT 548, one permanent program identity in the championship ledger while the generations turned beneath it, from the Gen-3 line through the frozen final spec and into the horsepower era. Development packages are filed annually against the same entry, each one a little harder than the last. A team that rose from a scrap lot does not rename the proof; it sharpens it."
+      ],
+      "quotes": [
+        "A Tyrant chief mechanic, spanner in hand: 'The boss does not want the 548 fast, he wants it frightening. We build the brakes to hold one lap longer than the other fellow's nerve. Everything after that takes care of itself.'",
+        "A LEVEL C rival, unimpressed: 'Big iron fist for the boys below, soft little bow at the door above. The 548 will flatten the whole midfield, then park nice and quiet behind Madonna like it always does.'"
+      ]
+    },
+    "losel-125": {
+      "name": "LOSEL 125",
+      "team": "team.losel",
+      "tagline": "THE ANSWER, RUN AT THREE HUNDRED.",
+      "naming": "Run 125 of the founding wind-tunnel program was the session where the numbers first agreed with each other, and the engineers, being engineers, named the car for the only thing they had ever fully trusted.",
+      "character": "The LOSEL 125 is a precision instrument that happens to do three hundred: flush panels, efficient aero, and an eerie, metronomic consistency that wears rivals down one identical lap at a time. The customer VAPOR gives it steady, dependable shove rather than theatre, and the chassis spends nothing it cannot justify on a data sheet, so the tyres last, the fuel lasts, and the brakes are used exactly as hard as the spreadsheet permits. Its flaws are the same as its virtues: a narrow setup window, a qualifying peak that flatters no one, and a wet-weather manner that is calculated rather than brave. It cools and cruises within its margins at any speed, and it gives a driver the cold confidence of a proof, right up to the corner where the equation meets a man who simply wants it more.",
+      "history": [
+        "The 125 was born in a wind tunnel, not a boardroom, raised by run-out engineers and slide-rule fanatics who believed a race is won on the drawing board weeks before the lights go out. Its design philosophy has never changed: every corner is an equation with exactly one correct answer, and the car exists to deliver it.",
+        "Its triumphs are the glory of the almost: LEVEL B campaigns finished a whisker from promotion, afternoons spent out-engineering half the LEVEL A establishment on pure pace, long metronomic stints that made the timing screens look broken. Its failures are the great open wound of the Losel story, the seasons a tenth short, the trophies the aristocrats kept anyway, because raw calculation can carry you to the door of the elite but heart and history hold it shut. The whole garage grinds at that gap every winter, convinced the next tenth is the one that breaks it down.",
+        "For seventeen seasons the registered name has been LOSEL 125, one permanent program identity recorded in the championship ledger while the generations evolved beneath it, from the Gen-3 line through the frozen final specification and into the Gen-4 dispensation. Every winter's development package is filed against the same entry, numbered, measured and verified. The engineers considered a rename once, calculated the benefit as zero, and filed that too."
+      ],
+      "quotes": [
+        "The Losel garage, stopwatch in hand: 'Everyone else tunes by feel. We tune by proof. When the 125 leaves the box it has already run this lap a thousand times in here; the track is just the formality.'",
+        "A Bullets man, grinning: 'Fastest calculator on the grid, coldest heart in the paddock. Ceara drives on fire, mate. You cannot put a stopwatch on wanting it, and that is the one variable their 125 never solves.'"
+      ]
+    },
+    "may-555": {
+      "name": "MAY 555",
+      "team": "team.may",
+      "tagline": "THE GREEN MACHINE THAT BLOOMS DOWN THE STRAIGHT.",
+      "naming": "Five founders, the fifth month, and the fifth day of the spring festival they first met at: 555. The number went on the car the way the blossom did, because this team has never once hidden what it is.",
+      "character": "The MAY 555 is youth in metal: light on its feet, slippery on the straights, and visibly happier as the afternoon warms and the tyres come to it. The LORRY V8 gives steady, honest torque rather than a kick, the chassis is friendly at the limit, the brakes decent, the cooling untroubled, and the whole car is tuned with the doors open and the radio on. It is at its best on sun-baked afternoons and long straights, a little loose when the weather turns, and in the wet it is brave in the way young things are brave, quick and occasionally spectacular in both directions. Its reliability improves every single season, and it gives a driver the sunniest confidence on the grid: the unshakeable sense that the next corner belongs to the green car.",
+      "history": [
+        "The 555 began as pooled savings and one green chassis, built by grinning hopefuls who believed a team could bloom straight out of the midfield. Its design philosophy is optimism with a torque wrench: keep it light, keep it simple, point it at the sun and let it grow. Nobody at the top took it seriously. Everybody does now.",
+        "Its triumphs are the podiums it crashed through the front door, the sprayed bubbly, the famous warm afternoons when the little green machine hunted down heavier, older cars on the straights while their rivals faded in the heat. Its crises are the growing pains of an entire ladder: the one-place-short seasons, noses pressed to the glass of the establishment, and the winter the Gen-4 horsepower formula was announced and May's George Turner had to lead the little teams' anxious delegation over the costs, smiling in public and grey over the ledger in private. Growth like this, the garage insists, ends in only one place.",
+        "Across all seventeen seasons the registered name has stayed MAY 555, one permanent program identity in the championship ledger while the machinery grew through the Gen-3 generations, the frozen final spec and the Gen-4 era the team could barely afford. Each year's development package is planted against the same entry like another season's crop. Spring does not rename itself to please the calendar, and neither does May."
+      ],
+      "quotes": [
+        "The May garage, doors open at dawn: 'We tune the 555 when the sun comes up so the car wakes when we do. Point her at a warm afternoon and that little green thing just blooms down the straight.'",
+        "An Azalea voice, LEVEL A, sniffing: 'A blossom team, how sweet. Blossoms are lovely for a week and then they blow away. We have been in this garden for years, darling.'"
+      ]
+    },
+    "bullets-560": {
+      "name": "BULLETS 560",
+      "team": "team.bullets",
+      "tagline": "CHAMBERED LIGHT, AIMED AT THE CROWN.",
+      "naming": "560 was the street number of the backstreet lock-up where the first car was hammered together, painted over the door before it ever went on a machine. The team kept the address as the name, because home is the whole legend.",
+      "character": "The BULLETS 560 is built light to the edge of recklessness, and it shows in everything it does. It snaps off the line quicker than anything on the grid, knives through traffic like a thrown dart, and in standing water it is simply the best car in the world, reading the spray the way other cars read dry asphalt. The little LIZZIE V8 loves to rev, the brakes are strong, the mechanical grip startling, and the price is written in smoke: the gearbox lives on a highwire, the cooling is marginal, the engine is stressed to the red line of sense, and high-speed stability is cheerfully sacrificed. Every Bullets weekend is a coin spun between a famous win and a plume on the horizon, and the car hands a brave man the confidence to keep spinning it.",
+      "history": [
+        "The 560 was built in a lock-up by men who could not afford a seat at the grandees' table, so they built a weapon instead of a showpiece: stripped to the bone, chambered light, pointed at something bigger than itself. The design philosophy has never softened. If a gram does not make the car faster on Sunday, it does not make the trip.",
+        "Its triumphs are the days the whole circus remembers: six career wins from a LEVEL C address, the sweltering home rounds where Ceara drags the 560 past machinery worth a king's ransom, and the Wet Season, the flooded Belgium classic, the day the LEVEL A men queued in a backstreet car's spray and the grandees stopped laughing mid-season. Its failures are the same story told in smoke: the gearboxes that let go with the title in sight, the championships slipped with the crown in plain view, the protests survived, Dardan's bolt-by-bolt examination, legal but never forgiven. A loaded gun, the paddock learned, only has to be right once, and spends the other afternoons being rebuilt.",
+        "For seventeen seasons the registered name has been BULLETS 560, one permanent program identity in the championship ledger while the generations turned beneath it, the G3M4 bones of the frozen final spec giving way to the horsepower era Ceara publicly declared his natural country. The famous featherweight interpretation of the freeze rules is filed, like every annual development package, against the same lock-up number. The grandees rename and rebrand; the insurgent keeps the address, so they always know where to send the wreckers."
+      ],
+      "quotes": [
+        "The Bullets garage chief: 'She is not built to finish pretty, friend, she is built to finish first. We chamber the 560 light, strip her to the bone and pray the box holds to the flag. When the heavens open? Say your prayers to somebody else, that weather belongs to us.'",
+        "A Madonna man, coolly: 'The little gun barks on its home straight and in the rain, and calls it a coronation. The 560 has led my king onto the final lap a hundred times. It has watched the number one pull away a hundred times.'"
+      ]
+    },
+    "dardan-700": {
+      "name": "DARDAN 700",
+      "team": "team.dardan",
+      "tagline": "THE BRONZE SPEAR OF THE MIDFIELD WARS.",
+      "naming": "The clan counts seven hundred mountain passes in its old country, one for every ancestor who never knelt, and the car carries their number the way it carries the spearhead flash: as a promise, not a decoration.",
+      "character": "The DARDAN 700 is a war chariot: stiff, aggressive and happiest when the circuit fights back. It hops kerbs, shrugs off bumps, brakes brutally and turns in like it has been insulted, which makes it a genuine menace on the tight, walled street rounds the clan treats as contested ground. The customer VAPOR V8 gives stout mid-range shove, the chassis is heavy and hard on its tyres, the aero is blunt enough that long straights feel like sieges, and the cooling runs hot under a summer sun. In the wet it is a brawler in its element, at high speed merely enduring, through slow corners genuinely dangerous. It is battle-scarred rather than fragile, and it gives a driver the only confidence the clan respects: the certainty that the car will never be the first to blink.",
+      "history": [
+        "The 700 was forged in a hillside garage by a clan that measured pride in scars, and it has always been dressed for battle rather than admiration: oxblood over hammered bronze, a spearhead flash nose to tail, no soft sponsor gloss. The design philosophy is the clan's own: they would sooner see the car come home dented and third than spotless and eighth.",
+        "Its triumphs are the bloody noses of the establishment: street-round ambushes where grandee machinery went home with bronze paint on its flanks, and the strange, savage honour that fallen champions are cast down into this garage and handed a spear to climb back with. Its famous crises are the protest wars, four hearings in one furious campaign against the sister-chassis Bullets, nothing proven, everything remembered, and the longer, colder failure of the LEVEL B door that has never once been kicked down no matter how hard the 700 charges it. The midfield is Dardan's battlefield; the palace stays shut.",
+        "Through seventeen seasons the registered name has been DARDAN 700, one permanent program identity in the championship ledger while the generations passed beneath it, from the Gen-3 line through the frozen final spec and into the Gen-4 dispensation. Each annual development package is hammered out and filed against the same entry, the same seven hundred. A spear does not change its name between battles; it is sharpened, and it is raised again."
+      ],
+      "quotes": [
+        "The Forge, Dardan chief mechanic: 'We do not polish the 700, we sharpen it. She rolls out of my garage looking for somebody to hit, and on a walled street circuit, she usually finds him.'",
+        "A Firenze aristocrat, sneering: 'Dardan? A charming little war-band with a bronze spear. It is where we send fallen kings to be forgotten, big proud 700, permanent LEVEL C.'"
+      ]
+    },
+    "linden-ln198": {
+      "name": "LINDEN LN198",
+      "team": "team.linden",
+      "tagline": "SEASONED LIKE TIMBER, STILL STANDING.",
+      "naming": "LN is the tree; 198 is the number of rings the great linden had grown the summer the first car was built, counted by hand and recorded in the workshop book. The car is named for its own roots.",
+      "character": "The LINDEN LN198 is the patient car of the grid: soft, compliant suspension seasoned like timber, gentle brakes, and a LORRY V8 asked only for its steady, honest torque. It is kind to its tyres past the point of virtue, never overheats, never runs out of fuel, and understeers with a predictability a driver could set a watch by. It is slow, and it does not pretend otherwise; at high speed it is safe, through slow corners deliberate, and in the wet it simply waits for the road to come to it, which, in Moreau's hands, it always does. Reliability is seasoned into every bolt, and the confidence it gives is the grandfatherly kind: you will not win the afternoon, and you will be there at the end of it.",
+      "history": [
+        "The LN198 descends from wheelwrights and clockmakers who swore a racing car should be built the way you plant a tree, slowly, deeply, to stand for a hundred seasons. Its design philosophy is seasoning: every component tested until it refuses to warp under pressure, every change measured in years rather than weeks. Rivals laughed at a stable that measured progress in decades; the LN198 simply kept turning up, long after the laughers had rusted away.",
+        "Its triumphs are counted in a different currency: more starts, more finishes and more seasons on the grid than any team beneath LEVEL A, young chargers leaving its cockpit smoother and steadier than they arrived, and the honour no one else could have earned, Moreau leading the frozen-specification parade at Monaco, the oldest number on the grid escorting the old iron home. Its failures are the quiet ones it admits freely: no crown, no wish to bet the whole garage to steal one, whole seasons where the stopwatch simply said no. Linden does not file defeats; it rings them, one more circle in the trunk.",
+        "Across all seventeen seasons the registered name has been LINDEN LN198, one permanent program identity in the championship ledger while the generations turned beneath it, from the Gen-3 line through the frozen final spec Moreau himself paraded, and into the Gen-4 era. Every annual development package is seasoned and filed against the same entry, the same rings. A linden does not rename itself for the weather; it grows, and it endures."
+      ],
+      "quotes": [
+        "The Linden garage: 'Flashy? Not us, friend. But you will never once see the LN198 walking home. We season every bolt like firewood; by the time it goes on the car, it has forgotten how to break.'",
+        "Marcel Moreau, #22: 'The hairpin is a question the whole grid shouts at. This old tree and I are the only ones patient enough to wait for it to answer.'"
+      ]
+    },
+    "minarae-594": {
+      "name": "MINARAE 594",
+      "team": "team.minarae",
+      "tagline": "THE STARTING LINE WITH WHEELS.",
+      "naming": "594 was the team's entry in the championship's roll of licensed constructors, kept as the car's name because a first rung of the ladder should never be ashamed of its number.",
+      "character": "The MINARAE 594 is the honest trainer of the whole grid: light, nimble and built to be wrestled rather than merely steered. The SEGA V8 is deliberately mild, so the car wins its corners with mechanical grip and courage instead of horsepower, and its slow-corner balance is genuinely lovely, a brave right foot outscoring a fat budget every time. The brakes are adequate, the tyres last, the cooling is simple, the top speed a standing apology, and at high speed it is brave rather than quick. In the wet it is a classroom, forgiving enough to teach and honest enough to punish a lie. It will see the flag, it will embarrass its betters through the barriers, and it gives a rookie the rarest confidence of all: a car that tells him the truth about himself.",
+      "history": [
+        "The 594 was founded as the championship's front door, a modest formula car built to hand a raw, unproven kid a real racing machine and point him up the field. The design philosophy is the banner over the garage, LET'S TRY HARD TO WIN: keep it plain, keep it honest, keep it nimble, and let the driver supply the rest. It flaunts so little precisely because it promises so much.",
+        "Its triumphs are written by the men it launched: Miller turning the concrete canyon of the U.S.A. round into Minarae country, brake-late and elbows-out until even the untouchable king found no clean air, and a whole honour roll of graduates poached up the ladder by the hungriest garages in the sport. Its failures are structural and worn proudly: a team measured by the talent it loses, whole seasons as the paddock's waiting room, good drivers gone before the car ever learned their names. The 594 has never been a home. It is an on-ramp, and it has never once pretended otherwise.",
+        "For seventeen seasons the registered name has been MINARAE 594, one permanent program identity in the championship ledger while the generations passed beneath it, from the Gen-3 line through the frozen final spec and into the Gen-4 dispensation. Every annual development package is filed against the same constructor's entry, the same first rung. The graduates take the ladder; the 594 keeps the number, ready for the next kid with no history to read."
+      ],
+      "quotes": [
+        "The Minarae head mechanic, slapping the nose of car #20: 'She is plain, she is honest, and the 594 will bring you home if you do not hurl her at a wall. Now get in and buckle up. LET'S TRY HARD TO WIN.'",
+        "A LEVEL A grandee, looking all the way down the ladder: 'Minarae? Ha! That is not a team, my friend, that is a waiting room with wheels.'"
+      ]
+    },
+    "rigel-3000": {
+      "name": "RIGEL 3000",
+      "team": "team.rigel",
+      "tagline": "THE PRETTIEST GHOST AT THE BACK OF THE PHOTO.",
+      "naming": "The founder's old star catalog ran to three thousand entries, and he circled the last one, the great blue giant, and named his team and his car for it. The 3000 is the catalog, closed and kept.",
+      "character": "The RIGEL 3000 is beautiful and brittle in equal measure. On the days it is right, the balance is genuinely sweet, the brakes decent, the old bones flowing through corners with a grace the modern midfield has forgotten; on the days it is not, the engine keeps its own superstitions, the cooling turns temperamental, and the whole weekend becomes a seance. The LORRY V8 in Rigel trim is asked for reliability and answers on its own schedule. At high speed it is dignified, through slow corners delicate, in the wet a coin toss. Qualifying can still produce one lap that makes the timing screens blink; race trim fades like starlight. It gives a driver the strangest confidence on the grid: faith, backed by a trophy shelf nobody dusts.",
+      "history": [
+        "The 3000 is half race car, half reliquary, built by a workshop that does not rebuild but restores, coaxing one more clean lap out of parts held together by memory and stubbornness. There was an age, the old hands swear, when the midnight machine flickered near the front and the pit wall smelled of champagne. The design philosophy has never changed: keep the star burning, whatever the bill.",
+        "Its legend rests on one storied night at the old street circuit, when a Rigel led into the final third before the engine let go in a plume of blue smoke that matched the paint, the podium they never quite reached, retold until it shines brighter than most that actually happened. Its present is harder: qualifying fought for the last rows, a points finish celebrated like a festival, whole seasons spent one cruel rung above the floor's oblivion. The beautiful car is also one of the least reliable on the grid, and the garage builds each weekend around finding out which night the star feels like finishing.",
+        "Through all seventeen seasons the registered name has been RIGEL 3000, one permanent program identity in the championship ledger while the generations turned beneath it, the G3M2 bones restored again and again through the frozen final spec and the Gen-4 era beyond. Every annual development package is filed against the same catalog entry, the same circled star. A faded star is still a star, and you do not rename the light just because it arrives late."
+      ],
+      "quotes": [
+        "The Rigel garage, wiping blue paint from a knuckle: 'She will finish if she loves you. Some nights she loves you. We build the whole weekend around finding out which night the 3000 is in the mood.'",
+        "A Bullets mechanic, smirking down the pit lane: 'Gorgeous car. Prettiest thing at the back of the photo. We will wave as we go by, twice, if the seat is up for grabs.'"
+      ]
+    },
+    "comet-323": {
+      "name": "COMET 323",
+      "team": "team.comet",
+      "tagline": "TWO LAPS THAT MAKE YOU WEEP, THEN THE SMOKE SIGNAL.",
+      "naming": "323 was the speed-trap figure the black car posted on the day it caught lightning, the fastest number the little shop has ever seen. They named the car for it because nobody there expects to see its like again.",
+      "character": "The COMET 323 is a streak of light with a fragile constitution. It runs light and eager and produces qualifying laps that make the timing screens gasp, a genuine shock slot two or three times a season, all low drag and brave throttle. Then the race starts: the engine lives past its means, the cooling runs hot, the spares shelf is bare, and the 323 has a famous habit of expiring in a plume of smoke somewhere past half-distance. The brakes are good while they last, the tyres fine, the high-speed behaviour nervous and eager, the slow corners its best work, and in the wet it is fast right up until something lets go. It gives a driver two laps of pure belief and then asks him to nurse a legend home on memory.",
+      "history": [
+        "The 323 was born from a single, gorgeous accident: a back-road tuning shop with a black machine nobody rated, arriving at the floor of LEVEL D to make up the numbers and instead catching lightning for one unrepeatable season. The design philosophy is whatever that summer had, light, eager and slightly unhinged, and the shop has been trying to bottle it again ever since.",
+        "Its triumph is The Season, the one summer the comet-tailed cars streaked past aristocrats who never bothered to learn the name on the entry list, the highlight reel the whole garage swears it was there for. Its failures are the long tail of that brilliance: the smoke past half-distance, the fragile engines rebuilt every fortnight, the bitter basement scraps with Moon and Orchis over the final scoring seats, the standing quarrel with Cool over which of them peaked hardest and fell furthest. Hope, in this garage, is a maintenance schedule.",
+        "For seventeen seasons the registered name has been COMET 323, one permanent program identity in the championship ledger while the generations turned beneath it, from the Gen-3 line through the frozen final spec and into the Gen-4 era. Every annual development package is filed against the same entry, the same trap speed, the same summer. The team names nothing new, because a comet comes back around, and when it does, it will still be called 323."
+      ],
+      "quotes": [
+        "The Comet chief mechanic, wiping oil off the black flank: 'She will give you two laps that will make you weep, then she will give you a smoke signal. I rebuild the same engine every fortnight and I would do it forever. I was there the year the 323 flew; you do not forget flying.'",
+        "E. Tornio, #29: 'Not much to say. Watch the hairpin. The car is old, the tail is still fast. That is the whole story.'"
+      ]
+    },
+    "orchis-056": {
+      "name": "ORCHIS 056",
+      "team": "team.orchis",
+      "tagline": "THE LOVELIEST CAR NOBODY CAN QUITE RACE.",
+      "naming": "Bench 056 in the glasshouse was where the first chassis was potted, and the magnate kept the leading zero because he liked the look of it, a dew-drop in front of the number. The registry recorded it exactly so, and so it remains.",
+      "character": "The ORCHIS 056 is a hothouse bloom: exquisite when everything is perfect, doomed when it is not. Give it cool air, a smooth track and a gentle hand and it corners like petals opening, soft, precise and genuinely quick; ask it to fight in the heat, in the shove, in the rain of a real dogfight, and it wilts. The little MISFIRE V8 overheats at the first sign of argument, the suspension is delicate as a stem, the cooling marginal on any warm afternoon, and the mechanics handle the whole car like something that might bruise. At high speed it shivers in another car's wash; through slow corners on a cool morning it is a jewel; in the wet it is a catastrophe except on the days its frost gambler reads the sky one lap early and looks like a prophet. It gives a gentle driver a fragile, blooming confidence, and a hard one nothing at all.",
+      "history": [
+        "The 056 was never really founded, it was planted: a glasshouse magnate who loved rare flowers more than fast cars potted a race team the way he potted his prize orchids, under glass, watered by hand, sheltered from every draft. The design philosophy is horticulture: cool air, smooth ground, gentle handling, and no sudden movements.",
+        "Its legend is one shimmering, impossible season when the delicate thing actually flowered, and its most famous single act came in the Wet Season, Tegner's one-lap-early tyre call in front of the world, pitting while the sky was still merely threatening and inheriting half the big board when it broke, a positions swing no pass could have bought. Its failures are every other kind of afternoon: the warm-up lap steams, the wilted hot Sundays, the radiators that sigh and the tyres that go soft as bruised fruit, whole seasons spent clinging to the last crumbling ledge above the drop. The frost, the crew says, comes for the tender ones first.",
+        "Through all seventeen seasons the registered name has been ORCHIS 056, leading zero and all, one permanent program identity in the championship ledger while the generations turned beneath it, from the Gen-3 line through the frozen final spec and into the Gen-4 dispensation. Every annual development package is filed against the same glasshouse bench. A flower does not renumber its pot to survive the winter; it simply asks for one more bloom."
+      ],
+      "quotes": [
+        "An Orchis mechanic, wiping steam off his goggles: 'She overheated on the warm-up lap. The warm-up lap. I do not tune the 056, mate, I garden it: trim the wilted bits, prop up the stem, and pray the frost holds off till the flag.'",
+        "The Orchis number one, quiet after another Sunday clinging on: 'We finished. We are still here. Down here that is not a result you laugh at, that is the whole championship.'"
+      ]
+    },
+    "zeroforce-231": {
+      "name": "ZEROFORCE 231",
+      "team": "team.zeroforce",
+      "tagline": "IT MOVES, AND MOVING IS THE WHOLE RELIGION.",
+      "naming": "Unit 231 is the last cold garage at the dead end of pit lane, the address nobody else wanted. The car carries its own address because, down here, an address is an achievement.",
+      "character": "The ZEROFORCE 231 is the floor of the grid made metal: heavy, tired and asthmatic on the straights, with an old LORRY V8 asked to do what it can. It understeers, its brakes are marginal but honest, its cooling sounds like a dying furnace that somehow never quite dies, and it has no vices a brave man cannot bully and no virtues a stopwatch can find. At high speed it is slow but stable, through slow corners slow but predictable, and in the wet it is simply miserable, though no more miserable than the men who love it anyway. Its one genuine quality is that it goes: it qualifies, it starts, and more often than the big board expects, it is still moving at the flag. It gives a driver the gallows confidence of the last rung: nothing below you, and nothing left to protect.",
+      "history": [
+        "The 231 was assembled rather than founded, bolted together in the coldest garage from the parts and people nobody else wanted, and legend says the team took its name the night its first machine failed to move off the line under its own power. Zero force, zero go, zero excuses. The design philosophy is survival: tape it, weld it, send it, because there is no truck coming to save you.",
+        "Its triumphs are measured in a crueler arithmetic than winning: a qualifying lap that beats the cut is a triumph, a finish is a miracle, and a point, every point this team has ever scored, is clawed from a machine that had no business still turning and is remembered by name. Its failures are the ordinary days, the dead-last Sundays, the seasons the floor pressed up against the gearbox like rising water. The 231's true rival is not a team but oblivion itself, and every race it starts is another day it stares that rival down and, somehow, refuses to blink.",
+        "For seventeen seasons the registered name has been ZEROFORCE 231, one permanent program identity in the championship ledger while the generations passed over it, from the Gen-3 line through the frozen final spec and into the Gen-4 era. Every annual development package, such as it is, gets taped to the same unit number. The end of the road has a pit box, and the pit box has a name, and the name is still here."
+      ],
+      "quotes": [
+        "The Zeroforce garage: 'She sounds like a dying furnace and drives like a shopping trolley full of bricks, but the 231 MOVES, and on this rung of the ladder, moving is the only word that matters. Tape it, weld it, send it.'",
+        "The Zeroforce principal: 'People ask what our goal is this season. Our goal is that there IS a next season. Down here we count the ones still breathing at the flag, and every so often, that is us.'"
+      ]
+    },
+    "joke-777": {
+      "name": "JOKE 777",
+      "team": "team.joke",
+      "tagline": "THE PUNCHLINE ARRIVES AT THE HAIRPIN FIRST.",
+      "naming": "Three sevens is the jackpot row on the fairground fruit machine the founders could never afford to play. They painted it on the car as a dare to fate, and fate, being a connoisseur of these things, paid out.",
+      "character": "The JOKE 777 is misdirection in mechanical form: genuinely quick underneath the motley, with strong traction, a playful, talkative balance and brakes far sharper than the livery suggests. The old marine-bred POND V8 is lazy, torquey and practically waterproof, which makes the 777 a menace in mixed conditions, and the garage treats setup as theatre, sandbagging the Preliminary Race a full second off the pace and arriving on Sunday with the throttle buried. Reliability is dicey on paper and better than it looks on the road. At high speed it is no joke, through slow corners it is a pickpocket, and in the wet it grins. It gives a driver the trickster's confidence: nobody on the big board, not even the man in the seat, ever knows what the punchline will be.",
+      "history": [
+        "The 777 rolled into the paddock as a dare, a garish carnival outfit half the grid took for a publicity stunt, and a slow one at that. The grandees chuckled on day one; by the finale the number 16 had gatecrashed the points and wiped every smirk off the big board. The design philosophy is the oldest gag in the carnival: look harmless, be armed.",
+        "Its triumphs are the great spoils of the circus: rostrum steps lifted off grandees in the middle of title fights, coronations turned to farce, afternoons where the grinning jester mask filled a champion's mirrors and the whole pit wall forgot to breathe. Its failures are the other side of the trick: the seasons the clowning outran the car, the gambles that fooled nobody, and the itch the team cannot scratch, it can ruin a king's afternoon, but it has never once been let all the way inside to take his chair. Twice or thrice a season the 777 rattles the LEVEL A crockery. The rest of the time it is simply the worst news on anyone's big board.",
+        "Across all seventeen seasons the registered name has been JOKE 777, one permanent program identity in the championship ledger while the generations turned beneath it, from the Gen-3 line through the frozen final spec and into the Gen-4 dispensation. Every annual development package is filed against the same jackpot number. A joke only works if you keep telling it, and the 777 has been telling the same one, beautifully, for seventeen seasons."
+      ],
+      "quotes": [
+        "The Ringmaster, working the tannoy like a fairground barker: 'You paid for a comedy, ladies and gentlemen, and a comedy you will get. The twist is the 777 lands on whoever qualified ahead of my number sixteen. Enjoy the show.'",
+        "A LEVEL A grandee, moments before losing a podium step: 'A fairground float with a steering wheel. Send the clowns back to the tent.'"
+      ]
+    },
+    "lares-92": {
+      "name": "LARES 92",
+      "team": "team.lares",
+      "tagline": "THE MACHINE THAT WILL STILL BE CIRCULATING AT THE FLAG.",
+      "naming": "92 is the house number of the family home where the workshop still keeps its books and its kettle. The car carries the address because, at Lares, the garage is the house and the house is the team.",
+      "character": "The LARES 92 is a hearth on wheels: soft, torquey and built to come back. The big RAM V12 gives deep, unhurried shove that never stresses itself, the suspension is gentle, the brakes kind, the cooling bulletproof, and the whole car is so easy on its tyres and fuel that a Lares crossing the line is practically a law of nature. It is slow through the traps and admits it, safe at high speed, deliberate in slow corners, and in the wet it is quietly wonderful, patient hands harvesting points while brasher cars aquaplane into the scenery. Nothing about it startles a driver, which is the entire point: it gives a rookie the confidence of a warm kitchen, and a veteran the certainty that whatever the afternoon does, the 92 will still be circulating at the end of it.",
+      "history": [
+        "The 92 was founded in a family workshop by old hands who believed a race team should feel like a household, a hearth where a driver is fed, sheltered and never left out in the cold. The design philosophy is hospitality as engineering: reliability the way other teams are famous for pole positions, a car that always comes back running, lap after lap, race after race.",
+        "Its triumphs are the guardian's records: stretches of finishes so dependable that rivals grumbled a Lares would still be circulating after the crew, the catering and the flag had all gone home, points scavenged on the days the fancy teams broke, and the Wet Season harvest, Arai's hearth-red machine creeping up the standings one sodden, unspectacular afternoon at a time until the paddock started calling patience a weapon. Its failures are gentle and admitted: never a crown, never a pretence of one, seasons where the speed traps simply told the truth. Lares measures glory in seasons survived and rookies made whole, and by that arithmetic it is rich.",
+        "For seventeen seasons the registered name has been LARES 92, one permanent program identity in the championship ledger while the generations turned beneath it, from the Gen-3 line through the frozen final spec and into the Gen-4 dispensation. Every annual development package is filed against the same house number. The lamp stays lit, the door stays open, and the name over both has never once needed changing."
+      ],
+      "quotes": [
+        "The Lares garage, wiping down the hearth-red bodywork: 'She is not the fastest girl on the grid, but the 92 will bring you back every single time. Feed her, love her, she finishes. That is the Lares way.'",
+        "A returning driver: 'I won my seat in LEVEL B, but the card on my mantel still reads Lares. You do not forget the house that took you in when you had nothing.'"
+      ]
+    },
+    "feet-13": {
+      "name": "FEET 13",
+      "team": "team.feet",
+      "tagline": "OLD BOOTS, STILL THERE AT THE FLAG.",
+      "naming": "Thirteen men signed the founding pledge on the workshop floor, and the number went on the nose so none of them would ever be forgotten. The garage calls her Old Boots, and Old Boots answers to 13.",
+      "character": "The FEET 13 is the working man's car of the whole circus: heavy, honest and screwed together to run the full distance. The industrial-bred YOUGEN V10 gives gruff, unstressed torque, the mechanical grip is decent, the brakes are durable rather than sharp, and the aero is whatever the hand-beaten panels say it is, fingerprints included. It gives best to the aristocrats on raw pace every Saturday and drags itself home on its rims on Sunday, long after the pretty machines have kissed the Armco. At high speed it is limited, through slow corners stubborn, in the wet gritty and unbothered, and it never, ever overheats its welcome. It gives a driver the grafter's confidence: nothing on this car was bought, so nothing on it can be repossessed.",
+      "history": [
+        "The 13 was hammered together on a cold concrete floor by men who had spent their lives wrenching for richer teams and grown sick of polishing somebody else's crown. The paddock sneered that the outfit ran on its feet, so the grafters painted the insult on the car themselves and made a badge of it. The design philosophy is the pledge: no bluff, no cheat, no whine, out-work the whole grid.",
+        "Its triumphs are the honest kind: points finishes stolen from grandees who overcooked it, a podium snatched on a chaos afternoon when the aristocrats fed the barriers, long full-distance seasons where the battered blue car simply refused to stop. Its failures are the ones it admits to your face: no crown, no coin, Saturdays given away to anyone with a budget, and the LEVEL B dream deferred one honest result at a time. But when a Feet car crosses the line ahead of a machine that cost ten times as much, the whole pit lane knows it was earned down to the final bolt.",
+        "Through all seventeen seasons the registered name has been FEET 13, one permanent program identity in the championship ledger while the generations turned beneath it, from the Gen-3 line through the frozen final spec and into the Gen-4 dispensation. Every annual development package is filed against the same pledge, the same thirteen signatures. The boots stay on the ground, the head stays down, and the number on the nose never forgets the men who signed."
+      ],
+      "quotes": [
+        "The Feet chief mechanic: 'Every panel on the 13 was beaten by hand on this very floor, by these very hands. I do not care what the big board says our budget is. Nobody out-works this garage, and nobody on that ladder ever has.'",
+        "A grandee's dig: 'The little team that runs on its feet, how perfectly quaint. No crown, no coin, just grease under the fingernails and a boot painted on the door. Charming, truly.'"
+      ]
+    },
+    "serga-1000": {
+      "name": "SERGA 1000",
+      "team": "team.serga",
+      "tagline": "HAND-BUILT, MOUNTAIN-BRED, QUICKER THAN YOUR BUDGET.",
+      "naming": "The pass above Sambena's workshop climbs a thousand metres, and that is where the first engine was run until it either sang or seized. It sang. The car has carried the altitude ever since.",
+      "character": "The SERGA 1000 is a working man's weapon: light, eager and quick-steering, with strong mechanical grip and a low, wide flat-twelve that Sambena can service with his own two hands, because he built it that way on purpose. The aero is crude, the top speed limited, the brakes honest, the cooling simple enough to fix with a penknife, and the whole car rattles where the factory machines purr. At high speed it is game rather than fast, through slow corners it is a genuine pickpocket, and in the wet it runs on instinct the way its builder does. Reliability is last night's part and a prayer, and the prayer usually works. It gives a driver the self-made confidence of a machine with no excuse and no owner but the man in the seat.",
+      "history": [
+        "The 1000 was welded together by hands you could count on two, in a workshop that smells of oil and stubbornness, and entered at the World Championship uninvited. When the establishment asks who backs Serga, the answer is nobody, and that is exactly the point. The design philosophy is the mountain: build what you can reach, fix what you can carry, and never borrow a part you cannot make.",
+        "Its triumphs are the sweetest kind, the resentment of everyone it was never supposed to beat: factory machines embarrassed at the hairpin, points banked never bought, the grey number 25 turning up in LEVEL A mirrors until nobody in the polished garages is laughing. Its failures are the shoestring nights: the part that had to be made before it could be fitted, the seasons the budget ran out before the calendar did, the climbs that stalled one rung short. Every point on the board is proof that a garage can race, and the 1000 keeps climbing until someone up top loses a seat to a man who built his own.",
+        "Across all seventeen seasons the registered name has been SERGA 1000, one permanent program identity in the championship ledger while the generations turned beneath it, from the Gen-3 line through the frozen final spec and into the Gen-4 dispensation. Every annual development package is scavenged, sharpened and filed against the same altitude. The number 25 on the flank is still a little crooked, because a tired man painted it at two in the morning, and the name stays for the same reason."
+      ],
+      "quotes": [
+        "Sambena, owner and driver, wiping his hands on a rag: 'They ask who signs my cheques. I sign my cheques. I build the 1000, I paint the number, I drive it flat out, and when I pass a factory machine, that is the only sponsorship I need.'",
+        "A rival engineer, grudging: 'You can out-spend a lot of things in this championship. You cannot out-spend a man who has nothing to lose and built the whole thing himself. Watch the 1000. It bites.'"
+      ]
+    },
+    "cool-05": {
+      "name": "COOL 05",
+      "team": "team.cool",
+      "tagline": "THE FRIENDLIEST THING ON THE GRID.",
+      "naming": "The crew counted its furniture before it counted its parts: five deckchairs on the lockup roof, so the car became 05. The leading zero stayed because you do not renumber a deckchair.",
+      "character": "The COOL 05 is a postcard from the coast that happens to race: soft, slow, gentle and utterly unbothered. The old CORSE V8 is a warm, worn heart with more charm than power, the brakes are weak but honest, the tyres are run long past fashion, the electrics fragile, and the whole car has an unhappy habit of coughing to a halt at the worst possible moment. And yet: it is easy to drive, easy on fuel, calm at any speed it can reach, and in the rain, with a romantic at the wheel, it has produced points finishes that made a whole forest grandstand roar. At high speed it is limited, through slow corners amiable, in the wet strangely at home. It gives a driver the rarest confidence on the floor of the ladder: serenity, the certainty that whatever the big board says, the sun is still out.",
+      "history": [
+        "The 05 was founded on a shrug and a shoestring, in a sun-warmed lockup at the cheap end of the paddock, by a burned-out journeyman who decided all that winning was far too much like hard work. The design philosophy is endurance without anxiety: turn up, go racing, enjoy the ride, and never once let the panic in.",
+        "Its triumphs are counted like saints' days: a single point sends the garage into raptures, a top-ten is a festival, and the famous wet afternoon in Delvaux's home forest, when the little glacier-blue car hung on for points in front of its own people, is retold like a title. Its failures are the coughs to a halt at the worst moments, the seasons held together with tape and good humour, and the standing quarrel with Comet over which of the two peaked hardest and fell furthest. Flashier outfits have burned bright and folded; the 05 is still here, patched and painted and grinning. Down here, staying is winning.",
+        "For seventeen seasons the registered name has been COOL 05, leading zero and all, one permanent program identity in the championship ledger while the generations turned beneath it, from the Gen-3 line through the frozen final spec and into the Gen-4 dispensation. Every annual development package, such as it is, gets filed against the same five deckchairs. The paddock sweats. The 05 stays cool, and the name stays put."
+      ],
+      "quotes": [
+        "The Cool garage, feet up: 'Points? Podium? We brought the 05 home in one piece, the sun is out, and nobody is crying in the garage. That, my friend, is a championship day.'",
+        "A rival, stuck behind it in qualifying: 'Cool are not racing, they are on vacation. Somebody fetch a licence for that deckchair and clear the road for people who actually want it.'"
+      ]
+    },
+    "moon-292": {
+      "name": "MOON 292",
+      "team": "team.moon",
+      "tagline": "BUILT TO KEEP CIRCLING LONG AFTER THE FLASHIER CARS BREAK.",
+      "naming": "292 names were on the founding subscription ledger when it closed, every one of them a believer with empty pockets. The car carries the whole ledger on its nose, because a promise made in the cold is kept in the cold.",
+      "character": "The MOON 292 is a patient satellite of a race car: heavy, stable and built to finish rather than to fly. The big RAM V12 gives deep, geological torque that never stresses itself, the brakes are strong, the tyres last forever, the cooling is cold-blooded by nature, and the whole machine is so devoid of bite that it is practically impossible to crash. At high speed it is limited but serene, through slow corners deliberate, in the wet steady as a tide, and its fuel and maintenance appetites are the smallest on the grid. It will be lapped by the crown before half-distance, and it will still be circling, cheerfully, at the flag. It gives a driver the far-side confidence of a long orbit: the light is impossibly far away, and the 292 reaches for it one faithful lap at a time.",
+      "history": [
+        "The 292 was born on the far edge of the paddock, the last outfit to bolt its gates shut before the season deadline, funded on fumes and stubborn dreaming. Its design philosophy is the orbit: keep the lights on, keep circling, and trust that every long-odds gamble, the garage calls them moonshots, is a hand reaching up toward a light that is, by definition, still up there.",
+        "Its triumphs are quiet and strange: races finished long after flashier cars broke, moonshot strategies that stole a position from the arithmetic, and the impossible good cheer of Yepes waving at the machines that lap him, insisting the back row has the finest view on the grid. Its failures are the empty points columns, the groaning gearboxes, the cruel weekends when the gap to daylight feels like a gap between planets. Only Zeroforce sits below, and some Sundays even that feels close. Moon does not fold. Season after season it keeps its cold vigil at the back, and down here, that alone is a kind of victory.",
+        "Through all seventeen seasons the registered name has been MOON 292, one permanent program identity in the championship ledger while the generations turned beneath it, from the Gen-3 line through the frozen final spec and into the Gen-4 dispensation. Every annual development package is filed against the same subscription ledger, all 292 names. A moon does not chase the sun and does not change its name; it waits through the dark, holds its orbit, and rises in its own good time."
+      ],
+      "quotes": [
+        "The Moon garage chief: 'She runs on borrowed light and spare parts, this silver girl of ours. Point the 292 at the hairpin, wave to the leaders as they lap us, and dream a size bigger every single night. That is the whole job, friend.'",
+        "A crown-team driver: 'Moon? That is the little silver speck I lap twice before lunch. Round and round it goes, dreaming of the rise. From down there even LEVEL C is another planet.'"
+      ]
+    },
+    "iris-717": {
+      "name": "IRIS 717",
+      "team": "team.iris",
+      "tagline": "CUT LIKE GLASS, TUNED LIKE A LENS.",
+      "naming": "717 degrees is the founding calibration of the glasshouse furnace, the temperature at which the first perfect panel was blown. The car carries the number because Iris names things the way it makes them, exactly.",
+      "character": "The IRIS 717 is the jewel of the grid and, on pure pace, very often the class of it. The PRISM V10 sings a clean, high, expensive note, the aero is cut like a facet, and through the fast sweepers it simply knives past machinery that washes wide. It is light on its tyres when driven cleanly, exact on its brakes, frugal at full song, and cooled and packaged with white-glove precision. Its cruelties are the cruelties of perfection: a narrow margin at the very limit, a distaste for dirty air, a setup window measured in millimetres. At high speed it is magnificent, through slow corners surgical, in the wet a dancer in the right hands. It gives a driver the perfectionist's confidence, total so long as the lap is clean, and nothing forgiven the moment it is not.",
+      "history": [
+        "The 717 was born in a glassblowers' quarter, founded by artisans who believed a race machine should be assembled the way a jeweller sets a stone, no seam allowed to show, no gram unaccounted for. The design philosophy is cold clarity: do not build a fast car, build a perfect one, and perfect happens to be fast.",
+        "Its triumphs are banked like polished stones: poles threaded one perfect lap at a time, podiums collected quietly and steadily, a drivers' title carried home in violet, and wet afternoons when Salgado danced the 717 where richer machines tiptoed. Its failures are precise ones: the seasons raw power beat finesse and the jewel qualified beautifully and finished fourth, the rare afternoons the limit arrived without an error to blame. It has known glory and frustration in equal, immaculate measure, but it has never known shame, and it has never slipped from LEVEL A.",
+        "Across all seventeen seasons the registered name has been IRIS 717, one permanent program identity in the championship ledger while the generations turned beneath it, from the Gen-3 line through the frozen final spec and into the Gen-4 dispensation. Every annual development package is filed against the same furnace calibration, ground to the same figure. A jewel does not change its name between settings; it is simply recut, season by season, to catch the light better."
+      ],
+      "quotes": [
+        "The Iris garage: 'White gloves on, gentlemen. If you can see a fingerprint on that violet, it is not going on the grid. We set the 717 like a stone, not a sandwich.'",
+        "The Iris principal: 'Madonna wears the crown. Fine. We will be the jewel one step below it, cut so clean the crown never dares relax.'"
+      ]
+    },
+    "azalea-808": {
+      "name": "AZALEA 808",
+      "team": "team.azalea",
+      "tagline": "PETALS OF STEEL OVER AN ENGINE THAT SNARLS.",
+      "naming": "Bay 8, row 8, of the cultivation glasshouse is where the first magenta panel was shaped, recorded as 808 the day the first chassis was potted. The bloom, the gardeners say, grows in pairs.",
+      "character": "The AZALEA 808 is a held breath of a race car: elegant, balanced and deliberately unhurried about revealing itself. The BLOOM V8 builds its power like a flower opening, soft at the bottom and fierce at full song, and the chassis is kind to its tyres across a stint, settling deeper into its stride as the fuel burns. It is quick on Fridays and lethal on the grand Sundays, strong in high-speed stability, precise in slow corners, unbothered in the wet, and pampered in cooling and preparation. Its one deception is timing: it can look decorative in round three and towering by round sixteen. It gives a driver a glacial confidence, the calm of a machine that knows exactly which afternoon it was built for.",
+      "history": [
+        "The 808 was cultivated onto the grid rather than entered, hand-shaped panel by panel in a glasshouse until it was ready to open, twinned from the first with its sister marque Iris. The design philosophy is patience as a weapon: do not waste the bloom on the early rounds; measure every petal to the gram and wait for the stage worth flowering on.",
+        "Its triumphs are the biggest ones on the calendar: the night races, the hairpin under the floodlights, the title-deciding finales, a trophy cabinet not the fullest on the grid but stuffed with the rounds that decide everything. Its failures are the long springs spent closed, the seasons it waited one round too long and let the arithmetic freeze over, the small Sundays surrendered to louder cars. Azalea does not sulk about them. It prunes, it feeds the root, and it lets the whole paddock forget, right up until the lights burn brightest and the frost-and-magenta car towers over everyone foolish enough to have written it off.",
+        "For seventeen seasons the registered name has been AZALEA 808, one permanent program identity in the championship ledger while the generations turned beneath it, from the Gen-3 line through the frozen final spec and into the Gen-4 dispensation. Every annual development package is filed against the same glasshouse bay. A bloom does not change its name to please the season; it closes, it waits, and it opens again under the same one."
+      ],
+      "quotes": [
+        "The Azalea garage, wiping a smudge from the magenta flank: 'Every petal on the 808 is measured to the gram. It looks like it should be in a vase. It is built to end your season.'",
+        "Mika Larssen, #34, helmet still on: 'I do not celebrate. I bloom, I win, I return to the cold.'"
+      ]
+    }
+  }
+}
