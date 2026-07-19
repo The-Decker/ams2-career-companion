@@ -63,6 +63,24 @@ public sealed class PaddockRenderTests
                     TeamId = "team.madonna", Name = "Madonna", Motto = "THE CROWN NEVER SLIPS",
                     LogoKey = "team.madonna", History = ["The king's house.", "Yellow and red."],
                     Quotes = ["We are chased."], DriverNames = ["Ayrton Senna"], Prestige = 5,
+                    Machine = new SmgpMachineDossier
+                    {
+                        CarName = "MADONNA 456", CarTagline = "THE CROWN IN METAL",
+                        CarNaming = "The 456th entry in the house registry.",
+                        CarCharacter = "Serene, exact, and cruelly quick.",
+                        CarHistory = ["Born gilded.", "Never once argued.", "The name stays."],
+                        CarQuotes = ["We build the standard."],
+                        EngineName = "PALM 190 V10", EngineTagline = "THE QUIET THUNDER",
+                        EngineNaming = "Palm's 190th works drawing.",
+                        EngineCharacter = "A tenor that never strains.",
+                        EngineHistory = ["A foundry's pride.", "Never coughed.", "Still the yardstick."],
+                        EngineQuotes = ["It does not know fear."],
+                    },
+                    SeasonArc =
+                    [
+                        new SmgpTeamSeasonArcLine { Season = 1, Summary = "The tenth summer, owned." },
+                        new SmgpTeamSeasonArcLine { Season = 2, Summary = "The protest year, weathered." },
+                    ],
                 },
                 new SmgpTeamCard
                 {
@@ -121,10 +139,15 @@ public sealed class PaddockRenderTests
             Assert.Equal(1, CountText(view, "THE UNTOUCHABLE KING"));
             Assert.True(CountText(view, "69") >= 1);   // career wins stat tile
 
-            // Toggle to the TEAMS view, the team dossier renders its motto.
+            // Toggle to the TEAMS view, the team dossier renders its motto and its MACHINE block.
             vm.ShowTeamsListCommand.Execute(null);
             view.UpdateLayout();
             Assert.True(CountText(view, "THE CROWN NEVER SLIPS") >= 1);
+            Assert.True(CountText(view, "MADONNA 456") >= 1);   // the permanent car
+            Assert.True(CountText(view, "PALM 190 V10") >= 1);  // the permanent engine
+            Assert.True(CountText(view, "Serene, exact, and cruelly quick.") >= 1);
+            Assert.True(CountText(view, "THE SEVENTEEN SEASONS") >= 1);  // the capsule arc
+            Assert.True(CountText(view, "The tenth summer, owned.") >= 1);
         });
     }
 

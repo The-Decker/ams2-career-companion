@@ -1502,6 +1502,42 @@ public sealed record SmgpTeamCard
     /// <summary>The sponsors backing this team (cross-referenced from the paddock's sponsor board), so the
     /// GUI can link team ↔ sponsor. Empty when none authored.</summary>
     public IReadOnlyList<SmgpTeamSponsorRef> Sponsors { get; init; } = [];
+
+    /// <summary>The team's MACHINE dossier: the permanent car and engine identity (SMGP-024 canon
+    /// lock) plus their lore block. Null when no canon/dossier data is installed, the section then
+    /// simply omits.</summary>
+    public SmgpMachineDossier? Machine { get; init; }
+
+    /// <summary>The team's seventeen-season arc from the base-universe history capsules
+    /// (SMGP-024): one line per season, the world's own story, no player. Empty when no capsule
+    /// data is installed.</summary>
+    public IReadOnlyList<SmgpTeamSeasonArcLine> SeasonArc { get; init; } = [];
+}
+
+/// <summary>One season line of a team's seventeen-season arc on the paddock team card: the
+/// season ordinal and its capsule summary. DISPLAY-ONLY.</summary>
+public sealed record SmgpTeamSeasonArcLine
+{
+    public required int Season { get; init; }
+    public required string Summary { get; init; }
+}
+
+/// <summary>The team card's machine block: the team's permanent car and engine, each with its
+/// dossier lore (SMGP-024). DISPLAY-ONLY.</summary>
+public sealed record SmgpMachineDossier
+{
+    public required string CarName { get; init; }
+    public required string CarTagline { get; init; }
+    public required string CarNaming { get; init; }
+    public required string CarCharacter { get; init; }
+    public required IReadOnlyList<string> CarHistory { get; init; }
+    public required IReadOnlyList<string> CarQuotes { get; init; }
+    public required string EngineName { get; init; }
+    public required string EngineTagline { get; init; }
+    public required string EngineNaming { get; init; }
+    public required string EngineCharacter { get; init; }
+    public required IReadOnlyList<string> EngineHistory { get; init; }
+    public required IReadOnlyList<string> EngineQuotes { get; init; }
 }
 
 /// <summary>One line of a team's live roster: a seated driver, their this-season standing, and a career

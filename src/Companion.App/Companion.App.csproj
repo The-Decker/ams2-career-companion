@@ -124,6 +124,8 @@
          rival quotes, what-really-happened). Previously only reached the deployed dist via a manual copy;
          copied beside the exe so a dev/publish run also loads them (else SmgpDispatchCorpus etc. fall back). -->
     <None Include="..\..\data\rules\smgp\*.json" Link="data\rules\smgp\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- The SMGP-024 team-season capsules (non-recursive globs: the subtree needs its own line). -->
+    <None Include="..\..\data\rules\smgp\capsules\*.json" Link="data\rules\smgp\capsules\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- Grand Prix Dynasty owner-economy rules (a REQUIRED fold input for Dynasty economy careers).
          The rules copy-globs are per-folder and NON-recursive, so this subtree needs its own line —
          the exact packaging gap the smgp folder documents above. -->

@@ -2365,6 +2365,28 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         foreach (var t in Pack.Teams)
         {
             var tp = teamProfiles.ForTeam(t.Id);
+            // The MACHINE dossier (SMGP-024): the permanent car + engine identity from the canon,
+            // their lore from the dossier catalogs. Null when either catalog is absent.
+            var canonTeam = _environment.Rules.SmgpCanon.ForTeam(t.Id);
+            var carDossier = canonTeam is null ? null : _environment.Rules.SmgpCarDossiers.ForCar(canonTeam.CarId);
+            var engineDossier = canonTeam is null ? null : _environment.Rules.SmgpEngineDossiers.ForEngine(canonTeam.EngineId);
+            SmgpMachineDossier? machine = canonTeam is null || carDossier is null || engineDossier is null
+                ? null
+                : new SmgpMachineDossier
+                {
+                    CarName = carDossier.Name,
+                    CarTagline = carDossier.Tagline,
+                    CarNaming = carDossier.Naming,
+                    CarCharacter = carDossier.Character,
+                    CarHistory = carDossier.History,
+                    CarQuotes = carDossier.Quotes,
+                    EngineName = engineDossier.Name,
+                    EngineTagline = engineDossier.Tagline,
+                    EngineNaming = engineDossier.Naming,
+                    EngineCharacter = engineDossier.Character,
+                    EngineHistory = engineDossier.History,
+                    EngineQuotes = engineDossier.Quotes,
+                };
             var roster = orderedDrivers
                 .Where(c => string.Equals(c.TeamId, t.Id, StringComparison.Ordinal))
                 .Select(c => new SmgpTeamRosterLine
@@ -2395,6 +2417,16 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                     .Select(s => new SmgpTeamSponsorRef
                     {
                         Id = s.Id, Name = s.Name, Tier = s.Tier, BrandColorHex = s.BrandColorHex,
+                    })
+                    .ToList(),
+                Machine = machine,
+                // The seventeen-season arc (SMGP-024 capsules): the base universe's record of this
+                // team, one line per season, empty when no capsule data is installed.
+                SeasonArc = _environment.Rules.SmgpSeasonCapsules.ForTeam(t.Id)
+                    .Select(entry => new SmgpTeamSeasonArcLine
+                    {
+                        Season = entry.Season,
+                        Summary = entry.Capsule.Summary,
                     })
                     .ToList(),
             });

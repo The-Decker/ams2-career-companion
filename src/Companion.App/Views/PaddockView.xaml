@@ -406,6 +406,89 @@
                     </Grid>
                 </Border>
 
+                <!-- MACHINE (SMGP-024): the permanent car + engine dossier, collapsed without canon data -->
+                <Border Style="{StaticResource Panel}" Margin="0,16,0,0" Padding="16"
+                        Visibility="{Binding Machine, Converter={StaticResource NullCollapsed}}">
+                    <StackPanel>
+                        <TextBlock Text="MACHINE" Style="{StaticResource Eyebrow}" />
+                        <TextBlock Text="{Binding Machine.CarName}" Style="{StaticResource H2}" Margin="0,4,0,0" />
+                        <TextBlock Text="{Binding Machine.CarTagline}" Foreground="{DynamicResource AccentTextBrush}"
+                                   FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,2,0,0"
+                                   Visibility="{Binding Machine.CarTagline, Converter={StaticResource StringVisible}}" />
+                        <TextBlock Text="{Binding Machine.CarNaming}" Style="{StaticResource Muted}"
+                                   TextWrapping="Wrap" Margin="0,6,0,0" />
+                        <TextBlock Text="{Binding Machine.CarCharacter}" Style="{StaticResource Body}"
+                                   TextWrapping="Wrap" Margin="0,6,0,0" />
+                        <ItemsControl ItemsSource="{Binding Machine.CarHistory}" Margin="0,4,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" Style="{StaticResource Body}" TextWrapping="Wrap" Margin="0,0,0,8" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <ItemsControl ItemsSource="{Binding Machine.CarQuotes}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource QuoteCard}" Margin="0,0,0,6">
+                                        <TextBlock Text="{Binding}" Style="{StaticResource Body}"
+                                                   FontStyle="Italic" TextWrapping="Wrap" />
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <TextBlock Text="ENGINE" Style="{StaticResource Eyebrow}" Margin="0,12,0,0" />
+                        <TextBlock Text="{Binding Machine.EngineName}" FontWeight="SemiBold" FontSize="16" Margin="0,4,0,0" />
+                        <TextBlock Text="{Binding Machine.EngineTagline}" Foreground="{DynamicResource AccentTextBrush}"
+                                   FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,2,0,0"
+                                   Visibility="{Binding Machine.EngineTagline, Converter={StaticResource StringVisible}}" />
+                        <TextBlock Text="{Binding Machine.EngineNaming}" Style="{StaticResource Muted}"
+                                   TextWrapping="Wrap" Margin="0,6,0,0" />
+                        <TextBlock Text="{Binding Machine.EngineCharacter}" Style="{StaticResource Body}"
+                                   TextWrapping="Wrap" Margin="0,6,0,0" />
+                        <ItemsControl ItemsSource="{Binding Machine.EngineHistory}" Margin="0,4,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" Style="{StaticResource Body}" TextWrapping="Wrap" Margin="0,0,0,8" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <ItemsControl ItemsSource="{Binding Machine.EngineQuotes}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource QuoteCard}" Margin="0,0,0,6">
+                                        <TextBlock Text="{Binding}" Style="{StaticResource Body}"
+                                                   FontStyle="Italic" TextWrapping="Wrap" />
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <!-- THE SEVENTEEN SEASONS (SMGP-024 capsules): the base universe's record of this
+                     team, one line per season; collapsed when no capsule data is installed -->
+                <TextBlock Text="THE SEVENTEEN SEASONS" Style="{StaticResource Eyebrow}" Margin="0,16,0,8"
+                           Visibility="{Binding SeasonArc.Count, Converter={StaticResource CountVisible}}" />
+                <ItemsControl ItemsSource="{Binding SeasonArc}"
+                              Visibility="{Binding SeasonArc.Count, Converter={StaticResource CountVisible}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" MinWidth="74" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{Binding Season, StringFormat='S{0:00}'}"
+                                           Style="{StaticResource Mono}" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource AccentTextBrush}" Margin="0,0,10,0" />
+                                <TextBlock Grid.Column="1" Text="{Binding Summary}" Style="{StaticResource Body}"
+                                           TextWrapping="Wrap" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
                 <TextBlock Text="TEAM HISTORY" Style="{StaticResource Eyebrow}" Margin="0,16,0,8" />
                 <ItemsControl ItemsSource="{Binding History}">
                     <ItemsControl.ItemTemplate>

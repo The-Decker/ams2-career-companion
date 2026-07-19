@@ -1,0 +1,370 @@
+{
+  "missionId": "SMGP-ART-LORE-PREFLIGHT-001",
+  "state": "RESEARCH_AND_PLANNING_ONLY",
+  "generated": "2026-07-18",
+  "keyOrder": "stableContentId",
+  "noImagesGenerated": true,
+  "packets": {
+    "ch.showdown.smgp": {
+      "stableContentId": "ch.showdown.smgp",
+      "contentId": "newsroom-template:ch.showdown.smgp",
+      "expectedAssetId": "newsroom:ch.showdown.smgp",
+      "inventoryRow": { "file": "docs/art-audit/news_history_art_inventory.csv", "line": 2294, "contentType": "NEWS", "contentSubtype": "NEWSROOM_TEMPLATE", "severity": "P0", "currentAuditStatus": "MISSING_ASSET_FIELD|EXPLICIT_PLACEHOLDER|GENERIC_FALLBACK|UNIVERSAL_FALLBACK_OVERUSE" },
+      "sourceFiles": [
+        { "file": "data/rules/newsroom/032-championship.json", "pointer": "templates[14]", "lines": "244-250", "role": "template" },
+        { "file": "data/rules/smgp/what-really-happened.json", "pointer": "races.\"Monaco\"", "lines": "229-242", "role": "referenceScene" },
+        { "file": "data/rules/smgp/seasons.json", "pointer": "seasons[ordinal=8].overview", "lines": "454", "role": "corroboration" },
+        { "file": "packs/smgp-1/season.json", "pointer": "rounds[15].track", "lines": "1547-1555", "role": "venueMapping" }
+      ],
+      "seasonOrdinal": null,
+      "runtimeYear": null,
+      "referenceSeasonOrdinal": 8,
+      "referenceRuntimeYear": 1997,
+      "canonTitle": "FINAL STAGE: THE CROWN IS DECIDED AT THE LAST ROUND",
+      "referenceSceneTitle": "MONACO, THE JEWEL WHERE KINGS ARE CROWNED",
+      "eventCategory": "rivalry-championship-pressure",
+      "eventKind": "finalRoundShowdown",
+      "provenance": "careerUniverse",
+      "provenanceNote": "SMGP-mode newsroom stories badge CAREER UNIVERSE (ProvenanceFor fall-through, NewsroomComposer.cs:247-253); the reference scene is smgpFiction. Manifest records careerUniverse with SMGP-scoped context filters.",
+      "drivers": [
+        { "id": "driver.ayrton_senna", "name": "Ayrton Senna", "country": "BRA", "team": "team.madonna", "number": 1, "epithet": "THE UNTOUCHABLE KING", "depiction": "car-and-number-only" },
+        { "id": "driver.gilberto_ceara", "name": "Gilberto Ceara", "country": "BRA", "team": "team.bullets", "number": 17, "epithet": "THE LOADED GUN", "depiction": "car-and-number-only" }
+      ],
+      "teams": [
+        { "id": "team.madonna", "tier": "A", "colors": "deep imperial red bleeding into blazing gold; the yellow-and-red garage", "motto": "YELLOW AND RED, FIRST AND FLAWLESS, THE CROWN NEVER SLIPS." },
+        { "id": "team.bullets", "tier": "C", "colors": "gunmetal flanks, a brass blade down the nose, a flash of tropical green", "motto": "LOADED AT LEVEL C. AIMED STRAIGHT AT THE CROWN." }
+      ],
+      "cars": [
+        { "entry": "Madonna #1", "vehicleId": "formula_classic_g3m1", "class": "F-Classic_Gen3" },
+        { "entry": "Bullets #17", "vehicleId": "formula_classic_g3m4", "class": "F-Classic_Gen3" }
+      ],
+      "era": { "inWorldGeneration": "pre-Charter (Gen-4 era frame)", "hardwareNote": "All 17 seasons drive F-Classic_Gen3; in-world Gen evolution is prose-only." },
+      "venue": { "name": "Monaco", "realVenue": "Circuit de Monaco", "layoutId": "azure_circuit_2021", "country": "Monaco", "location": "Monte Carlo", "type": "street", "direction": "clockwise", "lengthKm": 3.33, "turns": 20, "roundPositionSeason1": 16, "frameNote": "pre-Charter dark tunnel (relit only in Charter years, seasons.json:582,1036)" },
+      "confirmedEvent": "Almanac tunnel duel: Senna and Ceara nose-to-tail in the dark with D.P. on the line, both kissing Armco within a breath of each other on the last lap; Senna took the flag (what-really-happened.json:235); champion of record A. Senna / Madonna (:232). Template fires while the live showdown is undecided, so art is result-free.",
+      "weather": "UNKNOWN (tunnel darkness is structural)",
+      "timeOfDay": "UNKNOWN",
+      "tone": "knife-edge; a held breath; the argument the grandstand never stops having",
+      "requiredVisible": ["red-and-gold #1 and gunmetal #17 nose-to-tail in tunnel shadow", "Armco close on both sides", "tunnel exit glow ahead", "tension composition without outcome"],
+      "forbiddenVisible": ["winner declaration or flag imagery", "faces, helmets, likenesses", "harbor, yachts, casino, palace, waterfront", "text or logos", "bright relit tunnel", "contact or crash depiction"],
+      "uiSurfaces": ["News lead", "featured cards", "story list", "bookmarks", "search", "article reader"],
+      "aspectRatios": { "master": "3.2:1 (e.g. 1920x600)", "slots": ["lead 280/210/120 px full width", "cards 280-480 x 190/154/104", "reader <=980 x 250 with 320 right and 390 left layers"], "safeZone": "subject in central 40% width x 50% height; bottom 12% scrim-expendable; right 15% and left 18% reader-layer expendable" },
+      "provenanceConcerns": ["Senna likeness abstraction mandatory", "badge-edge must be documented in manifest"],
+      "contradictions": ["badge fall-through (registered)", "tunnel lighting state era-dependent (resolved by pre-Charter frame)"],
+      "confidence": "HIGH",
+      "decision": "READY"
+    },
+    "dnf.mechanical": {
+      "stableContentId": "dnf.mechanical",
+      "contentId": "newsroom-template:dnf.mechanical",
+      "expectedAssetId": "newsroom:dnf.mechanical",
+      "inventoryRow": { "file": "docs/art-audit/news_history_art_inventory.csv", "line": 2304, "contentType": "NEWS", "contentSubtype": "NEWSROOM_TEMPLATE", "severity": "P0", "currentAuditStatus": "MISSING_ASSET_FIELD|EXPLICIT_PLACEHOLDER|GENERIC_FALLBACK|UNIVERSAL_FALLBACK_OVERUSE" },
+      "sourceFiles": [
+        { "file": "data/rules/newsroom/010-core.json", "pointer": "templates[15]", "lines": "223-229", "role": "template" },
+        { "file": "data/rules/smgp/seasons.json", "pointer": "seasons[ordinal=5].timeline", "lines": "265,269,280,296", "role": "referenceScene" },
+        { "file": "data/rules/smgp/what-really-happened.json", "pointer": "races.\"West Germany\"", "lines": "64-77", "role": "almanacContext" },
+        { "file": "packs/smgp-1/season.json", "pointer": "rounds[4].track", "lines": "456-464", "role": "venueMapping" }
+      ],
+      "seasonOrdinal": null,
+      "runtimeYear": null,
+      "referenceSeasonOrdinal": 5,
+      "referenceRuntimeYear": 1994,
+      "canonTitle": "Machinery fails {subject}[[?venue: at {venue}]]",
+      "referenceSceneTitle": "The Horsepower Spring smoke plague",
+      "eventCategory": "mechanical-failure",
+      "eventKind": "retiredMechanical",
+      "provenance": "careerUniverse",
+      "provenanceNote": "Template is era-generic (no eras field) and serves all career types; the reference scene is smgpFiction. Art must carry no SMGP-only marks.",
+      "drivers": [
+        { "id": "driver.michael_blume", "name": "Michael Blume", "country": "DEU", "team": "team.bestowal", "number": 8, "epithet": "THE UNREDEEMED HEIR", "depiction": "almanac-context-only, never the failing driver" }
+      ],
+      "teams": [
+        { "id": "team.bestowal", "tier": "A", "colors": "a gunmetal-and-silver missile with a great red 8 on its flanks (team-profiles.json:62)", "motto": "EVERYTHING GIVEN. NOTHING FORGIVEN.", "depiction": "venue context only; failing car is team-neutral" }
+      ],
+      "cars": [
+        { "entry": "anonymous coasted car", "vehicleId": null, "class": "F-Classic_Gen3 hardware era", "note": "no generation-specific bodywork claim" }
+      ],
+      "era": { "inWorldGeneration": "first-spring Gen-4 (smoke plague)", "hardwareNote": "F-Classic_Gen3 for all seasons; Gen evolution prose-only." },
+      "venue": { "name": "West Germany", "realVenue": "Hockenheimring", "layoutId": "hockenheim_1988", "country": "Germany", "location": "Hockenheim", "type": "permanent circuit", "direction": "clockwise", "lengthKm": 6.8, "turns": 16, "roundPositionSeason1": 5, "frameNote": "treeline at the forest straights; stadium bowl distant only" },
+      "confirmedEvent": "Season-5 smoke plague: retirements at an all-time record, the treeline at West Germany eating a season of engines whole in one scorching weekend (seasons.json:269,280,296); failures mechanical not human, drivers coast to the grass and walk back to applause (seasons.json:265).",
+      "weather": "scorching heat (authored for the reference weekend, seasons.json:280)",
+      "timeOfDay": "UNKNOWN",
+      "tone": "cruel luck; industrial pathos; the walked-away applause",
+      "requiredVisible": ["coasted car on grass at the treeline trailing smoke and steam", "anonymous driver walking away, rear view", "forest edge silhouette", "heat shimmer", "empty track ahead"],
+      "forbiddenVisible": ["flames or fireball", "crash or impact", "injury narrative", "identifiable driver or team livery", "modern barriers or pit buildings", "SMGP-only marks"],
+      "uiSurfaces": ["News lead", "featured cards", "story list", "bookmarks", "search", "article reader"],
+      "aspectRatios": { "master": "3.2:1 (e.g. 1920x600)", "slots": ["lead 280/210/120 px full width", "cards 280-480 x 190/154/104", "reader <=980 x 250"], "safeZone": "subject in central 40% width x 50% height; bottom 12% scrim-expendable" },
+      "provenanceConcerns": ["era-capped caption vocabulary (NewsCorpusGuardTests)", "era-generic scope declared in manifest context filters"],
+      "contradictions": ["Bestowal-color research disagreement resolved by direct citation (team-profiles.json:62)", "era-generic template vs SMGP reference declared openly"],
+      "confidence": "HIGH (scene/venue), MEDIUM (template scope, declared)",
+      "decision": "READY"
+    },
+    "mt.transfer.smgp": {
+      "stableContentId": "mt.transfer.smgp",
+      "contentId": "newsroom-template:mt.transfer.smgp",
+      "expectedAssetId": "newsroom:mt.transfer.smgp",
+      "inventoryRow": { "file": "docs/art-audit/news_history_art_inventory.csv", "line": 2358, "contentType": "NEWS", "contentSubtype": "NEWSROOM_TEMPLATE", "severity": "P0", "currentAuditStatus": "MISSING_ASSET_FIELD|EXPLICIT_PLACEHOLDER|GENERIC_FALLBACK|UNIVERSAL_FALLBACK_OVERUSE" },
+      "sourceFiles": [
+        { "file": "data/rules/newsroom/034-market-teams.json", "pointer": "templates[6]", "lines": "85-91", "role": "template" },
+        { "file": "data/rules/smgp/seasons.json", "pointer": "seasons[ordinal=8].timeline", "lines": "454,467,474,485,493", "role": "referenceStory" }
+      ],
+      "seasonOrdinal": null,
+      "runtimeYear": null,
+      "referenceSeasonOrdinal": 8,
+      "referenceRuntimeYear": 1997,
+      "canonTitle": "{player} JUMPS TO {team}!",
+      "referenceSceneTitle": "The works-engine winter (The Boiling Point)",
+      "eventCategory": "transfer-contract",
+      "eventKind": "playerTeamChanged",
+      "provenance": "careerUniverse",
+      "provenanceNote": "careerUniverse badge; smgpFiction reference story.",
+      "drivers": [
+        { "id": "driver.gilberto_ceara", "name": "Gilberto Ceara", "country": "BRA", "team": "team.bullets", "number": 17, "epithet": "THE LOADED GUN", "depiction": "handshake silhouette only, no face" }
+      ],
+      "teams": [
+        { "id": "team.bullets", "tier": "C", "colors": "gunmetal flanks, a brass blade down the nose, a flash of tropical green", "motto": "LOADED AT LEVEL C. AIMED STRAIGHT AT THE CROWN." }
+      ],
+      "cars": [
+        { "entry": "Bullets #17", "vehicleId": "formula_classic_g3m4", "class": "F-Classic_Gen3", "note": "brass-blade nose under a work lamp" }
+      ],
+      "era": { "inWorldGeneration": "fourth-year Gen-4 context (not visible in garage)", "hardwareNote": "F-Classic_Gen3 hardware." },
+      "venue": null,
+      "venueNote": "No track scene: Bullets backstreet garage and paddock, winter preseason signing and season-end dissolution.",
+      "confirmedEvent": "Winter signing of the one-season works-engine deal, the only time the backstreet garage ever runs establishment power (seasons.json:467); dissolution under establishment pressure at season's end, Ceara shakes the engineers' hands and goes back to building his own thunder (seasons.json:474; hooks 485,493).",
+      "weather": "winter authored for the signing; scene is indoors so weather is immaterial",
+      "timeOfDay": "UNKNOWN",
+      "tone": "cold-war paddock politics; a deal too good to last; defiant craft pride",
+      "requiredVisible": ["backstreet garage interior", "gunmetal #17 nose with brass blade under a work lamp", "unbranded tarped engine crate", "two silhouetted figures in handshake or paperwork exchange, no faces", "winter light through the garage door", "workbench and tool texture"],
+      "forbiddenVisible": ["supplier marque, logo, or wordmark", "contract text", "faces or likenesses", "real-world team trade dress", "race-day elements", "red-and-white chevron geometry"],
+      "uiSurfaces": ["News lead", "featured cards", "story list", "bookmarks", "search", "article reader"],
+      "aspectRatios": { "master": "3.2:1 (e.g. 1920x600)", "slots": ["lead 280/210/120 px full width", "cards 280-480 x 190/154/104", "reader <=980 x 250"], "safeZone": "car nose left-of-center and handshake right-of-center, both inside the central 40% x 50% core" },
+      "provenanceConcerns": ["fictional sponsors only", "unnamed supplier stays unnamed in every visual and caption"],
+      "contradictions": [],
+      "confidence": "HIGH",
+      "decision": "READY"
+    },
+    "smgp-dispatch:milestone.first-win": {
+      "stableContentId": "smgp-dispatch:milestone.first-win",
+      "contentId": "smgp-dispatch:milestone.first-win",
+      "expectedAssetId": "smgp-dispatch:milestone.first-win",
+      "inventoryRow": { "file": "docs/art-audit/news_history_art_inventory.csv", "line": 2537, "contentType": "NEWS", "contentSubtype": "SMGP_DISPATCH_FAMILY", "severity": "P1", "currentAuditStatus": "GENERIC_FALLBACK|UNINTENTIONAL_REUSE" },
+      "sourceFiles": [
+        { "file": "data/rules/smgp/dispatches.json", "pointer": "templates.\"milestone.first-win\"", "lines": "74-77", "role": "template" },
+        { "file": "data/rules/smgp/what-really-happened.json", "pointer": "races.\"Brazil\"", "lines": "19-33", "role": "referenceScene" },
+        { "file": "packs/smgp-1/season.json", "pointer": "rounds[1].track", "lines": "159-167", "role": "venueMapping" }
+      ],
+      "seasonOrdinal": null,
+      "runtimeYear": null,
+      "referenceSeasonOrdinal": null,
+      "referenceRuntimeYear": null,
+      "canonTitle": "milestone.first-win",
+      "referenceSceneTitle": "BRAZIL, CEARA'S BURNING FORTRESS",
+      "eventCategory": "race-triumph",
+      "eventKind": "milestone.first-win",
+      "provenance": "smgpFiction",
+      "provenanceNote": "Family and almanac scene both smgpFiction; badge SMGP UNIVERSE.",
+      "drivers": [
+        { "id": "driver.gilberto_ceara", "name": "Gilberto Ceara", "country": "BRA", "team": "team.bullets", "number": 17, "epithet": "THE LOADED GUN", "depiction": "car-and-palette-only", "identityNote": "wet master, roster-highest wet skill (packs/smgp-1/drivers.json)" }
+      ],
+      "teams": [
+        { "id": "team.bullets", "tier": "C", "colors": "gunmetal flanks, a brass blade down the nose, a flash of tropical green", "motto": "LOADED AT LEVEL C. AIMED STRAIGHT AT THE CROWN." }
+      ],
+      "cars": [
+        { "entry": "Bullets #17", "vehicleId": "formula_classic_g3m4", "class": "F-Classic_Gen3" }
+      ],
+      "era": { "inWorldGeneration": "UNKNOWN (pre-campaign memory)", "hardwareNote": "Pack g3m4 is the hardware reference." },
+      "venue": { "name": "Brazil", "realVenue": "Autodromo Internacional do Rio de Janeiro (Jacarepagua)", "layoutId": "jacarepagua_historic", "country": "Brazil", "location": "Rio de Janeiro", "type": "permanent circuit", "direction": "anti-clockwise", "lengthKm": 5.003, "turns": 11, "roundPositionSeason1": 2 },
+      "confirmedEvent": "Brazil champion of record G. Ceara / Bullets (what-really-happened.json:22); authored rain coronation: the heavens opened on lap one and the Bullets simply vanished up the road, the grandees paddling in his spray (:26).",
+      "weather": "rain (authored almanac fiction, :26)",
+      "timeOfDay": "UNKNOWN",
+      "tone": "coronation in the rain; a home fortress roaring; the wet master's apotheosis",
+      "requiredVisible": ["gunmetal #17 with brass blade and green flash vanishing up a wet bumpy straight, rear three-quarter view", "pursuing grandees as indistinct silhouettes in spray", "soaked asphalt sheen", "roaring home grandstand as noise-silhouettes", "abstracted big-board glow"],
+      "forbiddenVisible": ["driver face or likeness", "podium ceremony or trophy", "any maiden or first-win visual claim", "identifiable Senna among silhouettes", "live-career result claims", "text, logos, flag iconography"],
+      "uiSurfaces": ["News lead", "News cards", "article reader", "History latest dispatches"],
+      "aspectRatios": { "master": "3.2:1 (e.g. 1920x600)", "slots": ["lead 280/210/120 px full width", "cards 280-480 x 190/154/104", "reader <=980 x 250", "history dispatch card ~320-490 x 92"], "safeZone": "subject in central 40% width x 50% height; bottom 12% scrim-expendable; right 15% and left 18% reader-layer expendable" },
+      "provenanceConcerns": ["dispatch identity not append-stable (audit section 22): manifest keys from stable content data, not dispatch order"],
+      "contradictions": ["documented scene is a coronation, not a maiden win (no maiden claim permitted)", "season 2+ sim weather seeded independently of lore: rain illustrates the almanac memory only"],
+      "confidence": "HIGH (scene), MEDIUM (family binding semantics, caveat logged)",
+      "decision": "READY"
+    },
+    "smgp-dispatch:setback.died": {
+      "stableContentId": "smgp-dispatch:setback.died",
+      "contentId": "smgp-dispatch:setback.died",
+      "expectedAssetId": "smgp-dispatch:setback.died",
+      "inventoryRow": { "file": "docs/art-audit/news_history_art_inventory.csv", "line": 2544, "contentType": "NEWS", "contentSubtype": "SMGP_DISPATCH_FAMILY", "severity": "P1", "currentAuditStatus": "GENERIC_FALLBACK|UNINTENTIONAL_REUSE" },
+      "sourceFiles": [
+        { "file": "data/rules/smgp/dispatches.json", "pointer": "templates.\"setback.died\"", "lines": "122-125", "role": "template" },
+        { "file": "data/rules/smgp/dispatches.json", "pointer": "pools.\"mourning\"", "lines": "29-35", "role": "voicePool" },
+        { "file": "data/rules/newsroom/033-reliability-injury.json", "pointer": "restrained death register", "lines": "357-358,371", "role": "restraintRegister" },
+        { "file": "data/rules/smgp/seasons.json", "pointer": "seasons[ordinal=9].safety", "lines": "520,533", "role": "zeroFatalityCanon" },
+        { "file": "docs/dev/character-death-injury.md", "pointer": "MortalityMode opt-in", "lines": "45-65", "role": "gating" },
+        { "file": "docs/CAREER_GAME_OVER_FLOW.md", "pointer": "severity band and IN MEMORIAM badge", "lines": "20,50-52", "role": "gating" }
+      ],
+      "seasonOrdinal": null,
+      "runtimeYear": null,
+      "referenceSeasonOrdinal": null,
+      "referenceRuntimeYear": null,
+      "canonTitle": "setback.died",
+      "referenceSceneTitle": "The circus falls silent",
+      "eventCategory": "restrained-fatality-coverage",
+      "eventKind": "setback.died",
+      "provenance": "smgpFiction",
+      "provenanceNote": "smgpFiction family over a career-instance context; badge SMGP UNIVERSE; fires only with the mortality opt-in enabled.",
+      "drivers": [],
+      "driversNote": "No driver depicted, by design. The subject token {player} resolves at runtime and is never shown.",
+      "teams": [],
+      "cars": [
+        { "entry": "covered car or silent engine stand", "vehicleId": null, "class": null, "note": "identity-free" }
+      ],
+      "era": { "inWorldGeneration": null, "hardwareNote": "No identifiable hardware." },
+      "venue": null,
+      "venueNote": "Venue-free pit-lane and garage memorial, by design; keeps clear of packet 2's Adelaide scene.",
+      "confirmedEvent": "Authored voice: TRAGEDY. {player} has been killed in an accident here. The SMGP world loses one of its own, and the circus falls silent. (dispatches.json:123) with the mourning pool (:29-35).",
+      "weather": "UNKNOWN",
+      "timeOfDay": "UNKNOWN (grey stilled light is a palette choice, labeled as such, not canon)",
+      "tone": "restrained mourning: silence, flags at half-mast, the empty seat; never graphic",
+      "requiredVisible": ["flags at half-mast over a pit lane (pool verbatim)", "empty garage bay", "covered car or engine stand", "darkened big board", "muted desaturated palette", "stillness as the whole subject"],
+      "forbiddenVisible": ["crash depiction, wreckage, body, flames, gore", "driver identity, portrait, or the deceased's helmet", "any venue claim", "any implication of a canon death", "resemblance to a real person's memorial or documentary photograph"],
+      "uiSurfaces": ["News lead", "News cards", "article reader", "History latest dispatches"],
+      "aspectRatios": { "master": "3.2:1 (e.g. 1920x600)", "slots": ["lead 280/210/120 px full width", "cards 280-480 x 190/154/104", "reader <=980 x 250", "history dispatch card ~320-490 x 92"], "safeZone": "flag and garage bay inside the central 40% x 50% core so near-square fallback crops keep both" },
+      "provenanceConcerns": ["stricter context and provenance review per ART-P3-001", "context filters gate on the mortality opt-in", "sensitivity review is part of approval"],
+      "contradictions": [],
+      "confidence": "HIGH",
+      "decision": "READY"
+    },
+    "smgp-season-lore:1": {
+      "stableContentId": "smgp-season-lore:1",
+      "contentId": "smgp-season-lore:1",
+      "expectedAssetId": "smgp-season:1",
+      "inventoryRow": { "file": "docs/art-audit/news_history_art_inventory.csv", "line": 1082, "contentType": "HISTORY", "contentSubtype": "SMGP_SEASON_LORE", "severity": "P1", "currentAuditStatus": "MISSING_ASSET_FIELD" },
+      "sourceFiles": [
+        { "file": "data/rules/smgp/seasons.json", "pointer": "seasons[ordinal=1]", "lines": "9-44", "role": "canon" },
+        { "file": "packs/smgp-1/season.json", "pointer": "rounds[0].track, rounds[15].track", "lines": "60-68,1547-1555", "role": "venueMapping" },
+        { "file": "data/rules/smgp/what-really-happened.json", "pointer": "races.\"San Marino\", races.\"Monaco\"", "lines": "4-17,229-242", "role": "almanacContext" }
+      ],
+      "seasonOrdinal": 1,
+      "runtimeYear": 1990,
+      "inWorldNumbering": "tenth World Championship",
+      "canonTitle": "The Tenth Summer",
+      "eraName": "The Iron Circus",
+      "eventCategory": "season-identity-early",
+      "provenance": "smgpFiction",
+      "drivers": [
+        { "id": "driver.ayrton_senna", "name": "Ayrton Senna", "country": "BRA", "team": "team.madonna", "number": 1, "epithet": "THE UNTOUCHABLE KING", "depiction": "abstracted: car, number, colors only", "identityNote": "6 crowns, 69 wins, 72 poles at the campaign's dawn (driver-stats.json; seasons.json:44)" },
+        { "id": "driver.gilberto_ceara", "name": "Gilberto Ceara", "country": "BRA", "team": "team.bullets", "number": 17, "epithet": "THE LOADED GUN", "depiction": "car-and-palette-only" }
+      ],
+      "teams": [
+        { "id": "team.madonna", "tier": "A", "colors": "deep imperial red bleeding into blazing gold; the yellow-and-red garage", "motto": "YELLOW AND RED, FIRST AND FLAWLESS, THE CROWN NEVER SLIPS." },
+        { "id": "team.bullets", "tier": "C", "colors": "gunmetal flanks, a brass blade down the nose, a flash of tropical green", "motto": "LOADED AT LEVEL C. AIMED STRAIGHT AT THE CROWN." }
+      ],
+      "cars": [
+        { "entry": "Madonna #1", "vehicleId": "formula_classic_g3m1", "class": "F-Classic_Gen3" },
+        { "entry": "Bullets #17", "vehicleId": "formula_classic_g3m4", "class": "F-Classic_Gen3" }
+      ],
+      "era": { "inWorldGeneration": "final-spec Gen-3 (homologation freeze)", "hardwareNote": "The one season where in-world generation matches the physical fleet." },
+      "venue": { "name": "San Marino (opener) and Monaco (finale)", "layoutId": "imola_88; azure_circuit_2021", "roundPositionSeason1": "1; 16" },
+      "confirmedEvent": "Gen-3 homologation freeze becomes law (seasons.json:22); stewards declare the featherweight Bullets legal, Dardan's protest fails (:41); the King's arithmetic read aloud at San Marino (:44); season opens at Imola, closes at Monaco (pack calendar). Lore declares no champion; the sim decides.",
+      "weather": "Clear (pack-authored for every season-1 session; packs/smgp-1/season.json weatherSlots; docs/dev/smgp-design.md:46)",
+      "timeOfDay": "UNKNOWN (neutral clear daylight is an art choice, not canon)",
+      "tone": "stone-carved old order at full weight; a serene king; a quiet, almost unnoticed beginning",
+      "requiredVisible": ["red-and-gold #1 car by number and palette, no likeness", "gunmetal #17 with brass nose blade", "season-opener pit-straight atmosphere at Imola, generic furniture only", "full grandstand as silhouette", "clear sky", "muted Iron Circus palette with one imperial red-and-gold accent"],
+      "forbiddenVisible": ["Senna face, helmet, or McLaren-era trade dress", "Marlboro chevron geometry", "text, logos, HUD", "Monaco harbor, yachts, casino, waterfront", "150th-GP Silverstone motif and its awe-silent grandstand", "pace cars, medical corps, rebuilt Charter barriers", "Gen-4 or Gen-5 visual claims"],
+      "uiSurfaces": ["Briefing season header", "Rival screen", "campaign timeline", "future season preview"],
+      "aspectRatios": { "master": "16:9 (1920x1080)", "slots": ["Briefing season header hero band", "CampaignTimelineStrip 168x104 card and 88x46 chip", "Rival screen", "season preview"], "safeZone": "subject in central 40% width x 50% height; nothing load-bearing in outer 20% on any edge" },
+      "provenanceConcerns": ["highest likeness risk in the set (real, deceased public figure); abstraction mandatory", "SmgpFiction manifest record with full Stage B fields"],
+      "contradictions": [],
+      "confidence": "HIGH",
+      "decision": "READY"
+    },
+    "smgp-season-lore:17": {
+      "stableContentId": "smgp-season-lore:17",
+      "contentId": "smgp-season-lore:17",
+      "expectedAssetId": "smgp-season:17",
+      "inventoryRow": { "file": "docs/art-audit/news_history_art_inventory.csv", "line": 1098, "contentType": "HISTORY", "contentSubtype": "SMGP_SEASON_LORE", "severity": "P1", "currentAuditStatus": "MISSING_ASSET_FIELD" },
+      "sourceFiles": [
+        { "file": "data/rules/smgp/seasons.json", "pointer": "seasons[ordinal=17]", "lines": "1030-1090", "role": "canon" },
+        { "file": "data/rules/smgp/what-really-happened.json", "pointer": "races.\"Monaco\"", "lines": "229-242", "role": "almanacContext" },
+        { "file": "packs/smgp-1/season.json", "pointer": "rounds[15].track", "lines": "1547-1555", "role": "venueMapping" }
+      ],
+      "seasonOrdinal": 17,
+      "runtimeYear": 2006,
+      "inWorldNumbering": "twenty-sixth World Championship",
+      "canonTitle": "The Crown of Crowns",
+      "eraName": "The Golden Circus",
+      "eventCategory": "season-identity-final",
+      "provenance": "smgpFiction",
+      "drivers": [
+        { "id": "driver.ayrton_senna", "name": "Ayrton Senna", "country": "BRA", "team": "team.madonna", "number": 1, "epithet": "THE UNTOUCHABLE KING", "depiction": "abstracted: car, number, colors only" },
+        { "id": "driver.alain_asselin", "name": "Alain Asselin", "country": "FRA", "team": "team.madonna", "number": 2, "epithet": "THE CLOSING DOOR", "depiction": "prose-only" },
+        { "id": "driver.gilberto_ceara", "name": "Gilberto Ceara", "country": "BRA", "team": "team.bullets", "number": 17, "epithet": "THE LOADED GUN", "depiction": "prose-only" },
+        { "id": "driver.mika_larssen", "name": "Mika Larssen", "country": "FIN", "team": "team.azalea", "number": 34, "epithet": "THE FROST THAT BLOOMS", "depiction": "prose-only", "identityNote": "the roster's one authored female driver (driver-profiles.json drivers[9])" }
+      ],
+      "teams": [
+        { "id": "team.madonna", "tier": "A", "colors": "deep imperial red bleeding into blazing gold", "motto": "YELLOW AND RED, FIRST AND FLAWLESS, THE CROWN NEVER SLIPS." },
+        { "id": "team.azalea", "tier": "A", "colors": "deep magenta petals fanning into cold white, chrome edges", "motto": "PETALS OF STEEL, SHE BLOOMS WHEN THE LIGHTS BURN BRIGHTEST." },
+        { "id": "team.blanche", "tier": "B", "colors": "the purest white on the grid", "motto": "SPOTLESS BODYWORK. SPOTLESS RECORD. ONE PASS FROM THE CROWN." },
+        { "id": "team.minarae", "tier": "C", "colors": "a big bold number on the nose and honest workshop colours, plain by canon", "motto": "EVERY CHAMPION STARTED IN A MINARAE." }
+      ],
+      "cars": [
+        { "entry": "Madonna #1", "vehicleId": "formula_classic_g3m1", "class": "F-Classic_Gen3", "note": "one imperial look only" }
+      ],
+      "era": { "inWorldGeneration": "Gen-5 jewel formula at absolute peak (prose-only)", "hardwareNote": "F-Classic_Gen3 hardware; no multi-era heritage parade (that is ordinal 16's motif)." },
+      "venue": { "name": "Monaco (finale)", "realVenue": "Circuit de Monaco", "layoutId": "azure_circuit_2021", "country": "Monaco", "location": "Monte Carlo", "type": "street", "direction": "clockwise", "lengthKm": 3.33, "turns": 20, "roundPositionSeason1": 16, "frameNote": "Charter-era state: relit tunnel, rebuilt barriers, pace-car fixture, silver medical car (seasons.json:1036,584)" },
+      "confirmedEvent": "The twenty-sixth championship proclaimed the Crown of Crowns, sixteen rounds staged as chapters of one finale (seasons.json:1033,1038,1068); Senna's eve-of-San-Marino declaration (:1046); the last flag falls at Monaco (:1031,1075); the sealed prize beyond the last flag for the campaign's finishers (:1042,1079). Lore declares no champion; the sim decides.",
+      "weather": "UNKNOWN",
+      "timeOfDay": "UNKNOWN (relit tunnel is a permanent state; farewell warmth is palette, not canon)",
+      "tone": "valedictory, reverent, conclusive; pilgrims at the crown jewel; a sealed mystery beyond the flag",
+      "requiredVisible": ["crown-jewel street circuit in farewell dress: Armco, hairpin, tunnel exit glow (warm lit portal, not darkness)", "pilgrim grandstands", "one imperial red-and-gold #1 as the only car", "Charter-era safety furniture permitted (rebuilt barriers, distant silver medical car)", "muted Golden Circus palette with one jubilee gold accent"],
+      "forbiddenVisible": ["any champion or winner declaration", "faces, helmets, likenesses", "harbor, yachts, casino, palace, waterfront", "heritage-liveries drift toward real trade dress", "the sealed prize depicted (special.jpg and ultimate.jpg are sealed finale assets)", "a dark tunnel (relit by 2006)"],
+      "uiSurfaces": ["Briefing season header", "Rival screen", "campaign timeline", "future season preview"],
+      "aspectRatios": { "master": "16:9 (1920x1080)", "slots": ["Briefing season header hero band", "CampaignTimelineStrip 168x104 card and 88x46 chip", "Rival screen", "season preview"], "safeZone": "subject in central 40% width x 50% height" },
+      "provenanceConcerns": ["Senna abstraction", "jubilee pageantry stays inside SMGP fictional palettes"],
+      "contradictions": ["ordinal-16 vs ordinal-17 motif conflation caught and corrected (heritage liveries are the Silver Jubilee's, seasons.json:967-1026)"],
+      "confidence": "HIGH",
+      "decision": "READY"
+    },
+    "smgp-season-lore:9": {
+      "stableContentId": "smgp-season-lore:9",
+      "contentId": "smgp-season-lore:9",
+      "expectedAssetId": "smgp-season:9",
+      "inventoryRow": { "file": "docs/art-audit/news_history_art_inventory.csv", "line": 1090, "contentType": "HISTORY", "contentSubtype": "SMGP_SEASON_LORE", "severity": "P1", "currentAuditStatus": "MISSING_ASSET_FIELD" },
+      "sourceFiles": [
+        { "file": "data/rules/smgp/seasons.json", "pointer": "seasons[ordinal=9]", "lines": "517-557", "role": "canon" },
+        { "file": "data/rules/smgp/what-really-happened.json", "pointer": "races.\"Australia\"", "lines": "214-227", "role": "almanacContext" },
+        { "file": "packs/smgp-1/season.json", "pointer": "rounds[14].track", "lines": "1448-1456", "role": "venueMapping" }
+      ],
+      "seasonOrdinal": 9,
+      "runtimeYear": 1998,
+      "inWorldNumbering": "eighteenth World Championship",
+      "canonTitle": "The Reckoning",
+      "eraName": "The Horsepower War (closing hinge)",
+      "eventCategory": "season-identity-middle",
+      "provenance": "smgpFiction",
+      "drivers": [
+        { "id": "driver.gilles_gould", "name": "Gilles Gould", "country": "CAN", "team": "team.tyrant", "number": 12, "epithet": "ALL OR THE ARMCO", "depiction": "prose-only, never depicted", "identityNote": "out-dared at last by the concrete, walked away (seasons.json:520)" },
+        { "id": "driver.michael_blume", "name": "Michael Blume", "country": "DEU", "team": "team.bestowal", "number": 8, "epithet": "THE UNREDEEMED HEIR", "depiction": "prose-only" },
+        { "id": "driver.marcel_moreau", "name": "Marcel Moreau", "country": "FRA", "team": "team.linden", "number": 22, "epithet": "THE PATIENT ROOT", "depiction": "prose-only" },
+        { "id": "driver.giorgio_alberti", "name": "Giorgio Alberti", "country": "ITA", "team": "team.millions", "number": 6, "epithet": "THE CROWNED PATRICIAN", "depiction": "prose-only" }
+      ],
+      "teams": [
+        { "id": "team.tyrant", "tier": "B", "colors": "gunmetal grey slabbed over oxblood red, a black iron fist stamped on each flank (team-profiles.json:130)", "motto": "OBEY THE IRON, OR FEED IT TO THE WALL.", "depiction": "context only, no car shown" },
+        { "id": "team.bestowal", "tier": "A", "colors": "a gunmetal-and-silver missile with a great red 8 on its flanks (team-profiles.json:62)", "motto": "EVERYTHING GIVEN. NOTHING FORGIVEN.", "depiction": "context only" }
+      ],
+      "cars": [],
+      "carsNote": "Scene is deliberately car-free so no generation claim is visible; in-world peak Gen-4, hardware F-Classic_Gen3.",
+      "era": { "inWorldGeneration": "peak Gen-4, the final angriest evolution (seasons.json:519)", "hardwareNote": "Gen evolution prose-only." },
+      "venue": { "name": "Australia", "realVenue": "Adelaide Street Circuit", "layoutId": "adelaide_historic", "country": "Australia", "location": "Adelaide", "type": "street", "direction": "clockwise", "lengthKm": 3.78, "turns": 16, "roundPositionSeason1": 15, "frameNote": "pre-Charter scene: no pace car, no medical corps, no rebuilt barriers" },
+      "confirmedEvent": "The Second Great Wall Sunday: half the field in the Armco, Gould out-dared at last, the tannoy falling silent over a standing grandstand; everyone walks away, and no one pretends nothing happened (seasons.json:520,533); the silent-grandstand photograph becomes the era's full stop (:549); the Safety Charter announced at Monaco: pace-car law, pit-lane speed limits, rebuilt barriers, standing medical corps, twenty percent power cut (:537,557); the retirement column ran longer than the finishing order (:556).",
+      "weather": "UNKNOWN (none authored for the Australia scene)",
+      "timeOfDay": "UNKNOWN",
+      "tone": "the somber hinge of the whole campaign: attrition, silence, conscience, then reform",
+      "requiredVisible": ["empty concrete-walled street circuit (Adelaide walls, canon-sanctioned)", "standing silent grandstand as a hushed mass silhouette", "no cars on the racing surface", "institutional grey and steel palette", "stillness as the subject"],
+      "forbiddenVisible": ["crash depiction, wreckage, debris, bodies, flames, car smoke", "any driver identity (Gould remains prose)", "Charter furniture at the Australia scene (pace car, silver medical car, rebuilt barriers)", "city skyline, parkland, waterfront", "Charter text or documents", "the awe-silent grandstand of Senna's 150th (this packet owns the motif, grief register only)"],
+      "uiSurfaces": ["Briefing season header", "Rival screen", "campaign timeline", "future season preview"],
+      "aspectRatios": { "master": "16:9 (1920x1080)", "slots": ["Briefing season header hero band", "CampaignTimelineStrip 168x104 card and 88x46 chip", "Rival screen", "season preview"], "safeZone": "subject in central 40% width x 50% height" },
+      "provenanceConcerns": ["fatality-adjacent material under the stricter ART-P3-001 review", "must not resemble documentary photography of any real crash"],
+      "contradictions": ["almanac's earlier Great Wall Sunday shows a crawling pace car (what-really-happened.json:221) while standing pace-car law arrives only with the 1998 Charter (seasons.json:537); handled by showing the 1998 scene car-free"],
+      "confidence": "HIGH",
+      "decision": "READY"
+    }
+  }
+}

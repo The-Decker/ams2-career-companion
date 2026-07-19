@@ -49,6 +49,8 @@
     <None Include="..\..\data\rules\newsroom\seasons\*.json" Link="Fixtures\rules\newsroom\seasons\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- The SMGP rival-dossier trash-talk corpus, for the quote drift guard. -->
     <None Include="..\..\data\rules\smgp\*.json" Link="Fixtures\rules\smgp\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- The SMGP-024 team-season history capsules (data\rules\smgp\capsules\*.json). -->
+    <None Include="..\..\data\rules\smgp\capsules\*.json" Link="Fixtures\rules\smgp\capsules\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- Grand Prix Dynasty owner-economy rules, for the economy fold + balance tests on real data. -->
     <None Include="..\..\data\rules\dynasty\*.json" Link="Fixtures\rules\dynasty\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- The real extracted AMS2 content library, for living validation of the shipped packs. -->
