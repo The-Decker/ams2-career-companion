@@ -89,6 +89,12 @@ public sealed record CareerRulesData
     /// DISPLAY-ONLY, never a fold input; empty when the file is absent (the card then collapses).</summary>
     public required CarSpecCatalog CarSpecs { get; init; }
 
+    /// <summary>The SMGP canonical identity registry (<c>data\rules\smgp\canon.json</c>): the ONE
+    /// authoritative source for the 24 teams' permanent car and engine names across all 17 seasons
+    /// (mission SMGP-024 canon lock). DISPLAY-ONLY reference data, never a fold input; empty when
+    /// the file is absent (canon-aware surfaces then fall back to their legacy sources).</summary>
+    public required Companion.Core.Smgp.SmgpCanon SmgpCanon { get; init; }
+
     /// <summary>The Grand Prix Dynasty owner-economy balance tables
     /// (<c>data\rules\dynasty\economy.json</c>), an OPTIONAL-MODE fold input: required for an
     /// economy career (the creation seed and every economy fold/decision path refuse when it is
@@ -116,6 +122,7 @@ public sealed record CareerRulesData
     {
         var character = CharacterRules.Parse(Read(rulesDirectory, "perks.json"));
         var racingDna = RacingDnaCatalog.Parse(Read(rulesDirectory, "racing-dna-v2.json"), character);
+        var smgpCanon = Companion.Core.Smgp.SmgpCanon.Load(rulesDirectory);
         return new CareerRulesData
         {
             AgingCurves = AgingCurveSet.Parse(Read(rulesDirectory, "career-aging-curves.json")),
@@ -136,7 +143,8 @@ public sealed record CareerRulesData
             SmgpSponsors = SmgpSponsors.Load(rulesDirectory),
             SmgpDispatchCorpus = SmgpDispatchCorpus.Load(rulesDirectory),
             DynastyEconomy = Companion.Core.Dynasty.DynastyEconomyRules.Load(rulesDirectory),
-            CarSpecs = CarSpecCatalog.Load(rulesDirectory),
+            CarSpecs = CarSpecCatalog.Load(rulesDirectory).WithSmgpCanon(smgpCanon),
+            SmgpCanon = smgpCanon,
             NewsroomCorpus = Companion.Core.Newsroom.NewsroomCorpus.LoadDirectory(
                 Path.Combine(rulesDirectory, "newsroom")),
             NewsDesks = Companion.Core.Newsroom.NewsDesks.Load(
