@@ -53,8 +53,14 @@ public static class SmgpRules
 
     /// <summary>The floor (LEVEL D) tolerance: lose this many rival battles while in a D team and
     /// the SMGP career is over, kicked out of F1 SMGP. (Mike's rule; the one hard-fail state now
-    /// that D has nowhere to be relegated to.)</summary>
+    /// that D has nowhere to be relegated to.) LEGACY (two-wins) careers only: series careers use
+    /// the series floor rules instead (lose a series at D → Zeroforce; lose one there → over).</summary>
     public const int FloorLossLimit = 4;
+
+    /// <summary>The best-of-7 series target (owner-approved 2026-07-19, docs/dev/smgp-series-ladder.md):
+    /// the first side to reach this many race wins against the same rival takes the series. A
+    /// D→C→B→A climb is now three long wars, not a speedrun.</summary>
+    public const int SeriesWinTarget = 4;
 
     /// <summary>The grand campaign length: SEVENTEEN full seasons (Mike's "17 seasons total before it
     /// gives you a final final screen"). Reaching the end of season 17 unlocks the locked finale and its
@@ -106,6 +112,38 @@ public static class SmgpRules
             updated = updated with { PlayerStreak = 0 };
         else if (trigger == SmgpTrigger.PlayerSeatForfeit)
             updated = updated with { RivalStreak = 0 };
+
+        return new SmgpBattleUpdate { Tally = updated, Trigger = trigger };
+    }
+
+    /// <summary>
+    /// Folds one battle outcome into a best-of-7 SERIES tally (gated careers only): each side's
+    /// race wins accumulate independently (a loss never resets the other side; voids do not
+    /// count), and the first side to <see cref="SeriesWinTarget"/> takes the series. The tally
+    /// fields carry series WINS here, not streaks; a completed series resets both to 0-0 so a
+    /// fresh series can start against the same rival later. Triggers mirror
+    /// <see cref="ApplyBattle"/>: player takes the series → the seat-swap offer; the rival takes
+    /// it → the player's seat forfeits (the fold maps that to relegation above D, Zeroforce at
+    /// D, or career-over at Zeroforce).
+    /// </summary>
+    public static SmgpBattleUpdate ApplySeriesBattle(SmgpBattleTally tally, SmgpBattleOutcome outcome)
+    {
+        if (outcome == SmgpBattleOutcome.Void)
+            return new SmgpBattleUpdate { Tally = tally, Trigger = SmgpTrigger.None };
+
+        var updated = outcome == SmgpBattleOutcome.PlayerBeatRival
+            ? tally with { PlayerStreak = tally.PlayerStreak + 1 }
+            : tally with { RivalStreak = tally.RivalStreak + 1 };
+
+        var trigger = updated switch
+        {
+            { PlayerStreak: >= SeriesWinTarget } => SmgpTrigger.SeatSwapOfferToPlayer,
+            { RivalStreak: >= SeriesWinTarget } => SmgpTrigger.PlayerSeatForfeit,
+            _ => SmgpTrigger.None,
+        };
+        // A completed series resets both sides: the next fight against this rival starts 0-0.
+        if (trigger != SmgpTrigger.None)
+            updated = updated with { PlayerStreak = 0, RivalStreak = 0 };
 
         return new SmgpBattleUpdate { Tally = updated, Trigger = trigger };
     }
@@ -197,7 +235,11 @@ public enum SmgpTrigger
     PlayerSeatForfeit,
 }
 
-/// <summary>Per-rival battle streaks (both directions; a win on either side resets the other).</summary>
+/// <summary>Per-rival battle record (both directions). Dual meaning by gate: legacy (two-wins)
+/// careers read the fields as STREAKS (a win on either side resets the other); series careers
+/// (<see cref="SmgpState.SeriesLadder"/>) read them as accumulated series WINS, first to
+/// <see cref="SmgpRules.SeriesWinTarget"/>. One blob shape serves both so old saves parse
+/// unchanged and replay re-derives each career under its own rules.</summary>
 public sealed record SmgpBattleTally
 {
     public static readonly SmgpBattleTally Empty = new();

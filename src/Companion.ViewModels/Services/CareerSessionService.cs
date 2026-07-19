@@ -645,6 +645,9 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                     PerSeasonDnq = Companion.Core.Smgp.SmgpDnqField.HasDnqField(pack),
                     PerSeasonVariety = true,
                     StandingsReshuffle = true,
+                    // Best-of-7 series ladder (owner, 2026-07-19): new careers race first-to-4
+                    // series; omitted-when-false keeps every legacy career on the two-wins rules.
+                    SeriesLadder = true,
                 }
                 : null,
             // The mortality mode (character death & injury, Slice 1): Off (default) serializes to
@@ -2032,6 +2035,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             History = profile?.History ?? [],
             Quotes = profile?.Quotes ?? [],
             RivalName = rivalName,
+            SeriesRules = CurrentSmgpState()?.SeriesLadder ?? false,
         };
     }
 
@@ -2177,8 +2181,11 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                 // Their line varies by WHO they are and WHERE the ladder stands (first meeting, you a win
                 // up, or them a win up). Display-only, so a per-round seed just keeps it stable on re-open.
                 Quote = RivalQuote(seat.DriverId, tally, round),
-                OfferOnWin = tally.PlayerStreak == 1,
-                ForfeitOnLoss = tally.RivalStreak == 1,
+                OfferOnWin = !state.SeriesLadder && tally.PlayerStreak == 1,
+                ForfeitOnLoss = !state.SeriesLadder && tally.RivalStreak == 1,
+                SeriesLadder = state.SeriesLadder,
+                SeriesPlayerWins = tally.PlayerStreak,
+                SeriesRivalWins = tally.RivalStreak,
                 // Gendered pronouns for the naming copy (Mika = female → "her"). Default he/him.
                 Pronouns = profiles.ForDriver(seat.DriverId)?.Pronouns ?? Companion.Core.Smgp.SmgpPronouns.Default,
                 // The rival's ladder CLASS for the (coloured) picker dropdown, so you know who you can climb toward.

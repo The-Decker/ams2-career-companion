@@ -58,7 +58,13 @@ game's own deadpan vocabulary; no cheese.
 - Four tiers as the game labels them: **LEVEL A** Madonna, Firenze, Millions, Bestowal ·
   **LEVEL B** Blanche, Tyrant, Losel, May · **LEVEL C** Bullets, Dardan, Linden, Minarae(player) ·
   **LEVEL D** Rigel, Comet, Orchis, Zeroforce.
-- **Rival system**: before each race the player MAY name a rival from any team ("WILL YOU NAME
+- **Rival system (best-of-7 series, owner-approved 2026-07-19):** new careers run rivalries as a
+  **first-to-4 race-wins series**, carried across seasons; win the series and the seat-swap offer
+  defers to the promotion screen as before; lose it above D and you are relegated a tier, lose it
+  at D and you drop to ZEROFORCE like the original game, lose it there and the career ends.
+  Full locked rules: **docs/dev/smgp-series-ladder.md**. Gated on `SmgpState.SeriesLadder`;
+  everything below this line describes the LEGACY two-wins rules that pre-series saves still run.
+- **Rival system (legacy two-wins):** before each race the player MAY name a rival from any team ("WILL YOU NAME
   HIM AS YOUR RIVAL? ►YES NO"); sometimes another driver force-challenges the player. Rules:
   - Beat the same rival **twice without losing to him** → "you may get an offer to join his
     team!" — a SEAT SWAP. **CLEAN model (shipped `f277a95`, Mike's anti-chaos rule):** you race as

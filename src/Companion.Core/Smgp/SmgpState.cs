@@ -88,6 +88,15 @@ public sealed record SmgpState
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public bool StandingsReshuffle { get; init; }
 
+    /// <summary>New-career gate for the best-of-7 rivalry SERIES (docs/dev/smgp-series-ladder.md,
+    /// owner-approved 2026-07-19): rivalries run first-to-4 race wins instead of two-wins-without-
+    /// a-loss, series state carries across season rollovers, a lost series relegates above D,
+    /// demotes to Zeroforce at D, and ends the career at Zeroforce. Seeded true at creation for
+    /// new smgp careers; OMITTED when false so every legacy career keeps the two-wins rules (and
+    /// the streak meaning of the tally fields) byte-identically.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool SeriesLadder { get; init; }
+
     /// <summary>A two-wins seat-swap offer AWAITING the player's post-race accept/decline on the
     /// promotion screen (3c-2, two-phase careers only): the battle fold records it here INSTEAD of
     /// moving the seat, and the resolution fold (driven by the journaled <c>smgp.swap</c> input,
@@ -108,11 +117,13 @@ public sealed record SmgpState
     public SmgpState WithAiSeatOverride(string driverId, string ams2LiveryName) =>
         this with { AiSeatOverrides = Canonical(AiSeatOverrides, driverId, ams2LiveryName) };
 
-    /// <summary>The between-seasons reset: rival streaks and the defense scratchpad clear (each
-    /// season's ladder starts fresh); seats, titles and the career-over flag carry.</summary>
+    /// <summary>The between-seasons reset: the defense scratchpad clears; seats, titles and the
+    /// career-over flag carry. Rival tallies clear for legacy (two-wins) careers, each season's
+    /// ladder starting fresh, but CARRY for series careers: a 2-2 fight in November is still
+    /// 2-2 at the next opener (the series-spanning rule).</summary>
     public SmgpState WithSeasonReset() => this with
     {
-        Tallies = EmptyTallies,
+        Tallies = SeriesLadder ? Tallies : EmptyTallies,
         TitleDefense = false,
         DefenseRound1 = SmgpBattleOutcome.Void,
         FloorLosses = 0,
@@ -142,6 +153,7 @@ public sealed record SmgpState
             && PerSeasonDnq == other.PerSeasonDnq
             && PerSeasonVariety == other.PerSeasonVariety
             && StandingsReshuffle == other.StandingsReshuffle
+            && SeriesLadder == other.SeriesLadder
             && Equals(PendingSwap, other.PendingSwap)
             && Tallies.SequenceEqual(other.Tallies)
             && AiSeatOverrides.SequenceEqual(other.AiSeatOverrides);
@@ -160,6 +172,7 @@ public sealed record SmgpState
         hash.Add(PerSeasonDnq);
         hash.Add(PerSeasonVariety);
         hash.Add(StandingsReshuffle);
+        hash.Add(SeriesLadder);
         hash.Add(PendingSwap);
         foreach (var pair in Tallies)
         {

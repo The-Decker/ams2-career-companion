@@ -1680,6 +1680,16 @@ public sealed record SmgpPromotionModel
     /// <summary>The rival the player beat twice to earn the offer (promotion only), or null.</summary>
     public string? RivalName { get; init; }
 
+    /// <summary>True for a best-of-7 series career (owner, 2026-07-19): the view's offer copy says
+    /// "took the series"; false (legacy careers) keeps the two-wins wording.</summary>
+    public bool SeriesRules { get; init; }
+
+    /// <summary>The one-line "how you got here" under the rival's name on the offer screen:
+    /// series wording for series careers, the two-wins wording for legacy careers.</summary>
+    public string VictoryLine => SeriesRules
+        ? $"You took the series against {RivalName}, the seat is yours if you want it."
+        : $"You beat {RivalName} twice without losing, the seat is yours if you want it.";
+
     /// <summary>True for a promotion offer (the Decline button shows); false for a forced demotion.</summary>
     public bool CanDecline => Kind == SmgpPromotionKind.PromotionOffer;
 
@@ -1744,6 +1754,16 @@ public sealed record SmgpRivalOption
 
     /// <summary>Lose to them once more and they are offered YOUR seat.</summary>
     public required bool ForfeitOnLoss { get; init; }
+
+    /// <summary>True for a best-of-7 series career (owner, 2026-07-19): the briefing shows the
+    /// series score instead of two-wins telegraphy.</summary>
+    public bool SeriesLadder { get; init; }
+
+    /// <summary>Your race wins in the live series against this rival (series careers; first to 4).</summary>
+    public int SeriesPlayerWins { get; init; }
+
+    /// <summary>The rival's race wins in the live series (series careers; first to 4).</summary>
+    public int SeriesRivalWins { get; init; }
 
     /// <summary>The rival's gendered pronoun set for the naming copy (Mika is female → she/her). Defaults to
     /// he/him for every unmarked driver, so existing copy is unchanged for the rest of the grid.</summary>

@@ -23,8 +23,13 @@ public static class SmgpBattleFold
             return ApplyTitleDefense(context);
 
         var state = context.State;
+        bool series = state.SeriesLadder;
         var outcome = SmgpRules.BattleOutcome(context.PlayerFinish, context.RivalFinish);
-        var update = SmgpRules.ApplyBattle(state.TallyFor(context.RivalDriverId), outcome);
+        // Series careers run first-to-4 race wins (losses never reset); legacy careers keep the
+        // two-wins-without-a-loss streaks, byte-identical (docs/dev/smgp-series-ladder.md).
+        var update = series
+            ? SmgpRules.ApplySeriesBattle(state.TallyFor(context.RivalDriverId), outcome)
+            : SmgpRules.ApplyBattle(state.TallyFor(context.RivalDriverId), outcome);
         state = state.WithTally(context.RivalDriverId, update.Tally);
 
         var ladder = Ladder(context.Pack);
@@ -61,10 +66,19 @@ public static class SmgpBattleFold
         }
         else if (update.Trigger == SmgpTrigger.PlayerSeatForfeit && playerTier != 'D')
             state = ApplyForfeit(context, ladder, state, seatEvents);
+        else if (update.Trigger == SmgpTrigger.PlayerSeatForfeit && series)
+        {
+            // The SERIES floor rules (owner, 2026-07-19): a lost series at LEVEL D demotes to
+            // ZEROFORCE like the original game; a lost series AT Zeroforce ends the career. No
+            // Zeroforce seat in the pack (test ladders) means the floor has no bottom at all,
+            // which is also game over.
+            state = ApplySeriesFloor(context, ladder, state, seatEvents);
+        }
 
-        // The LEVEL D floor: every LOST battle (any rival) counts toward FloorLossLimit; reaching
-        // it ends the career, kicked out of F1 SMGP (Mike's rule).
-        if (playerTier == 'D' && outcome == SmgpBattleOutcome.RivalBeatPlayer)
+        // The LEGACY LEVEL D floor (two-wins careers only): every LOST battle (any rival) counts
+        // toward FloorLossLimit; reaching it ends the career. Series careers never increment it,
+        // their floor is the series outcome above.
+        if (!series && playerTier == 'D' && outcome == SmgpBattleOutcome.RivalBeatPlayer)
         {
             state = state with { FloorLosses = state.FloorLosses + 1 };
             if (state.FloorLosses >= SmgpRules.FloorLossLimit)
@@ -279,6 +293,50 @@ public static class SmgpBattleFold
         state = state with { CurrentSeatLivery = target };
         seatEvents.Add(SeatEvent("seat-forfeit", playerSeat, target,
             context.RivalDriverId, rivalSeat, rivalSeat,
+            displacedDriverId: null, displacedFrom: null, displacedTo: null));
+        return state;
+    }
+
+    /// <summary>The SERIES floor rule (owner, 2026-07-19): the rival took the series while the
+    /// player races at LEVEL D. Not yet at the floor team (Zeroforce, the ladder's last) → the
+    /// player is demoted into its first seat, like the original game. Already there → the career
+    /// ends, the floor's floor. Only the player moves: the floor car's AI benches, the player's
+    /// old car reverts to its authored driver, no cascade. The floor team is the LADDER's last
+    /// distinct team, so test ladders without a literal team.zeroforce still resolve; a ladder
+    /// whose floor seat is the player's own (or absent) means the pit has no bottom, also game
+    /// over.</summary>
+    private static SmgpState ApplySeriesFloor(
+        SmgpBattleFoldContext context, IReadOnlyList<LadderSeat> ladder, SmgpState state,
+        List<JournalEvent> seatEvents)
+    {
+        string playerSeat = state.CurrentSeatLivery;
+        var floorSeats = new List<LadderSeat>();
+        string? floorTeamId = null;
+        for (int i = ladder.Count - 1; i >= 0 && floorSeats.Count == 0; i--)
+        {
+            floorTeamId = ladder[i].TeamId;
+            foreach (var seat in ladder)
+                if (string.Equals(seat.TeamId, floorTeamId, StringComparison.Ordinal))
+                    floorSeats.Add(seat);
+        }
+
+        var playerLadderSeat = ladder.FirstOrDefault(s =>
+            string.Equals(s.Livery, playerSeat, StringComparison.Ordinal));
+        bool atFloorTeam = playerLadderSeat is not null && floorTeamId is not null &&
+            string.Equals(playerLadderSeat.TeamId, floorTeamId, StringComparison.Ordinal);
+
+        if (atFloorTeam)
+            return state with { CareerOver = true };
+
+        string? target = floorSeats
+            .FirstOrDefault(s => !string.Equals(s.Livery, playerSeat, StringComparison.Ordinal))
+            ?.Livery;
+        if (target is null)
+            return state with { CareerOver = true };
+
+        state = state with { CurrentSeatLivery = target };
+        seatEvents.Add(SeatEvent("seat-forfeit", playerSeat, target,
+            context.RivalDriverId, playerSeat, playerSeat,
             displacedDriverId: null, displacedFrom: null, displacedTo: null));
         return state;
     }

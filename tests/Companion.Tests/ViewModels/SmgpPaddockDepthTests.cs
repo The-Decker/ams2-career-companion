@@ -301,7 +301,7 @@ public sealed class SmgpPaddockDepthTests : IDisposable
     {
         string packDirectory = Path.Combine(PacksRoot, "smgp-ladder");
         TestPackBuilder.Write(LadderPack(), packDirectory);
-        return CareerSessionService.CreateCareer(new CareerCreationRequest
+        var session = CareerSessionService.CreateCareer(new CareerCreationRequest
         {
             PackDirectory = packDirectory,
             CareerFilePath = CareerPath,
@@ -310,6 +310,14 @@ public sealed class SmgpPaddockDepthTests : IDisposable
             PlayerLiveryName = SeatC,
             SmgpMode = true,
         }, Environment());
+        // These scenarios pin the LEGACY two-wins ladder; new careers run the best-of-7 series
+        // (four wins), so flip the gate off like a pre-series save.
+        using var db = CareerDatabase.Open(CareerPath);
+        long seasonId = CareerStore.ReadSeasons(db).Single().Id;
+        var start = StateStore.ReadPlayerState(db, seasonId, StateStore.StageStart)!;
+        StateStore.UpsertPlayerState(db, seasonId, StateStore.StageStart,
+            start with { Smgp = start.Smgp! with { SeriesLadder = false } });
+        return session;
     }
 
     private static SeasonPack LadderPack()

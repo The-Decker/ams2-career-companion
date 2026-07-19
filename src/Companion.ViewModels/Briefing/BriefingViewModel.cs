@@ -277,14 +277,22 @@ public sealed partial class BriefingViewModel : ObservableObject
     public bool SmgpCanName => SelectedSmgpRival is not null &&
         !ReferenceEquals(SelectedSmgpRival, NamedSmgpRival);
 
-    /// <summary>The commitment banner, deadpan, the game's register. Streak-aware: once you have
-    /// already beaten him once (a win banked from a PAST race you named him in), it says so, so the
-    /// two-wins ladder never reads as "start over".</summary>
+    /// <summary>The commitment banner, deadpan, the game's register. Streak-aware for legacy
+    /// careers (a banked win says so); for series careers it reads the live series score, first
+    /// to 4, so the ladder never reads as "start over".</summary>
     public string SmgpNamedLine => NamedSmgpRival switch
     {
         { OfferOnWin: true } named =>
             $"{named.DriverName.ToUpperInvariant()} IS YOUR RIVAL, and you have beaten {named.Pronouns.Object} once already. " +
             $"Finish ahead of {named.Pronouns.Object} again THIS race and {named.Pronouns.Possessive} seat is yours.",
+        { SeriesLadder: true, SeriesPlayerWins: > 0, SeriesRivalWins: 0 } named =>
+            $"{named.DriverName.ToUpperInvariant()} IS YOUR RIVAL. The series is {named.SeriesPlayerWins}-0 to you, first to 4 takes the seat.",
+        { SeriesLadder: true, SeriesRivalWins: 0 } named =>
+            $"{named.DriverName.ToUpperInvariant()} IS YOUR RIVAL. The series is {named.SeriesPlayerWins}-0, first to 4 takes the seat.",
+        { SeriesLadder: true, SeriesPlayerWins: > 0 } named =>
+            $"{named.DriverName.ToUpperInvariant()} IS YOUR RIVAL. The series is {named.SeriesPlayerWins}-{named.SeriesRivalWins} to you, first to 4 takes the seat.",
+        { SeriesLadder: true } named =>
+            $"{named.DriverName.ToUpperInvariant()} IS YOUR RIVAL. The series is {named.SeriesPlayerWins}-{named.SeriesRivalWins}, first to 4 takes the seat.",
         { } named =>
             $"{named.DriverName.ToUpperInvariant()} IS YOUR RIVAL. Beat {named.Pronouns.Object} this race and once more, two wins " +
             $"without losing to {named.Pronouns.Object}, and you take {named.Pronouns.Possessive} seat.",
@@ -325,20 +333,30 @@ public sealed partial class BriefingViewModel : ObservableObject
         $"YES, name {SelectedSmgpRival?.Pronouns.Object ?? "them"} as my rival";
 
     /// <summary>The rival-screen intro subtitle, gender-aware (uses the previewed rival's pronoun, else the
-    /// neutral "their"). The RivalScreenView binds its subtitle here.</summary>
-    public string SmgpRivalIntro =>
-        $"Name a rival to challenge this round, finish ahead of the same driver twice without losing and you " +
-        $"may take {SelectedSmgpRival?.Pronouns.Possessive ?? "their"} seat. Or race with no rival named.";
+    /// neutral "their"). Series careers hear the first-to-4 rule; legacy careers the two-wins rule.</summary>
+    public string SmgpRivalIntro => SelectedSmgpRival?.SeriesLadder == true
+        ? $"Name a rival to challenge this round, first to 4 race wins against the same driver takes " +
+          $"{SelectedSmgpRival.Pronouns.Possessive} seat. Losses cost races, not the streak. Or race with no rival named."
+        : $"Name a rival to challenge this round, finish ahead of the same driver twice without losing and you " +
+          $"may take {SelectedSmgpRival?.Pronouns.Possessive ?? "their"} seat. Or race with no rival named.";
 
-    /// <summary>What this rival's ladder telegraphs, streak-aware so the two-wins path and your
-    /// progress along it are always explicit (Mike's fix: "beat him once, then it said two races").
-    /// A win only counts in a race you NAMED him for, so the fresh-rival line spells that out.</summary>
+    /// <summary>What this rival's ladder telegraphs, streak-aware so the path and your progress
+    /// along it are always explicit (legacy: two wins; series: first to 4 with the live score).
+    /// A win only counts in a race you NAMED them for, so the fresh-rival line spells that out.</summary>
     public string SmgpLadderLine => SelectedSmgpRival switch
     {
         { OfferOnWin: true } r =>
             $"You have beaten {r.Pronouns.Object} once, finish ahead of {r.Pronouns.Object} again THIS race and you take {r.Pronouns.Possessive} seat!",
         { ForfeitOnLoss: true } r =>
             $"{r.Pronouns.SubjectCap} has beaten you once, lose to {r.Pronouns.Object} again this race and {r.Pronouns.Subject} takes YOUR seat.",
+        { SeriesLadder: true, SeriesPlayerWins: 0, SeriesRivalWins: 0 } r =>
+            $"First to 4 race wins against {r.Pronouns.Object} takes the series and {r.Pronouns.Possessive} seat. Name {r.Pronouns.Object} each race you mean to beat, a win only counts when {r.Pronouns.Subject} is your named rival.",
+        { SeriesLadder: true, SeriesRivalWins: 0 } r =>
+            $"The series is {r.SeriesPlayerWins}-0 to you. First to 4 takes the series and {r.Pronouns.Possessive} seat.",
+        { SeriesLadder: true, SeriesPlayerWins: 0 } r =>
+            $"The series is 0-{r.SeriesRivalWins} to {r.Pronouns.Object}. First to 4; lose the series and the ladder pushes back.",
+        { SeriesLadder: true } r =>
+            $"The series is {r.SeriesPlayerWins}-{r.SeriesRivalWins}. First to 4 takes the series and {r.Pronouns.Possessive} seat.",
         { } r =>
             $"Beat {r.Pronouns.Object} twice without losing to take {r.Pronouns.Possessive} seat. Name {r.Pronouns.Object} each race you mean to beat, a win only counts when {r.Pronouns.Subject} is your named rival.",
         null => "",

@@ -1,6 +1,7 @@
 using Companion.Core.Grid;
 using Companion.Core.Packs;
 using Companion.Core.Smgp;
+using Companion.Data;
 using Companion.ViewModels.Confirm;
 using Companion.ViewModels.ResultEntry;
 using Companion.ViewModels.Services;
@@ -189,6 +190,16 @@ public sealed class SmgpPromotionScreenTests : IDisposable
                 SmgpMode = true,
             },
             environment);
+
+        // The two-wins offer this test projects is the LEGACY ladder (new careers run the
+        // best-of-7 series): flip the gate off like a pre-series save.
+        using (var db = CareerDatabase.Open(careerPath))
+        {
+            long seasonId = CareerStore.ReadSeasons(db).Single().Id;
+            var start = StateStore.ReadPlayerState(db, seasonId, StateStore.StageStart)!;
+            StateStore.UpsertPlayerState(db, seasonId, StateStore.StageStart,
+                start with { Smgp = start.Smgp! with { SeriesLadder = false } });
+        }
 
         // Beat driver.a twice → a two-wins offer is pending (deferred by 3c-2).
         WinAgainst(session, "driver.a");

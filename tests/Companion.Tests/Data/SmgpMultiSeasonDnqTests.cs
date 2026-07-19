@@ -124,6 +124,16 @@ public sealed class SmgpMultiSeasonDnqTests : IDisposable
             SmgpMode = true,
         }, Environment()))
         {
+            // The two-wins promotion this scenario needs is the LEGACY ladder: new careers run
+            // the best-of-7 series (four wins), so flip the gate off like a pre-series save.
+            using (var db = CareerDatabase.Open(CareerPath))
+            {
+                long seasonId = CareerStore.ReadSeasons(db).Single().Id;
+                var start = StateStore.ReadPlayerState(db, seasonId, StateStore.StageStart)!;
+                StateStore.UpsertPlayerState(db, seasonId, StateStore.StageStart,
+                    start with { Smgp = start.Smgp! with { SeriesLadder = false } });
+            }
+
             // Two wins over driver.a, then accept the deferred offer on the promotion screen:
             // the player leaves team.c for team.a (SeatA) mid-season, the clean two-wins swap.
             ApplyPlayerFirst(session, new SmgpRivalCall { RivalDriverId = "driver.a" });

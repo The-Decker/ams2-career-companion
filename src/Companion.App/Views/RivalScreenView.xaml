@@ -242,7 +242,7 @@
                                     Command="{Binding SmgpNameRivalCommand}"
                                     audio:SoundAssist.Cue="Confirm"
                                     Visibility="{Binding SmgpCanName, Converter={StaticResource BoolVisible}}"
-                                    ToolTip="Commit this rival for the round, finish ahead of them twice without losing and you may take their seat" />
+                                    ToolTip="Commit this rival for the round, win the head-to-head series against them and you may take their seat" />
                             <!-- after naming: the rival reacts in their OWN voice (mood-aware trash-talk),
                                  then the commitment line spells out what beating them means. -->
                             <Border x:Name="SmgpNamedBanner" Style="{StaticResource SuccessCallout}"
@@ -261,7 +261,7 @@
                             <CheckBox Content="{Binding SmgpSwapAcceptLabel}" IsChecked="{Binding SmgpSwapAccept}"
                                       Margin="0,12,0,0" FontSize="17"
                                       Visibility="{Binding SmgpSwapPromptVisible, Converter={StaticResource BoolVisible}}"
-                                      ToolTip="Beat the same rival twice without losing and you may get an offer to join their team, this is your standing answer" />
+                                      ToolTip="Win the head-to-head series against the same rival and you may get an offer to join their team, this is your standing answer" />
                         </StackPanel>
                     </Border>
 

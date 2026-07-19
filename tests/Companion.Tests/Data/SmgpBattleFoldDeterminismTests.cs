@@ -112,7 +112,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
             library: FourSeatLibrary());
         string careerPath = Path.Combine(_root, "careers", "final-offer.ams2career");
 
-        using (var session = CareerSessionService.CreateCareer(
+        using (var session = CreateLegacyCareer(
                    new CareerCreationRequest
                    {
                        PackDirectory = packDirectory,
@@ -260,7 +260,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
             library: FourSeatLibrary());
         string careerPath = Path.Combine(_root, "careers", "floor-4.ams2career");
 
-        using (var session = CareerSessionService.CreateCareer(
+        using (var session = CreateLegacyCareer(
                    new CareerCreationRequest
                    {
                        PackDirectory = packDirectory,
@@ -311,7 +311,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
             library: FourSeatLibrary());
         string careerPath = Path.Combine(_root, "careers", "floor-stop.ams2career");
 
-        using var session = CareerSessionService.CreateCareer(
+        using var session = CreateLegacyCareer(
             new CareerCreationRequest
             {
                 PackDirectory = packDirectory,
@@ -352,7 +352,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
             library: FourSeatLibrary());
         string careerPath = Path.Combine(_root, "careers", "final-floor-stop.ams2career");
 
-        using (var session = CareerSessionService.CreateCareer(
+        using (var session = CreateLegacyCareer(
                    new CareerCreationRequest
                    {
                        PackDirectory = packDirectory,
@@ -392,7 +392,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
             library: FourSeatLibrary());
         string careerPath = Path.Combine(_root, "careers", "post-swap.ams2career");
 
-        using (var session = CareerSessionService.CreateCareer(
+        using (var session = CreateLegacyCareer(
                    new CareerCreationRequest
                    {
                        PackDirectory = packDirectory,
@@ -473,7 +473,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
             library: FiveSeatLibrary());
         string careerPath = Path.Combine(_root, "careers", "floor-second-car.ams2career");
 
-        using (var session = CareerSessionService.CreateCareer(
+        using (var session = CreateLegacyCareer(
                    new CareerCreationRequest
                    {
                        PackDirectory = packDirectory,
@@ -521,7 +521,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
             library: FiveSeatLibrary());
         string careerPath = Path.Combine(_root, "careers", "relegate.ams2career");
 
-        using (var session = CareerSessionService.CreateCareer(
+        using (var session = CreateLegacyCareer(
                    new CareerCreationRequest
                    {
                        PackDirectory = packDirectory,
@@ -712,6 +712,21 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
         };
     }
 
+    /// <summary>Creates a legacy (two-wins) smgp career: new careers default to the best-of-7
+    /// series ladder (owner, 2026-07-19), so the two-wins contract this class pins flips the
+    /// gate off right after creation, exactly how a pre-series save parses it.</summary>
+    private static CareerSessionService CreateLegacyCareer(
+        CareerCreationRequest request, CareerEnvironment environment)
+    {
+        var session = CareerSessionService.CreateCareer(request, environment);
+        using var db = CareerDatabase.Open(request.CareerFilePath);
+        long seasonId = CareerStore.ReadSeasons(db).Single().Id;
+        var start = StateStore.ReadPlayerState(db, seasonId, StateStore.StageStart)!;
+        StateStore.UpsertPlayerState(db, seasonId, StateStore.StageStart,
+            start with { Smgp = start.Smgp! with { SeriesLadder = false } });
+        return session;
+    }
+
     /// <summary>Creates an smgp-mode career on the ladder pack and folds two rounds carrying
     /// rival calls against driver.a, the player finishing first (or last) of the four.</summary>
     private (string CareerPath, long SeasonId) FoldTwoBattleRounds(
@@ -726,7 +741,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
             library: FourSeatLibrary());
 
         string careerPath = Path.Combine(_root, "careers", fileName);
-        using (var session = CareerSessionService.CreateCareer(
+        using (var session = CreateLegacyCareer(
                    new CareerCreationRequest
                    {
                        PackDirectory = packDirectory,

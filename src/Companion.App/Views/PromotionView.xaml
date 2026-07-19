@@ -90,9 +90,8 @@
                 <Border Style="{StaticResource AccentCallout}" Margin="0,14,0,0"
                         Visibility="{Binding Model.RivalName, Converter={StaticResource StringVisible}}">
                     <TextBlock TextAlignment="Center" HorizontalAlignment="Stretch"
-                               Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap">
-                        <Run Text="You beat " /><Run Text="{Binding Model.RivalName, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" twice without losing, the seat is yours if you want it." />
-                    </TextBlock>
+                               Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"
+                               Text="{Binding Model.VictoryLine, Mode=OneWay}" />
                 </Border>
                     </StackPanel>
                 </Border>
