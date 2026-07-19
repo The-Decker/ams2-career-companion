@@ -5,7 +5,7 @@ namespace Companion.Tests.ViewModels;
 /// <summary>
 /// The wizard's "race as your own entrant" escape hatch (custom AMS2 livery): typing a livery on the
 /// seat-pick step lets the player advance WITHOUT selecting a pack seat, adds a locked own-entrant row
-/// to the grid, and creates the career on that livery — which the session resolves to the stable
+/// to the grid, and creates the career on that livery, which the session resolves to the stable
 /// synthetic player-entrant (a non-pack livery). The ordinary seat-pick flow stays byte-identical.
 /// </summary>
 public sealed class OwnEntrantWizardTests : IDisposable
@@ -51,14 +51,14 @@ public sealed class OwnEntrantWizardTests : IDisposable
         // No seat, no custom livery → the seat step is not satisfied.
         Assert.False(wizard.NextCommand.CanExecute(null));
 
-        // Typing a custom livery is the own-entrant escape hatch — Next unlocks with no seat picked.
+        // Typing a custom livery is the own-entrant escape hatch, Next unlocks with no seat picked.
         wizard.CustomLiveryName = "My Privateer Skin";
         Assert.True(wizard.IsOwnEntrant);
         Assert.True(wizard.NextCommand.CanExecute(null));
 
         wizard.NextCommand.Execute(null);                 // -> Grid (built on entry)
 
-        // The grid shows exactly one locked row — the player's own entrant, on the typed livery.
+        // The grid shows exactly one locked row, the player's own entrant, on the typed livery.
         var locked = Assert.Single(wizard.GridChoices, c => c.IsLocked);
         Assert.Equal("My Privateer Skin", locked.LiveryName);
         Assert.Contains("own entrant", locked.DriverName);

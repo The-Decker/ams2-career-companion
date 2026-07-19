@@ -42,7 +42,7 @@ public class ResultStoreTests
         Assert.True(reimport.ReImported);
         Assert.False(reimport.PayloadChanged);
 
-        // Still exactly one stored result for the round — idempotent on (season, round).
+        // Still exactly one stored result for the round, idempotent on (season, round).
         var results = ResultStore.ReadSeasonResults(db, seasonId);
         Assert.Single(results);
         Assert.Equal("""{"round":1}""", results[0].PayloadJson);
@@ -152,7 +152,7 @@ public class ResultStoreTests
         var (db, seasonId) = Setup(tmp);
         using var _ = db;
 
-        // A genuine v6 accident DNF had no severity concept — the field is absent from the JSON.
+        // A genuine v6 accident DNF had no severity concept, the field is absent from the JSON.
         // It must read back null so the fold treats it as legacy binary behavior (no injury roll).
         string roundJson = JsonSerializer.Serialize(DataCareerFixture.Rounds()[0], CoreJson.Options);
         string v6Payload = $"{{\"version\":6,\"result\":{roundJson},\"playerDnfCause\":\"driverError\"}}";
@@ -171,7 +171,7 @@ public class ResultStoreTests
         var (db, seasonId) = Setup(tmp);
         using var _ = db;
 
-        // A pre-envelope career stored the RoundResult directly — it must read as a
+        // A pre-envelope career stored the RoundResult directly, it must read as a
         // version-1 envelope with unknown slider and DNF cause.
         var round = DataCareerFixture.Rounds()[0];
         ResultStore.Append(
@@ -210,12 +210,12 @@ public class ResultStoreTests
         var stored = ResultStore.ReadSeasonResults(db, seasonId)[0].ToEnvelope();
         Assert.Equal(RoundResultEnvelope.CurrentVersion, stored.Version); // v3
         Assert.Equal(new[] { "driver.b", "driver.a", "driver.c" }, stored.QualifyingOrder);
-        // The race result is unchanged by the added field — scoring never sees qualifying.
+        // The race result is unchanged by the added field, scoring never sees qualifying.
         Assert.Equal(
             JsonSerializer.Serialize(DataCareerFixture.Rounds()[0], CoreJson.Options),
             JsonSerializer.Serialize(stored.Result, CoreJson.Options));
 
-        // A pre-weekend (v2) payload reads with a null order — every existing save.
+        // A pre-weekend (v2) payload reads with a null order, every existing save.
         var legacy = new RoundResultEnvelope { Version = 2, Result = DataCareerFixture.Rounds()[0] };
         ResultStore.Append(
             db, seasonId, 2,
@@ -252,12 +252,12 @@ public class ResultStoreTests
         Assert.Equal("driver.miyagi_hamano", stored.SmgpRival!.RivalDriverId);
         Assert.False(stored.SmgpRival.Forced);
         Assert.True(stored.SmgpRival.SeatSwapAccepted);
-        // The race result is unchanged by the added block — scoring never sees the rival.
+        // The race result is unchanged by the added block, scoring never sees the rival.
         Assert.Equal(
             JsonSerializer.Serialize(DataCareerFixture.Rounds()[0], CoreJson.Options),
             JsonSerializer.Serialize(stored.Result, CoreJson.Options));
 
-        // A v5 (pre-smgp) payload reads with a null rival — every existing save.
+        // A v5 (pre-smgp) payload reads with a null rival, every existing save.
         var legacy = new RoundResultEnvelope { Version = 5, Result = DataCareerFixture.Rounds()[0] };
         ResultStore.Append(
             db, seasonId, 2,

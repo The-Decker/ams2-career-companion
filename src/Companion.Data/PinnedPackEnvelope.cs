@@ -7,7 +7,7 @@ namespace Companion.Data;
 
 /// <summary>
 /// THE pinned form of a season pack (one place for the whole app): all five JSON parts —
-/// verbatim, as read from the pack folder — wrapped in one JSON envelope and stored as a
+/// verbatim, as read from the pack folder, wrapped in one JSON envelope and stored as a
 /// blob in the career's pinned_pack table with its SHA-256. Careers rehydrate from this,
 /// never from the mutable pack folder.
 ///

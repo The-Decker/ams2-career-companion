@@ -7,7 +7,7 @@ namespace Companion.Tests.Grid;
 
 /// <summary>
 /// Diff-aware staging (NAMeS-first, locked decision #7b): when the installed class XML —
-/// lenient-parsed, community quirks and all — already carries an equivalent base entry for
+/// lenient-parsed, community quirks and all, already carries an equivalent base entry for
 /// every generated seat, Stage writes NOTHING (no backup, no force needed) and reports
 /// NoOpAlreadyMatches. Any genuine divergence (rating beyond 1e-4, missing livery, different
 /// name, non-neutral scalar) stages exactly as before: force-gated on foreign files,
@@ -16,7 +16,7 @@ namespace Companion.Tests.Grid;
 public class GridStagerNoOpTests
 {
     // The community-file counterpart of Seat(): same effective values written in the loose
-    // jusk dialect — malformed dashed comment, '0.80'-style zero-padding, an unrelated extra
+    // jusk dialect, malformed dashed comment, '0.80'-style zero-padding, an unrelated extra
     // livery, and a track-scoped override entry that must NOT break base equivalence.
     private const string EquivalentInstalledXml = """
         <?xml version="1.0" encoding="UTF-8"?>
@@ -60,7 +60,7 @@ public class GridStagerNoOpTests
         File.WriteAllText(target, EquivalentInstalledXml);
         var before = File.GetLastWriteTimeUtc(target);
 
-        // The installed file is the user's own (no GeneratedMarker) — yet NO force is needed,
+        // The installed file is the user's own (no GeneratedMarker), yet NO force is needed,
         // because nothing is written.
         var result = GridStager.Stage(Build(Seat()), dir.Path, Timestamp(0));
 
@@ -80,7 +80,7 @@ public class GridStagerNoOpTests
     {
         using var dir = new TempDir();
         string target = Path.Combine(dir.Path, "F-Vintage_Gen1.xml");
-        // 0.80005 vs generated 0.8 — inside the 1e-4 tolerance.
+        // 0.80005 vs generated 0.8, inside the 1e-4 tolerance.
         File.WriteAllText(target, EquivalentInstalledXml.Replace(
             "<race_skill>0.80</race_skill>", "<race_skill>0.80005</race_skill>"));
 
@@ -99,7 +99,7 @@ public class GridStagerNoOpTests
         var second = GridStager.Stage(file, dir.Path, Timestamp(1));
 
         Assert.False(first.NoOpAlreadyMatches);
-        // The writer's "0.0###" format re-parses within 1e-4 — restaging the identical round
+        // The writer's "0.0###" format re-parses within 1e-4, restaging the identical round
         // never rewrites, so clicking Stage twice takes no pointless second backup.
         Assert.True(second.NoOpAlreadyMatches);
         Assert.Empty(new CustomAiBackup(dir.Path).ListBackups("F-Vintage_Gen1"));

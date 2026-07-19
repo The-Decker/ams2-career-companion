@@ -7,7 +7,7 @@ namespace Companion.Tests.ViewModels;
 /// <summary>
 /// NAMeS-first baseline import (locked decision #7a): per-livery mapping from entries.json
 /// onto the installed file's base entries, the wizard's opt-in step (default ON when the
-/// installed class XML parses), the summary diff, and — the load-bearing invariant — that the
+/// installed class XML parses), the summary diff, and, the load-bearing invariant, that the
 /// IMPORTED result is pinned: deleting the community file after creation changes nothing.
 /// </summary>
 public sealed class BaselineImportTests : IDisposable
@@ -73,7 +73,7 @@ public sealed class BaselineImportTests : IDisposable
         Assert.Equal(0.5, brabham.Ratings.Aggression);         // absent fields keep pack values
         Assert.Equal(0.8, brabham.Ratings.Stamina);
 
-        // The track-scoped 0.99 stayed round-level — NOT the baseline.
+        // The track-scoped 0.99 stayed round-level, NOT the baseline.
         Assert.NotEqual(0.99, brabham.Ratings.RaceSkill);
 
         // driver.hulme's livery has no community entry: pack-only fallback, untouched.
@@ -179,7 +179,7 @@ public sealed class BaselineImportTests : IDisposable
         Assert.NotNull(wizard.BaselineImportError);
         Assert.Equal(InstalledAiPath, wizard.InstalledAiFilePath); // the file WAS found
 
-        wizard.NextCommand.Execute(null); // Create still works — pack baseline
+        wizard.NextCommand.Execute(null); // Create still works, pack baseline
         Assert.Null(_factory.LastRequest!.CommunityBaselineXml);
     }
 

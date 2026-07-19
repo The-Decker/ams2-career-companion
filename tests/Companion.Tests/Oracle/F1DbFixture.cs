@@ -29,7 +29,7 @@ public sealed record F1DbRoundFixture
 {
     public required int Round { get; init; }
 
-    /// <summary>f1db grand prix id, for traceability only — overrides are already resolved.</summary>
+    /// <summary>f1db grand prix id, for traceability only, overrides are already resolved.</summary>
     public string? GrandPrixId { get; init; }
 
     /// <summary>"1/2" half points, "2" double points, "1" otherwise.</summary>
@@ -46,7 +46,7 @@ public sealed record F1DbRoundFixture
 
 public sealed record F1DbSessionFixture
 {
-    /// <summary>"race" | "sprint" — the fixture strings match the engine enum's camelCase form.</summary>
+    /// <summary>"race" | "sprint", the fixture strings match the engine enum's camelCase form.</summary>
     public required SessionKind Kind { get; init; }
 
     /// <summary>ALL holders of the session's fastest time (ties: 1954 British GP had seven).</summary>

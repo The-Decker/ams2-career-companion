@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Companion.Core.Career;
 using Companion.ViewModels.Services;
 using Companion.ViewModels.Settings;
 
@@ -26,8 +27,19 @@ public sealed partial class NewsViewModel : ObservableObject
         ArgumentNullException.ThrowIfNull(session);
         _session = session;
         NewsDetail = newsDetail;
+        EraSkin = session.EraThemeOverrides()?.ForYear(session.Pack.Season.Year)
+            ?? EraThemes.ForYear(session.Pack.Season.Year);
         Refresh();
     }
+
+    /// <summary>The era skin the newsroom chrome renders with (era-theming-assets-brief.md Slice
+    /// 0): the period medium/accent/font/texture for the career's season year, resolved through
+    /// the <c>era-themes.json</c> override when one covers the decade.</summary>
+    public IEraSkin EraSkin { get; }
+
+    /// <summary>The era medium flattened to a top-level bindable so a WPF DataTrigger can key
+    /// on it without a nested path.</summary>
+    public EraMedium EraMedium => EraSkin.Medium;
 
     /// <summary>The immersion verbosity these items were projected under.</summary>
     public NewsDetailLevel NewsDetail { get; }
@@ -38,8 +50,8 @@ public sealed partial class NewsViewModel : ObservableObject
 
     public ObservableCollection<NewsItemViewModel> Items { get; } = [];
 
-    /// <summary>True when there is no news yet — the tab shows a friendly empty state
-    /// ("no dispatches yet — run a race") instead of a blank panel.</summary>
+    /// <summary>True when there is no news yet, the tab shows a friendly empty state
+    /// ("no dispatches yet, run a race") instead of a blank panel.</summary>
     public bool IsEmpty => Stories.Count == 0;
 
     /// <summary>Re-pull the feed (called on open and after every Apply).</summary>
@@ -76,7 +88,7 @@ public sealed partial class NewsItemViewModel : ObservableObject
 
     public bool HasWhy => !string.IsNullOrEmpty(_dispatch.WhyText);
 
-    /// <summary>True when this item can expand into a body — off under a headlines-only
+    /// <summary>True when this item can expand into a body, off under a headlines-only
     /// immersion level, which collapses the expander to a plain headline.</summary>
     public bool HasBody => _showBody;
 

@@ -39,7 +39,7 @@ public sealed record HistorySubject
     public IReadOnlyList<string> Sources { get; init; } = [];
 }
 
-/// <summary>A documented team-lineage relationship — never a silent merge: two historically
+/// <summary>A documented team-lineage relationship, never a silent merge: two historically
 /// connected teams stay distinct entities with the connection on record.</summary>
 public sealed record TeamLineageLink
 {

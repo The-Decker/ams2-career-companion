@@ -162,7 +162,7 @@ public sealed partial class HubRailRenderTests
         public string FormText => "";
         public bool HasForm => false;
         public string DriverLevelText => "LV 137";
-        public string DriverAvailabilityLabel => "Injured — out 2 races";
+        public string DriverAvailabilityLabel => "Injured, out 2 races";
     }
 
     private sealed class BriefingHost { public bool SmgpCareerOver => false; }

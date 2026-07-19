@@ -20,7 +20,7 @@ namespace Companion.Core.News;
 /// traversal order, from ONE seeded <c>headlines</c> PCG32 stream (the same stream the shipped
 /// <see cref="HeadlineBank"/> consumes, constructed via <see cref="StreamFactory"/> from
 /// <c>(masterSeed, year, round)</c>). So the same career renders byte-identical articles on
-/// replay — the body is DERIVED, never a stored input. New eras/events are pure JSON adds.
+/// replay, the body is DERIVED, never a stored input. New eras/events are pure JSON adds.
 /// </summary>
 public sealed class NewsArticleBank
 {
@@ -44,8 +44,8 @@ public sealed class NewsArticleBank
 
     /// <summary>Loads and MERGES every <c>*.json</c> corpus in a directory into one bank, so
     /// each era (or event family) can live in its own file and community packs drop new files
-    /// beside the shipped ones — "add more content easily later" by construction. Files are
-    /// read in ordinal filename order (deterministic); merge is additive — each file
+    /// beside the shipped ones, "add more content easily later" by construction. Files are
+    /// read in ordinal filename order (deterministic); merge is additive, each file
     /// contributes its eras, and appends its body/pool variants to any shared key. A missing
     /// or empty directory yields an empty bank (the feed then keeps headlines as the story).</summary>
     public static NewsArticleBank LoadDirectory(string directory)
@@ -163,7 +163,7 @@ public sealed class NewsArticleBank
     }
 
     /// <summary>The era key for a year: the first declared era whose range contains it, else
-    /// "default" — the same resolution rule as <see cref="HeadlineBank"/>.</summary>
+    /// "default", the same resolution rule as <see cref="HeadlineBank"/>.</summary>
     public string ResolveEra(int year)
     {
         foreach (var era in Eras)
@@ -196,7 +196,7 @@ public sealed class NewsArticleBank
     /// left-to-right traversal order. Returns null when the corpus has no body for the key —
     /// the caller then keeps the headline as the whole story. Never mutates the corpus.</summary>
     /// <exception cref="InvalidOperationException">A selected template or fragment references an
-    /// unknown token or an undeclared pool — so corpus bugs surface in tests, not journals.</exception>
+    /// unknown token or an undeclared pool, so corpus bugs surface in tests, not journals.</exception>
     public string? BuildBody(NewsFacts facts, Pcg32 stream)
     {
         // PreferredEra (the SMGP fictional-world corpus) overrides the year→era resolution; a
@@ -212,7 +212,7 @@ public sealed class NewsArticleBank
         return Expand(template, era, tokens, stream, depth: 0);
     }
 
-    /// <summary>Single-pass expansion: scan the text once, resolving each <c>{token}</c> — a
+    /// <summary>Single-pass expansion: scan the text once, resolving each <c>{token}</c>, a
     /// <c>{pool:name}</c> selects a fragment (recursively expanded, same stream) and a plain
     /// token substitutes a fact value. Substituted values are NOT re-scanned, so a fact that
     /// happens to contain braces prints verbatim.</summary>
@@ -225,7 +225,7 @@ public sealed class NewsArticleBank
     {
         if (depth > MaxExpansionDepth)
             throw new InvalidOperationException(
-                $"News article expansion exceeded depth {MaxExpansionDepth} — a pool likely " +
+                $"News article expansion exceeded depth {MaxExpansionDepth}, a pool likely " +
                 "references itself. Break the cycle in the corpus.");
 
         return TokenPattern.Replace(text, match =>

@@ -10,7 +10,7 @@ namespace Companion.App.Behaviors;
 /// <summary>
 /// App-wide mouse-wheel scrolling: the wheel always scrolls the nearest scrollable region, and
 /// when that region can't move any further (or can't scroll at all), the gesture is handed up to
-/// the nearest scrollable ancestor so the outer page keeps scrolling — no dead spots over lists,
+/// the nearest scrollable ancestor so the outer page keeps scrolling, no dead spots over lists,
 /// cards, text boxes, or closed combo boxes.
 ///
 /// WPF's default is the friction the user hit: an inner <see cref="ScrollViewer"/> (the one every
@@ -18,14 +18,14 @@ namespace Companion.App.Behaviors;
 /// <c>Handled</c> even when it has nothing left to scroll, and a closed <see cref="ComboBox"/>
 /// eats the wheel to change its selection. Either way the outer page stops responding while the
 /// cursor sits over that element. This registers two application-global class handlers on the
-/// TUNNELING preview event — so it runs before the eater consumes the gesture — and, only when the
+/// TUNNELING preview event, so it runs before the eater consumes the gesture, and, only when the
 /// element under the cursor can't use the wheel, re-raises the gesture directly on the nearest
 /// scrollable ancestor (skipping any intermediate can't-scroll region, so arbitrary nesting still
 /// works, at native scroll speed). Normal inner scrolling is untouched: a list still scrolls while
 /// it has room. No per-view markup required.
 ///
 /// Registered from a <see cref="ModuleInitializerAttribute"/> so it arms once at assembly load with
-/// zero edits to the shell/composition root — a single self-contained hook.
+/// zero edits to the shell/composition root, a single self-contained hook.
 /// </summary>
 internal static class GlobalWheelScrolling
 {
@@ -76,7 +76,7 @@ internal static class GlobalWheelScrolling
 
         // An OPEN combo box scrolls its dropdown normally; a CLOSED one would otherwise silently
         // change its selection on a stray wheel tick while the page fails to scroll. Hand the closed
-        // case to the page (only when there is actually a scroll region to move — otherwise leave
+        // case to the page (only when there is actually a scroll region to move, otherwise leave
         // the combo's default behavior alone).
         if (!((ComboBox)sender).IsDropDownOpen)
         {
@@ -86,7 +86,7 @@ internal static class GlobalWheelScrolling
 
     /// <summary>Finds the nearest ancestor <see cref="ScrollViewer"/> that can move in the wheel's
     /// direction and re-raises the gesture on it (native speed, skipping any spent region between).
-    /// No-op when nothing above can scroll — the original event is left untouched.</summary>
+    /// No-op when nothing above can scroll, the original event is left untouched.</summary>
     private static void RedirectToScrollableAncestor(FrameworkElement source, MouseWheelEventArgs e)
     {
         for (var node = VisualParentOf(source); node is not null; node = VisualParentOf(node))
@@ -111,7 +111,7 @@ internal static class GlobalWheelScrolling
         ((delta < 0 && scrollViewer.VerticalOffset < scrollViewer.ScrollableHeight) ||
          (delta > 0 && scrollViewer.VerticalOffset > 0.0));
 
-    /// <summary>The parent to forward to — visual parent first (covers templated content), logical
+    /// <summary>The parent to forward to, visual parent first (covers templated content), logical
     /// parent as a fallback for elements not yet in a visual tree.</summary>
     private static DependencyObject? VisualParentOf(DependencyObject node) =>
         (node is Visual or Visual3D ? VisualTreeHelper.GetParent(node) : null)

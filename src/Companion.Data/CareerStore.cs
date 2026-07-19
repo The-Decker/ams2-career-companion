@@ -58,7 +58,7 @@ public sealed record PinnedPackRecord
     public SeasonPack Load() =>
         JsonSerializer.Deserialize<SeasonPack>(PackJson, CoreJson.Options)
         ?? throw new InvalidDataException(
-            $"Pinned pack {PackId} {Version} deserialized to null — the career file is damaged.");
+            $"Pinned pack {PackId} {Version} deserialized to null, the career file is damaged.");
 }
 
 /// <summary>Career identity, pack pinning, and season lifecycle. Thin explicit SQL; every
@@ -71,7 +71,7 @@ public static class CareerStore
         using var existing = db.Command("SELECT COUNT(*) FROM career;");
         if (Convert.ToInt32(existing.ExecuteScalar()) != 0)
             throw new InvalidOperationException(
-                "This career file already has a career — one career per file.");
+                "This career file already has a career, one career per file.");
 
         db.Execute(
             """
@@ -105,7 +105,7 @@ public static class CareerStore
     /// <summary>Pins the pack's canonical serialization (CoreJson) into the career, keyed by
     /// (packId, version), and returns its sha256 (lowercase hex). Pinning the identical pack
     /// again is a no-op; pinning DIFFERENT content under an already-pinned (packId, version)
-    /// throws — pinned packs are immutable, content changes require a version bump.</summary>
+    /// throws, pinned packs are immutable, content changes require a version bump.</summary>
     public static string PinPack(
         CareerDatabase db,
         SeasonPack pack,
@@ -157,7 +157,7 @@ public static class CareerStore
                     return sha256;
                 throw new InvalidOperationException(
                     $"Pack {packId} {packVersion} is already pinned with " +
-                    "different content — pinned packs are immutable; bump the pack version instead.");
+                    "different content, pinned packs are immutable; bump the pack version instead.");
             }
         }
 
@@ -199,7 +199,7 @@ public static class CareerStore
         if (!string.Equals(actualSha, storedSha, StringComparison.Ordinal))
             throw new InvalidDataException(
                 $"Pinned pack {packId} {version} failed hash verification " +
-                $"(stored {storedSha}, actual {actualSha}) — the career file is damaged.");
+                $"(stored {storedSha}, actual {actualSha}), the career file is damaged.");
 
         return new PinnedPackRecord
         {
@@ -235,7 +235,7 @@ public static class CareerStore
 
     /// <summary>
     /// Era transition v1 (PLAN M6): starts the first season of the NEXT era pack from a
-    /// <see cref="TransitionPlan"/> — atomically pins the new pack, creates the season row,
+    /// <see cref="TransitionPlan"/>, atomically pins the new pack, creates the season row,
     /// writes the plan's stage-'start' states (rollover + transition carryover), and journals
     /// the era.transition header plus the plan's era.bridge / era.departed / era.economy
     /// events under the new season. Refuses plans carrying validation errors (the UI must
@@ -273,13 +273,13 @@ public static class CareerStore
     {
         if (plan.ValidationErrors.Count > 0)
             throw new InvalidOperationException(
-                "The transition plan has validation errors — surface them to the user instead of " +
+                "The transition plan has validation errors, surface them to the user instead of " +
                 "starting the season: " + string.Join(" | ", plan.ValidationErrors));
         if (!string.Equals(toPack.Manifest.PackId, plan.ToPackId, StringComparison.Ordinal) ||
             toPack.Season.Year != plan.ToYear)
             throw new ArgumentException(
                 $"The supplied pack is {toPack.Manifest.PackId} ({toPack.Season.Year}) but the plan " +
-                $"targets {plan.ToPackId} ({plan.ToYear}) — build the plan against the pack you start.",
+                $"targets {plan.ToPackId} ({plan.ToYear}), build the plan against the pack you start.",
                 nameof(toPack));
 
         var seasons = ReadSeasons(db);
@@ -290,7 +290,7 @@ public static class CareerStore
                 (previous is null ? "does not exist." : $"is {previous.Year}."));
         if (!string.Equals(previous.Status, SeasonStatus.Complete, StringComparison.Ordinal))
             throw new InvalidOperationException(
-                $"Season {previous.Id} ({previous.Year}) is still {previous.Status} — finish it " +
+                $"Season {previous.Id} ({previous.Year}) is still {previous.Status}, finish it " +
                 "before transitioning into the next era.");
 
         using var transaction = db.Connection.BeginTransaction();
@@ -333,7 +333,7 @@ public static class CareerStore
             throw new InvalidOperationException("A carryover needs a previous season to roll over from.");
         if (!string.Equals(previous.Status, SeasonStatus.Complete, StringComparison.Ordinal))
             throw new InvalidOperationException(
-                $"Season {previous.Id} ({previous.Year}) is still {previous.Status} — finish it before " +
+                $"Season {previous.Id} ({previous.Year}) is still {previous.Status}, finish it before " +
                 "carrying the career into the next year.");
         if (year <= previous.Year)
             throw new InvalidOperationException(
@@ -347,7 +347,7 @@ public static class CareerStore
 
         using var transaction = db.Connection.BeginTransaction();
         // The pack is already pinned by the previous season (one pin serves every season that
-        // reuses it) — the carryover just adds a season row that references it.
+        // reuses it), the carryover just adds a season row that references it.
         long seasonId = StartSeason(db, year, packId, packVersion, transaction);
         StateStore.UpsertPlayerState(db, seasonId, StateStore.StageStart, startStates.Player, transaction);
         StateStore.UpsertDriverStates(db, seasonId, StateStore.StageStart, startStates.Drivers, transaction);

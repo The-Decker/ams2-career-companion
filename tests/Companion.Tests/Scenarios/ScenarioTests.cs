@@ -39,7 +39,7 @@ public sealed class ScenarioTests
         var map = BatScenarioReader.Parse(Bat);
 
         Assert.Equal(new[] { 1, 2 }, map.Keys.OrderBy(k => k)); // two real rounds; the what-if is not a round
-        Assert.Equal(2, map[1].Count);                          // g2m1 + mp44 overrides — NOT the custom-AI copy
+        Assert.Equal(2, map[1].Count);                          // g2m1 + mp44 overrides, NOT the custom-AI copy
         Assert.All(map[1], s => Assert.Contains("Overrides", s.SourceRelativePath));
         Assert.DoesNotContain(map[1], s => s.SourceRelativePath.Contains("CustomAIDrivers"));
         Assert.Contains(map[1], s => s.SourceRelativePath.EndsWith(@"formula_classic_g2m1_01Brazil.xml"));
@@ -107,7 +107,7 @@ public sealed class ScenarioTests
     // The newer selector shape (1995/1996-1997/2010/2016): one bat serves multiple seasons, and each
     // round's menu section only PRINTS its changes + a Y/N prompt, then `goto INSTALL_<ID>` where the
     // real COPY block lives. The confirm section also has `goto main_menu` (cancel) and the INSTALL
-    // block DEL/COPYs the class custom-AI file (incl. PERF_MODE-conditional variants) — neither must
+    // block DEL/COPYs the class custom-AI file (incl. PERF_MODE-conditional variants), neither must
     // be treated as a livery-override swap.
     private static readonly string TwoHopBat = string.Join("\n", new[]
     {
@@ -145,7 +145,7 @@ public sealed class ScenarioTests
         "\tgoto main_menu",
         ":INSTALL_1996_SANMARINO",
         // The non-monotonic case: the main file advances to 05SMR while the McLaren KEEPS its 02BRA
-        // livery — a plain round-number binder cannot express "car A at R5, car B still at R2".
+        // livery, a plain round-number binder cannot express "car A at R5, car B still at R2".
         "\tCOPY .\\Vehicles\\Textures\\CustomLiveries\\Overrides\\formula_v10_g1\\formula_v10_g1_1996_05SMR.xml .\\Vehicles\\Textures\\CustomLiveries\\Overrides\\formula_v10_g1\\formula_v10_g1.xml",
         "\tCOPY .\\Vehicles\\Textures\\CustomLiveries\\Overrides\\mclaren_mp4_12\\mclaren_mp4_12_1996_02BRA.xml .\\Vehicles\\Textures\\CustomLiveries\\Overrides\\mclaren_mp4_12\\mclaren_mp4_12.xml",
         "\tgoto main_menu",
@@ -160,7 +160,7 @@ public sealed class ScenarioTests
         var map = BatScenarioReader.Parse(TwoHopBat, ":1996");
 
         Assert.Equal(new[] { 1, 5 }, map.Keys.OrderBy(k => k));
-        // Round 1: the two livery overrides from the followed INSTALL_ block — NOT the class custom-AI
+        // Round 1: the two livery overrides from the followed INSTALL_ block, NOT the class custom-AI
         // copy, and NOT the PERF_MODE-conditional custom-AI copy.
         Assert.Equal(2, map[1].Count);
         Assert.All(map[1], s => Assert.Contains("Overrides", s.SourceRelativePath));
@@ -176,7 +176,7 @@ public sealed class ScenarioTests
         var map = BatScenarioReader.Parse(TwoHopBat, ":1996");
 
         // R5 San Marino: the main formula file is on its 05SMR variant, but the McLaren is STILL on its
-        // 02BRA livery — the exact per-model, non-monotonic state the .bat encodes and a round-number
+        // 02BRA livery, the exact per-model, non-monotonic state the .bat encodes and a round-number
         // change-point binder loses.
         Assert.Contains(map[5], s => s.SourceRelativePath.EndsWith(@"formula_v10_g1_1996_05SMR.xml"));
         Assert.Contains(map[5], s => s.SourceRelativePath.EndsWith(@"mclaren_mp4_12_1996_02BRA.xml"));

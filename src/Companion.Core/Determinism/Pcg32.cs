@@ -1,12 +1,12 @@
 namespace Companion.Core.Determinism;
 
 /// <summary>
-/// PCG-XSH-RR 32-bit generator (64-bit state, 32-bit output) — a direct port of M.E.
+/// PCG-XSH-RR 32-bit generator (64-bit state, 32-bit output), a direct port of M.E.
 /// O'Neill's reference implementation (pcg32_srandom_r / pcg32_random_r /
 /// pcg32_boundedrand_r from the PCG "basic C" library, pcg-random.org).
 ///
 /// API guarantee: the output sequence for a given (initState, initSeq) pair is byte-stable
-/// across processes, machines, architectures, and app versions — career save files depend on
+/// across processes, machines, architectures, and app versions, career save files depend on
 /// it. Any change to this class is a breaking save-format change.
 /// </summary>
 public sealed class Pcg32

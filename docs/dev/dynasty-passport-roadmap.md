@@ -6,6 +6,10 @@ development; Racing Passport activates and holds the historical seasons as threa
 Dynasty tycoon economy in parallel (`docs/dev/fable-tycoon-brief.md`) — this doc is the mode
 infrastructure around it (Claude's lane: Core/ViewModels/Data)._
 
+> **Status (2026-07-18):** Piece 2 (debug menu) SHIPPED + deployed. Piece 1 (Dynasty gating)
+> SHIPPED. **Piece 3 SHIPPED AS PURE RACING** — the shared-progression Passport design was
+> superseded by the product-owner decision of 2026-07-18 (see below). All three pieces are done.
+
 ## Content reality (drives the gating)
 
 Faithful packs on disk today: **1967, 1969, 1974, 1978, 1983, 1985, 1986, 1988, 1990–1993, 1995,
@@ -16,77 +20,86 @@ Unbuilt years render as preview/"coming soon", never as playable, never synthesi
 
 ---
 
-## Piece 1 — Dynasty chronological gating
+## Piece 1 — Dynasty chronological gating — SHIPPED (2026-07-17)
 
-**Goal:** in `grandPrixDynasty` you start at the earliest point of the timeline and advance
-chronologically. Future seasons are **previewable** (you can look at the pack — calendar, teams,
-era) but **not playable** until you reach them in sequence. 1967 is the first playable stop.
+In `grandPrixDynasty` you advance chronologically through the pinned timeline: only the current
+(earliest unfinished) pinned season is playable; earlier are completed history; later are
+preview-locked. What shipped vs. the original sketch:
 
-- The creation-time `CampaignProgressionPlan.pinnedSeasonSequence` already pins the ordered faithful
-  packs (career-modes-alpha1.md §3). Gating rides on top of it: **only the current (earliest
-  unfinished) pinned season is playable; earlier are completed history; later are preview-locked.**
-  Same three-state shape as the SMGP `CampaignTimeline` (Completed / Current / Locked) — reuse it.
-- Add a **preview projection**: a locked future season exposes its *pack-level* identity (year, era,
-  series, calendar venues, team list) for a "coming up / preview" screen, but NO play entry. This is
-  the deliberate opposite of the SMGP spoiler rule — historical years are real-world known, so
-  previewing them is fine; the gate is about *playing in order*, not hiding.
-- A **Formula-Junior-era prologue** slot at the head of the timeline: a labelled "Formula Junior →
-  1967" pre-championship stretch shown as preview/coming-soon until content exists, so the timeline
-  starts where Mike wants even though play starts at 1967.
-- Enforce at the session layer: `StartNextSeason` / creation may only pin/enter the sequence head;
-  a jump to a later year throws (like SMGP's Season-18 guard). Debug menu (Piece 2) is the sanctioned
-  bypass.
-- Tests: the sequence is chronological + gap-honest; only the current season enters; a future season
-  is preview-only; replay byte-identical.
+- **Head-only entry already held by construction** — creation pins the ordered
+  `pinnedSeasonSequence` and enters its head; `NextSeason()`/`StartNextSeason` can only ever target
+  `PinnedSeasonSequence[_seasonOrdinal]` (no jump path exists). Proven by
+  `DynastyContinuation_IgnoresMutableInterveningPackAndStartsPrePinnedOccurrence` (a tempting
+  on-disk 1968 is ignored; BridgedYears honest; replay byte-identical). The debug menu (Piece 2) is
+  the sanctioned bypass.
+- **Preview projection:** `CampaignSeasonPreview` (year, series, decade `EraLabel`, round count,
+  venues, teams) rides `CampaignTimelineEntry.Preview` on LOCKED Dynasty seasons, built once per
+  session from the pre-pinned bytes (`CareerSessionService.DynastySeasonPreviews`, display-only,
+  never a play entry). Historical years are real-world known, so previewing them is fine; the gate
+  is about *playing in order*, not hiding — the deliberate opposite of the SMGP no-spoiler rule,
+  whose locked seasons keep `Preview` null (tested).
+- **Formula Junior prologue slot:** a synthetic ordinal-0 `CampaignTimelineEntry` (`IsPrologue`,
+  Locked, "Formula Junior → 1967", "Pre-championship prologue, coming soon") heads every Dynasty
+  timeline whose plan starts ≤1967 — the timeline starts where the story should even though play
+  starts at 1967.
+- **Tests:** `CampaignTimelineTests` Dynasty section (prologue/current/previewed-locked, the
+  advance arc, display-only-never-journals) + the existing creation/continuation coverage.
+- **GUI handoff:** the timeline tab binds `Preview`/`IsPrologue` when Codex does the Dynasty wave.
 
-## Piece 2 — Debug menu (dev-only)
+## Piece 2 — Debug menu (dev-only) — SHIPPED (2026-07-17)
 
-**Goal:** preview/unlock everything while we build — jump to any year/season, any of the three modes,
-force money/injury/terminal states, unlock locked seasons, reveal SMGP future lore.
-
-- **Gated so it never reaches players**: behind a settings flag (`Settings.DeveloperMode`, off by
-  default and not surfaced in the normal UI) AND/OR `#if DEBUG` for the build-time parts. A shipped
-  Release with the flag off shows nothing.
-- A `DebugMenuViewModel` exposing dev commands over `ICareerSession` + creation: open any pack as any
-  mode, force-advance to a season, set balance/injury/level, toggle the gating unlock, dump the
-  journal. Pure ViewModel + a bindable surface; the App lane adds a hidden panel (e.g., a key chord).
-- Everything it does routes through the SAME session/fold seams (no back doors that bypass the fold),
-  so a debug-created state still replays honestly — it just skips the gating/normal-flow.
-- Tests: the menu is invisible/no-op with the flag off; each command hits the real seam.
-
-## Piece 3 — Racing Passport activation
-
-**Goal:** turn on `racingPassport` (currently fail-closed at
-`CampaignCreationPlanner.cs:90` — "requires its portfolio activity ledger and cannot be created as a
-single career file yet"). Passport holds the **historical seasons as independent threads** — the
-"original" historical careers, now under one persistent character.
-
-Implements career-modes-alpha1.md §5 (read it fully — the model is already specified):
-- One SQLite DB, one **root Passport character** (global XP/level/SP/mastery/DNA), many
-  **career threads** (thread-local seat/standings/injury/news), an **activity ledger** (authoritative
-  order), and the **portfolio progression** (creditedExperienceKeys, `creditedReferenceProgress`,
-  `portfolioPool` gate to 499 SP over 16 credited season-equivalents — the exact math in
-  `CharacterProgressionV2Math`/`character-progression-v2.md` §5.4).
-- Thread switching only at atomic checkpoints (before a result, or after a result + all derived rows
-  commit — never mid-decision).
-- Anti-double-credit: a re-simulated or cloned thread records its local result but never awards the
-  same global XP credit twice (the credited-key set is the guard).
-- This is the largest of the three (cross-thread ledger + switching + one-DB multi-thread) and must
-  keep the byte-identical-replay contract per thread.
-- Tests: create root + a 1967 thread + an SMGP thread; switch at checkpoints; global XP advances once
-  per credited activity; each thread replays byte-identically; no double credit on resim.
+The dev-only menu that previews/unlocks everything while we build: jump to any year/season/mode,
+force money/injury/terminal states, unlock locked seasons, reveal SMGP future lore. Gated behind
+`Settings.DeveloperMode` (off by default, not in the normal UI; Ctrl+Shift+F12 unlocks,
+Ctrl+Shift+D opens; `AMS2_DEVMODE=1` env) so a shipped Release with the flag off shows nothing.
+Two fold-safe tiers: Tier-1 REAL replay-safe throwaway careers (advanced only through
+provenance-excluded input mutators; `DebugCareerResimTests` proves byte-identical resim) and Tier-2
+non-persistent preview sessions. Every command routes the same session/fold seams — no back doors.
 
 ---
 
-## Recommended order
+## Piece 3 — Racing Passport — SHIPPED AS PURE RACING (2026-07-18)
 
-1. **Debug menu (Piece 2) first** — it's the enabler: it lets us preview/test Dynasty gating, the
-   tycoon economy Fable builds, and Passport threads without grinding through content each time.
-   Smallest, self-contained, unblocks everything else.
-2. **Dynasty gating (Piece 1)** — builds on the existing pinned-sequence + campaign-timeline shape;
-   moderate; makes Dynasty playable-in-order.
-3. **Racing Passport (Piece 3)** — largest; the portfolio ledger is already specified, so it's
-   well-scoped, but it's the most work. Do it once the debug menu can exercise it.
+**The shared-progression Passport design below this status line was SUPERSEDED by the
+product-owner decision of 2026-07-18** (`docs/dev/racing-passport-pure-racing.md`): Racing Passport
+is a PURE-RACING mode — no XP, no levels, no SP, no DNA, no skills, no mastery, no owner economy,
+no threads, no portfolio ledger, no shared progression profile. The container/ledger model
+(`RacingPassportSave`, root character, activity ledger, credited-experience keys, child seeds,
+thread switching) is retired and must not be built; it survives only in git history.
 
-Fable's tycoon economy (`fable-tycoon-brief.md`) proceeds in parallel with 1–3; it plugs into the
-Dynasty fold the gating governs.
+What shipped instead (branch `mission/racing-passport-pure-racing`):
+
+- **The mode is live:** the start-screen card is available ("PLAYABLE NOW"); the wizard accepts
+  `racingPassport` and runs SeasonPick → Verification → SeatPick → Confirm (no character creator,
+  no custom grid editor, no mortality picker, no economy choice; the optional driver display name
+  is the one identity field).
+- **Creation:** `CampaignCreationPlanner.PrepareRacingPassport` — one faithful season pinned at
+  creation (exact bytes/version/hash), no v2 character required, no bounded plan; contradictory
+  input (a character, `DynastyEconomy`, `SmgpMode`, an SMGP pack) is REJECTED. The save is an
+  ordinary self-contained `.ams2career` with `experienceMode = "racingPassport"` persisted on the
+  start player state.
+- **The season:** the ordinary deterministic fold, staging, standings, news, history, and review,
+  all reused unchanged. `SeasonEndContext.PureRacingSeason` gates the career-ladder season-end
+  steps (aging, retirements, seat market, player offers, tier drift) off while standings,
+  headlines, records, and the digest are produced normally. `NextSeason()` is null and
+  `StartNextSeason` throws: one season IS the campaign; the completed save stays
+  reopenable/reviewable and replays byte-identically.
+- **Player name without progression:** additive `CareerCreationRequest.PlayerDisplayName` →
+  `PlayerCareerState.CustomDisplayName` (`WhenWritingNull`, legacy blobs byte-identical), resolved
+  ahead of the seat's authored name through the existing `PlayerIdentity()` channel. No journal
+  row, no profile, no fake identity.
+- **Tests:** `RacingPassportTests` (10) + the replaced menu/wizard assertions
+  (`CareerModeMenuTests`, `CharacterWizardTests`, `CampaignProgressionCreationTests` member data).
+- **Docs:** `career-modes-alpha1.md` §5 rewritten as pure racing (§§6-7 of the old design
+  removed); the GUI handoff is `docs/dev/racing-passport-pure-racing-gui-handoff.md`.
+
+<details><summary>The retired Piece 3 sketch (history only, do not build)</summary>
+
+**Goal (RETIRED):** turn on `racingPassport` as a shared-progression mode — one SQLite DB, one
+root Passport character (global XP/level/SP/mastery/DNA), many career threads (thread-local
+seat/standings/injury/news), an activity ledger (authoritative order), and portfolio progression
+(creditedExperienceKeys, `creditedReferenceProgress`, `portfolioPool` gate to 499 SP over 16
+credited season-equivalents). Thread switching only at atomic checkpoints. Anti-double-credit via
+the credited-key set. Per-thread byte-identical replay.
+
+</details>

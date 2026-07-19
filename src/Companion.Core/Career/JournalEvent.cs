@@ -20,7 +20,7 @@ public sealed record JournalEvent
     /// <summary>The state delta as JSON (CoreJson conventions, single line).</summary>
     public required string DeltaJson { get; init; }
 
-    /// <summary>Why it happened — the phase+cause pair keys the headline template bank.</summary>
+    /// <summary>Why it happened, the phase+cause pair keys the headline template bank.</summary>
     public required string Cause { get; init; }
 }
 

@@ -37,7 +37,7 @@ public sealed class SmgpRulesTests
     [InlineData(7, 3, SmgpBattleOutcome.RivalBeatPlayer)]
     [InlineData(5, null, SmgpBattleOutcome.PlayerBeatRival)]  // a finish beats a DNF
     [InlineData(null, 5, SmgpBattleOutcome.RivalBeatPlayer)]
-    [InlineData(null, null, SmgpBattleOutcome.Void)]          // both out — nobody beat anyone
+    [InlineData(null, null, SmgpBattleOutcome.Void)]          // both out, nobody beat anyone
     public void BattleOutcome_DecidesByFinishingAhead(int? player, int? rival, SmgpBattleOutcome expected) =>
         Assert.Equal(expected, SmgpRules.BattleOutcome(player, rival));
 
@@ -118,7 +118,7 @@ public sealed class SmgpRulesTests
 
     // ---------- title defense / completion ----------
     // (The old "forfeit at the Zeroforce floor = career over" rule is superseded by the LEVEL-D
-    //  4-loss counter — see SmgpRules.FloorLossLimit + SmgpChallengeRulesTests /
+    //  4-loss counter, see SmgpRules.FloorLossLimit + SmgpChallengeRulesTests /
     //  SmgpBattleFoldDeterminismTests.FourLosses_AtTheFloor_EndTheCareer_ButNotBefore.)
 
     [Theory]

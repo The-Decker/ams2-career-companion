@@ -9,12 +9,12 @@ namespace Companion.Tests.Smgp;
 /// <summary>
 /// The SMGP dispatch corpus (Task 4): the templated in-world news renderer. These cover the pure grammar
 /// (deterministic template/pool selection, fallback, the rumor pool) AND a consistency guard over the SHIPPED
-/// <c>data/rules/smgp/dispatches.json</c> — every template renders without throwing (no undeclared pool) and
+/// <c>data/rules/smgp/dispatches.json</c>, every template renders without throwing (no undeclared pool) and
 /// only ever names known tokens/pools, so the lenient runtime renderer never quietly drops a real token.
 /// </summary>
 public sealed class SmgpDispatchCorpusTests
 {
-    /// <summary>The token vocabulary the ViewModels supply — a shipped template may name only these.</summary>
+    /// <summary>The token vocabulary the ViewModels supply, a shipped template may name only these.</summary>
     private static readonly HashSet<string> KnownTokens = new(StringComparer.Ordinal)
     {
         "player", "team", "rival", "venue", "season", "number", "subject", "other", "leader", "benchmark",

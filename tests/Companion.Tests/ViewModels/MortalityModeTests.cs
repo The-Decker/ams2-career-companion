@@ -164,7 +164,7 @@ public sealed class MortalityModeTests : IDisposable
             slot = session.SaveToSlot("after round 1");
             Assert.Single(session.AllSnapshots());
 
-            ApplyOneRound(session);                    // round 2 done — season complete
+            ApplyOneRound(session);                    // round 2 done, season complete
             Assert.True(session.Summary.SeasonComplete);
             Assert.Equal(2, session.AllSnapshots().Count);
 
@@ -177,7 +177,7 @@ public sealed class MortalityModeTests : IDisposable
         Assert.Single(reopened.AllSnapshots());         // back to the one-round snapshot
     }
 
-    // ---- (c2) an unknown slot id fails clean — the live session is NOT spent ----
+    // ---- (c2) an unknown slot id fails clean, the live session is NOT spent ----
 
     [Fact]
     public void RestoreUnknownSlot_ThrowsWithoutSpendingTheSession()
@@ -188,7 +188,7 @@ public sealed class MortalityModeTests : IDisposable
 
         Assert.Throws<InvalidOperationException>(() => session.RestoreSlot("no-such-slot"));
 
-        // The DB was not torn down — the session is still fully usable.
+        // The DB was not torn down, the session is still fully usable.
         Assert.Equal(MortalityMode.Normal, session.Mortality);
         Assert.Single(session.AllSnapshots());
         ApplyOneRound(session);                        // a live write proves the DB survived
@@ -229,7 +229,7 @@ public sealed class MortalityModeTests : IDisposable
         Assert.Equal(MortalityMode.Hardcore, session.Mortality);
         Assert.False(session.SavesEnabled);
         Assert.Empty(session.SaveSlots());
-        // Hardcore never autosaves — no snapshot files were written at all.
+        // Hardcore never autosaves, no snapshot files were written at all.
         Assert.Empty(SaveSlotStore.List(careerPath));
 
         Assert.Throws<InvalidOperationException>(() => session.SaveToSlot("nope"));

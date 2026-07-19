@@ -4,7 +4,7 @@ namespace Companion.App.Views;
 
 /// <summary>Modal "Rename career" prompt (view-layer, like every dialog): shows the current name
 /// pre-selected, returns the edited text via <see cref="NewName"/> when confirmed. The VM never
-/// sees the dialog — StartView hands the collected name to <c>StartViewModel.RenameRecent</c>.</summary>
+/// sees the dialog, StartView hands the collected name to <c>StartViewModel.RenameRecent</c>.</summary>
 public partial class RenameCareerDialog : Window
 {
     public RenameCareerDialog(string currentName)

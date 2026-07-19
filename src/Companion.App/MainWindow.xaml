@@ -29,7 +29,7 @@
                         FontFamily="{StaticResource IconFont}" Content="&#xE713;" FontSize="15" Padding="8,5"
                         audio:SoundAssist.Cue="Navigate"
                         AutomationProperties.Name="Settings"
-                        ToolTip="Settings — appearance, racing defaults, staging behavior, data folders (click again or press Esc to close)"
+                        ToolTip="Settings: appearance, racing defaults, staging behavior, data folders (click again or press Esc to close)"
                         Command="{Binding ToggleSettingsCommand}" />
                 <TextBlock DockPanel.Dock="Left" Text="AMS2 CAREER COMPANION" Style="{StaticResource Faint}"
                            VerticalAlignment="Center" Margin="4,0,14,0" FontSize="11" />

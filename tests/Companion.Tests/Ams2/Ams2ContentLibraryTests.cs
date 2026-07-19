@@ -60,7 +60,7 @@ public class Ams2ContentLibraryTests : IDisposable
     [Fact]
     public void Load_OfficialLiveriesAbsent_IsEmptyNotAThrow()
     {
-        // The file is OPTIONAL (older data dirs / test fixtures) — absent means an empty map.
+        // The file is OPTIONAL (older data dirs / test fixtures), absent means an empty map.
         var library = Load(VehiclesJson(("stock_corolla_23", "stock_corolla_23", 2023)));
         Assert.Empty(library.OfficialLiveries);
     }

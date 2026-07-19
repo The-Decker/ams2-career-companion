@@ -9,7 +9,7 @@ namespace Companion.ViewModels.Debug;
 /// TIER-2 previews (dynasty-passport-roadmap.md Piece 2). Mirrors the shape of the test suite's
 /// minimal pack so a <see cref="PreviewCareerSession"/> can host any View with real pack identity
 /// (year, teams, drivers, a grid) WITHOUT reading a career database off disk. Nothing here is ever
-/// pinned, folded, or written — it exists only to feed display projections, so a preview can never
+/// pinned, folded, or written, it exists only to feed display projections, so a preview can never
 /// perturb the deterministic-replay contract or create a <c>.ams2career</c> file.
 /// </summary>
 public static class DebugPreviewPack
@@ -18,7 +18,7 @@ public static class DebugPreviewPack
     private const string Car = "formula_vintage_g1m2";
     private const string Track = "kyalami_historic";
 
-    /// <summary>The player's livery on the built grid — the seat a preview treats as "you".</summary>
+    /// <summary>The player's livery on the built grid, the seat a preview treats as "you".</summary>
     public const string PlayerLivery = "Stock Livery #2";
 
     /// <summary>Builds a two-round preview pack for <paramref name="year"/>. When

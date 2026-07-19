@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -39,10 +39,14 @@
     <None Include="..\..\data\rules\mastery-skills-v2.json" Link="Fixtures\rules\mastery-skills-v2.json" CopyToOutputDirectory="PreserveNewest" />
     <!-- Arcade car-spec cards (display-only), for the catalog loader test + the on-real-data checks. -->
     <None Include="..\..\data\rules\car-specs.json" Link="Fixtures\rules\car-specs.json" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Era-skin decade overrides (display-only), for the catalog loader + parity contract tests. -->
+    <None Include="..\..\data\rules\era-themes.json" Link="Fixtures\rules\era-themes.json" CopyToOutputDirectory="PreserveNewest" />
     <!-- The generative news-article corpora (data\rules\news\*.json) for the news-feed tests. -->
     <None Include="..\..\data\rules\news\*.json" Link="Fixtures\rules\news\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- The newsroom template packs + desks (data\rules\newsroom\*.json) for the composer/content tests. -->
     <None Include="..\..\data\rules\newsroom\*.json" Link="Fixtures\rules\newsroom\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- The per-season newsroom packs (data\rules\newsroom\seasons\*.json) for the season-scoping tests. -->
+    <None Include="..\..\data\rules\newsroom\seasons\*.json" Link="Fixtures\rules\newsroom\seasons\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- The SMGP rival-dossier trash-talk corpus, for the quote drift guard. -->
     <None Include="..\..\data\rules\smgp\*.json" Link="Fixtures\rules\smgp\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- Grand Prix Dynasty owner-economy rules, for the economy fold + balance tests on real data. -->

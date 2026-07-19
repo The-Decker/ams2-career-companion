@@ -7,7 +7,7 @@ namespace Companion.Ams2.CustomAi;
 /// <summary>
 /// A leniently parsed installed custom-AI class file (typically a community NAMeS file).
 /// Base entries (no <c>tracks</c> attribute) carry the file's season-wide driver data; track
-/// entries are the author's per-venue overrides and stay separate — the baseline import uses
+/// entries are the author's per-venue overrides and stay separate, the baseline import uses
 /// base entries only, while track entries remain the file's own round-level refinement.
 /// </summary>
 public sealed record CommunityAiFile
@@ -37,7 +37,7 @@ public sealed record CommunityAiFile
 /// Lenient reader for INSTALLED custom-AI XML files. Community files (jusk et al.) are not
 /// well-formed XML: header comments contain '--' runs (calendar tables drawn with dashes),
 /// attribute spacing is nonstandard (<c>tracks ="..."</c>), and livery names carry raw
-/// ampersands ("Bang &amp; Olufsen" written as "Bang &amp;"). The game reads them anyway — so
+/// ampersands ("Bang &amp; Olufsen" written as "Bang &amp;"). The game reads them anyway, so
 /// must we: <see cref="LenientXml.Clean"/> strips comments and escapes bare ampersands BEFORE
 /// the XML parse, and per-entry oddities degrade to warnings, never exceptions. Only
 /// hopelessly broken markup throws (as <see cref="InvalidOperationException"/>).
@@ -87,7 +87,7 @@ public static class CommunityAiReader
             string? liveryName = AttributeValue(element, "livery_name");
             if (string.IsNullOrWhiteSpace(liveryName))
             {
-                warnings.Add($"Driver entry #{position} has no livery_name attribute — skipped.");
+                warnings.Add($"Driver entry #{position} has no livery_name attribute, skipped.");
                 continue;
             }
 
@@ -158,7 +158,7 @@ public static class CommunityAiReader
         if (double.TryParse(raw, NumberStyles.Float, CultureInfo.InvariantCulture, out double value))
             return value;
 
-        warnings.Add($"'{liveryName}': {name} value '{raw}' is not a number — ignored.");
+        warnings.Add($"'{liveryName}': {name} value '{raw}' is not a number, ignored.");
         return null;
     }
 }

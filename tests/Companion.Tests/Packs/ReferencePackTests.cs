@@ -13,8 +13,8 @@ namespace Companion.Tests.Packs;
 /// <see cref="PackStructuralValidator"/> with no errors, and pass
 /// <see cref="PackContentValidator"/> against the REAL extracted content library
 /// (data/ams2/*.json, linked into the test output) with an empty installed-livery set.
-/// Stock-library livery misses are warnings by design — the skin packs the manifests require
-/// are not assumed installed — so only errors fail the suite.
+/// Stock-library livery misses are warnings by design, the skin packs the manifests require
+/// are not assumed installed, so only errors fail the suite.
 /// </summary>
 public class ReferencePackTests
 {
@@ -29,11 +29,11 @@ public class ReferencePackTests
         if (!File.Exists(Path.Combine(Ams2DataDirectory, "classes.json")))
             throw new FileNotFoundException(
                 $"Content library not found under '{Ams2DataDirectory}'. The test project links " +
-                "data/ams2/*.json into the output — rebuild tests/Companion.Tests.");
+                "data/ams2/*.json into the output, rebuild tests/Companion.Tests.");
         return Ams2ContentLibrary.Load(Ams2DataDirectory);
     });
 
-    /// <summary>Every pack folder shipped in the repo — the living-validation suite is
+    /// <summary>Every pack folder shipped in the repo, the living-validation suite is
     /// directory-driven, so a newly added season pack is held to the exemplar bar
     /// automatically (load, structural + content validation, v1.1 venue rules).</summary>
     public static TheoryData<string> ReferencePackIds()
@@ -55,7 +55,7 @@ public class ReferencePackTests
     {
         string dir = Path.Combine(PacksDirectory, packId);
         Assert.True(Directory.Exists(dir),
-            $"Reference pack folder '{dir}' was not copied to the test output — " +
+            $"Reference pack folder '{dir}' was not copied to the test output, " +
             "check the packs None-Include in Companion.Tests.csproj and rebuild.");
 
         return PackLoader.Parse(
@@ -69,7 +69,7 @@ public class ReferencePackTests
     private static string Read(string dir, string filePart)
     {
         string path = Path.Combine(dir, filePart);
-        Assert.True(File.Exists(path), $"Pack file '{path}' is missing — a season pack is five files.");
+        Assert.True(File.Exists(path), $"Pack file '{path}' is missing, a season pack is five files.");
         return File.ReadAllText(path);
     }
 
@@ -79,7 +79,7 @@ public class ReferencePackTests
     public void PacksFolder_ContainsAllReferencePacks()
     {
         Assert.True(Directory.Exists(PacksDirectory),
-            $"'{PacksDirectory}' missing — the packs None-Include did not copy anything.");
+            $"'{PacksDirectory}' missing, the packs None-Include did not copy anything.");
 
         var found = Directory.GetDirectories(PacksDirectory).Select(Path.GetFileName).ToHashSet();
         Assert.Contains("f1-1967", found);
@@ -168,7 +168,7 @@ public class ReferencePackTests
     // ---------- historical per-round grid (the grid-cap fix) ----------
 
     /// <summary>Every round carries a grid block, and its size never exceeds the track's Max AI
-    /// participants (the game's own cap) — the core promise of the grid-cap fix.</summary>
+    /// participants (the game's own cap), the core promise of the grid-cap fix.</summary>
     [Theory]
     [MemberData(nameof(ReferencePackIds))]
     public void ReferencePack_EveryRoundGridSizeFitsTheTrackAiCap(string packId)
@@ -178,7 +178,7 @@ public class ReferencePackTests
         foreach (var round in pack.Season.Rounds)
         {
             Assert.True(round.Grid is not null,
-                $"{packId} round {round.Round} ({round.Name}) has no grid block — the grid-cap fix " +
+                $"{packId} round {round.Round} ({round.Name}) has no grid block, the grid-cap fix " +
                 "adds one to every round.");
 
             var grid = round.Grid!;
@@ -241,7 +241,7 @@ public class ReferencePackTests
     // ---------- optional alternate mod tracks (opt-in venue swaps) ----------
 
     /// <summary>Every authored <c>track.alternate</c> must point at a track that (a) resolves in the
-    /// content library, (b) is an installed MOD track (<c>isMod:true</c> — base/DLC tracks are never
+    /// content library, (b) is an installed MOD track (<c>isMod:true</c>, base/DLC tracks are never
     /// offered as opt-in mod alternates), and (c) carries a positive distance-preserving lap count.
     /// Guards the curated alternate list against a typo'd tag or a non-mod target.</summary>
     [Theory]
@@ -258,7 +258,7 @@ public class ReferencePackTests
             Assert.True(Library.Value.Tracks.TryGetValue(alt.Id, out var track),
                 $"{packId} round {round.Round}: alternate track '{alt.Id}' is not in the content library.");
             Assert.True(track!.IsMod,
-                $"{packId} round {round.Round}: alternate '{alt.Id}' is not a mod track (isMod:false) — " +
+                $"{packId} round {round.Round}: alternate '{alt.Id}' is not a mod track (isMod:false), " +
                 "only installed mod tracks may be opt-in alternates.");
             Assert.True(alt.Laps >= 1,
                 $"{packId} round {round.Round}: alternate '{alt.Id}' has laps={alt.Laps}; must be >= 1.");
@@ -276,12 +276,12 @@ public class ReferencePackTests
         foreach (var round in pack.Season.Rounds)
         {
             Assert.False(string.IsNullOrWhiteSpace(round.Track.RealVenue),
-                $"{packId} round {round.Round} ({round.Name}) has no track.realVenue — " +
+                $"{packId} round {round.Round} ({round.Name}) has no track.realVenue, " +
                 "v1.1 keeps the historical venue on record for every round.");
         }
     }
 
-    /// <summary>The known-placeholder exemplars must actually mark placeholders — a floor that
+    /// <summary>The known-placeholder exemplars must actually mark placeholders, a floor that
     /// catches the isPlaceholder flag silently breaking. (A newer pack whose venues all exist
     /// in AMS2 legitimately has none, so this is asserted only for the known set.)</summary>
     [Theory]
@@ -326,7 +326,7 @@ public class ReferencePackTests
                 @"(?<hist>\d+) laps / (?<km>\d+(?:\.\d+)?) km reproduced as (?<laps>\d+) laps");
             Assert.True(match.Success,
                 $"{packId} round {round.Round} ({round.Name}): placeholder notes must state " +
-                $"'<historical> laps / <km> km reproduced as <laps> laps' — got: \"{notes}\"");
+                $"'<historical> laps / <km> km reproduced as <laps> laps', got: \"{notes}\"");
 
             int historicalLaps = int.Parse(match.Groups["hist"].Value, CultureInfo.InvariantCulture);
             double distanceKm = double.Parse(match.Groups["km"].Value, CultureInfo.InvariantCulture);
@@ -344,7 +344,7 @@ public class ReferencePackTests
 
             Assert.True(round.Laps != historicalLaps || expected == historicalLaps,
                 $"{packId} round {round.Round}: placeholder laps equal the historical lap count " +
-                $"({historicalLaps}) but the distance math gives {expected} — the historical " +
+                $"({historicalLaps}) but the distance math gives {expected}, the historical " +
                 "count was copied instead of recomputed.");
         }
     }

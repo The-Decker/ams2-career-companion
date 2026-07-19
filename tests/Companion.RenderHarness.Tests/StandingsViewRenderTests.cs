@@ -55,7 +55,7 @@ public sealed class StandingsViewRenderTests
             Assert.Contains("Mike Kobra", host.VisibleTexts());
 
             // The header legend plus the realised player/rival rows make identity explicit without
-            // relying on colour alone — important in SMGP's dense live championship table.
+            // relying on colour alone, important in SMGP's dense live championship table.
             Assert.True(host.VisibleTexts().Count(t => t == "YOU") >= 2);
             Assert.True(host.VisibleTexts().Count(t => t == "RIVAL") >= 2);
 

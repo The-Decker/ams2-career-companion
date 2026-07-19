@@ -7,7 +7,7 @@ namespace Companion.App.Services;
 /// FileSystemWatcher-backed <see cref="IFileWatcher"/> for the briefing screen's staged
 /// custom-AI XML. Watches exactly one file at a time; raises <see cref="Changed"/> with the
 /// watched path (change, create, delete, or rename all count as "touched"). Events are
-/// marshalled onto the construction thread's SynchronizationContext (the UI thread — the
+/// marshalled onto the construction thread's SynchronizationContext (the UI thread, the
 /// composition root constructs it there) so the viewmodel never sees cross-thread callbacks.
 /// </summary>
 public sealed class FileSystemFileWatcher : IFileWatcher, IDisposable
@@ -26,7 +26,7 @@ public sealed class FileSystemFileWatcher : IFileWatcher, IDisposable
         string fullPath = Path.GetFullPath(filePath);
         string? directory = Path.GetDirectoryName(fullPath);
         if (string.IsNullOrEmpty(directory) || !Directory.Exists(directory))
-            return; // nothing to watch — a vanished directory is not worth crashing over
+            return; // nothing to watch, a vanished directory is not worth crashing over
 
         _filePath = fullPath;
         var watcher = new FileSystemWatcher(directory, Path.GetFileName(fullPath))

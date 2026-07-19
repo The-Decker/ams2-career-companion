@@ -271,7 +271,7 @@ public sealed class NewsViewRenderTests
             using var host = Host.Show(view, 1280, 860);
 
             // Story-card badges: desk byline, editorial status, the visually distinct provenance
-            // chip, layout tier, fine-grained category, unread marker and reading time — all text.
+            // chip, layout tier, fine-grained category, unread marker and reading time, all text.
             string[] texts = host.VisibleTexts().ToArray();
             Assert.Contains("Apex Technical Review", texts);
             Assert.Contains("AT", texts);

@@ -9,7 +9,7 @@ namespace Companion.Tests.Dynasty;
 
 /// <summary>The economy session surface on real machinery (the SmgpTeamDashboardTests shape):
 /// the dashboard projects the folded ledger + the pending plan, and DeclareEconomyDecision is
-/// the single validation authority — refusals carry player-facing reasons and journal nothing.</summary>
+/// the single validation authority, refusals carry player-facing reasons and journal nothing.</summary>
 public sealed class DynastyEconomyDashboardTests : IDisposable
 {
     private readonly string _root = Directory.CreateTempSubdirectory("companion-dynasty-dashboard-").FullName;

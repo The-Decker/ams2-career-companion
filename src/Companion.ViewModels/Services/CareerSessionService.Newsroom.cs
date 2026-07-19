@@ -11,7 +11,7 @@ namespace Companion.ViewModels.Services;
 /// The newsroom half of the session: shapes the mode-agnostic per-season/per-round facts the
 /// <see cref="CareerNewsEvents"/> detector reads (the same shape-in-the-session, detect-in-Core
 /// split as <c>BuildSmgpNarrativeSeasons</c>). A pure display-only projection over the immutable
-/// stored results, journal, and folded states — never a fold input, so replay stays
+/// stored results, journal, and folded states, never a fold input, so replay stays
 /// byte-identical by construction (docs/dev/newsroom-history-overhaul.md D1/D4).
 /// </summary>
 public sealed partial class CareerSessionService
@@ -19,11 +19,11 @@ public sealed partial class CareerSessionService
     private IReadOnlyList<NewsEvent>? _newsroomEventsCache;
     private ProjectionFingerprint _newsroomEventsFingerprint;
 
-    /// <summary>Every detected newsroom event for the whole career, chronological — the spine
+    /// <summary>Every detected newsroom event for the whole career, chronological, the spine
     /// triggers plus, for historical-style careers with a documented reference year, the
     /// real-history divergence events. Deterministic per career. Memoized per stored-state
     /// fingerprint: detection is a pure projection over the immutable journal/results (D1/D4),
-    /// so the cache is exactly as fresh as the underlying rows — one refresh per fold/rollover
+    /// so the cache is exactly as fresh as the underlying rows, one refresh per fold/rollover
     /// instead of a full-career recompute on every News/History/thread read.</summary>
     public IReadOnlyList<NewsEvent> NewsroomEvents()
     {
@@ -50,7 +50,7 @@ public sealed partial class CareerSessionService
         else if (_environment.Rules?.SmgpWhatReallyHappened is { } almanac)
         {
             // The SMGP career diverges against its OWN canon (D9): the almanac's remembered venue
-            // rulers, labeled SmgpFiction — the fiction layer never touches the real-history path.
+            // rulers, labeled SmgpFiction, the fiction layer never touches the real-history path.
             events.AddRange(Companion.Core.Smgp.SmgpCanonDivergence.Compare(seasons, almanac));
         }
 
@@ -141,7 +141,7 @@ public sealed partial class CareerSessionService
 
     /// <summary>The computed history archive: driver/team/circuit profiles aggregated from the
     /// shipped verified season files, the authored eras/subjects/team-identity reference data,
-    /// and the verified-history timeline. Static app data — built once per session and cached.
+    /// and the verified-history timeline. Static app data, built once per session and cached.
     /// Real history only; career-universe records never enter this index.</summary>
     public HistoryArchiveIndex HistoryArchive()
     {
@@ -372,7 +372,7 @@ public sealed partial class CareerSessionService
                 snapshotByRound[champStored[i].Round] = snapshots[i];
             }
 
-            // Gross points are monotonic — the honest "scored this round" signal even under
+            // Gross points are monotonic, the honest "scored this round" signal even under
             // dropped-scores rules (counted points can shrink late-season).
             var grossAfterRound = new Dictionary<int, double>();
             for (int i = 0; i < snapshots.Count && i < champStored.Count; i++)
@@ -422,18 +422,23 @@ public sealed partial class CareerSessionService
                 bool scoredThisRound = grossNow > previousGross;
                 previousGross = grossNow;
 
-                // Winner identity + team (entry covering this calendar round wins attribution).
+                // Winner identity + team. The stored envelope entry's ConstructorId is the
+                // fold-time truth (the fold ran on that season's grid), so a winter-reshuffled
+                // winner is credited to the team they actually drove for; the pack entries
+                // (season-1-authored for past seasons) are only the fallback.
                 var winnerRow = entries.FirstOrDefault(e => e.Status == FinishStatus.Classified && e.Position == 1);
                 string winnerId = winnerRow?.DriverId ?? "";
                 string winnerTeamId = "";
                 if (winnerId.Length > 0)
                 {
-                    winnerTeamId = seasonPack.Entries.FirstOrDefault(e =>
-                            string.Equals(e.DriverId, winnerId, StringComparison.Ordinal)
-                            && RoundsRange.TryParse(e.Rounds, out var range) && range.Contains(s.Round))?.TeamId
-                        ?? seasonPack.Entries.FirstOrDefault(e =>
-                            string.Equals(e.DriverId, winnerId, StringComparison.Ordinal))?.TeamId
-                        ?? "";
+                    winnerTeamId = winnerRow?.ConstructorId is { Length: > 0 } foldedTeam
+                        ? foldedTeam
+                        : seasonPack.Entries.FirstOrDefault(e =>
+                                string.Equals(e.DriverId, winnerId, StringComparison.Ordinal)
+                                && RoundsRange.TryParse(e.Rounds, out var range) && range.Contains(s.Round))?.TeamId
+                            ?? seasonPack.Entries.FirstOrDefault(e =>
+                                string.Equals(e.DriverId, winnerId, StringComparison.Ordinal))?.TeamId
+                            ?? "";
                 }
                 var winnerTeam = winnerTeamId.Length > 0 ? teamsById.GetValueOrDefault(winnerTeamId) : null;
 
@@ -570,7 +575,7 @@ public sealed partial class CareerSessionService
         string.Equals(driverId, pid, StringComparison.Ordinal) ? "player" : driverId;
 
     /// <summary>A generous single-round ceiling (win + fastest lap + sprint + best alternate
-    /// table) — generous keeps the clinch bound conservative: a title is only called when the
+    /// table), generous keeps the clinch bound conservative: a title is only called when the
     /// gap exceeds even this ceiling times the remaining rounds.</summary>
     private static double MaxPointsPerRound(PointsSystem system)
     {
@@ -674,7 +679,7 @@ public sealed partial class CareerSessionService
     }
 
     /// <summary>Renders a fold Rational ("26400" / "20000/3" / "-5000") as a whole-unit display
-    /// amount ("26,400"); the raw text on any parse failure. DISPLAY-ONLY — exact money never
+    /// amount ("26,400"); the raw text on any parse failure. DISPLAY-ONLY, exact money never
     /// leaves the fold (economy §8).</summary>
     private static string FormatMoney(string rationalText)
     {

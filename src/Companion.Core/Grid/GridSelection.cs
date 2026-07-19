@@ -1,7 +1,7 @@
 namespace Companion.Core.Grid;
 
 /// <summary>
-/// The field the player chose for the season — which of the pack's seats (by livery) are on the
+/// The field the player chose for the season, which of the pack's seats (by livery) are on the
 /// grid. This is the "choose the entire grid before a season" input: the sim folds exactly this
 /// field, the staged custom-AI file carries exactly these drivers, and the briefing tells the
 /// player to set AMS2's opponent count to match (AMS2 assembles the grid from a pool of liveries;
@@ -13,7 +13,7 @@ namespace Companion.Core.Grid;
 /// </summary>
 public sealed record GridSelection
 {
-    /// <summary>The whole-pack field — no filtering. The default and the byte-identical identity.</summary>
+    /// <summary>The whole-pack field, no filtering. The default and the byte-identical identity.</summary>
     public static readonly GridSelection Everything = new();
 
     /// <summary>The EXACT livery names the player included as the season field (case-sensitive), or
@@ -22,7 +22,7 @@ public sealed record GridSelection
     /// player).</summary>
     public IReadOnlyList<string>? IncludedLiveries { get; init; }
 
-    /// <summary>True when no filtering applies — the full pack field (identity).</summary>
+    /// <summary>True when no filtering applies, the full pack field (identity).</summary>
     public bool IncludesEverything => IncludedLiveries is null or { Count: 0 };
 
     /// <summary>Whether a given livery is on the chosen field (always true when
@@ -31,7 +31,7 @@ public sealed record GridSelection
         IncludesEverything ||
         IncludedLiveries!.Contains(liveryName, StringComparer.Ordinal);
 
-    // STRUCTURAL equality over the livery list — the record default compares IncludedLiveries by
+    // STRUCTURAL equality over the livery list, the record default compares IncludedLiveries by
     // REFERENCE, which would make a re-derived selection (from the journal) unequal to the
     // deserialized one and fail the byte-identical replay gate at a season boundary (the exact bug
     // CharacterProfile hit). Compare contents ordinally, order-sensitive.

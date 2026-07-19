@@ -49,6 +49,9 @@
             <DataTemplate DataType="{x:Type hub:PaddockViewModel}">
                 <views:PaddockView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type hub:EconomyViewModel}">
+                <views:EconomyView />
+            </DataTemplate>
             <DataTemplate DataType="{x:Type shell:HomeViewModel}">
                 <views:HomeView />
             </DataTemplate>
@@ -88,7 +91,7 @@
             <DataTemplate DataType="{x:Type settings:SettingsViewModel}">
                 <views:SettingsView />
             </DataTemplate>
-            <!-- developer debug menu (dynasty-passport-roadmap Piece 2) — dev-only, gated at runtime -->
+            <!-- developer debug menu (dynasty-passport-roadmap Piece 2), dev-only, gated at runtime -->
             <DataTemplate DataType="{x:Type debug:DebugMenuViewModel}">
                 <views:DebugMenuView />
             </DataTemplate>

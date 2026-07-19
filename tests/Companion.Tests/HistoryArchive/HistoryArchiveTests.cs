@@ -6,7 +6,7 @@ namespace Companion.Tests.HistoryArchive;
 
 /// <summary>
 /// The history archive over the REAL shipped reference set (60 season files + the authored
-/// eras/subjects/aliases) — the shipped data must validate, and the computed entity profiles
+/// eras/subjects/aliases), the shipped data must validate, and the computed entity profiles
 /// must reproduce canonical f1db facts exactly (aggregation correctness, zero fabrication).
 /// </summary>
 public class HistoryArchiveTests

@@ -11,7 +11,7 @@ namespace Companion.Tests.Data;
 /// FOLD SAFETY (build brief §4/§7): a career created and advanced entirely through the debug menu's
 /// Tier-1 helpers routes through the SAME provenance-excluded INPUT seams the normal app uses
 /// (<c>CareerCreationRequest</c> → create, then <c>Apply</c> / <c>ApplySkillPlan</c> / offers /
-/// <c>StartNextSeason</c>). It must therefore resimulate byte-identical — proving the debug menu
+/// <c>StartNextSeason</c>). It must therefore resimulate byte-identical, proving the debug menu
 /// creates honest saves and never pokes derived state.
 /// </summary>
 public sealed class DebugCareerResimTests : IDisposable
@@ -132,13 +132,81 @@ public sealed class DebugCareerResimTests : IDisposable
         Assert.True(report.ComparedRows > 0);
     }
 
-    // ---------- SMGP scaffolding (mirrors SmgpMultiSeasonDnqTests' ladder shape) ----------
+    [Fact]
+    public void DebugContinuedDynastyCareer_AdvancesTwoSeasonEnds_ResimulatesByteIdentical()
+    {
+        const long seed = 20260717;
+        WritePack(1967);
+        WritePack(1969);
+        WritePack(2020);
+        var environment = Environment();
 
-    private const string PlayerSeat = "Stock Livery #3"; // team.c — a midfield start on the ladder
+        string careerPath = Path.Combine(_root, "careers", "debug-continue.ams2career");
+        var request = DebugCareerFactory.BuildRequest(
+            Path.Combine(PacksRoot, "1967"), careerPath,
+            CareerExperienceModes.GrandPrixDynasty, seed);
+
+        // Mirror the menu's AdvanceSeason click TWICE, reopening between clicks exactly like the
+        // shell does (superseded sessions stay open meanwhile, as the hub's would).
+        var sessions = new List<ICareerSession>();
+        try
+        {
+            var session = CareerSessionService.CreateCareer(request, environment);
+            sessions.Add(session);
+
+            // Click 1 (mid-season): plays season 1 out to its end.
+            DebugCareerFactory.AdvanceToNextSeasonEnd(session, out string note);
+            Assert.Equal("", note);
+            session = CareerSessionService.OpenCareer(careerPath, environment);
+            sessions.Add(session);
+            DebugCareerFactory.FinishSeason(session); // no-op at an end
+            Assert.True(session.Summary.SeasonComplete);
+            Assert.Equal(1967, session.Summary.SeasonYear);
+
+            // Click 2 (season end): signs into the next era and plays THAT season out too.
+            DebugCareerFactory.AdvanceToNextSeasonEnd(session, out note);
+            Assert.Equal("", note);
+            session = CareerSessionService.OpenCareer(careerPath, environment);
+            sessions.Add(session);
+            DebugCareerFactory.FinishSeason(session);
+            Assert.True(session.Summary.SeasonComplete);
+            Assert.Equal(1969, session.Summary.SeasonYear);
+        }
+        finally
+        {
+            foreach (var s in sessions)
+                (s as IDisposable)?.Dispose();
+            Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+        }
+
+        using var db = CareerDatabase.Open(careerPath);
+        Assert.Equal(2, CareerStore.ReadSeasons(db).Count);
+        var rules = environment.Rules;
+        var report = ReplayService.Resimulate(db, unchecked((ulong)seed), new ReplaySimInputs
+        {
+            AgingCurves = rules.AgingCurves,
+            Archetypes = rules.Archetypes,
+            Headlines = rules.Headlines,
+            PlayerDriverId = "driver.hulme",
+            PlayerAge = 22,
+            CharacterRules = rules.Character,
+            MasterySkills = rules.MasterySkills,
+        });
+
+        Assert.True(
+            report.Identical,
+            $"diverged: {report.FirstDivergence?.Reason} " +
+            $"stored={report.FirstDivergence?.StoredDeltaJson} " +
+            $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");
+        Assert.True(report.ComparedRows > 0);
+    }
+
+    // ---------- SMGP scaffolding (mirrors SmgpMultiSeasonDnqTests' ladder shape) ----------
+    private const string PlayerSeat = "Stock Livery #3"; // team.c, a midfield start on the ladder
 
     /// <summary>Five one-driver teams down the ladder over the REQUIRED 16-round replica season
     /// (the bounded SMGP campaign plan rejects any other round count), each round capping the grid
-    /// at 4 — the minimal SMGP-shape pack a real SMGP career can be created from.</summary>
+    /// at 4, the minimal SMGP-shape pack a real SMGP career can be created from.</summary>
     private static SeasonPack SmgpLadderPack()
     {
         var basePack = TestPackBuilder.TwoRoundPack();

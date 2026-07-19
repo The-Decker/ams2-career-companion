@@ -5,7 +5,7 @@ using Microsoft.Data.Sqlite;
 namespace Companion.Tests.Data;
 
 /// <summary>The grid editor's per-seat override persistence (v4 staging_override table): cosmetic
-/// rename/rebind overrides round-trip, upsert, and clear. Non-journaled — the sim never reads it.</summary>
+/// rename/rebind overrides round-trip, upsert, and clear. Non-journaled, the sim never reads it.</summary>
 public sealed class StagingOverrideStoreTests : IDisposable
 {
     private readonly string _path = Path.Combine(

@@ -6,7 +6,7 @@
              Focusable="False">
     <ScrollViewer x:Name="BriefingScroll" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
         <!-- proportional page cap (was a hard 860): ~94% of the viewport, never under 860 where
-             there is room — fills a 2560 window in two columns yet still hugs a small one -->
+             there is room, fills a 2560 window in two columns yet still hugs a small one -->
         <StackPanel HorizontalAlignment="Left"
                     MaxWidth="{Binding ActualWidth, ElementName=BriefingScroll,
                                Converter={StaticResource WidthFraction}, ConverterParameter=0.94|860}">
@@ -54,19 +54,19 @@
                 <Border CornerRadius="6" ClipToBounds="True">
                     <Image x:Name="TrackArtImage" Stretch="Uniform" StretchDirection="DownOnly"
                            Source="{Binding TrackId, Converter={StaticResource TrackImage}}"
-                           ToolTip="{Binding VenueDisplayName, StringFormat='{}{0} — track layout'}" />
+                           ToolTip="{Binding VenueDisplayName, StringFormat='{}{0}, track layout'}" />
                 </Border>
             </Border>
 
             <!-- season-complete state (Home normally swaps away before this shows) -->
             <TextBlock Style="{StaticResource Muted}" Margin="0,16,0,0"
-                       Text="Season complete — there is no round left to brief."
+                       Text="Season complete, there is no round left to brief."
                        Visibility="{Binding SeasonComplete, Converter={StaticResource BoolVisible}}" />
 
             <!-- two-column race-day layout: checklist + staging (3*) | circuit + advisories (2*).
                  The left column's floor is PROPORTIONAL (55% of the viewport, capped at 520): a
-                 fixed 520 floor would shove the whole right column — including the Setup Gamble
-                 buttons — outside the non-scrolling viewport at 130% UI scale near the 920px
+                 fixed 520 floor would shove the whole right column, including the Setup Gamble
+                 buttons, outside the non-scrolling viewport at 130% UI scale near the 920px
                  window minimum. -->
             <Grid Margin="0,0,0,0">
                 <Grid.ColumnDefinitions>
@@ -77,11 +77,11 @@
                     <ColumnDefinition Width="2*" />
                 </Grid.ColumnDefinitions>
 
-                <!-- ===== LEFT: the work column — checklist, staging, outcomes ===== -->
+                <!-- ===== LEFT: the work column, checklist, staging, outcomes ===== -->
                 <StackPanel Grid.Column="0">
 
                     <!-- first-run coach mark: the briefing checklist (ux-round §4; binds through
-                         Home so the compact window — no HomeView ancestor — falls back to hidden) -->
+                         Home so the compact window, no HomeView ancestor, falls back to hidden) -->
                     <Border Style="{StaticResource CoachMark}" Margin="0,16,0,0"
                             Visibility="{Binding DataContext.CoachMarks.ShowBriefingChecklist,
                                          RelativeSource={RelativeSource AncestorType=views:HomeView},
@@ -94,12 +94,12 @@
                                     Command="{Binding DataContext.CoachMarks.DismissBriefingChecklistCommand,
                                               RelativeSource={RelativeSource AncestorType=views:HomeView}}" />
                             <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource TextSecondaryBrush}"
-                                       Text="New here? This checklist mirrors AMS2's custom-race screen top to bottom. The game can't paste values, so set each line in-game and click the row here to tick it off — the Compact overlay button keeps the list on top of AMS2 while you do." />
+                                       Text="New here? This checklist mirrors AMS2's custom-race screen top to bottom. The game can't paste values, so set each line in-game and click the row here to tick it off, the Compact overlay button keeps the list on top of AMS2 while you do." />
                         </DockPanel>
                     </Border>
 
                     <!-- the manual setup CHECKLIST (ux-round correction: AMS2's custom-race settings
-                         are arrow-steppers, nothing can be pasted — tick each row as you set it) -->
+                         are arrow-steppers, nothing can be pasted, tick each row as you set it) -->
                     <Border Style="{StaticResource Panel}" Margin="0,16,0,0"
                             Visibility="{Binding SeasonComplete, Converter={StaticResource BoolCollapsed}}">
                         <StackPanel>
@@ -128,73 +128,84 @@
                                     </TextBlock>
                                 </Border>
                                 <StackPanel>
-                                    <TextBlock Text="In-game race setup — set each line, tick it off" FontWeight="SemiBold" />
+                                    <TextBlock Text="In-game race setup, set each line, tick it off" FontWeight="SemiBold" />
                                     <TextBlock Style="{StaticResource Faint}" Margin="0,2,0,0" TextWrapping="Wrap"
-                                               Text="Rows follow AMS2's custom-race screen top to bottom (the values can't be pasted — the game uses arrow-steppers). Click a row to tick it." />
+                                               Text="Rows follow AMS2's custom-race screen top to bottom (the values can't be pasted, the game uses arrow-steppers). Click a row to tick it." />
                                 </StackPanel>
                             </DockPanel>
 
-                            <!-- sectioned checklist: outer = Race-Day sections (Event / Practice /
-                                 Qualifying / Race / Rules), inner = the tickable rows. Grouping is done in
-                                 the viewmodel (Sections), so this is a plain nested ItemsControl with no
-                                 grouping CollectionViewSource. (Render-test thread-safety comes from the
-                                 harness's DisableTestParallelization, not from this structure.)
-                                 Label column is shared-size Auto so long labels never clip at 130% scale. -->
-                            <ItemsControl ItemsSource="{Binding Sections}" Grid.IsSharedSizeScope="True">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel>
-                                            <!-- section header; collapses for an ungrouped (empty-title) section -->
-                                            <TextBlock Text="{Binding Title}" Style="{StaticResource Faint}"
-                                                       FontSize="11" FontWeight="SemiBold" Margin="0,8,0,1"
-                                                       ToolTip="AMS2 custom-race screen section"
-                                                       Visibility="{Binding Title, Converter={StaticResource StringVisible}}" />
-                                            <ItemsControl ItemsSource="{Binding Items}">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <!-- the whole row is the toggle hit-target -->
-                                                        <CheckBox IsChecked="{Binding IsChecked}" Margin="0,0"
-                                                                  HorizontalContentAlignment="Stretch"
-                                                                  ToolTip="Click to tick this setting off (ticks reset each round)">
-                                                            <Grid Margin="8,1,0,1">
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="Auto" MinWidth="130" SharedSizeGroup="ChecklistLabel" />
-                                                                    <ColumnDefinition Width="*" />
-                                                                </Grid.ColumnDefinitions>
-                                                                <TextBlock Grid.Column="0" Text="{Binding Label}" Margin="0,0,12,0"
-                                                                           Style="{StaticResource Muted}" VerticalAlignment="Center" />
-                                                                <!-- big glanceable value; read-only TextBox keeps it selectable -->
-                                                                <TextBox Grid.Column="1" Text="{Binding Value, Mode=OneWay}"
-                                                                         IsReadOnly="True" IsTabStop="False"
-                                                                         BorderThickness="0" Background="Transparent" Padding="0"
-                                                                         FontFamily="{StaticResource MonoFont}" FontSize="15" FontWeight="SemiBold"
-                                                                         VerticalAlignment="Center" TextWrapping="Wrap"
-                                                                         ToolTip="Selectable — but AMS2 can't paste it; use the tick instead">
-                                                                    <TextBox.Style>
-                                                                        <Style TargetType="TextBox">
-                                                                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
-                                                                            <Style.Triggers>
-                                                                                <DataTrigger Binding="{Binding IsChecked}" Value="True">
-                                                                                    <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
-                                                                                </DataTrigger>
-                                                                            </Style.Triggers>
-                                                                        </Style>
-                                                                    </TextBox.Style>
-                                                                </TextBox>
-                                                            </Grid>
-                                                        </CheckBox>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+                            <!-- sectioned checklist as compact cards: outer = Race-Day sections
+                                 (Event / Practice / Qualifying / Race / Rules) flowed two-up by a
+                                 wrap panel so the list reads in columns instead of one tall scroll,
+                                 inner = the tickable rows. Grouping is done in the viewmodel
+                                 (Sections), so this stays a plain nested ItemsControl with no
+                                 grouping CollectionViewSource. Label column is shared-size Auto so
+                                 long labels never clip at 130% scale. -->
+                            <Grid Grid.IsSharedSizeScope="True">
+                                <ItemsControl ItemsSource="{Binding Sections}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border MinWidth="290" MaxWidth="380" Margin="0,0,12,10" Padding="12,8"
+                                                    Background="{DynamicResource SurfaceAltBrush}" CornerRadius="6">
+                                                <StackPanel>
+                                                    <!-- section header; collapses for an ungrouped (empty-title) section -->
+                                                    <TextBlock Text="{Binding Title}" Style="{StaticResource Faint}"
+                                                               FontSize="10.5" FontWeight="SemiBold" Margin="0,0,0,3"
+                                                               ToolTip="AMS2 custom-race screen section"
+                                                               Visibility="{Binding Title, Converter={StaticResource StringVisible}}" />
+                                                    <ItemsControl ItemsSource="{Binding Items}">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <!-- the whole row is the toggle hit-target -->
+                                                                <CheckBox IsChecked="{Binding IsChecked}" Margin="0,0"
+                                                                          HorizontalContentAlignment="Stretch"
+                                                                          ToolTip="Click to tick this setting off (ticks reset each round)">
+                                                                    <Grid Margin="4,0,0,0">
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="Auto" MinWidth="104" SharedSizeGroup="ChecklistLabel" />
+                                                                            <ColumnDefinition Width="*" />
+                                                                        </Grid.ColumnDefinitions>
+                                                                        <TextBlock Grid.Column="0" Text="{Binding Label}" Margin="0,0,10,0"
+                                                                                   Style="{StaticResource Muted}" FontSize="12.5" VerticalAlignment="Center" />
+                                                                        <!-- big glanceable value; read-only TextBox keeps it selectable -->
+                                                                        <TextBox Grid.Column="1" Text="{Binding Value, Mode=OneWay}"
+                                                                                 IsReadOnly="True" IsTabStop="False"
+                                                                                 BorderThickness="0" Background="Transparent" Padding="0"
+                                                                                 FontFamily="{StaticResource MonoFont}" FontSize="13.5" FontWeight="SemiBold"
+                                                                                 VerticalAlignment="Center" TextWrapping="Wrap"
+                                                                                 ToolTip="Selectable, but AMS2 can't paste it; use the tick instead">
+                                                                            <TextBox.Style>
+                                                                                <Style TargetType="TextBox">
+                                                                                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+                                                                                    <Style.Triggers>
+                                                                                        <DataTrigger Binding="{Binding IsChecked}" Value="True">
+                                                                                            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+                                                                                        </DataTrigger>
+                                                                                    </Style.Triggers>
+                                                                                </Style>
+                                                                            </TextBox.Style>
+                                                                        </TextBox>
+                                                                    </Grid>
+                                                                </CheckBox>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
 
                             <WrapPanel Margin="0,12,0,0">
                                 <Button Content="Copy summary" Margin="0,0,10,8"
                                         Command="{Binding CopySummaryCommand}"
-                                        ToolTip="Copies the whole checklist as text — for sharing outside the game (AMS2 itself can't paste)" />
+                                        ToolTip="Copies the whole checklist as text, for sharing outside the game (AMS2 itself can't paste)" />
                                 <Button Margin="0,0,10,8" Command="{Binding ToggleCompactChecklistCommand}"
                                         ToolTip="A small always-on-top checklist window to keep over AMS2 in windowed/borderless mode">
                                     <Button.Style>
@@ -224,7 +235,7 @@
                         <Button x:Name="ForceStageButton" Content="Overwrite anyway (backup first)" Margin="0,0,10,8"
                                 audio:SoundAssist.Cue="Warning"
                                 Click="OnForceStageClick"
-                                ToolTip="Your installed AI is a community file — this overwrites it; a timestamped backup is still taken first">
+                                ToolTip="Your installed AI is a community file, this overwrites it; a timestamped backup is still taken first">
                             <Button.Style>
                                 <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                                     <Setter Property="Visibility" Value="Collapsed" />
@@ -249,7 +260,7 @@
 
                         <!-- the loop-walker: set the race up in AMS2, race it, then Continue through
                              qualifying → grid → result → confirm (the Upcoming Race tab's own advance,
-                             now that the header loop buttons are gone — reserved for the tycoon mode).
+                             now that the header loop buttons are gone, reserved for the tycoon mode).
                              Binds up to the hosting HomeView; absent there (e.g. the render harness) it
                              simply disables. -->
                         <Button Content="Continue  ⏎" Style="{StaticResource AccentButton}"
@@ -257,7 +268,7 @@
                                 MinWidth="150" Margin="0,0,10,8"
                                 Command="{Binding DataContext.EnterResultCommand,
                                           RelativeSource={RelativeSource AncestorType=views:HomeView}}"
-                                ToolTip="Continue the race weekend — qualifying, then the result" />
+                                ToolTip="Continue the race weekend, qualifying, then the result" />
                     </WrapPanel>
 
                     <!-- stage confirmation popover -->
@@ -267,7 +278,7 @@
                                 BorderThickness="1" CornerRadius="6" Padding="14,12" MaxWidth="420">
                             <StackPanel>
                                 <TextBlock TextWrapping="Wrap" Style="{StaticResource Body}"
-                                           Text="This writes the round's generated AI grid into your AMS2 install. Any existing file is backed up first with a timestamp — and if your installed file already matches, nothing is written at all." />
+                                           Text="This writes the round's generated AI grid into your AMS2 install. Any existing file is backed up first with a timestamp, and if your installed file already matches, nothing is written at all." />
                                 <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                                     <Button Content="Stage grid" Style="{StaticResource AccentButton}" Click="OnStageConfirm"
                                             audio:SoundAssist.Cue="Confirm" />
@@ -285,7 +296,7 @@
                                 BorderThickness="1" CornerRadius="6" Padding="14,12" MaxWidth="440">
                             <StackPanel>
                                 <TextBlock TextWrapping="Wrap" Style="{StaticResource Body}"
-                                           Text="The app normally only overwrites AI files it wrote itself — it recognizes its own files by a marker it puts inside them. This file has no marker, so it is YOURS (hand-edited, or a community file like NAMeS) and normal staging refuses to touch it." />
+                                           Text="The app normally only overwrites AI files it wrote itself, it recognizes its own files by a marker it puts inside them. This file has no marker, so it is YOURS (hand-edited, or a community file like NAMeS) and normal staging refuses to touch it." />
                                 <TextBlock TextWrapping="Wrap" Style="{StaticResource Body}" Margin="0,8,0,0"
                                            Text="Overwrite anyway takes a timestamped backup first, and season end offers one-click restore of the original." />
                                 <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
@@ -347,7 +358,7 @@
                     <Border Style="{StaticResource WarningCallout}" Margin="0,8,0,0"
                             Visibility="{Binding StagedFileTouchedExternally, Converter={StaticResource BoolVisible}}">
                         <TextBlock Foreground="{DynamicResource WarningBrush}" FontWeight="SemiBold" TextWrapping="Wrap"
-                                   Text="⚠ The staged file was modified outside the app — re-stage before racing." />
+                                   Text="⚠ The staged file was modified outside the app, re-stage before racing." />
                     </Border>
 
                     <!-- preflight / staging summary messages (the livery scan is ONE line here) -->
@@ -386,12 +397,12 @@
                     </StackPanel>
                 </StackPanel>
 
-                <!-- ===== RIGHT: reference + advisories — circuit, difficulty, fuel, gamble, notes ===== -->
+                <!-- ===== RIGHT: reference + advisories, circuit, difficulty, fuel, gamble, notes ===== -->
                 <StackPanel Grid.Column="2">
 
                     <!-- Circuit map: the f1db-derived vector layout of the circuit this round is run on,
                          with a one-line caption (name · length · turns · direction). Collapses when the
-                         round has no circuit data. Always shows (no user art needed) — the "very
+                         round has no circuit data. Always shows (no user art needed), the "very
                          important visual per race". Map scales with the column (140–280 square). -->
                     <Border x:Name="CircuitPanel" Style="{StaticResource Panel}" Margin="0,16,0,0"
                             Visibility="{Binding CircuitLayoutId, Converter={StaticResource StringVisible}}">
@@ -448,7 +459,7 @@
 
                     <!-- Optional reputation bet: unlocked only after one completed race has calibrated
                          player pace, and shown only when the team benchmark leaves room for a harder call.
-                         (BoolVisible: true => Visible — BoolCollapsed is the INVERSE converter and had
+                         (BoolVisible: true => Visible, BoolCollapsed is the INVERSE converter and had
                          this panel backwards since 4b shipped; the render test now pins visibility.) -->
                     <Border x:Name="GamblePanel" Style="{StaticResource Panel}" Margin="0,12,0,0"
                             Visibility="{Binding CanGamble, Converter={StaticResource BoolVisible}}">

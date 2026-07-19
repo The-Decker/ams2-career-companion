@@ -5,10 +5,10 @@ namespace Companion.Tests.ViewModels;
 
 /// <summary>
 /// The ORIGINAL-CIRCUIT lookup rule (Mike's bug report: every smgp-1 Calendar expander showed
-/// the WRONG circuit — the join keyed the pack year's SAME-NUMBERED round, but the replica's
+/// the WRONG circuit, the join keyed the pack year's SAME-NUMBERED round, but the replica's
 /// calendar runs the game's order, not 1990's). <see cref="HistoricalCircuitLookup"/> honors a
 /// round's authored history pointer and falls back to the old rule; the shipped smgp-1 pack maps
-/// every round onto the 1989 event whose venue it models — validated here against the shipped
+/// every round onto the 1989 event whose venue it models, validated here against the shipped
 /// 1989 reference file, round by round.
 /// </summary>
 public sealed class SmgpHistoryMappingTests
@@ -29,7 +29,7 @@ public sealed class SmgpHistoryMappingTests
                 Rounds =
                 [
                     basePack.Season.Rounds[0] with { History = new PackRoundHistoryRef { Year = 1989, Round = 16 } },
-                    basePack.Season.Rounds[1], // no pointer — the pack-year default
+                    basePack.Season.Rounds[1], // no pointer, the pack-year default
                 ],
             },
         };

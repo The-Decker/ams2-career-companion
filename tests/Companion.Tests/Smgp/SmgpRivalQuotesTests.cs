@@ -81,7 +81,7 @@ public sealed class SmgpRivalQuotesTests
     }
 
     /// <summary>The SHIPPED corpus loads and every driver in the SMGP field has his own dossier
-    /// voice — a new field car with no authored lines would only fall back to the generic pool,
+    /// voice, a new field car with no authored lines would only fall back to the generic pool,
     /// which reads as a bug (the design intends a distinct line per character).</summary>
     [Fact]
     public void TheShippedCorpus_GivesEverySmgpFieldDriver_AVoice()
@@ -89,7 +89,7 @@ public sealed class SmgpRivalQuotesTests
         string rulesDir = Path.Combine(AppContext.BaseDirectory, "Fixtures", "rules");
         string quotesPath = Path.Combine(rulesDir, "smgp", "rival-quotes.json");
         Assert.True(File.Exists(quotesPath),
-            $"'{quotesPath}' missing — check the smgp None-Include in Companion.Tests.csproj.");
+            $"'{quotesPath}' missing, check the smgp None-Include in Companion.Tests.csproj.");
 
         var authored = System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(quotesPath))!["drivers"]!
             .AsObject().Select(kv => kv.Key).ToHashSet(StringComparer.Ordinal);

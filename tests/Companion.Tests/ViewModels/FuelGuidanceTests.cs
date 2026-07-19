@@ -18,7 +18,7 @@ public class FuelGuidanceTests
     [Fact]
     public void EveryBundledPackClass_HasAProfile()
     {
-        // The 19 shipped pack classes (m2 deep pass) — each must produce a fuel note.
+        // The 19 shipped pack classes (m2 deep pass), each must produce a fuel note.
         string[] classes =
         [
             "F-Vintage_Gen1", "F-Vintage_Gen2", "F-Retro_Gen1", "F-Retro_Gen2", "F-Retro_Gen3",
@@ -45,7 +45,7 @@ public class FuelGuidanceTests
     [Fact]
     public void RefuelEra_LongRace_RequiresAFuelStop_NeverFillToDistance()
     {
-        // 2006 V8 (conservative est. tank): a GP distance is beyond one tank — plan a stop.
+        // 2006 V8 (conservative est. tank): a GP distance is beyond one tank, plan a stop.
         string? note = FuelGuidance.Note("F-V8_Gen1", laps: 60, refuellingAllowed: true);
 
         Assert.NotNull(note);

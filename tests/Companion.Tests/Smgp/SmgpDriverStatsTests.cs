@@ -3,8 +3,8 @@ using Companion.Core.Smgp;
 namespace Companion.Tests.Smgp;
 
 /// <summary>
-/// The SMGP predetermined driver career stats (<c>data/rules/smgp/driver-stats.json</c>) — the world's
-/// history the moment the player arrived. DISPLAY-ONLY. Pins the loader and — the important guards —
+/// The SMGP predetermined driver career stats (<c>data/rules/smgp/driver-stats.json</c>), the world's
+/// history the moment the player arrived. DISPLAY-ONLY. Pins the loader and, the important guards —
 /// that the SHIPPED table covers every smgp-1 driver AND is internally coherent (the totals add up and
 /// each line is monotone), so a Paddock stat block is never blank or nonsensical.
 /// </summary>

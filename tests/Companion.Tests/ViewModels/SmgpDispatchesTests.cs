@@ -9,15 +9,15 @@ namespace Companion.Tests.ViewModels;
 
 /// <summary>
 /// The SMGP "living world" dispatch feed (Task 4) over the REAL career machinery: the reactive per-round news
-/// the career writes as it unfolds — the player's own milestones plus the AI-world stories around them, voiced
+/// the career writes as it unfolds, the player's own milestones plus the AI-world stories around them, voiced
 /// through the dispatch corpus. A pure display projection over the folded results (deterministic body
-/// selection off the master seed), so it never touches the fold — these assert the feed reads the stored
+/// selection off the master seed), so it never touches the fold, these assert the feed reads the stored
 /// results correctly, is chronologically ordered newest-first, and is stable/deterministic. Scaffolding
 /// mirrors <see cref="SmgpPaddockDepthTests"/>' real-ladder ladder.
 /// </summary>
 public sealed class SmgpDispatchesTests : IDisposable
 {
-    private const string SeatC = "Stock Livery #3"; // team.c LEVEL C — the player's start
+    private const string SeatC = "Stock Livery #3"; // team.c LEVEL C, the player's start
     private const long Seed = 20260712;
 
     private readonly string _root = Directory.CreateTempSubdirectory("companion-smgp-dispatch-").FullName;
@@ -107,8 +107,8 @@ public sealed class SmgpDispatchesTests : IDisposable
     public void A_fatal_accident_writes_a_setback_died_dispatch_and_the_career_replays_byte_identically()
     {
         // Character death & injury §6: a mortality SMGP career whose driver is KILLED in an accident writes a
-        // living-world "TRAGEDY" setback. The dispatch is a pure display read over the folded journal — never a
-        // fold input — so the dead career still re-simulates byte-for-byte.
+        // living-world "TRAGEDY" setback. The dispatch is a pure display read over the folded journal, never a
+        // fold input, so the dead career still re-simulates byte-for-byte.
         SeasonPack pack;
         string playerId;
         using (var session = NewMortalCareer(durability: -50.0)) // a lethal shunt (forced-death offset)

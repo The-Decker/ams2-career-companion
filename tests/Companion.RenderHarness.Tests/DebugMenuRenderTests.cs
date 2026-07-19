@@ -8,7 +8,7 @@ using Companion.ViewModels.Services;
 namespace Companion.RenderHarness.Tests;
 
 /// <summary>Off-screen render of the developer debug menu (dynasty-passport-roadmap Piece 2) over a
-/// real <see cref="DebugMenuViewModel"/> — catches a broken binding or missing resource in the Tier
+/// real <see cref="DebugMenuViewModel"/>, catches a broken binding or missing resource in the Tier
 /// buttons, pack list, level input and inspector panel. Self-skips off Windows.</summary>
 public sealed class DebugMenuRenderTests
 {

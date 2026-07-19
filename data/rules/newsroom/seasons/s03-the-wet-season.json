@@ -1,0 +1,101 @@
+{
+  "$comment": "Season dossier pack S03, The Wet Season (Iron Circus act). Season-scoped coverage keyed to rain, spray, and survival. Ids are stable rendezvous keys, never rename. Read-side only.",
+  "version": 1,
+  "templates": [
+    {
+      "id": "s03.season-started.under-grey-skies",
+      "event": "seasonStarted",
+      "eras": ["smgp"],
+      "seasons": [3],
+      "headline": "THE WET SEASON: it is raining on the grid, and it will not stop",
+      "deck": "Sixteen rounds of spray ahead",
+      "summary": "Season three opens under grey skies, and the paddock knows what the forecast means for the year.",
+      "sections": {
+        "lead": "{pool:dateline} The umbrellas went up before the pit garage doors did. They are already calling it the wet season, and the drivers who learned their craft in the dry are about to find out how much of it was craft.",
+        "context": "Rain is the great leveler of this paddock: the big board does not care how fast you are when the standing water has a say. The garage is already damp, the forecasts are already wrong, and the brave men are already quiet.",
+        "close": "The forecast says spray, standing water, and sixteen rounds of proof about who can actually drive."
+      }
+    },
+    {
+      "id": "s03.race-won.master-of-rain",
+      "event": "raceWon",
+      "eras": ["smgp"],
+      "seasons": [3],
+      "headline": "{subject} wins in the wet[[?venue: at {venue}]], a rain master's day",
+      "deck": "While others tiptoed, {subject} drove",
+      "summary": "{subject} won[[?venue: at {venue}]][[?round: in round {round}]].",
+      "sections": {
+        "lead": "{pool:dateline} In the wet season, the board respects one name above the others when the rain comes, and today that name is {subject}. This was not survival, this was driving. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: Championship account: {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s03.podium.kept-it-straight",
+      "event": "podiumFinish",
+      "eras": ["smgp"],
+      "seasons": [3],
+      "headline": "{subject} on the podium[[?venue: at {venue}]], keeping it straight when it counted",
+      "deck": "A podium earned in spray and patience",
+      "summary": "{subject} finished on the podium[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The wet season asks for hands, patience, and brakes that answer politely. {subject} had all three today, and the podium is the proof. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: Championship: {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s03.pole.brave-lap",
+      "event": "polePosition",
+      "eras": ["smgp"],
+      "seasons": [3],
+      "headline": "POLE for {subject}[[?venue: at {venue}]], the bravest lap of the week",
+      "deck": "Full commitment on a drying line",
+      "summary": "{subject} took pole position[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The lap that wins pole in the wet season is not a lap, it is a wager. {subject} put every corner on the table and the stopwatch paid out. {pool:swBoard}",
+        "close": "The grid will try to cash that wager tomorrow. The line may not be dry by then."
+      }
+    },
+    {
+      "id": "s03.lead-taken.weather-proof",
+      "event": "championshipLeadTaken",
+      "eras": ["smgp"],
+      "seasons": [3],
+      "headline": "{subject} leads the wet season: rainproof so far",
+      "deck": "Top of the board under grey skies",
+      "summary": "{subject} took the championship lead in season three.",
+      "sections": {
+        "lead": "{pool:dateline} The board has a new leader and the rain has a new favorite. {subject} heads the championship in a year when the weather votes twice a weekend, and so far the votes agree. {pool:swBoard}",
+        "stats": "{pool:rrStatLine}",
+        "close": "The season is long and the forecast is worse. Nobody leads the wet season dry."
+      }
+    },
+    {
+      "id": "s03.retired-driver-error.aquaplane",
+      "event": "retiredDriverError",
+      "eras": ["smgp"],
+      "seasons": [3],
+      "headline": "{subject} slides off[[?venue: at {venue}]], the wet season claims one",
+      "deck": "Standing water 1, ambition 0",
+      "summary": "{subject} crashed out[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} {subject} found the puddle with the verdict in it[[?venue: at {venue}]]. One moment the car was pointing somewhere useful, the next it was a passenger. The wet season keeps its toll book current. {pool:swCrowd}",
+        "close": "The driver climbed out wet, unhurt, and older by one lesson."
+      }
+    },
+    {
+      "id": "s03.retired-mechanical.drowned-horse",
+      "event": "retiredMechanical",
+      "eras": ["smgp"],
+      "seasons": [3],
+      "headline": "The rain gets into {subject}'s machine[[?venue: at {venue}]]",
+      "deck": "Electrics drown, the day ends early",
+      "summary": "{subject} retired with mechanical failure[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} Water finds every gap in a racing car, and today it found the one that matters in {subject}'s machine. Silence, a coast, a park job. {pool:wrenchNote}",
+        "close": "The crew brings the dryers out. Again."
+      }
+    }
+  ]
+}

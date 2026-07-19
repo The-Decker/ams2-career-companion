@@ -2,7 +2,7 @@ namespace Companion.Core.Newsroom;
 
 public enum RumorResolutionKind
 {
-    /// <summary>Still open — no later fact settles it yet.</summary>
+    /// <summary>Still open, no later fact settles it yet.</summary>
     Open,
     /// <summary>A later confirmed event settled the rumour true; linked by key.</summary>
     Confirmed,
@@ -13,7 +13,7 @@ public enum RumorResolutionKind
 /// <summary>
 /// One rumour with its honest lifecycle. The ORIGINAL story is preserved untouched (its key
 /// still renders with <see cref="EditorialStatus.Rumour"/>/<see cref="EditorialStatus.Reported"/>);
-/// resolution NEVER rewrites it — it links the confirming/denying story instead
+/// resolution NEVER rewrites it, it links the confirming/denying story instead
 /// (docs/dev/newsroom-history-overhaul.md D6: a rumour never silently becomes factual).
 /// </summary>
 public sealed record RumorRecord
@@ -32,7 +32,7 @@ public sealed record RumorRecord
 /// <summary>
 /// Derives the rumour ledger from the event spine. Only fact-backed rumours exist: a
 /// retirement WHISPER is the journaled foreshadow row; a driver-market LINK is a real
-/// extended offer. Resolution reads strictly later facts — deterministic, display-only.
+/// extended offer. Resolution reads strictly later facts, deterministic, display-only.
 /// </summary>
 public static class RumorBook
 {

@@ -6,10 +6,10 @@ namespace Companion.Core.Career;
 /// <summary>Why a player DNF'd, for OPI blame assignment (docs/dev/career-sim.md, Player model).</summary>
 public enum DnfCause
 {
-    /// <summary>The car broke — no blame: scores as the expected finish.</summary>
+    /// <summary>The car broke, no blame: scores as the expected finish.</summary>
     Mechanical,
 
-    /// <summary>The driver binned it — full blame: scores as the grid size.</summary>
+    /// <summary>The driver binned it, full blame: scores as the grid size.</summary>
     DriverError,
 }
 
@@ -42,7 +42,7 @@ public sealed record TeamCareerState
     /// <summary>Team id within the current pack (equals the lineage id in v1 packs).</summary>
     public required string TeamId { get; init; }
 
-    /// <summary>Lineage id, stable across era packs ("team.lotus") — the M6 era-transition key.</summary>
+    /// <summary>Lineage id, stable across era packs ("team.lotus"), the M6 era-transition key.</summary>
     public required string LineageId { get; init; }
 
     /// <summary>Budget tier 1–5; 5 is the richest (tier drives scalar bands, salary bands,
@@ -60,7 +60,7 @@ public sealed record PlayerCareerState
     public double Opi { get; init; }
 
     /// <summary>Pace anchor: EWMA (α=0.3) of the player's implied pace in Opponent Skill
-    /// slider percent. 0 means "not yet calibrated" — the first round seeds it directly.</summary>
+    /// slider percent. 0 means "not yet calibrated", the first round seeds it directly.</summary>
     public double PaceAnchor { get; init; }
 
     /// <summary>Qualifying (one-lap) pace anchor: EWMA (α=0.3) of the player's implied one-lap
@@ -72,14 +72,14 @@ public sealed record PlayerCareerState
 
     public string? CurrentTeamId { get; init; }
 
-    /// <summary>EXACT ams2LiveryName of the player's seat — identifies which pack entry the
+    /// <summary>EXACT ams2LiveryName of the player's seat, identifies which pack entry the
     /// player occupies (that entry is excluded from the AI seat market).</summary>
     public string? LiveryName { get; init; }
 
     // ---- Character system (Increment 4a) ----
     // All default/null for a career created before the character system. Each is omitted from the
     // serialized state blob when default (WhenWritingDefault), so a character-free career's
-    // player_state is BYTE-IDENTICAL to today's — the character layer perturbs nothing until a
+    // player_state is BYTE-IDENTICAL to today's, the character layer perturbs nothing until a
     // character is actually created (docs/dev/character-system.md §9).
 
     /// <summary>The player's authored character (seven stats + perk ids + unspent CP), or null for
@@ -102,8 +102,23 @@ public sealed record PlayerCareerState
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string? ExperienceMode { get; init; }
 
-    /// <summary>Creation-pinned bounded campaign horizon and rational XP scale. Passport uses its
-    /// own portfolio state instead, so this is null there and on every legacy save.</summary>
+    /// <summary>The player's custom display name (Racing Passport's one identity field): persisted
+    /// at creation, shown ahead of the seat's authored driver name everywhere the synthetic player
+    /// name renders. Null = no customization, the replaced driver's authored name shows, and every
+    /// pre-feature save's blob stays byte-identical. NOT a character: no profile, no progression.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string? CustomDisplayName { get; init; }
+
+    /// <summary>The player's custom nationality (Racing Passport's optional identity field):
+    /// persisted at creation as an ISO 3-letter code, resolved by
+    /// <c>ICareerSession.CurrentPlayerCountryCode()</c> when no character owns one. Null = the
+    /// replaced driver's authored country shows, and every pre-feature save's blob stays
+    /// byte-identical.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string? CustomCountryCode { get; init; }
+
+    /// <summary>Creation-pinned bounded campaign horizon and rational XP scale. Null on every
+    /// legacy save and on every pure-racing Passport save (one faithful season, no horizon).</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public CampaignProgressionPlan? CampaignProgressionPlan { get; init; }
 
@@ -140,8 +155,8 @@ public sealed record PlayerCareerState
     /// player's expected finish / OPI / pace anchor shift when a RIVAL is hot that weekend. A
     /// creation-time deterministic capability seeded into the season start state and carried forward
     /// each round (record <c>with</c>); the form VALUES come only from the pinned pack, never the save.
-    /// Omitted when false (WhenWritingDefault) so a pre-Phase-3 career — including existing careers on
-    /// packs that already ship DriverForm — is byte-identical and folds form-inert forever.</summary>
+    /// Omitted when false (WhenWritingDefault) so a pre-Phase-3 career, including existing careers on
+    /// packs that already ship DriverForm, is byte-identical and folds form-inert forever.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public bool FormAware { get; init; }
 
@@ -150,7 +165,7 @@ public sealed record PlayerCareerState
     /// <summary>The SMGP replica mode's folded state (rival tallies, the player's current car,
     /// seat-swap displacements, titles, the Zeroforce game-over flag), or null for every career
     /// outside the mode. Seeded at creation ONLY when the pack declares <c>careerStyle "smgp"</c>
-    /// AND the creation request opted in — mirroring <see cref="FormAware"/> — and carried forward
+    /// AND the creation request opted in, mirroring <see cref="FormAware"/>, and carried forward
     /// each round via record <c>with</c>, so rollover/season-end re-derive it identically. Omitted
     /// when null (WhenWritingNull): every existing career's player_state blob is byte-identical
     /// and the whole mode stays inert.</summary>
@@ -160,10 +175,10 @@ public sealed record PlayerCareerState
     // ---- Grand Prix Dynasty owner economy (docs/dev/dynasty-tycoon-economy.md) ----
 
     /// <summary>The Dynasty owner-economy's folded state (balance, development, staff, sponsor
-    /// contracts, the bankruptcy flag), or null for every career outside the mode — including
+    /// contracts, the bankruptcy flag), or null for every career outside the mode, including
     /// Dynasty careers created before the economy shipped. Seeded at creation ONLY when the
-    /// campaign mode is <c>grandPrixDynasty</c> AND the creation request opted in — mirroring
-    /// <see cref="Smgp"/> — and carried forward each round via record <c>with</c>, so
+    /// campaign mode is <c>grandPrixDynasty</c> AND the creation request opted in, mirroring
+    /// <see cref="Smgp"/>, and carried forward each round via record <c>with</c>, so
     /// rollover/season-end re-derive it identically. Omitted when null (WhenWritingNull): every
     /// existing career's player_state blob is byte-identical and the whole economy stays inert.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -172,12 +187,12 @@ public sealed record PlayerCareerState
     // ---- Character death & injury (docs/dev/character-death-injury.md, Slice 1) ----
 
     /// <summary>The career's mortality mode (Off / Normal / Hardcore), seeded ONCE at creation and
-    /// carried forward each round via record <c>with</c> — mirroring <see cref="FormAware"/> and the
+    /// carried forward each round via record <c>with</c>, mirroring <see cref="FormAware"/> and the
     /// SMGP gates. <see cref="MortalityMode.Off"/> is the enum default, so this is omitted from the
     /// serialized start state (WhenWritingDefault): every pre-feature career's player_state blob is
     /// BYTE-IDENTICAL and the whole mortality system stays inert. It is display/career-wide state
     /// (the same value is also persisted on the <c>career</c> table); Slice 1 makes NO fold change,
-    /// so an Off career — and a Normal/Hardcore one — re-simulates exactly as before.</summary>
+    /// so an Off career, and a Normal/Hardcore one, re-simulates exactly as before.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public MortalityMode Mortality { get; init; }
 
@@ -194,7 +209,7 @@ public sealed record PlayerCareerState
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public bool SeasonEndingInjury { get; init; }
 
-    /// <summary>The character DIED in an accident (§3.3) — TERMINAL. The career stops accepting rounds
+    /// <summary>The character DIED in an accident (§3.3), TERMINAL. The career stops accepting rounds
     /// (mirrors the SMGP CareerOver floor); in Hardcore the career file is physically deleted. Carried
     /// forward verbatim (never reset). Omitted when false so a living career is byte-identical.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
@@ -222,7 +237,7 @@ public sealed record SeatCandidate
     public double Reputation { get; init; }
 
     /// <summary>Tier-derived default reputation: 15 per budget tier (tier 1 minnow driver
-    /// ⇒ 15, tier 5 works driver ⇒ 75) — consistent with the offer rep floors (30/50/70).</summary>
+    /// ⇒ 15, tier 5 works driver ⇒ 75), consistent with the offer rep floors (30/50/70).</summary>
     public static double DefaultReputation(int budgetTier) => 15.0 * Math.Clamp(budgetTier, 1, 5);
 }
 

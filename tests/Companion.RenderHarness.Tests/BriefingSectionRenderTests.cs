@@ -12,7 +12,7 @@ namespace Companion.RenderHarness.Tests;
 /// BriefingViewModel whose fake session returns a multi-section checklist (Event / Practice /
 /// Qualifying / Race / Rules, with repeated per-session "Weather slot 1" labels) plus a fuel note.
 /// Proves the nested Sections/Items ItemsControl bindings + the section-header StringVisible binding
-/// resolve and the fuel panel renders — the view-layer surface a compiled-XAML build cannot check.
+/// resolve and the fuel panel renders, the view-layer surface a compiled-XAML build cannot check.
 /// Self-skips off Windows.</summary>
 public sealed class BriefingSectionRenderTests
 {
@@ -55,7 +55,7 @@ public sealed class BriefingSectionRenderTests
                 new CopyableSetting("Mandatory pit stop", "No") { Section = "Rules" },
                 new CopyableSetting("Refuelling", "No") { Section = "Rules" },
             ],
-            FuelNote = "⛽ 80 laps is beyond the ~58-lap range of the ~190 L tank — save fuel.",
+            FuelNote = "⛽ 80 laps is beyond the ~58-lap range of the ~190 L tank, save fuel.",
         };
 
         public SeasonPack Pack { get; } = SectionPack();
@@ -152,7 +152,7 @@ public sealed class BriefingSectionRenderTests
 
             // 510 ≈ the briefing viewport at 130% UI scale on a 920px window (920/1.3 − rail −
             // margins). The right column (circuit panel, fuel, gamble buttons) must stay INSIDE
-            // the viewport — a fixed 520 left-column floor used to shove it out of reach.
+            // the viewport, a fixed 520 left-column floor used to shove it out of reach.
             view.Measure(new Size(510, 1400));
             view.Arrange(new Rect(0, 0, 510, 1400));
             view.UpdateLayout();

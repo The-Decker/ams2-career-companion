@@ -30,7 +30,7 @@ public class GridSelectionTests
     public void Selection_AlwaysKeepsThePlayersOwnSeat_EvenWhenExcluded()
     {
         var pack = GridTestData.LoadReferencePack("f1-1967");
-        // The chosen field does NOT list the player's livery — but the player must never be benched.
+        // The chosen field does NOT list the player's livery, but the player must never be benched.
         var chosen = new GridSelection { IncludedLiveries = [Clark] };
         var player = new PlayerSeat { Ams2LiveryName = Brabham1 };
 
@@ -71,7 +71,7 @@ public class GridSelectionTests
     [Fact]
     public void HasStructuralEquality_OverTheLiveryList()
     {
-        // Two DIFFERENT list instances with the same contents must be equal — else a re-derived
+        // Two DIFFERENT list instances with the same contents must be equal, else a re-derived
         // selection would diverge from the deserialized one and break byte-identical replay.
         var a = new GridSelection { IncludedLiveries = new List<string> { Brabham1, Clark } };
         var b = new GridSelection { IncludedLiveries = new List<string> { Brabham1, Clark } };

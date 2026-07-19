@@ -11,8 +11,8 @@ namespace Companion.Core.Smgp;
 /// (<c>{player}</c>, <c>{rival}</c>, <c>{venue}</c>, <c>{number}</c>, …) + pool references, so a compact
 /// corpus composes into many distinct stories. Selection is DETERMINISTIC from a PCG32 stream (the caller
 /// keys it off the master seed + the round), so the same career renders the same dispatches on every open and
-/// on replay. DISPLAY-ONLY — never a fold input, exactly like <see cref="SmgpRivalQuotes"/> and the news
-/// corpora. An absent file yields <see cref="Empty"/> — every render returns the caller's fallback, so the
+/// on replay. DISPLAY-ONLY, never a fold input, exactly like <see cref="SmgpRivalQuotes"/> and the news
+/// corpora. An absent file yields <see cref="Empty"/>, every render returns the caller's fallback, so the
 /// feed still shows each milestone's own words.
 /// </summary>
 public sealed class SmgpDispatchCorpus
@@ -65,7 +65,7 @@ public sealed class SmgpDispatchCorpus
     /// <paramref name="tokens"/>, drawing the template pick and every pool expansion from
     /// <paramref name="stream"/> in a fixed left-to-right traversal order. Returns
     /// <paramref name="fallback"/> when the corpus declares no template for the key (so a dispatch always
-    /// has a body). An unknown <c>{token}</c> resolves to empty (lenient — the feed never crashes; the
+    /// has a body). An unknown <c>{token}</c> resolves to empty (lenient, the feed never crashes; the
     /// corpus-consistency test proves every shipped template uses only known tokens/pools).</summary>
     public string Render(
         string templateKey, IReadOnlyDictionary<string, string> tokens, Pcg32 stream, string fallback)
@@ -88,14 +88,14 @@ public sealed class SmgpDispatchCorpus
         return Expand(line, tokens, stream, depth: 0);
     }
 
-    /// <summary>Single-pass expansion: resolve each <c>{token}</c> — <c>{pool:name}</c> selects a fragment
+    /// <summary>Single-pass expansion: resolve each <c>{token}</c>, <c>{pool:name}</c> selects a fragment
     /// (recursively expanded, same stream); a plain token substitutes a fact value (missing → empty).
     /// Substituted values are not re-scanned, so a fact containing braces prints verbatim.</summary>
     private string Expand(string text, IReadOnlyDictionary<string, string> tokens, Pcg32 stream, int depth)
     {
         if (depth > MaxExpansionDepth)
             throw new InvalidOperationException(
-                $"SMGP dispatch expansion exceeded depth {MaxExpansionDepth} — a pool likely references " +
+                $"SMGP dispatch expansion exceeded depth {MaxExpansionDepth}, a pool likely references " +
                 "itself. Break the cycle in the corpus.");
 
         return TokenPattern.Replace(text, match =>

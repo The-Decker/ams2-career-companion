@@ -26,11 +26,11 @@ public sealed record CareerCreationRequest
 
     /// <summary>Raw XML text of the user's installed class file, to import as the season's
     /// ratings/name/country baseline (NAMeS-first, locked decision #7). Null = pack baseline.
-    /// The IMPORTED result is pinned into the career DB — the career never re-reads the
+    /// The IMPORTED result is pinned into the career DB, the career never re-reads the
     /// mutable installed file afterwards.</summary>
     public string? CommunityBaselineXml { get; init; }
 
-    /// <summary>Where <see cref="CommunityBaselineXml"/> was read from — journaled provenance
+    /// <summary>Where <see cref="CommunityBaselineXml"/> was read from, journaled provenance
     /// only, never re-read.</summary>
     public string? CommunityBaselineSourcePath { get; init; }
 
@@ -49,48 +49,62 @@ public sealed record CareerCreationRequest
     /// rival shifts the player's expected finish / OPI / pace anchor). Seeded into the season start
     /// state (<see cref="Companion.Core.Career.PlayerCareerState.FormAware"/>) and carried forward.
     /// Default false so existing creation callers (and every test that does not opt in) fold exactly
-    /// as before — byte-identical. The new-career wizard sets it true for all new careers.</summary>
+    /// as before, byte-identical. The new-career wizard sets it true for all new careers.</summary>
     public bool FormAware { get; init; }
 
     /// <summary>The SMGP replica mode (M3): when true AND the pack declares <c>careerStyle "smgp"</c>,
-    /// the career's start state seeds <see cref="Companion.Core.Smgp.SmgpState"/> — the per-career gate
+    /// the career's start state seeds <see cref="Companion.Core.Smgp.SmgpState"/>, the per-career gate
     /// every mode mechanic (rival battles, seat swaps, the title defense) hangs off. Mirrors
     /// <see cref="FormAware"/>: default false, so existing creation callers (and every test that does
     /// not opt in) seed nothing and fold byte-identically; the wizard sets it for smgp packs. On a
-    /// normal pack the flag is ignored — the pack's style is the other half of the gate.</summary>
+    /// normal pack the flag is ignored, the pack's style is the other half of the gate.</summary>
     public bool SmgpMode { get; init; }
 
     /// <summary>OPT-IN modded field (v1.4): when true AND the pack declares a modded field AND its
     /// required car mod is installed, the creation-time transform appends the mod's grid entries
-    /// and bumps the round grid sizes BEFORE pinning — so the pinned pack fields the fuller grid
-    /// (the SMGP McLaren teams) and replays stay byte-identical. False (default) — or true but the
-    /// mod missing — pins the base field only, so the default never depends on the mod. The wizard
+    /// and bumps the round grid sizes BEFORE pinning, so the pinned pack fields the fuller grid
+    /// (the SMGP McLaren teams) and replays stay byte-identical. False (default), or true but the
+    /// mod missing, pins the base field only, so the default never depends on the mod. The wizard
     /// sets it for a pack that has a modded field.</summary>
     public bool UseModdedField { get; init; }
 
     /// <summary>OPT-IN alternate mod tracks (Mike's "RockyTM track switch"): when true AND every mod
     /// track the pack's alternates need is installed, the creation-time transform swaps each round
-    /// with a <c>track.alternate</c> to that alternate BEFORE pinning — so the pinned pack drives the
-    /// mod venues and replays stay byte-identical. When false (default) — or true but a required mod
-    /// is missing — the season is pinned on its base/DLC defaults and NO mod track is used, so the
+    /// with a <c>track.alternate</c> to that alternate BEFORE pinning, so the pinned pack drives the
+    /// mod venues and replays stay byte-identical. When false (default), or true but a required mod
+    /// is missing, the season is pinned on its base/DLC defaults and NO mod track is used, so the
     /// default never depends on a mod. Seed-driven per-round variety is a later slice.</summary>
     public bool UseAlternateTracks { get; init; }
 
     /// <summary>The career's MORTALITY mode (character death &amp; injury, Slice 1;
     /// docs/dev/character-death-injury.md §2). Default <see cref="Companion.Core.Career.MortalityMode.Off"/>
     /// so existing creation callers (and every test that does not opt in) create a career with no
-    /// injury/death — byte-identical to before. The wizard surfaces Off/Normal/Hardcore as an explicit
+    /// injury/death, byte-identical to before. The wizard surfaces Off/Normal/Hardcore as an explicit
     /// creation choice. Persisted on the <c>career</c> table AND mirrored into the start player state.</summary>
     public Companion.Core.Career.MortalityMode Mortality { get; init; }
 
     /// <summary>The Dynasty owner economy (docs/dev/dynasty-tycoon-economy.md): when true AND the
     /// campaign mode is <c>grandPrixDynasty</c>, the start state seeds
-    /// <see cref="Companion.Core.Dynasty.DynastyEconomyState"/> — the per-career gate the whole
+    /// <see cref="Companion.Core.Dynasty.DynastyEconomyState"/>, the per-career gate the whole
     /// team ledger hangs off. Mirrors <see cref="SmgpMode"/>: default false, so existing creation
     /// callers (and every test that does not opt in) seed nothing and fold byte-identically; the
-    /// wizard sets it for new Dynasty careers. On any other mode the flag is ignored — the mode is
+    /// wizard sets it for new Dynasty careers. On any other mode the flag is ignored, the mode is
     /// the other half of the gate (a legacy/SMGP/Passport career can never gain the economy).</summary>
     public bool DynastyEconomy { get; init; }
+
+    /// <summary>The player's custom display name (Racing Passport's one identity field,
+    /// 2026-07-18): trimmed at validation, persisted on the start player state
+    /// (<see cref="Companion.Core.Career.PlayerCareerState.CustomDisplayName"/>), and resolved
+    /// ahead of the seat's authored driver name everywhere the synthetic player name shows.
+    /// Null (default) keeps the replaced driver's authored name, and every existing caller's
+    /// behavior byte-identical. NOT a character: no profile, no stats, no progression.</summary>
+    public string? PlayerDisplayName { get; init; }
+
+    /// <summary>The player's custom nationality (Racing Passport's optional identity field):
+    /// an ISO 3-letter country code persisted on the start player state
+    /// (<see cref="Companion.Core.Career.PlayerCareerState.CustomCountryCode"/>). Null (default)
+    /// keeps the replaced driver's authored country.</summary>
+    public string? PlayerCountryCode { get; init; }
 }
 
 /// <summary>
@@ -118,7 +132,7 @@ public sealed class CareerSessionFactory(CareerEnvironment environment) : ICaree
 /// Additive staging extension of the <see cref="ICareerSession"/> seam: staging over a
 /// custom-AI file the app did not generate (the user's curated community file) fails by
 /// default; <see cref="StageCurrentGrid"/> with <c>force: true</c> is the explicit
-/// user choice to proceed — a timestamped backup is still taken first.
+/// user choice to proceed, a timestamped backup is still taken first.
 /// </summary>
 public interface IForceStaging
 {
@@ -139,7 +153,7 @@ public interface IAms2GameLaunch
 /// The explicit "apply this grid to AMS2" action: ALWAYS writes an app-marked custom-AI file
 /// (backup-first), bypassing the diff-aware no-op and the community-file gate, so a grid the user
 /// deliberately chose lands on disk and is verifiable there. The AMS2 diagnosis (2026-07-07) found
-/// the ordinary staging flow frequently wrote 0 bytes (NAMeS-primary no-op + force-gate) — which is
+/// the ordinary staging flow frequently wrote 0 bytes (NAMeS-primary no-op + force-gate), which is
 /// why the user's edits never reached the game. This path guarantees a real write.
 /// </summary>
 public interface IExplicitGridApply

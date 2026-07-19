@@ -5,8 +5,8 @@ namespace Companion.Core.Character;
 /// <summary>
 /// A read-only snapshot of the player's driver for the hub's Driver dossier: identity, the seven
 /// stats, the perks (with what they do), and progression (level + XP toward the next). A pure
-/// projection built from the folded <c>PlayerCareerState</c> + the character rules — no session
-/// coupling — so the dossier view-model is built and tested from a plain value. (Character depth 3.)
+/// projection built from the folded <c>PlayerCareerState</c> + the character rules, no session
+/// coupling, so the dossier view-model is built and tested from a plain value. (Character depth 3.)
 /// </summary>
 public sealed record CharacterDossier
 {
@@ -44,7 +44,7 @@ public sealed record CharacterDossier
     /// hand-built test dossiers compiling with <see cref="IsAtLevelCap"/> false.</summary>
     public int LevelCap { get; init; } = int.MaxValue;
 
-    /// <summary>True when the driver sits at the effective level cap — the MAX-LEVEL display state.
+    /// <summary>True when the driver sits at the effective level cap, the MAX-LEVEL display state.
     /// The progress bar reads complete and no "XP to next level" line is meaningful.</summary>
     public bool IsAtLevelCap => Level >= LevelCap;
 
@@ -68,16 +68,16 @@ public sealed record CharacterDossier
     /// <summary>The rating effects the character's perks/mastery actually apply in the sim, split
     /// base-vs-active: unconditional rating deltas and car scalars always apply; conditional lines
     /// carry the round condition they wait on. A pure display projection of the SAME resolved
-    /// modifiers the fold consumes — never a second rules engine.</summary>
+    /// modifiers the fold consumes, never a second rules engine.</summary>
     public IReadOnlyList<DossierModifierLine> ActiveModifiers { get; init; } = [];
 
     /// <summary>The driver's CURRENT availability, folded from the accident/injury state
     /// (docs/dev/character-death-injury.md §6): Fit / Injured / Season over / Deceased. A healthy
-    /// driver — and every Off-mortality career, whose injury fields are always default — reads Fit.</summary>
+    /// driver, and every Off-mortality career, whose injury fields are always default, reads Fit.</summary>
     public AvailabilityStatus Availability { get; init; }
 
-    /// <summary>A ready-to-show label for <see cref="Availability"/> ("Fit", "Injured — out 2 races",
-    /// "Season over — recovering", "Deceased"); mirrors the fold in <c>PlayerMortalityStatus.IsFit</c>.</summary>
+    /// <summary>A ready-to-show label for <see cref="Availability"/> ("Fit", "Injured, out 2 races",
+    /// "Season over, recovering", "Deceased"); mirrors the fold in <c>PlayerMortalityStatus.IsFit</c>.</summary>
     public string AvailabilityLabel { get; init; } = "Fit";
 
     /// <summary>Progress through the current level, 0..1 (1 at the max level).</summary>
@@ -143,13 +143,13 @@ public sealed record CharacterDossier
             injuryRisk = hazard >= 0.30 ? "High" : hazard >= 0.16 ? "Moderate" : "Low";
         }
 
-        // Availability — the SAME precedence as PlayerMortalityStatus.IsFit (deceased > season-ending
+        // Availability, the SAME precedence as PlayerMortalityStatus.IsFit (deceased > season-ending
         // > suspended > fit). Off-mortality careers carry all-default fields, so they read Fit.
         var (availability, availabilityLabel) =
             deceased ? (AvailabilityStatus.Deceased, "Deceased")
-            : seasonEndingInjury ? (AvailabilityStatus.SeasonOver, "Season over — recovering")
+            : seasonEndingInjury ? (AvailabilityStatus.SeasonOver, "Season over, recovering")
             : raceSuspensionRemaining > 0
-                ? (AvailabilityStatus.Injured, $"Injured — out {raceSuspensionRemaining} race{(raceSuspensionRemaining == 1 ? "" : "s")}")
+                ? (AvailabilityStatus.Injured, $"Injured, out {raceSuspensionRemaining} race{(raceSuspensionRemaining == 1 ? "" : "s")}")
                 : (AvailabilityStatus.Fit, "Fit");
 
         return new CharacterDossier
@@ -184,7 +184,7 @@ public sealed record CharacterDossier
     /// <summary>Projects the resolved sim modifiers into readable base-vs-active lines: the
     /// unconditional rating deltas and car scalars (always on), then every dormant conditional
     /// rating/car effect with the round condition it waits on. Only rating-and-car levers are
-    /// surfaced — the career/economy levers already speak through the perk benefit lines.</summary>
+    /// surfaced, the career/economy levers already speak through the perk benefit lines.</summary>
     private static IReadOnlyList<DossierModifierLine> ProjectModifierLines(
         CharacterProfile character, CharacterRules rules, PlayerPerkModifiers modifiers)
     {
@@ -273,7 +273,7 @@ public sealed record CharacterDossier
     }
 }
 
-/// <summary>The driver's current availability for the next round — the display projection of the
+/// <summary>The driver's current availability for the next round, the display projection of the
 /// accident/injury fold state (docs/dev/character-death-injury.md §6). Ordered by severity so the
 /// default (0) is the healthy state.</summary>
 public enum AvailabilityStatus
@@ -287,7 +287,7 @@ public enum AvailabilityStatus
     /// <summary>Out for the rest of the season with a season-ending injury (returns next season).</summary>
     SeasonOver = 2,
 
-    /// <summary>Killed in an accident — terminal; the career is over.</summary>
+    /// <summary>Killed in an accident, terminal; the career is over.</summary>
     Deceased = 3,
 }
 
@@ -304,7 +304,7 @@ public sealed record DossierModifierLine(string Effect, string? Condition)
     public bool AlwaysActive => Condition is null;
 }
 
-/// <summary>One perk row of the dossier: what it is, what it costs, and — in plain language — the
+/// <summary>One perk row of the dossier: what it is, what it costs, and, in plain language, the
 /// good things it does and the costs it carries.</summary>
 public sealed record DossierPerk
 {
@@ -338,7 +338,7 @@ public sealed record DossierRacingDna
     public string? ChoiceValue { get; init; }
 }
 
-/// <summary>Display labels for the character stats — shared by the creation wizard and the dossier
+/// <summary>Display labels for the character stats, shared by the creation wizard and the dossier
 /// so the two never drift.</summary>
 public static class CharacterLabels
 {

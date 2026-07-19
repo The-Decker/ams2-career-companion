@@ -6,8 +6,8 @@ using Companion.ViewModels.Services;
 namespace Companion.ViewModels.Hub;
 
 /// <summary>
-/// The hub's Paddock lens (SMGP driver/team preview): the whole grid's drivers — each with a short bio,
-/// predetermined career stats and their team — and every team with its motto, history and quotes. A
+/// The hub's Paddock lens (SMGP driver/team preview): the whole grid's drivers, each with a short bio,
+/// predetermined career stats and their team, and every team with its motto, history and quotes. A
 /// thin read-only wrapper over <see cref="ICareerSession.SmgpPaddock"/>, re-projected after every applied
 /// round like the other lenses. Present as a rail tab only for an SMGP career with the reference data
 /// loaded (<see cref="HasPaddock"/>).
@@ -31,7 +31,7 @@ public sealed partial class PaddockViewModel : ObservableObject
     /// <summary>The SMGP sponsor board (the Sponsors tab); empty when none authored.</summary>
     public ObservableCollection<SmgpSponsorCard> Sponsors { get; } = [];
 
-    /// <summary>True when there is a paddock to show — the hub adds the tab only then.</summary>
+    /// <summary>True when there is a paddock to show, the hub adds the tab only then.</summary>
     public bool HasPaddock => Drivers.Count > 0;
 
     /// <summary>The view mode: false = the DRIVERS list, true = the TEAMS list.</summary>
@@ -115,7 +115,7 @@ public sealed partial class PaddockViewModel : ObservableObject
         }
     }
 
-    /// <summary>Jump to a sponsor's card (from a team's sponsor chip — the team ↔ sponsor cross-link).</summary>
+    /// <summary>Jump to a sponsor's card (from a team's sponsor chip, the team ↔ sponsor cross-link).</summary>
     [RelayCommand]
     private void ViewSponsor(string? sponsorId)
     {

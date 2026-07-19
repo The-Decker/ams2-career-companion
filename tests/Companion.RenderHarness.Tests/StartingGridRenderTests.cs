@@ -12,7 +12,7 @@ namespace Companion.RenderHarness.Tests;
 /// <summary>Off-screen render of the cinematic starting-grid screen (shown after qualifying) over a
 /// real <see cref="StartingGridViewModel"/>. Laying out the REAL <see cref="StartingGridView"/>
 /// realises both the historical staggered card grid and the SMGP-only pixel starting straight plus
-/// their conditions bars — resolving every StaticResource, canonical mode trigger, team-colour
+/// their conditions bars, resolving every StaticResource, canonical mode trigger, team-colour
 /// binding, keyed car fallback, and player-highlight DataTrigger that a pure VM test can't exercise.
 /// Self-skips on a non-Windows / non-STA host.</summary>
 public sealed class StartingGridRenderTests

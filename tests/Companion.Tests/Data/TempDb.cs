@@ -27,7 +27,7 @@ internal sealed class TempDb : IDisposable
         }
         catch (IOException)
         {
-            // Best effort — the OS temp cleaner owns leftovers.
+            // Best effort, the OS temp cleaner owns leftovers.
         }
         catch (UnauthorizedAccessException)
         {

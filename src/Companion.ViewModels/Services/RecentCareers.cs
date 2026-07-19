@@ -1,4 +1,6 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using Companion.Core.Career;
 
 namespace Companion.ViewModels.Services;
 
@@ -11,14 +13,14 @@ public sealed record RecentCareer
 
     /// <summary>The career's stored season year (<see cref="CareerSummary.SeasonYear"/>), used to
     /// resolve the gallery card's era art/badge deterministically instead of parsing the name.
-    /// <c>0</c> means "no stored year" — a legacy entry persisted before this field existed; the
+    /// <c>0</c> means "no stored year", a legacy entry persisted before this field existed; the
     /// gallery falls back to reading a year out of the name for those (see
     /// <see cref="EraArtResolver.YearForEntry"/>). Not <c>required</c> so JSON deserialization of an
     /// older <c>recent.json</c> (which omits the property) reads it as the 0 default, back-compat.</summary>
     public int SeasonYear { get; init; }
 
     /// <summary>The career's pack <c>careerStyle</c> (e.g. <c>"smgp"</c>), stored so the gallery can
-    /// resolve identity-keyed era art — the SMGP replica mode shares the 1990 career year with the
+    /// resolve identity-keyed era art, the SMGP replica mode shares the 1990 career year with the
     /// f1-1990 pack, so it must show its own art, not the year's. <c>null</c> (the JSON default) =
     /// a normal historical career (resolve by year). Not <c>required</c> so an older
     /// <c>recent.json</c> that omits it reads as null, back-compat.</summary>
@@ -26,17 +28,17 @@ public sealed record RecentCareer
 
     /// <summary>An optional user-chosen hero image for this career's gallery card (an absolute path
     /// the user picked with "Set card image…"), which OVERRIDES the year-resolved era art. <c>null</c>
-    /// (the JSON default) means "no override — use the era art for the year". Not <c>required</c> so an
+    /// (the JSON default) means "no override, use the era art for the year". Not <c>required</c> so an
     /// older <c>recent.json</c> that omits it reads as null. The image is point-to-file (never copied),
-    /// so a missing/moved file simply falls back to the era art — see
+    /// so a missing/moved file simply falls back to the era art, see
     /// <see cref="UserImageResolver"/> for the shared user-asset convention.</summary>
     public string? CustomImagePath { get; init; }
 
     /// <summary>The career's terminal state as last observed at open/create: <c>"deceased"</c>
-    /// (the driver died — the archive stays viewable), <c>"careerOver"</c> (the SMGP floor
-    /// knock-out), <c>"bankrupt"</c> (the Dynasty team folded — economy §7), or <c>null</c> for a
+    /// (the driver died, the archive stays viewable), <c>"careerOver"</c> (the SMGP floor
+    /// knock-out), <c>"bankrupt"</c> (the Dynasty team folded, economy §7), or <c>null</c> for a
     /// live career. Recorded so the gallery can badge a finished career honestly instead of
-    /// presenting it as playable. Not <c>required</c> — an older <c>recent.json</c> reads it as
+    /// presenting it as playable. Not <c>required</c>, an older <c>recent.json</c> reads it as
     /// null, back-compat.</summary>
     public string? TerminalState { get; init; }
 
@@ -51,6 +53,22 @@ public sealed record RecentCareer
         "bankrupt" => "BANKRUPT",
         _ => "",
     };
+
+    /// <summary>The era skin for the gallery card (era-theming-assets-brief.md Slice 0), resolved
+    /// from the same year <see cref="EraArtResolver.YearForEntry"/> uses (the stored season year,
+    /// else a year parsed from the name), or null when no year is known (a neutral card). The
+    /// gallery keys on the shared built-in table, the <c>era-themes.json</c> decade overrides
+    /// skin the in-career surfaces, which have a session to resolve them through. Computed;
+    /// never written to <c>recent.json</c>.</summary>
+    [JsonIgnore]
+    public IEraSkin? EraSkin => EraArtResolver.YearForEntry(this) is int year
+        ? EraThemes.ForYear(year)
+        : null;
+
+    /// <summary>The era medium flattened to a top-level bindable for DataTrigger keying; null
+    /// when the card has no known year.</summary>
+    [JsonIgnore]
+    public EraMedium? EraMedium => EraSkin?.Medium;
 }
 
 public interface IRecentCareersStore
@@ -61,12 +79,12 @@ public interface IRecentCareersStore
     /// <summary>Insert or move to the front (capped list), then persist. <paramref name="seasonYear"/>
     /// is the career's stored season year for the gallery's era art; pass <c>0</c> when it is unknown
     /// (the gallery then falls back to parsing the name). An existing entry's user-chosen
-    /// <see cref="RecentCareer.CustomImagePath"/> is CARRIED FORWARD (re-touching a career — Continue,
-    /// rename, re-open — never wipes the card image); set it with <see cref="SetCustomImage"/>.</summary>
+    /// <see cref="RecentCareer.CustomImagePath"/> is CARRIED FORWARD (re-touching a career, Continue,
+    /// rename, re-open, never wipes the card image); set it with <see cref="SetCustomImage"/>.</summary>
     void Touch(string path, string careerName, int seasonYear = 0, string? careerStyle = null);
 
     /// <summary>The badge-aware overload (called by open/create with the terminal state OBSERVED
-    /// from the live session): authoritative — a null observed state CLEARS the badge, so a
+    /// from the live session): authoritative, a null observed state CLEARS the badge, so a
     /// bankruptcy or death undone via save-restore un-badges the revived card. The unobserved
     /// overloads (rename / copy / plain Continue) carry the existing badge forward instead. Default
     /// drops the badge so lightweight test doubles need not implement it; the real store overrides
@@ -77,7 +95,7 @@ public interface IRecentCareersStore
     void Remove(string path);
 
     /// <summary>Sets (or, with a blank value, clears) the gallery card image for the career at
-    /// <paramref name="path"/>, in place — the MRU order is unchanged. A no-op when no such entry
+    /// <paramref name="path"/>, in place, the MRU order is unchanged. A no-op when no such entry
     /// exists. Default no-op so lightweight test doubles need not implement it; the real store
     /// overrides it.</summary>
     void SetCustomImage(string path, string? customImagePath) { }
@@ -85,7 +103,7 @@ public interface IRecentCareersStore
 
 /// <summary>
 /// A small JSON MRU file (default: %APPDATA%\AMS2CareerCompanion\recent.json). Corrupt or
-/// missing files read as empty — the start screen must never crash on a bad MRU file.
+/// missing files read as empty, the start screen must never crash on a bad MRU file.
 /// </summary>
 public sealed class RecentCareersStore : IRecentCareersStore
 {
@@ -146,11 +164,11 @@ public sealed class RecentCareersStore : IRecentCareersStore
             SeasonYear = seasonYear,
             CustomImagePath = existing?.CustomImagePath,
             CareerStyle = careerStyle ?? existing?.CareerStyle,
-            // An OBSERVED touch (open/create — the shell computed the badge from the live session)
+            // An OBSERVED touch (open/create, the shell computed the badge from the live session)
             // is AUTHORITATIVE: a session found alive clears a stale badge, so a bankruptcy or death
             // undone via save-restore un-badges the revived, fully playable card. An UNOBSERVED
             // touch (rename / copy / plain Continue) never knows the terminal state, so it carries
-            // the existing badge forward — a memorial card must survive a re-touch.
+            // the existing badge forward, a memorial card must survive a re-touch.
             TerminalState = observed ? terminalState : existing?.TerminalState,
         });
         WriteFile(entries.Take(Capacity).ToList());

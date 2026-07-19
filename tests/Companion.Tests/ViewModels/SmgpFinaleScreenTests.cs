@@ -30,7 +30,7 @@ public sealed class SmgpFinaleScreenTests
 
         ApplyARound(home);
 
-        // The finale owns the step — the season did NOT jump straight to the review.
+        // The finale owns the step, the season did NOT jump straight to the review.
         Assert.True(home.IsFinaleStep);
         Assert.False(home.IsSeasonReviewState);
         var screen = Assert.IsType<SmgpFinaleViewModel>(home.CurrentContent);

@@ -5,7 +5,7 @@ namespace Companion.Tests.ViewModels;
 
 /// <summary>
 /// Warning aggregation (fix round): the livery scan reports as ONE summary line on the
-/// wizard verification screen and in the staging messages — never a wall of per-file rows.
+/// wizard verification screen and in the staging messages, never a wall of per-file rows.
 /// Leniently recovered community files are a count, not warnings; only files that yield
 /// nothing even via the regex scrape warn, with the per-file list behind a collapsed
 /// details section.
@@ -88,7 +88,7 @@ public sealed class LiveryScanAggregationTests : IDisposable
 
         var wizard = WizardAtVerification();
 
-        // ONE aggregate line — info, so the proceed-anyway gate never appears.
+        // ONE aggregate line, info, so the proceed-anyway gate never appears.
         var scanItems = wizard.VerificationItems.Where(i => i.Message.StartsWith("Livery scan:")).ToList();
         var item = Assert.Single(scanItems);
         Assert.Equal(
@@ -111,7 +111,7 @@ public sealed class LiveryScanAggregationTests : IDisposable
 
         var wizard = WizardAtVerification();
 
-        // Still exactly ONE scan line — now a warning, so the gate applies.
+        // Still exactly ONE scan line, now a warning, so the gate applies.
         var scanItems = wizard.VerificationItems.Where(i => i.Message.StartsWith("Livery scan:")).ToList();
         var item = Assert.Single(scanItems);
         Assert.StartsWith("Livery scan: 1 livery from 2 files; 0 recovered leniently; 1 unreadable", item.Message);
@@ -192,7 +192,7 @@ public sealed class LiveryScanAggregationTests : IDisposable
 
         var outcome = session.StageCurrentGrid();
 
-        Assert.True(outcome.Success); // livery findings are warnings — staging proceeds
+        Assert.True(outcome.Success); // livery findings are warnings, staging proceeds
 
         var scanLines = outcome.Messages.Where(m => m.Contains("Livery scan", StringComparison.Ordinal)).ToList();
         Assert.Single(scanLines);

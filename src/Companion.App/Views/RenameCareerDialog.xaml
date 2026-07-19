@@ -9,7 +9,7 @@
         FontFamily="{StaticResource BodyFont}" FontSize="{DynamicResource AppFontSize}"
         Background="{DynamicResource SurfaceBrush}">
     <!-- keyboard parity: the textbox is focused on open, Enter = OK (IsDefault),
-         Esc = Cancel (IsCancel) — fully operable without the mouse. -->
+         Esc = Cancel (IsCancel), fully operable without the mouse. -->
     <Grid Background="{StaticResource AppTextureBrush}">
         <Border Background="{StaticResource AppVignetteBrush}" IsHitTestVisible="False" />
         <Border BorderBrush="{DynamicResource EdgeStrongBrush}" BorderThickness="1">

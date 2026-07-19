@@ -18,12 +18,12 @@ public sealed record ResultImport
 /// <summary>
 /// The versioned round_result_raw payload (docs/dev/m5-fix-integration.md, "unified fold"
 /// step 1): the ResultDraft-mapped raw classification plus the round context that is
-/// otherwise unre-derivable — the Opponent Skill slider the player actually raced at, the
+/// otherwise unre-derivable, the Opponent Skill slider the player actually raced at, the
 /// player's DNF cause, and (v3, Increment 2) the round's qualifying order. Grid, teammate
 /// finish, and expected finish are re-derived from pack + seed + round, never stored.
 /// Version-1 payloads (a bare RoundResult) read with defaults: slider unknown (fold substitutes
 /// the last recommendation), DNF cause unknown (fold substitutes the no-blame default). Version-2
-/// payloads read with <see cref="QualifyingOrder"/> null (no qualifying) — so every pre-weekend
+/// payloads read with <see cref="QualifyingOrder"/> null (no qualifying), so every pre-weekend
 /// save parses unchanged.
 /// </summary>
 public sealed record RoundResultEnvelope
@@ -36,20 +36,20 @@ public sealed record RoundResultEnvelope
     /// named (or was force-challenged by) and, when this round's battle triggered a seat-swap
     /// offer, the player's answer. Raw player-choice INPUTS the sim cannot re-derive, so they
     /// are stored; the battle OUTCOME itself derives from <see cref="Result"/>. Null = no rival
-    /// this round (every pre-v6 save, every non-smgp career, every declined prompt) — the fold
+    /// this round (every pre-v6 save, every non-smgp career, every declined prompt), the fold
     /// then runs no battle, so those rounds replay byte-identically. (M3, careerStyle "smgp".)</summary>
     public SmgpRivalCall? SmgpRival { get; init; }
 
     /// <summary>Whether the round was run in the WET (character depth: weather-conditional perks).
     /// A raw INPUT the sim cannot re-derive, so it is stored. Null = unknown/legacy (every pre-v4
-    /// save) — the fold then evaluates neither wetRound nor dryRound, so weather perks stay dormant
+    /// save), the fold then evaluates neither wetRound nor dryRound, so weather perks stay dormant
     /// and old careers replay byte-identically. true = wet, false = dry (explicitly captured).</summary>
     public bool? IsWet { get; init; }
 
-    /// <summary>The Setup Gamble (called shot) the player committed to before the race — the
+    /// <summary>The Setup Gamble (called shot) the player committed to before the race, the
     /// finishing position they bet on (1-based). A raw player-choice INPUT the sim cannot re-derive,
     /// so it is stored. Null = no bet (every pre-v5 save and every round the player did not gamble)
-    /// — the fold then resolves no call, so those rounds replay byte-identically. (Setup Gamble, 4b.)</summary>
+    ///, the fold then resolves no call, so those rounds replay byte-identically. (Setup Gamble, 4b.)</summary>
     public int? CalledShot { get; init; }
 
     /// <summary>The raw classification as imported (the engine's round-result shape).</summary>
@@ -64,9 +64,9 @@ public sealed record RoundResultEnvelope
     /// and a disqualified player to <see cref="DnfCause.DriverError"/>.</summary>
     public DnfCause? PlayerDnfCause { get; init; }
 
-    /// <summary>How hard the player's OWN accident (<c>"a"</c>) DNF was — Light/Medium/Heavy (character
+    /// <summary>How hard the player's OWN accident (<c>"a"</c>) DNF was, Light/Medium/Heavy (character
     /// death &amp; injury §3.1, v7). A raw player INPUT the sim cannot re-derive, so it is stored. Null on
-    /// every pre-v7 save AND on any non-accident DNF — the fold then treats null as "no severity, legacy
+    /// every pre-v7 save AND on any non-accident DNF, the fold then treats null as "no severity, legacy
     /// binary behavior". Slice 2 captures it only; NOTHING consumes it yet, so a round carrying a severity
     /// still replays BYTE-IDENTICALLY. Slice 3 folds it into the d500 injury roll.</summary>
     public AccidentSeverity? PlayerAccidentSeverity { get; init; }
@@ -79,12 +79,12 @@ public sealed record RoundResultEnvelope
     /// the fold then runs the ordinary player update, so those rounds stay byte-identical.</summary>
     public bool PlayerDidNotStart { get; init; }
 
-    /// <summary>The round's qualifying order — pack driver ids, pole first — when the pack's
+    /// <summary>The round's qualifying order, pack driver ids, pole first, when the pack's
     /// weekend ran a qualifying session (Increment 2). Null = no qualifying (every pre-weekend
     /// save and every single-race pack). It is a raw INPUT the sim cannot re-derive, so it is
     /// stored; later slices consume it for the grid (grid-from-qualy) and the qualifying pace
     /// anchor. It is deliberately NOT part of <see cref="RoundResult"/>, so it never reaches the
-    /// standings engine — scoring and the f1db oracle are untouched.</summary>
+    /// standings engine, scoring and the f1db oracle are untouched.</summary>
     public IReadOnlyList<string>? QualifyingOrder { get; init; }
 
     /// <summary>AI drivers' DNF cause letters as entered on the result screen ("m" mechanical /
@@ -93,7 +93,7 @@ public sealed record RoundResultEnvelope
     /// are stored so the reliability/incident desks can name AI retirements. CAPTURE-ONLY (the
     /// v7 severity precedent): NOTHING in the fold consumes it, so a round carrying causes still
     /// replays BYTE-IDENTICALLY, and null (every pre-v9 save, every round without AI DNFs)
-    /// degrades display to team-level phrasing. Display-only readers only — never a fold input.</summary>
+    /// degrades display to team-level phrasing. Display-only readers only, never a fold input.</summary>
     public IReadOnlyDictionary<string, string>? AiDnfCauses { get; init; }
 
     /// <summary>Parses a stored payload, accepting both the current envelope shape and the
@@ -139,10 +139,10 @@ public sealed record SmgpRivalCall
 /// seat rides on the folded state).</summary>
 public sealed record SmgpSwapInput
 {
-    /// <summary>The rival whose seat was offered (pack driver id) — provenance only.</summary>
+    /// <summary>The rival whose seat was offered (pack driver id), provenance only.</summary>
     public string? Rival { get; init; }
 
-    /// <summary>The offered car (ams2LiveryName) — provenance only.</summary>
+    /// <summary>The offered car (ams2LiveryName), provenance only.</summary>
     public string? OfferedSeat { get; init; }
 
     /// <summary>True = the player ACCEPTED the promotion (move into the offered car); false =
@@ -166,7 +166,7 @@ public sealed record StoredRoundResult
 }
 
 /// <summary>
-/// Verbatim raw result payloads — the replay contract's ground truth. Import is idempotent
+/// Verbatim raw result payloads, the replay contract's ground truth. Import is idempotent
 /// on (season, round): a re-import replaces the stored payload (same bytes or corrected ones)
 /// and appends an audit journal row (<see cref="DataJournalPhases.ImportResult"/>) recording
 /// that it happened. Raw results are never touched by re-simulation.

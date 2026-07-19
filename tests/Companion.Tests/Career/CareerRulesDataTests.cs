@@ -76,7 +76,7 @@ public class CareerRulesDataTests
     [Fact]
     public void GoldenAgeHazardLetsFrontLinersRacePastForty()
     {
-        // M5 audit fix: Fangio was champion at 46, Brabham won at 44 — the 60s hazard starts
+        // M5 audit fix: Fangio was champion at 46, Brabham won at 44, the 60s hazard starts
         // at 35 and accrues ~0.07/year, so a front-line 40-year-old more often stays than goes.
         var hazard = CareerTestData.LoadAgingCurves().ForYear(1967).Retirement;
         Assert.Equal(35, hazard.BaseAge);
@@ -178,7 +178,7 @@ public class CareerRulesDataTests
     [Fact]
     public void SixtiesFlavorIsRealNotToken()
     {
-        // Contract: modest but real — 6–10 variants per key event type, 1960s flavor first.
+        // Contract: modest but real, 6–10 variants per key event type, 1960s flavor first.
         var bank = CareerTestData.LoadHeadlines();
         foreach (string key in RequiredKeys)
         {

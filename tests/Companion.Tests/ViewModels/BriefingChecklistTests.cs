@@ -48,7 +48,7 @@ public class BriefingChecklistTests
             ["Event", "Practice", "Qualifying", "Race", "Rules"],
             vm.Settings.Select(s => s.Section).Distinct());
 
-        // Event leads with track/class/opponents — opponents right after class, the contract order.
+        // Event leads with track/class/opponents, opponents right after class, the contract order.
         Assert.Equal(["Track", "Class", "Opponents"], Labels("Event"));
 
         // Practice + qualifying are each a 60-min timed session with four independent weather slots.
@@ -192,7 +192,7 @@ public class BriefingChecklistTests
         vm.CopySummaryCommand.Execute(null);
 
         string text = Assert.Single(copied);
-        Assert.StartsWith("Dutch Grand Prix — placeholder: Spielberg_Vintage", text);
+        Assert.StartsWith("Dutch Grand Prix, placeholder: Spielberg_Vintage", text);
         Assert.Contains("Track: Spielberg_Vintage", text);
         Assert.Contains("Class: F-Vintage_Gen1", text);
         Assert.Contains("Opponents: 18", text);

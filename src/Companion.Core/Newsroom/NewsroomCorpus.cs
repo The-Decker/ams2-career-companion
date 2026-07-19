@@ -23,6 +23,10 @@ public sealed record NewsroomTemplate
     public IReadOnlyList<string> Desks { get; init; } = [];
     /// <summary>Eligible era keys; empty = any era.</summary>
     public IReadOnlyList<string> Eras { get; init; } = [];
+    /// <summary>Eligible campaign-season ORDINALS (1-based); empty = any season. The per-season
+    /// scoping that lets one era (SMGP's 17 seasons share the "smgp" era key) carry
+    /// season-specific writing: a season's own variants fire only in its year of the arc.</summary>
+    public IReadOnlyList<int> Seasons { get; init; } = [];
     public required string Headline { get; init; }
     public string Deck { get; init; } = "";
     public string Summary { get; init; } = "";
@@ -42,7 +46,7 @@ public sealed record NewsroomEra
 /// <summary>
 /// The merged newsroom content library: templates + era-voiced pools, loaded additively from
 /// every <c>data/rules/newsroom/*.json</c> pack (ordinal filename order, the NewsArticleBank
-/// convention). Read-side only — never a fold input — so packs are safe to edit and grow;
+/// convention). Read-side only, never a fold input, so packs are safe to edit and grow;
 /// rendezvous selection keeps existing articles' template choices stable under appends.
 /// </summary>
 public sealed class NewsroomCorpus
@@ -94,7 +98,7 @@ public sealed class NewsroomCorpus
 
     /// <summary>
     /// Picks the template for an event: filter to eligible (event kind, guards, era, desk),
-    /// prefer the MOST SPECIFIC situation (highest guard count — a first-win special always
+    /// prefer the MOST SPECIFIC situation (highest guard count, a first-win special always
     /// beats the generic when it applies), then rendezvous-hash among that tier so adding
     /// templates later only re-picks the events the newcomer actually wins.
     /// </summary>
@@ -106,6 +110,7 @@ public sealed class NewsroomCorpus
         {
             if (!string.Equals(t.Event, kindKey, StringComparison.Ordinal)
                 || t.Eras.Count > 0 && !t.Eras.Contains(eraKey)
+                || t.Seasons.Count > 0 && !t.Seasons.Contains(e.SeasonOrdinal)
                 || t.Desks.Count > 0 && deskId.Length > 0 && !t.Desks.Contains(deskId)
                 || !GuardsPass(t.When, e.Facts))
             {
@@ -188,6 +193,7 @@ public sealed class NewsroomCorpus
         public IReadOnlyDictionary<string, JsonElement>? When { get; init; }
         public IReadOnlyList<string>? Desks { get; init; }
         public IReadOnlyList<string>? Eras { get; init; }
+        public IReadOnlyList<int>? Seasons { get; init; }
         public required string Headline { get; init; }
         public string? Deck { get; init; }
         public string? Summary { get; init; }
@@ -220,7 +226,8 @@ public sealed class NewsroomCorpus
         }
 
         var dtos = new List<CorpusDto>();
-        foreach (var file in Directory.EnumerateFiles(directory, "*.json").OrderBy(f => f, StringComparer.Ordinal))
+        foreach (string file in Directory.EnumerateFiles(directory, "*.json", SearchOption.AllDirectories)
+                     .OrderBy(f => f, StringComparer.Ordinal))
         {
             // desks.json is its own document shape, loaded by NewsDesks.
             if (string.Equals(Path.GetFileName(file), "desks.json", StringComparison.OrdinalIgnoreCase))
@@ -262,6 +269,7 @@ public sealed class NewsroomCorpus
                     When = t.When ?? new Dictionary<string, JsonElement>(),
                     Desks = t.Desks ?? [],
                     Eras = t.Eras ?? [],
+                    Seasons = t.Seasons ?? [],
                     Headline = t.Headline,
                     Deck = t.Deck ?? "",
                     Summary = t.Summary ?? "",
@@ -300,7 +308,7 @@ public sealed class NewsroomCorpus
         };
     }
 
-    /// <summary>Authoring validation — run by the content tests over every shipped pack:
+    /// <summary>Authoring validation, run by the content tests over every shipped pack:
     /// duplicate ids, unknown event kinds, unknown guard keys, empty headline/sections, and
     /// unknown section names all throw with the offending id.</summary>
     public void Validate()
@@ -335,7 +343,7 @@ public sealed class NewsroomCorpus
                         $"Template '{t.Id}' section '{section.Key}' is empty.");
                 }
             }
-            // Each guard key validates alone (unknown keys throw) — a failing known guard
+            // Each guard key validates alone (unknown keys throw), a failing known guard
             // must not short-circuit past an unknown one hiding behind it.
             foreach (var guard in t.When)
             {

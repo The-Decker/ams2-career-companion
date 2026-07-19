@@ -39,5 +39,23 @@ mouse recording, sample-library asset, or copied interface sound.
   traced, recreated, or used as source material.
 - Permitted use: AMS2 Career Companion application, its builds, and its distributable packages.
 - Reproduction: run `.\tools\generate_sfx.ps1`, then
-  `.\src\Companion.App\Audio\Generation\generate-seat-confirm.ps1`, from the repository root.
+  `.\src\Companion.App\Audio\Generation\generate-seat-confirm.ps1`, then
+  `.\src\Companion.App\Audio\Generation\generate-era-sfx.ps1`, from the repository root.
+- Editing performed after generation: none.
+
+## Era-medium SFX voicings
+
+The twelve era-medium voicings (`navigate-`, `commit-`, `seat-confirm-`, and `back-` suffixed
+`-telegram`, `-fax`, and `-email`) were generated for this project on 2026-07-18 by the tracked
+`Audio/Generation/generate-era-sfx.ps1` source. They re-voice the four immersive cues per period
+medium (era-theming-assets-brief.md, Workstream B): telegraph-key relay strikes with small FM
+bells, thermal print-head chirps with handshake warbles, and soft FM chimes. All are mathematical
+oscillators and seeded deterministic noise shaped by the generator; the warble evokes a fax
+negotiation in the abstract and reproduces no recorded or standards-defined signal.
+
+- Source: repository generator; no recordings, third-party samples, sample libraries, broadcast
+  audio, or telecommunications signal captures.
+- Permitted use: AMS2 Career Companion application, its builds, and its distributable packages.
+- Reproduction: run `.\src\Companion.App\Audio\Generation\generate-era-sfx.ps1` from the repository
+  root; output is hash-stable across repeated runs.
 - Editing performed after generation: none.

@@ -22,7 +22,7 @@ public sealed class CareerEnvironment
     public IAms2Launcher Ams2Launcher { get; init; } = UnavailableAms2Launcher.Instance;
 
     /// <summary>Locates the AMS2 install; null when none is found (every consumer must
-    /// degrade gracefully — a missing install never crashes a flow).</summary>
+    /// degrade gracefully, a missing install never crashes a flow).</summary>
     public required Func<Ams2Installation?> LocateInstall { get; init; }
 
     public required string DocumentsDirectory { get; init; }
@@ -65,11 +65,11 @@ public sealed class CareerEnvironment
 
     private CareerRulesData? _rules;
 
-    /// <summary>The parsed career rules data, loaded once and cached — every fold and season
+    /// <summary>The parsed career rules data, loaded once and cached, every fold and season
     /// end consumes the same instances, so live and replay inputs are identical.</summary>
     public CareerRulesData Rules => _rules ??= CareerRulesData.Load(
         RulesDirectory ?? throw new InvalidOperationException(
-            "This environment has no rules directory — the data\\rules folder (aging curves, " +
+            "This environment has no rules directory, the data\\rules folder (aging curves, " +
             "archetypes, headlines) is required to apply results."));
 
     public static CareerEnvironment CreateDefault(string ams2DataDirectory) => new()
@@ -88,7 +88,7 @@ public sealed class CareerEnvironment
     };
 
     /// <summary>Scans installed skin-pack livery overrides for this machine (install-side and
-    /// Documents-side roots). A missing install just narrows the scan — never a failure.
+    /// Documents-side roots). A missing install just narrows the scan, never a failure.
     /// Returns the structured result: the UI reports its <see cref="LiveryScanResult.Summary"/>
     /// as one line, with the unreadable files behind a collapsed details section.</summary>
     public LiveryScanResult ScanInstalledLiveries(Ams2Installation? installation)
@@ -101,9 +101,9 @@ public sealed class CareerEnvironment
     }
 
     /// <summary>Scans the user's INSTALLED CustomAIDrivers class file for the livery names it
-    /// declares — the PRIMARY authority for which names are valid (locked decision #7, "found
+    /// declares, the PRIMARY authority for which names are valid (locked decision #7, "found
     /// before overwritten"). A missing install or class file yields an empty
-    /// (<see cref="InstalledAiNameSet.Found"/>=false) set — the preflight then falls back to
+    /// (<see cref="InstalledAiNameSet.Found"/>=false) set, the preflight then falls back to
     /// skins + stock alone.</summary>
     public InstalledAiNameSet ScanInstalledAiNames(Ams2Installation? installation, string vehicleClass)
     {

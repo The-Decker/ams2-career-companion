@@ -25,7 +25,7 @@ public enum FinishStatus
 /// <summary>
 /// One car/driver line of a session classification. Shared drives (two or more drivers in
 /// the same car) appear as one entry per driver with the same <see cref="Position"/> and
-/// <see cref="SharedDrive"/> set — the engine groups them by position to split or zero
+/// <see cref="SharedDrive"/> set, the engine groups them by position to split or zero
 /// the points per the season's <see cref="SharedDrivePolicy"/>.
 /// </summary>
 public sealed record ClassifiedEntry
@@ -47,11 +47,11 @@ public sealed record ClassifiedEntry
     /// <summary>False when the entry was classified but officially ineligible for
     /// championship points: F2 cars in the 1958–69 German GPs, non-registered second cars
     /// (1984 Monza, 1987 Adelaide), annulled results (Hill, France 1963). The classification
-    /// stands — only points are withheld.</summary>
+    /// stands, only points are withheld.</summary>
     public bool PointsEligible { get; init; } = true;
 
     /// <summary>The position used for the points-table lookup when official scoring diverged
-    /// from raw classification — e.g. 1967 German GP, where F1 cars behind ineligible F2
+    /// from raw classification, e.g. 1967 German GP, where F1 cars behind ineligible F2
     /// finishers received the points of their rank among eligible cars (Bonnier: classified
     /// 6th, paid as 5th). Null means the classification position scores.</summary>
     public int? PointsPosition { get; init; }

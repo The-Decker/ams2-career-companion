@@ -19,12 +19,12 @@
     ]
   },
   "notes": [
-    "Authored correction: Andrea Chiesa country 'ITA' -> 'CHE' — Chiesa is Swiss (f1db nationality: switzerland); the source XML's ITA is a data-entry error.",
-    "Authored correction: Bertrand Gachot country 'BEL' -> 'FRA' — Gachot contested the 1992 season under a French licence (f1db nationality: france); the source XML's BEL is his pre-1992 licence country.",
-    "Mapping: the skinpack's 'Larrousse-Lamborghini' liveries are bound to f1db constructor 'venturi' — Larrousse's 1992 entry was the Venturi LC92, which f1db records under the Venturi constructor.",
-    "Mapping: the source XML's 'Minardi-Lamborghini #23 A. Zanardi' entry (name 'Alessandro Zanardi') is f1db driver alex-zanardi (Alex Zanardi) — the same person; the pack uses the f1db name form.",
+    "Authored correction: Andrea Chiesa country 'ITA' -> 'CHE', Chiesa is Swiss (f1db nationality: switzerland); the source XML's ITA is a data-entry error.",
+    "Authored correction: Bertrand Gachot country 'BEL' -> 'FRA', Gachot contested the 1992 season under a French licence (f1db nationality: france); the source XML's BEL is his pre-1992 licence country.",
+    "Mapping: the skinpack's 'Larrousse-Lamborghini' liveries are bound to f1db constructor 'venturi', Larrousse's 1992 entry was the Venturi LC92, which f1db records under the Venturi constructor.",
+    "Mapping: the source XML's 'Minardi-Lamborghini #23 A. Zanardi' entry (name 'Alessandro Zanardi') is f1db driver alex-zanardi (Alex Zanardi), the same person; the pack uses the f1db name form.",
     "Model bindings are derived from the deployed F1_Season_1992 override DDS sets. The local deployment carries no DDS for the Fondmetal (#14/#15) and Larrousse (#29/#30) liveries, so those two teams are bound by authorship: Fondmetal -> formula_hitech_g1m3 (Ford HB V8 sister to the model's Benetton), Larrousse/Venturi -> formula_hitech_g1m1 (Lamborghini V12 like the model's Minardi).",
-    "The skinpack ships per-round livery texture variants (e.g. 7_Brabham_KYA.dds, 11_Lotus_ita.dds, 23_Minardi_SIL.dds, 28_Ferrari_SUZ.dds); the pack binds the season-base livery names from the custom-AI XML — per-round texture swaps are cosmetic and outside the pack format.",
+    "The skinpack ships per-round livery texture variants (e.g. 7_Brabham_KYA.dds, 11_Lotus_ita.dds, 23_Minardi_SIL.dds, 28_Ferrari_SUZ.dds); the pack binds the season-base livery names from the custom-AI XML, per-round texture swaps are cosmetic and outside the pack format.",
     "The source custom-AI XML carries no per-track (tracks=\"...\") override entries and no per-round variant files; every round's aiOverrides is empty."
   ]
 }

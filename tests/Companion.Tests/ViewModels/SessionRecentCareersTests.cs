@@ -106,7 +106,7 @@ public sealed class SessionRecentCareersTests : IDisposable
         store.SetCustomImage(@"C:\a.ams2career", @"C:\pics\a.jpg");
 
         var loaded = store.Load();
-        // Setting an image on 'a' must not move it to the front — b stays first.
+        // Setting an image on 'a' must not move it to the front, b stays first.
         Assert.Equal(@"C:\b.ams2career", loaded[0].Path);
         Assert.Equal(@"C:\pics\a.jpg", loaded.Single(c => c.Path == @"C:\a.ams2career").CustomImagePath);
 
@@ -172,7 +172,7 @@ public sealed class SessionRecentCareersTests : IDisposable
     [Fact]
     public void Load_LegacyEntryWithoutSeasonYear_ReadsAsZero()
     {
-        // A recent.json written before SeasonYear existed omits the property entirely — it must
+        // A recent.json written before SeasonYear existed omits the property entirely, it must
         // still load (read-with-default 0), never throw, so old MRU files keep working.
         File.WriteAllText(StoreFile, """
             {
@@ -275,7 +275,7 @@ public sealed class SessionRecentCareersTests : IDisposable
     [InlineData(null)]
     public void OpenCareer_BlankPath_SetsErrorAndDoesNotRaise(string? path)
     {
-        // careerFileExists must never be consulted for a blank path — the guard short-circuits first.
+        // careerFileExists must never be consulted for a blank path, the guard short-circuits first.
         var vm = new StartViewModel(Store(), careerFileExists: _ => throw new Xunit.Sdk.XunitException(
             "existence must not be probed for a blank path"));
         bool raised = false;
@@ -428,7 +428,7 @@ public sealed class SessionRecentCareersTests : IDisposable
     public void DeleteRecent_FileAlreadyGone_StillDropsTheEntry()
     {
         // Deleted outside the app between MRU load and the command: nothing to delete is not an
-        // error — the user asked for it gone, and it is.
+        // error, the user asked for it gone, and it is.
         string career = Path.Combine(_root, "already-gone.ams2career");
         var store = Store(exists: _ => true); // keep the entry visible despite the missing file
         store.Touch(career, "Ghost");

@@ -14,14 +14,16 @@
         <Geometry x:Key="RailGridIcon">M3,3 L7,3 L7,7 L3,7 Z M13,3 L17,3 L17,7 L13,7 Z M8,8 L12,8 L12,12 L8,12 Z M3,13 L7,13 L7,17 L3,17 Z M13,13 L17,13 L17,17 L13,17 Z</Geometry>
         <Geometry x:Key="RailHistoryIcon">M4,7 A7,7 0 1 1 3,13 M4,7 L4,3 M4,7 L8,7 M10,6 L10,10 L13,12</Geometry>
         <Geometry x:Key="RailPaddockIcon">M3,17 L3,8 L10,3 L17,8 L17,17 M6,17 L6,9 L14,9 L14,17 M6,12 L14,12 M8,15 L12,15</Geometry>
+        <Geometry x:Key="RailEconomyIcon">M4,3 L16,3 L16,17 L4,17 Z M4,6 L16,6 M7,9 L13,9 M7,12 L13,12 M7,15 L11,15</Geometry>
         <Geometry x:Key="RailNewsIcon">M3,8 L7,8 L15,4 L15,15 L7,11 L3,11 Z M7,11 L9,16 L12,16 L10,12 M17,7 C18,8 18,11 17,12</Geometry>
         <Geometry x:Key="RailStartIcon">M3,4 L11,4 L11,7 M3,4 L3,17 L11,17 L11,14 M8,10 L18,10 M15,7 L18,10 L15,13</Geometry>
         <Geometry x:Key="RailPopOutIcon">M4,5 L4,16 L15,16 L15,12 M9,4 L16,4 L16,11 M10,10 L16,4</Geometry>
     </UserControl.Resources>
     <Grid x:Name="HubStage">
-    <!-- Remove the ordinary Hub from BOTH layout and binding scope for either terminal path.
-         That matters in Hardcore: collapsed controls still keep WPF bindings alive, while clearing
-         this subtree's DataContext guarantees no hidden lens/converter can query the disposed session. -->
+    <!-- Remove the ordinary Hub from BOTH layout and binding scope for any terminal path (death,
+         SMGP career-over, bankruptcy). That matters in Hardcore: collapsed controls still keep WPF
+         bindings alive, while clearing this subtree's DataContext guarantees no hidden
+         lens/converter can query the disposed session. -->
     <Grid x:Name="LiveHubSurfaces">
         <Grid.Style>
             <Style TargetType="Grid">
@@ -36,6 +38,9 @@
                             <Condition Binding="{Binding DataContext.Home.Briefing.SmgpCareerOver,
                                                          RelativeSource={RelativeSource AncestorType=UserControl}}"
                                        Value="False" />
+                            <Condition Binding="{Binding DataContext.Home.BankruptcyScreen,
+                                                         RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                       Value="{x:Null}" />
                         </MultiDataTrigger.Conditions>
                         <Setter Property="Visibility" Value="Visible" />
                         <Setter Property="DataContext"
@@ -97,7 +102,7 @@
                         <TextBlock Text="{Binding Era.Label}" Style="{StaticResource Faint}" FontSize="10"
                                    Margin="2,-3,0,0"
                                    Visibility="{Binding EraThemingEnabled, Converter={StaticResource BoolVisible}}"
-                                   ToolTip="The period your career is skinned as — it ages telegram → fax → email across the decades" />
+                                   ToolTip="The period your career is skinned as, it ages telegram → fax → email across the decades" />
                     </StackPanel>
 
                     <StackPanel VerticalAlignment="Center">
@@ -317,6 +322,7 @@
                                                             <DataTrigger Binding="{Binding Key}" Value="skins"><Setter Property="Data" Value="{StaticResource RailGridIcon}" /></DataTrigger>
                                                             <DataTrigger Binding="{Binding Key}" Value="history"><Setter Property="Data" Value="{StaticResource RailHistoryIcon}" /></DataTrigger>
                                                             <DataTrigger Binding="{Binding Key}" Value="paddock"><Setter Property="Data" Value="{StaticResource RailPaddockIcon}" /></DataTrigger>
+                                                            <DataTrigger Binding="{Binding Key}" Value="economy"><Setter Property="Data" Value="{StaticResource RailEconomyIcon}" /></DataTrigger>
                                                             <DataTrigger Binding="{Binding Key}" Value="news"><Setter Property="Data" Value="{StaticResource RailNewsIcon}" /></DataTrigger>
                                                             <DataTrigger Binding="{Binding IsSelected}" Value="True"><Setter Property="Stroke" Value="{DynamicResource AccentTextBrush}" /></DataTrigger>
                                                         </Style.Triggers>
@@ -440,25 +446,25 @@
                                                Margin="0,3,0,0" TextWrapping="Wrap" />
                                     <WrapPanel Margin="0,10,0,0">
                                         <Border Style="{StaticResource CompactChip}" Margin="0,0,7,7">
-                                            <TextBlock Text="{Binding Tier, FallbackValue='TIER —'}" Style="{StaticResource Eyebrow}" />
+                                            <TextBlock Text="{Binding Tier, FallbackValue='TIER'}" Style="{StaticResource Eyebrow}" />
                                         </Border>
                                         <Border Style="{StaticResource CompactChip}" Margin="0,0,7,7">
                                             <TextBlock Style="{StaticResource Eyebrow}" FontWeight="Bold">
                                                 <TextBlock.Text>
                                                     <MultiBinding StringFormat="{}{0}  ·  {1} PTS">
                                                         <Binding Path="ChampionshipPosition" StringFormat="STANDING P{0}"
-                                                                 TargetNullValue="STANDING —" FallbackValue="STANDING —" />
-                                                        <Binding Path="ChampionshipPoints" FallbackValue="—" />
+                                                                 TargetNullValue="STANDING" FallbackValue="STANDING" />
+                                                        <Binding Path="ChampionshipPoints" FallbackValue="-" />
                                                     </MultiBinding>
                                                 </TextBlock.Text>
                                             </TextBlock>
                                         </Border>
                                         <Border Style="{StaticResource CompactChip}" Margin="0,0,7,7">
-                                            <TextBlock Text="{Binding BudgetTier, StringFormat=BUDGET  {0}, FallbackValue='BUDGET  —'}"
+                                            <TextBlock Text="{Binding BudgetTier, StringFormat=BUDGET  {0}, FallbackValue='BUDGET'}"
                                                        Style="{StaticResource Eyebrow}" FontWeight="Bold" />
                                         </Border>
                                     </WrapPanel>
-                                    <TextBlock Text="{Binding History[0], FallbackValue='The economy is not active yet—this is the read-only data spine for the future management mode.'}"
+                                    <TextBlock Text="{Binding History[0], FallbackValue='The economy is not active yet. This is the read-only data spine for the future management mode.'}"
                                                Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,4,0,0" />
                                 </StackPanel>
                             </Grid>
@@ -548,6 +554,23 @@
                 </Style>
             </views:DeathScreenView.Style>
         </views:DeathScreenView>
+
+        <!-- Bankruptcy takeover, the economy's terminal path. It binds only Home.BankruptcyScreen,
+             captured from the intact DB (a fold never deletes the career file), so the same
+             restore request flow as the Normal death screen applies. -->
+        <views:BankruptcyView x:Name="BankruptcySurface" Panel.ZIndex="20" DataContext="{Binding Home}"
+                              RestoreRequested="OnDeathRestoreRequested">
+            <views:BankruptcyView.Style>
+                <Style TargetType="views:BankruptcyView">
+                    <Setter Property="Visibility" Value="Visible" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding BankruptcyScreen}" Value="{x:Null}">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </views:BankruptcyView.Style>
+        </views:BankruptcyView>
 
         <!-- The SMGP Level-D floor uses the same terminal visual language, with a fired/out-of-F1
              voice instead of an obituary. This branch reads only the already-projected briefing. -->

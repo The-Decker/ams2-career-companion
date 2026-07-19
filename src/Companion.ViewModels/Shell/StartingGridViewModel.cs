@@ -5,7 +5,7 @@ using Companion.ViewModels.Wizard;
 namespace Companion.ViewModels.Shell;
 
 /// <summary>
-/// The "here's your starting grid" screen — shown AFTER qualifying and BEFORE the race, so the player
+/// The "here's your starting grid" screen, shown AFTER qualifying and BEFORE the race, so the player
 /// sees the qualifying result laid out pole-first as team-coloured driver + car cards before they go
 /// racing, with the race conditions (lap distance, weather, track state, fuel) framing it. DISPLAY-ONLY:
 /// it just projects the already-captured grid order + round conditions, never a fold input.
@@ -57,35 +57,35 @@ public sealed class StartingGridViewModel : ObservableObject
         return seat.IsPlayer ? (playerCarArtDriverId ?? seat.DriverId) : seat.DriverId;
     }
 
-    /// <summary>Heading — "Starting grid" plus the session label on a multi-race weekend.</summary>
+    /// <summary>Heading, "Starting grid" plus the session label on a multi-race weekend.</summary>
     public string Title { get; }
 
     /// <summary>The grid pole-first (index 0 = P1).</summary>
     public IReadOnlyList<StartingGridSlot> Slots { get; }
 
-    /// <summary>The odd grid slots (P1, P3, P5 …) — the FRONT row of each pair, laid across the top,
+    /// <summary>The odd grid slots (P1, P3, P5 …), the FRONT row of each pair, laid across the top,
     /// exactly like a real starting grid (the even slots sit a half-car back on the bottom row).</summary>
     public IReadOnlyList<StartingGridSlot> TopRow => Slots.Where(s => s.Position % 2 == 1).ToList();
 
-    /// <summary>The even grid slots (P2, P4, P6 …) — the BACK row of each pair, offset a half-car.</summary>
+    /// <summary>The even grid slots (P2, P4, P6 …), the BACK row of each pair, offset a half-car.</summary>
     public IReadOnlyList<StartingGridSlot> BottomRow => Slots.Where(s => s.Position % 2 == 0).ToList();
 
     /// <summary>The race conditions shown in the top/bottom bars (lap distance, weather, fuel …).</summary>
     public GridConditions Conditions { get; }
 
-    /// <summary>The cars that DID NOT QUALIFY this round — the SMGP dynamic DNQ field's rotating tail
+    /// <summary>The cars that DID NOT QUALIFY this round, the SMGP dynamic DNQ field's rotating tail
     /// (the pack fields 34 painted cars but the grid caps at ~26, so the slowest 8-9 sit out, and which
     /// ones rotates race to race). Empty for a full-field pack (no DNQ), which hides the strip.</summary>
     public IReadOnlyList<StartingGridDnq> Dnq { get; }
 
-    /// <summary>True when any car missed the cut this round — gates the "DID NOT QUALIFY" strip.</summary>
+    /// <summary>True when any car missed the cut this round, gates the "DID NOT QUALIFY" strip.</summary>
     public bool HasDnq => Dnq.Count > 0;
 
     /// <summary>The DNQ strip header, e.g. "DID NOT QUALIFY · 8".</summary>
     public string DnqHeader => $"DID NOT QUALIFY · {Dnq.Count}";
 }
 
-/// <summary>One car that failed to qualify this round — shown grayed on the grid's DNQ strip so the
+/// <summary>One car that failed to qualify this round, shown grayed on the grid's DNQ strip so the
 /// player can see the rotating field (who narrowly missed, who is a perennial backmarker).</summary>
 public sealed record StartingGridDnq(string Name, string TeamName, string? Number)
 {
@@ -112,7 +112,7 @@ public sealed record StartingGridSlot(
     /// <summary>Car number with a leading # when the entry carries one; empty otherwise.</summary>
     public string NumberLabel => string.IsNullOrEmpty(Number) ? "" : "#" + Number;
 
-    /// <summary>The team's accent colour ("#RRGGBB") — the position box, name accent and card edge.</summary>
+    /// <summary>The team's accent colour ("#RRGGBB"), the position box, name accent and card edge.</summary>
     public string TeamColor => TeamPalette.For(TeamId);
 
     /// <summary>The team's second livery colour. It equals <see cref="TeamColor"/> for a
@@ -140,7 +140,7 @@ public sealed record GridConditions
     public int HumidityPct { get; init; }
     public int FuelPct { get; init; } = 100;
 
-    public string LapDistanceLabel => LapDistanceKm is { } km ? $"{km:0.000} km" : "—";
+    public string LapDistanceLabel => LapDistanceKm is { } km ? $"{km:0.000} km" : "-";
     public string TrackTempLabel => $"{TrackTempC}°C";
     public string AirTempLabel => $"{AirTempC}°C";
     public string WindLabel => $"{WindMs:0.0} m/s";
@@ -148,7 +148,7 @@ public sealed record GridConditions
     public string FuelLabel => $"Fuel {FuelPct}%";
     public string TrackStateLabel => IsWet ? "Track wet" : "Track dry";
 
-    /// <summary>A Segoe MDL2 glyph for the weather — sun (clear) or raindrops (wet).</summary>
+    /// <summary>A Segoe MDL2 glyph for the weather, sun (clear) or raindrops (wet).</summary>
     public string WeatherGlyph => IsWet ? "" : "";
 
     public static GridConditions Unknown { get; } = new();

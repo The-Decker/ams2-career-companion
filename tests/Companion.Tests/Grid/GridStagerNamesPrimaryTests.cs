@@ -48,7 +48,7 @@ public class GridStagerNamesPrimaryTests
         using var dir = new TempInstall(InstalledXml);
         string classPath = Path.Combine(dir.Path, "F-Classic_Gen3.xml");
 
-        // The pinned pack ships STALE values for this livery — the same the generated round
+        // The pinned pack ships STALE values for this livery, the same the generated round
         // carries (no career change this round). The installed file already defines the driver.
         var packBaseline = BaselineDriver(
             name: "G. Morbidelli", raceSkill: 0.50, qualifying: 0.50, aggression: 0.50);
@@ -61,13 +61,13 @@ public class GridStagerNamesPrimaryTests
             packBaselineByLivery: SingleBaseline(packBaseline));
 
         // NAMeS-primary: the installed name/ratings are kept, the stale pinned values are NEVER
-        // written over them — so with no career delta this collapses to a diff-aware no-op.
+        // written over them, so with no career delta this collapses to a diff-aware no-op.
         Assert.True(result.NoOpAlreadyMatches);
         Assert.Null(result.BackupPath);
         Assert.Equal(before, File.ReadAllText(classPath)); // installed file untouched, byte-for-byte
 
         // And the stale pinned name/ratings are provably NOT in the file the game reads (parsed
-        // leniently — the untouched community file still has its malformed dashed comment).
+        // leniently, the untouched community file still has its malformed dashed comment).
         var onDisk = CommunityAiReader.ReadFile(classPath).BaseEntries.Single();
         Assert.Equal("Gianni Morbidelli", onDisk.Name);
         Assert.Equal(0.72, onDisk.RaceSkill!.Value, 3);
@@ -133,7 +133,7 @@ public class GridStagerNamesPrimaryTests
         using var dir = new TempInstall(InstalledXml);
 
         // Pinned baseline == generated (no career change). With the installed file made primary,
-        // the merged file equals the installed file — a NO-OP, nothing written, nothing backed up.
+        // the merged file equals the installed file, a NO-OP, nothing written, nothing backed up.
         var packBaseline = BaselineDriver(name: "G. Morbidelli", raceSkill: 0.50, qualifying: 0.50, aggression: 0.50);
         var generated = Build(Seat(name: "G. Morbidelli", raceSkill: 0.50, qualifying: 0.50, aggression: 0.50));
 
@@ -179,7 +179,7 @@ public class GridStagerNamesPrimaryTests
         // The NAMeS-primary merge is OPT-IN: the low-level Stage without a pinned-pack baseline
         // (dry-run / legacy callers) writes the generated file verbatim, exactly as before. The
         // live staging service (CareerSessionService) always supplies the baseline, so Mike's
-        // install is always protected — this only guards the low-level API's back-compat.
+        // install is always protected, this only guards the low-level API's back-compat.
         var generated = Build(Seat(name: "G. Morbidelli", raceSkill: 0.50, qualifying: 0.50, aggression: 0.50));
 
         var result = GridStager.Stage(generated, dir.Path, Timestamp(0), force: true);

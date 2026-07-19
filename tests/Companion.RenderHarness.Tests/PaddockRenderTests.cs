@@ -12,7 +12,7 @@ namespace Companion.RenderHarness.Tests;
 /// <summary>Off-screen render of the Paddock tab: a real PaddockView over a real PaddockViewModel whose
 /// fake session returns a two-driver / two-team paddock (with a full stat line + bio + quotes). Proves
 /// the master-detail, the DRIVERS/TEAMS toggle DataTriggers, the stat tiles and every StaticResource
-/// resolve without a render-time crash — which a compile can't. Self-skips off Windows.</summary>
+/// resolve without a render-time crash, which a compile can't. Self-skips off Windows.</summary>
 public sealed class PaddockRenderTests
 {
     private sealed class PaddockSession : ICareerSession
@@ -121,7 +121,7 @@ public sealed class PaddockRenderTests
             Assert.Equal(1, CountText(view, "THE UNTOUCHABLE KING"));
             Assert.True(CountText(view, "69") >= 1);   // career wins stat tile
 
-            // Toggle to the TEAMS view — the team dossier renders its motto.
+            // Toggle to the TEAMS view, the team dossier renders its motto.
             vm.ShowTeamsListCommand.Execute(null);
             view.UpdateLayout();
             Assert.True(CountText(view, "THE CROWN NEVER SLIPS") >= 1);

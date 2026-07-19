@@ -86,7 +86,7 @@ public sealed class ShellNavigationTests
 
         // Continue touches twice: the VM front-inserts the entry (preserving its stored year), then
         // the shell re-records it AUTHORITATIVELY from the opened session's summary. The FakeSession's
-        // summary year is 1967, so the last (winning) touch carries it — the gallery card then
+        // summary year is 1967, so the last (winning) touch carries it, the gallery card then
         // resolves its era by the STORED year, not by parsing the name.
         var touched = store.Touched.Last(t => t.Path == "Z:\\careers\\one.ams2career");
         Assert.Equal(1967, touched.SeasonYear);
@@ -97,7 +97,7 @@ public sealed class ShellNavigationTests
     {
         var shell = CreateShell(out var factory, out var store);
         // "Open career…" pre-flights File.Exists (the shell builds the Start VM with the default),
-        // so the target must be a real file on disk. Its contents are irrelevant — the fake factory
+        // so the target must be a real file on disk. Its contents are irrelevant, the fake factory
         // ignores them; only the existence check and the open routing are under test.
         string path = Path.Combine(Path.GetTempPath(), $"open-by-path-{Guid.NewGuid():N}.ams2career");
         File.WriteAllText(path, "not a real career db");
@@ -131,7 +131,7 @@ public sealed class ShellNavigationTests
             shell.Start.OpenCareerCommand.Execute(path);
 
             // The file exists (pre-flight passes) but the factory rejects it: the shell's own
-            // open-failure banner reports and the app stays on Start — never crashes.
+            // open-failure banner reports and the app stays on Start, never crashes.
             Assert.Same(shell.Start, shell.Current);
             Assert.Contains("not a database", shell.StatusError);
         }
@@ -263,7 +263,7 @@ public sealed class ShellNavigationTests
         var session = new FakeSession();
         using var home = new HomeViewModel(session);
 
-        // Round 1: no recommendation yet — the neutral default.
+        // Round 1: no recommendation yet, the neutral default.
         var entry = OpenRace(home);
         Assert.Equal(ResultEntryViewModel.NeutralSlider, entry.SliderUsed);
 
@@ -271,7 +271,7 @@ public sealed class ShellNavigationTests
         home.ConfirmResultCommand.Execute(null);
         ((ConfirmViewModel)home.CurrentContent!).ApplyCommand.Execute(null);
 
-        // Round 2: the fake session now recommends 97 — the prompt is prefilled with it.
+        // Round 2: the fake session now recommends 97, the prompt is prefilled with it.
         var second = OpenRace(home);
         Assert.Equal(97.0, second.SliderUsed);
     }
@@ -316,7 +316,7 @@ public sealed class ShellNavigationTests
         review.SignAndContinueCommand.Execute(null);
 
         // The transition went through the seam, the stale session was disposed, and the
-        // career was REOPENED — a fresh Hub (and Home) over the reopened (latest-season) session.
+        // career was REOPENED, a fresh Hub (and Home) over the reopened (latest-season) session.
         Assert.Equal(new[] { "team.brabham" }, factory.Session.SignedTeams);
         Assert.True(factory.Session.Disposed);
         Assert.Equal(2, factory.OpenCount);
@@ -431,7 +431,7 @@ public sealed class ShellNavigationTests
         // The lens is refreshed in place off the new state (the round count advanced), and the
         // History tab keeps the SAME view-model instance (only its collections re-projected).
         Assert.Same(history, hub.History);
-        Assert.Equal("In progress — 1 of 2 rounds", history.Seasons.Single().ResultText);
+        Assert.Equal("In progress, 1 of 2 rounds", history.Seasons.Single().ResultText);
     }
 
     [Fact]
@@ -569,7 +569,7 @@ public sealed class ShellNavigationTests
 
         public IReadOnlyList<StandingsSnapshot> AllSnapshots() => [];
 
-        /// <summary>The History lens's projection — a single completed season card grows one
+        /// <summary>The History lens's projection, a single completed season card grows one
         /// entry per applied round so the lens can be asserted after Apply.</summary>
         public CareerTimeline CareerTimeline() => new()
         {

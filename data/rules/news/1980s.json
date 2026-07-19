@@ -7,16 +7,16 @@
     "dateline": {
       "1980s": [
         "TRACKSIDE AT {race}, {year}. The wire's red-hot.",
-        "SPORTS DESK — {race}, round {round}.",
+        "SPORTS DESK, {race}, round {round}.",
         "LIVE FROM {race}: the result is through.",
         "FROM THE PIT WALL, {race}, {year}.",
-        "PADDOCK REPORT — {race}, and the classification is posted.",
-        "HOT OFF THE WIRE — {race}, {year}.",
+        "PADDOCK REPORT, {race}, and the classification is posted.",
+        "HOT OFF THE WIRE, {race}, {year}.",
         "GRANDSTAND VIEW, {race}: round {round} is complete.",
-        "TELETYPE FROM {race} — the {year} result is in.",
+        "TELETYPE FROM {race}, the {year} result is in.",
         "PRESS ROOM FEED, {race}: round {round}.",
-        "PRESS ROOM, {race}, {year} — typewriters hammering, deadline looming.",
-        "CHEQUERED FLAG AT {race} — round {round} is in the books."
+        "PRESS ROOM, {race}, {year}, typewriters hammering, deadline looming.",
+        "CHEQUERED FLAG AT {race}, round {round} is in the books."
       ],
       "default": [
         "Report from {race}, {year}.",
@@ -70,7 +70,7 @@
     "champLine": {
       "1980s": [
         "In the title race {player} sits {champPosition}, {champMove}.",
-        "The championship table now reads {player} {champPosition} — {champMove} on the year.",
+        "The championship table now reads {player} {champPosition}, {champMove} on the year.",
         "{player} climbs to {champPosition} in the points, {champMove}.",
         "That's {player} {champPosition} in the standings, {champMove}.",
         "Over on the title sheet {player} holds {champPosition}, {champMove}.",
@@ -206,13 +206,13 @@
       "1980s": [
         "{pool:dateline} {player} WINS {race} for {team}, first in a field of {fieldSize}. The chequered flag confirms the headline. {pool:mediaLine} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} VICTORY for {player} at {race}. The final classification puts the {team} entry {position} in round {round}. {pool:paceLine} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} STOP THE PRESSES — {player} takes the {year} {race} for {team}. The winning result is official. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} STOP THE PRESSES, {player} takes the {year} {race} for {team}. The winning result is official. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} is the {race} winner, delivering {team} the top finish among {fieldSize} starters. {pool:mediaLine} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} WINNER: {player}. At the flag it is {position} for {team} at {race}, with the race entered in the {year} record. {pool:paceLine} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} The back page has its name: {player} wins {race} for {team}. Round {round} belongs in the victory column. {pool:mediaLine} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} Chequered flag and first place for {player} at {race}. {team} owns the winning line on the official sheet. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} Round {round} result: {player} wins at {race}, heading the final order for {team}. {pool:paceLine} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} GLORY for {player} — victory at {race} for {team} in a field of {fieldSize}. The result is in. {pool:mediaLine} {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} GLORY for {player}, victory at {race} for {team} in a field of {fieldSize}. The result is in. {pool:mediaLine} {pool:champLine} {pool:closeGood}"
       ],
       "default": [
         "{player} won {race} for {team}, leading home a field of {fieldSize}. {pool:champLine} {pool:closeGood}",
@@ -221,13 +221,13 @@
     },
     "race.result|podium": {
       "1980s": [
-        "{pool:dateline} Podium for {player} — {position} at {race} for {team} in a field of {fieldSize}. {winner} took the win. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Podium for {player}, {position} at {race} for {team} in a field of {fieldSize}. {winner} took the win. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} puts the {team} machine on the box, home {position} at {race}. The classification lists {winner} first. {pool:paceLine} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} ROSTRUM! {player} banks {position} at {race}; {winner} wins the day and {team} leaves with a top-three result. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} BOX FINISH for {player}: {position} at {race} for {team}. {winner} heads the official order. {pool:mediaLine} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} climbs the rostrum at {race} — {position} in a {fieldSize}-car classification. Victory goes to {winner}. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} climbs the rostrum at {race}, {position} in a {fieldSize}-car classification. Victory goes to {winner}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} Champagne for {player}: {position} at {race} for {team}, with {winner} recorded first. {pool:paceLine} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} PODIUM — {player} banks {position} at {race}, putting {team} in the top three. {winner} won the race. {pool:mediaLine} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} PODIUM, {player} banks {position} at {race}, putting {team} in the top three. {winner} won the race. {pool:mediaLine} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} A top-three result for {player}: {position} at {race} from {fieldSize} starters. {winner} takes the victory. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} Onto the box goes {player}, {position} at {race} for {team}. The winner's line belongs to {winner}. {pool:champLine} {pool:closeGood}"
       ],
@@ -244,7 +244,7 @@
         "{pool:dateline} Points are the return for {player} at {race}, {position} from {fieldSize} starters. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} The final sheet gives {player} {position} and a points finish for {team} at {race}. {pool:paceLine} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} scores at {race}, finishing {position} for {team} as {winner} takes the victory. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} A points result for {player} — {position} at {race}, with the numbers now in the {year} ledger. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A points result for {player}, {position} at {race}, with the numbers now in the {year} ledger. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} Into the points goes {player}, {position} at {race} from a field of {fieldSize}. The return is official. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} brings {team} a points finish at {race}, classified {position}. {winner} owns the win. {pool:champLine} {pool:closeGood}"
       ],
@@ -257,7 +257,7 @@
       "1980s": [
         "{pool:dateline} GIANT-KILLER! {player} brings the {team} car home {position} at {race} {pool:expectationBeat}. {pool:paceLine} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} beats the pre-race estimate at {race}: {position} from {fieldSize} starters against a target of {expected}. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} STOP THE PRESSES — {player} takes {position} at {race} for {team} {pool:expectationBeat}. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} STOP THE PRESSES, {player} takes {position} at {race} for {team} {pool:expectationBeat}. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} The form guide said {expected}; the flag says {position} for {player} and {team} at {race}. {pool:mediaLine} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} ABOVE THE BILLING: {player} finishes {position} at {race}, better than {team}'s pre-race target of {expected}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} moves the {team} entry beyond its forecast, {position} at {race} against {expected}. {pool:paceLine} {pool:champLine} {pool:closeGood}",
@@ -342,7 +342,7 @@
       "1980s": [
         "THE {year} TITLE IS {player}'S. The {team} driver closes the final table as world champion. {pool:seasonClose}",
         "Cue the anthem: {player} is champion of {year}, finishing the campaign {champPosition} for {team}. {pool:seasonClose}",
-        "CHAMPION OF {year} — {player}! The final drivers' standings put the {team} racer first. {pool:seasonClose}",
+        "CHAMPION OF {year}, {player}! The final drivers' standings put the {team} racer first. {pool:seasonClose}",
         "IT'S {player}'S TITLE IN {year}. World champion is the line on the final table, with {team} beside the name. {pool:seasonClose}",
         "The season closes with {player} as {year} world champion for {team}. The championship result is official. {pool:seasonClose}",
         "THE CROWN IS {player}'S. Across {year}, the {team} driver earns the World Drivers' Championship. {pool:seasonClose}",
@@ -362,7 +362,7 @@
         "THE {year} TITLE BELONGS TO {champLeader}. The final table records {player} {champPosition} for {team}. {pool:seasonClose}",
         "Curtain down on {year}: {champLeader} takes the honours and {player} finishes {champPosition} for {team}. {pool:seasonClose}",
         "{champLeader} is champion of {year}; {player} brings the campaign home {champPosition} for {team}. {pool:seasonClose}",
-        "Final tally of {year} — {champLeader} on top, {player} {champPosition} for {team}. The championship order is fixed. {pool:seasonClose}",
+        "Final tally of {year}, {champLeader} on top, {player} {champPosition} for {team}. The championship order is fixed. {pool:seasonClose}",
         "The {year} crown goes to {champLeader}, with {player} ending the year {champPosition} for {team}. {pool:seasonClose}",
         "{champLeader} is champion of {year}; {player} closes the campaign {champPosition} for {team}. The final table is set. {pool:seasonClose}",
         "FINAL TABLE, {year}: {champLeader} takes the crown, with {player} {champPosition} for {team}. The result is filed. {pool:seasonClose}"

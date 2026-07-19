@@ -1,0 +1,102 @@
+{
+  "$comment": "Season dossier pack S14, The Jewel Formula (Golden Circus opener). Season-scoped coverage for the year the jewel formula debuts: the most beautiful machines the circus has ever built, the closest grid ever timed, the spectacle polished. Ids are stable rendezvous keys, never rename. Read-side only: editing this file changes display, never replay.",
+  "version": 1,
+  "templates": [
+    {
+      "id": "s14.season-started.covers-off",
+      "event": "seasonStarted",
+      "eras": ["smgp"],
+      "seasons": [14],
+      "headline": "THE JEWEL FORMULA: the covers come off the golden age",
+      "deck": "The most beautiful field the circus has ever parked",
+      "summary": "Season fourteen opens with the jewel formula unveiled and a grid timed closer than any in the almanac.",
+      "sections": {
+        "lead": "{pool:dateline} They rolled them out one by one under the launch-hall lights, twenty-four machines drawn like silverwork, and the paddock ran out of superlatives before the third garage. They are calling it the jewel formula, and for once the name undersells the merchandise.",
+        "context": "The new cars were drawn to race close and built to bring their drivers home, and the stopwatch says the whole field fits inside a blink. The grandees polish their heritage; the engineers polish everything else. {pool:paddockBuzz}",
+        "close": "Sixteen rounds to find out whether beauty pays. The board, as ever, keeps the accounts."
+      }
+    },
+    {
+      "id": "s14.race-won.cut-gem",
+      "event": "raceWon",
+      "eras": ["smgp"],
+      "seasons": [14],
+      "headline": "{subject} wins[[?venue: at {venue}]], a victory cut like a gemstone",
+      "deck": "Flawless facets under the golden circus lights",
+      "summary": "{subject} won[[?venue: at {venue}]][[?round: in round {round}]].",
+      "sections": {
+        "lead": "{pool:dateline} In the year of the jewel formula, {subject} produced the gem-cut afternoon: no wasted movement, no rough edges, a win faceted so cleanly the rest of the field could see themselves in it. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: The championship account glitters early: {subject} at {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s14.podium.gilt-edge",
+      "event": "podiumFinish",
+      "eras": ["smgp"],
+      "seasons": [14],
+      "headline": "{subject} on the podium[[?venue: at {venue}]], gilt-edged company",
+      "deck": "The rostrum is the year's brightest shelf",
+      "summary": "{subject} finished on the podium[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The jewel year makes no room for cheap silverware. {subject} earned a place on a rostrum the whole paddock covets, in a season where the distance between third and nowhere is measured in heartbeats. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: Championship: {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s14.pole.blink",
+      "event": "polePosition",
+      "eras": ["smgp"],
+      "seasons": [14],
+      "headline": "POLE for {subject}[[?venue: at {venue}]], fastest in a field covered by a blink",
+      "deck": "The closest grid ever timed has a sharpest edge",
+      "summary": "{subject} took pole position[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The jewel formula has squeezed the grid until the whole field fits inside a blink, and out of that blink came {subject} with the lap. Pole this year is not won by tenths; it is won by whiskers. {pool:swBoard}",
+        "close": "Tomorrow the field arrives at the first corner together. The jewel formula insists on it."
+      }
+    },
+    {
+      "id": "s14.lead-taken.showcase",
+      "event": "championshipLeadTaken",
+      "eras": ["smgp"],
+      "seasons": [14],
+      "headline": "{subject} leads the jewel year: the showcase has a headline act",
+      "deck": "Top of the board in the golden age's first season",
+      "summary": "{subject} took the championship lead in season fourteen.",
+      "sections": {
+        "lead": "{pool:dateline} The big board of the golden age has its headline act: {subject} leads the jewel formula's debut season, and the name sits up there as if it were engraved. {pool:swBoard}",
+        "stats": "{pool:rrStatLine}",
+        "close": "Engraving is easy to read and hard to hold. A showcase year shines the brightest lights on whoever stands in front."
+      }
+    },
+    {
+      "id": "s14.retired-mechanical.flaw-in-the-stone",
+      "event": "retiredMechanical",
+      "eras": ["smgp"],
+      "seasons": [14],
+      "headline": "A flaw in the stone: the machine fails {subject}[[?venue: at {venue}]]",
+      "deck": "Even jewels crack",
+      "summary": "{subject} retired with mechanical failure[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The jewel formula's machines are beautiful, closely matched, and on afternoons like this still machinery. Something inside {subject}'s car gave way[[?venue: at {venue}]], and the gleaming bodywork rolled silent to the grass. {pool:wrenchNote}",
+        "context": "The crew will find the flaw by lamplight and polish it out by morning. {pool:swLadder}",
+        "close": "The board records a blank. The garage records a fix."
+      }
+    },
+    {
+      "id": "s14.retired-driver-error.scuffed-finish",
+      "event": "retiredDriverError",
+      "eras": ["smgp"],
+      "seasons": [14],
+      "headline": "{subject} scuffs the bodywork[[?venue: at {venue}]], the jewel year takes a chip",
+      "deck": "The armco is not interested in the paintwork",
+      "summary": "{subject} crashed out[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The prettiest field the circus has ever built still bends metal the old way. {subject} asked a fraction too much[[?venue: at {venue}]], and the armco, unimpressed by the paintwork, collected its due. The driver walked away. {pool:swCrowd}",
+        "close": "The car goes back for re-polishing. The lesson requires no buffing."
+      }
+    }
+  ]
+}

@@ -6,7 +6,7 @@ namespace Companion.Tests.Ams2;
 /// The active-set rewriter (the 1985-pack shape): a fixed budget of active LIVERY_OVERRIDE slots
 /// plus alternates kept INSIDE one giant comment with manual copy-paste instructions. The
 /// rewriter does the pack's documented procedure automatically: copy a needed alternate out of
-/// the comment into the slot of an active car the round does not field — comment preserved,
+/// the comment into the slot of an active car the round does not field, comment preserved,
 /// minimal line edits, backup-first.
 /// </summary>
 public sealed class ActiveSetRewriterTests : IDisposable
@@ -76,7 +76,7 @@ public sealed class ActiveSetRewriterTests : IDisposable
     public void Apply_LiftsAnAlternateIntoADisplacedSlot_PreservingTheComment()
     {
         string path = Write(Retro1985Shape);
-        // The round fields Tyrrell #3, Skoal #9 and Skoal #10 — but NOT Osella #24.
+        // The round fields Tyrrell #3, Skoal #9 and Skoal #10, but NOT Osella #24.
         string[] desired =
             ["Tyrrell Racing Organisation #3", "Skoal Bandit Formula 1 Team #9", "Skoal Bandit Formula 1 Team #10"];
 

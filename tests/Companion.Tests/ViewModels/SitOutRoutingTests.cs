@@ -7,7 +7,7 @@ using Companion.ViewModels.Shell;
 namespace Companion.Tests.ViewModels;
 
 /// <summary>
-/// Character death &amp; injury, Slice 4 (shell routing — the review-confirmed gap): an injured round must
+/// Character death &amp; injury, Slice 4 (shell routing, the review-confirmed gap): an injured round must
 /// route to the auto-sim sit-out screen, NEVER manual result entry, and its Continue must fold the
 /// auto-simulated round. Without this the just-built injury mechanic is silently bypassed (the player
 /// "races while injured" and never heals).
@@ -23,7 +23,7 @@ public sealed class SitOutRoutingTests
             {
                 RaceSuspensionRemaining = 1,
                 SeasonEnding = false,
-                Headline = "INJURED — auto-simulating round (1 remaining)",
+                Headline = "INJURED, auto-simulating round (1 remaining)",
             },
         };
         using var home = new HomeViewModel(session);

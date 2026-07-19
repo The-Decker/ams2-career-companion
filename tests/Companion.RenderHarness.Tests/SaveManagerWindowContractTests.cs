@@ -45,6 +45,32 @@ public sealed class SaveManagerWindowContractTests
             attribute => attribute.Value.Contains("IsDegraded", StringComparison.Ordinal));
     }
 
+    [Fact]
+    public void DegradedSaveSlot_RendersItsRecoveredLabel_AndDimsTheCard()
+    {
+        XDocument document = XDocument.Load(Path.Combine(
+            FindRepositoryRoot(), "src", "Companion.App", "Views", "SaveManagerWindow.xaml"));
+
+        // The slot's Label binding renders the store's recovered label verbatim
+        // ("<slot> (recovered, details unreadable)"), the row is never hidden or renamed away.
+        Assert.Single(document.Descendants(),
+            element =>
+                element.Name.LocalName == "TextBlock" &&
+                Attribute(element, "Text") == "{Binding Label}");
+
+        // The degraded card is presented dimmed: an IsDegraded trigger lowers the panel opacity.
+        XElement dimmer = Assert.Single(document.Descendants(),
+            element =>
+                element.Name.LocalName == "DataTrigger" &&
+                Attribute(element, "Binding")?.Contains("IsDegraded", StringComparison.Ordinal) == true &&
+                Attribute(element, "Value") == "True" &&
+                element.Descendants().Any(setter =>
+                    setter.Name.LocalName == "Setter" &&
+                    Attribute(setter, "Property") == "Opacity"));
+        Assert.Contains(dimmer.Descendants(),
+            setter => Attribute(setter, "Value") == "0.68");
+    }
+
     private static string? Attribute(XElement element, string localName) =>
         element.Attributes().FirstOrDefault(attribute => attribute.Name.LocalName == localName)?.Value;
 

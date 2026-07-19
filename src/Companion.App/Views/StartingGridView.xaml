@@ -265,7 +265,7 @@
             <StackPanel VerticalAlignment="Center">
                 <TextBlock Text="STARTING GRID" Style="{StaticResource H2}" />
                 <TextBlock Style="{StaticResource Muted}" Margin="0,2,0,0"
-                           Text="Your grid for the race — pole first. Start the race when you're ready." />
+                           Text="Your grid for the race, pole first. Start the race when you're ready." />
             </StackPanel>
 
             <Border x:Name="DesktopConditionsPanel" HorizontalAlignment="Right" VerticalAlignment="Top" CornerRadius="8" Padding="4"
@@ -479,7 +479,7 @@
                                                        Foreground="{DynamicResource AccentTextBrush}"
                                                        Text="{Binding DataContext.Briefing.Briefing.Round.Laps,
                                                                       RelativeSource={RelativeSource AncestorType={x:Type views:HomeView}},
-                                                                      Mode=OneWay, FallbackValue='—'}" />
+                                                                      Mode=OneWay, FallbackValue='-'}" />
                                             <TextBlock Text=" LAPS" FontFamily="{StaticResource DisplayFont}"
                                                        FontSize="10" FontWeight="Bold" VerticalAlignment="Bottom"
                                                        Margin="0,0,0,3" />

@@ -5,7 +5,7 @@ namespace Companion.Tests.Data;
 
 /// <summary>
 /// The FILE-level save &amp; reload store (character-death plan §4). Snapshots are whole career-DB copies
-/// living in a sibling <c>Saves/&lt;stem&gt;/</c> folder — entirely outside the fold/replay contract — so
+/// living in a sibling <c>Saves/&lt;stem&gt;/</c> folder, entirely outside the fold/replay contract, so
 /// these tests exercise pure file mechanics: snapshot → mutate → restore reverts; list newest-first;
 /// delete; and the Hardcore-death destructive helper.
 /// </summary>
@@ -28,7 +28,7 @@ public sealed class SaveSlotStoreTests
                 db.Connection, tmp.Path, "manual-001", "checkpoint",
                 seasonYear: 1967, round: 3, createdUtc: Utc, isAutosave: false);
 
-            // Mutate AFTER the snapshot — the change must be undone by a restore.
+            // Mutate AFTER the snapshot, the change must be undone by a restore.
             using var mutate = db.Connection.CreateCommand();
             mutate.CommandText = "UPDATE career SET name = 'Mutated' WHERE id = 1;";
             mutate.ExecuteNonQuery();

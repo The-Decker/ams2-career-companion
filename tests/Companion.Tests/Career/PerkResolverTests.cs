@@ -131,7 +131,7 @@ public sealed class PerkResolverTests
         Assert.Equal(-0.02, veteran.TalentDelta("raceSkill"), 6);
         Assert.Equal(0.0, veteran.TalentDelta("qualifyingSkill"));
 
-        // wonderkid: xpRate ageWindow +0.40 @ageLtPeak / −0.25 @ageGtePeak — a blanket XP multiplier.
+        // wonderkid: xpRate ageWindow +0.40 @ageLtPeak / −0.25 @ageGtePeak, a blanket XP multiplier.
         var wonderYoung = PerkResolver.Resolve(["wonderkid"], rules, new HashSet<string> { "ageLtPeak" });
         Assert.Equal(1.40, wonderYoung.XpMult("ageWindow"), 6);
         var wonderOld = PerkResolver.Resolve(["wonderkid"], rules, new HashSet<string> { "ageGtePeak" });
@@ -156,7 +156,7 @@ public sealed class PerkResolverTests
 
         // one_trick: statDelta "chosenFlavor" +0.30 (benefit) + statPoints "lockToOne" (drawback).
         // The chosenFlavor placeholder resolves to the picked rating, and lockToOne records it as the
-        // ONE rating in-career development may raise — both were fully inert before the fix.
+        // ONE rating in-career development may raise, both were fully inert before the fix.
         var picked = PerkResolver.Resolve(["one_trick"], rules, activeConditions: null, chosenFlavor: "tyreManagement");
         Assert.Equal(0.30, picked.TalentDelta("tyreManagement"), 6);
         Assert.Equal(0.0, picked.TalentDelta("wetSkill")); // only the picked flavor moves
@@ -186,7 +186,7 @@ public sealed class PerkResolverTests
     [Fact]
     public void Resolve_SponsorMagnet_CarriesThePayBudgetTheOfferMarketReads()
     {
-        // sponsor_magnet's headline benefit is income/payBudgetBu +2.0 — dead before the fix (no
+        // sponsor_magnet's headline benefit is income/payBudgetBu +2.0, dead before the fix (no
         // consumer). It must now surface on the modifier so OfferScore's pay term reads it.
         var mods = PerkResolver.Resolve(["sponsor_magnet"], Rules());
         Assert.Equal(2.0, mods.PayBudgetBu, 6);
@@ -195,7 +195,7 @@ public sealed class PerkResolverTests
     [Fact]
     public void Resolve_EveryShippedArchetype_ProducesAResolvableModifier()
     {
-        // No archetype names a perk the resolver can't map — resolving each preset never throws and
+        // No archetype names a perk the resolver can't map, resolving each preset never throws and
         // never leaves an identity where the perks clearly move a lever.
         var rules = Rules();
         foreach (var archetype in rules.Creation.Archetypes)

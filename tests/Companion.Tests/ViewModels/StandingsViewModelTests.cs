@@ -207,7 +207,7 @@ public class StandingsViewModelTests
     public void AfterARound_AConstructorsSeason_ShowsAllThreeTabs_EachSelectable()
     {
         // A round has been applied to a season WITH a constructors championship (1967-style):
-        // Drivers, Constructors and Round matrix must all be present and reachable — the exact
+        // Drivers, Constructors and Round matrix must all be present and reachable, the exact
         // regression Mike hit where only Drivers showed after entering a round.
         var vm = Vm();
 

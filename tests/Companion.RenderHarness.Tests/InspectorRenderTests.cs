@@ -33,7 +33,7 @@ public sealed class InspectorRenderTests
                 Chain = new JournalChain
                 {
                     Entity = "driver.hulme",
-                    Title = "Why P2 — Denny Hulme, Round 3",
+                    Title = "Why P2, Denny Hulme, Round 3",
                     Summary = "Finished P2 against an expected P5.",
                     Contributions =
                     [
@@ -57,7 +57,7 @@ public sealed class InspectorRenderTests
             Assert.True(vm.IsInspectorOpen);
 
             var texts = host.VisibleTexts();
-            Assert.Contains("Why P2 — Denny Hulme, Round 3", texts);
+            Assert.Contains("Why P2, Denny Hulme, Round 3", texts);
             Assert.Contains("Finished P2 against an expected P5.", texts);
             // Both contribution row labels + values render in the realised tree.
             Assert.Contains(texts, t => t.Contains("Expected finish"));

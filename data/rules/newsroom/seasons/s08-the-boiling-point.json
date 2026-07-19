@@ -1,0 +1,101 @@
+{
+  "$comment": "Season dossier pack S08, The Boiling Point (Horsepower War act). Season-scoped coverage for the great duel year: the king and the insurgent at full flame, war metaphors for the title fight, engines at violent maturity, and a circus learning to police itself. Ids are stable rendezvous keys, never rename. Read-side only: editing this file changes display, never replay.",
+  "version": 1,
+  "templates": [
+    {
+      "id": "s08.season-started.loaded-gun",
+      "event": "seasonStarted",
+      "eras": ["smgp"],
+      "seasons": [8],
+      "headline": "THE BOILING POINT: the king, the insurgent, and a winter's worth of kindling",
+      "deck": "The duel the grandstand waited a decade for",
+      "summary": "Season eight opens with the insurgent finally armed with establishment power and the champion refusing to blink.",
+      "sections": {
+        "lead": "{pool:dateline} For a decade this paddock asked one question: what happens when the backstreet garage gets real thunder under the bodywork. This winter the question was answered with a signature, and the loaded gun is finally loaded. The champion, asked whether the insurgent worried him, simply looked at his own car.",
+        "context": "Every garage has picked a side and denied it in the same sentence. The war metaphors write themselves this year, and for once the racing promises to deserve them. {pool:paddockBuzz}",
+        "close": "Sixteen rounds at full flame. The circus waited ten years for this; it can bear sixteen rounds more."
+      }
+    },
+    {
+      "id": "s08.race-won.battle-honours",
+      "event": "raceWon",
+      "eras": ["smgp"],
+      "seasons": [8],
+      "headline": "{subject} WINS[[?venue: at {venue}]], a battle won in a season-long war",
+      "deck": "Full flame, front line, flag first",
+      "summary": "{subject} won[[?venue: at {venue}]][[?round: in round {round}]].",
+      "sections": {
+        "lead": "{pool:dateline} This was not a race, it was an engagement: two camps, one front line, and {subject} holding it when the flag fell. The boiling point forges its winners the way a furnace forges steel, and tonight one garage flies its colours over the whole front. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: The war ledger reads {ord:champPosition} for {subject}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s08.podium.third-wheel",
+      "event": "podiumFinish",
+      "eras": ["smgp"],
+      "seasons": [8],
+      "headline": "{subject} on the podium[[?venue: at {venue}]], the honour of third wheel",
+      "deck": "Between the titans, somebody stood tallest of the rest",
+      "summary": "{subject} finished on the podium[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The titans took the top steps and the headlines, and {subject} took everything left, which today was the whole of the rest of the field. A podium beside two armies is not a consolation; it is a border held. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: Championship: {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s08.pole.front-line",
+      "event": "polePosition",
+      "eras": ["smgp"],
+      "seasons": [8],
+      "headline": "POLE for {subject}[[?venue: at {venue}]], the front line drawn at full flame",
+      "deck": "First ground taken before the first corner",
+      "summary": "{subject} took pole position[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} In a war, ground taken before the battle is worth double. {subject} holds pole[[?venue: at {venue}]], the first yard of the front line, and the other camp has a long night of maps ahead. {pool:swBoard}",
+        "close": "Pole is a promise. Tomorrow decides whether it was a threat."
+      }
+    },
+    {
+      "id": "s08.lead-taken.high-ground",
+      "event": "championshipLeadTaken",
+      "eras": ["smgp"],
+      "seasons": [8],
+      "headline": "{subject} takes the high ground of the boiling point",
+      "deck": "The summit changes hands at the height of the war",
+      "summary": "{subject} took the championship lead in season eight.",
+      "sections": {
+        "lead": "{pool:dateline} The big board's top line has a new occupant, and in this season that line is a trench, a throne, and a target all at once. {subject} leads the boiling point, and the other camp is already loading for the reply. {pool:swBoard}",
+        "stats": "{pool:rrStatLine}",
+        "close": "Wars are not won by holding the summit for a week. The defence begins at the next flag."
+      }
+    },
+    {
+      "id": "s08.retired-mechanical.bomb-with-mirrors",
+      "event": "retiredMechanical",
+      "eras": ["smgp"],
+      "seasons": [8],
+      "headline": "{subject} stops[[?venue: at {venue}]], a bomb with mirrors, defused",
+      "deck": "Violent maturity collects its maintenance fee",
+      "summary": "{subject} retired with mechanical failure[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The men who build these engines call them fully mature, and the men who drive them call them bombs with mirrors. Today the bomb went quiet under {subject}[[?venue: at {venue}]] without exploding, which in this season counts as mercy. {pool:wrenchNote}",
+        "close": "The crew counts what is salvageable. The war cannot afford many Sundays like this one."
+      }
+    },
+    {
+      "id": "s08.retired-driver-error.boiled-over",
+      "event": "retiredDriverError",
+      "eras": ["smgp"],
+      "seasons": [8],
+      "headline": "{subject} boils over[[?venue: at {venue}]], the limit found at full flame",
+      "deck": "In the hottest season, tempers and tyres give out together",
+      "summary": "{subject} crashed out[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} Every duel has a corner where the bravest option and the correct option stop being the same thing. {subject} chose brave[[?venue: at {venue}]], and the armco delivered the correction. The driver walked; the other camp noted it down. {pool:swCrowd}",
+        "close": "The stewards are watching this season harder than any before it. The frights are being counted now."
+      }
+    }
+  ]
+}

@@ -9,11 +9,11 @@ using Companion.ViewModels.Services;
 namespace Companion.Tests.Data;
 
 /// <summary>
-/// M3 slice 4 — the championship title fold + the Madonna title defense, end to end over the
+/// M3 slice 4, the championship title fold + the Madonna title defense, end to end over the
 /// REAL carryover machinery. Winning the title arms the defense: the champion is reseated onto
-/// the top ladder car, the RESERVED challenger (authored but never entered — the Ceara
+/// the top ladder car, the RESERVED challenger (authored but never entered, the Ceara
 /// convention) is introduced into a real car, and rounds 1 + 2 of the new season resolve under
-/// the defense rule — at least one win keeps the seat, losing both fires the player down the
+/// the defense rule, at least one win keeps the seat, losing both fires the player down the
 /// ladder with the challenger taking the champion car. Every path re-simulates byte-identically
 /// (this exercises the multi-season rollover verifier over SmgpState's structural equality).
 /// </summary>
@@ -25,7 +25,7 @@ public sealed class SmgpTitleDefenseTests : IDisposable
     private const string SeatD = "Stock Livery #4"; // team.d  LEVEL D  (the floor)
     private const string SeatE = "Stock Livery #5"; // team.e  LEVEL C  (the challenger's own car)
     // The forced title-defense challenger is a REAL authored entry (like smgp-1's G. Ceara at
-    // Bullets) — DefenseChallenger picks the authored Ceara id even with an entry, and the clean
+    // Bullets), DefenseChallenger picks the authored Ceara id even with an entry, and the clean
     // seat model needs him racing in his own car (it introduces nobody).
     private const string Challenger = SmgpSchedule.CearaDriverId;
     // The clean-swap player is their OWN distinct driver, so replay scores them under the synthetic id.
@@ -69,9 +69,9 @@ public sealed class SmgpTitleDefenseTests : IDisposable
             Assert.DoesNotContain(seats, s => s.DriverId == "driver.a"); // the champion car's AI benches
             Assert.Equal(5, seats.Count);
 
-            // R1: the forced challenge, player ahead — the defense is decided but resolves at R2.
+            // R1: the forced challenge, player ahead, the defense is decided but resolves at R2.
             ApplyRound(s2, playerWins: true, rival: ForcedCall());
-            // R2: player behind — SmgpRules.TitleDefense(round1, round2) still says KEPT.
+            // R2: player behind, SmgpRules.TitleDefense(round1, round2) still says KEPT.
             ApplyRound(s2, playerWins: false, rival: ForcedCall());
         }
 
@@ -110,7 +110,7 @@ public sealed class SmgpTitleDefenseTests : IDisposable
             var after = StateStore.ReadRoundPlayerState(db, season2, 2)!.Player.Smgp!;
             Assert.False(after.TitleDefense);
             // No team.dardan authored → the structural demotion: first seat one tier below A (B).
-            // CLEAN: only the player moves — Madonna reverts to Senna, the challenger keeps his car.
+            // CLEAN: only the player moves, Madonna reverts to Senna, the challenger keeps his car.
             Assert.Equal(SeatB, after.CurrentSeatLivery);
             Assert.Empty(after.AiSeatOverrides);
 

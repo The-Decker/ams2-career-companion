@@ -138,7 +138,7 @@ public class StateStoreTests
             [(1, afterRound1), (2, afterRound2)],
             StateStore.ReadRoundPlayerStates(db, seasonId));
 
-        // Folding a round twice is a bug — the strict insert must throw, never replace.
+        // Folding a round twice is a bug, the strict insert must throw, never replace.
         Assert.ThrowsAny<Microsoft.Data.Sqlite.SqliteException>(() =>
             StateStore.InsertRoundPlayerState(db, seasonId, 1, afterRound1));
     }

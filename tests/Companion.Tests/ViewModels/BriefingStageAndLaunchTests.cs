@@ -56,7 +56,7 @@ public sealed class BriefingStageAndLaunchTests
     public void StageAndLaunch_WhenStagingFails_DoesNotLaunch()
     {
         var session = new StageLaunchSession();
-        session.StageOutcomes.Enqueue(Failed("Staging aborted — fix the preflight errors above and stage again."));
+        session.StageOutcomes.Enqueue(Failed("Staging aborted, fix the preflight errors above and stage again."));
         var watcher = new RecordingWatcher();
         var vm = new BriefingViewModel(session, watcher);
 

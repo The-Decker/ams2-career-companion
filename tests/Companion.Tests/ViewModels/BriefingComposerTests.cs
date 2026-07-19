@@ -20,7 +20,7 @@ public class BriefingComposerTests
     }
 
     /// <summary>Every 1967 round is authored with practice+qualifying at 60 min and four Clear
-    /// weather slots per session (practice/qualifying/race) — the invariant block both real-round
+    /// weather slots per session (practice/qualifying/race), the invariant block both real-round
     /// tests share, parameterised only by laps/opponents/date/start.</summary>
     private static IReadOnlyList<(string Section, string Label, string Value)> ExpectedSettings(
         string track, string opponents, string laps, string date) =>
@@ -74,7 +74,7 @@ public class BriefingComposerTests
         Assert.Contains("64 laps", briefing.FuelNote);
         Assert.Contains("don't refuel", briefing.FuelNote);
 
-        Assert.Equal("Dutch Grand Prix — placeholder: Spielberg_Vintage",
+        Assert.Equal("Dutch Grand Prix, placeholder: Spielberg_Vintage",
             BriefingComposer.ComposeTitle(briefing));
     }
 
@@ -88,7 +88,7 @@ public class BriefingComposerTests
         Assert.False(briefing.IsPlaceholder);
         Assert.Equal("Kyalami Racing Circuit", briefing.VenueDisplayName);
 
-        // grid.size 20 (the FULL 20-car skinpack roster — no more 11-car Kyalami) - 1 = 19.
+        // grid.size 20 (the FULL 20-car skinpack roster, no more 11-car Kyalami) - 1 = 19.
         Assert.Equal(
             ExpectedSettings(track: "Kyalami_Historic", opponents: "19", laps: "80", date: "1967-01-02"),
             briefing.Settings.Select(s => (s.Section, s.Label, s.Value)));
@@ -121,7 +121,7 @@ public class BriefingComposerTests
     public void Compose_WeekendWithoutPerRaceWeather_FallsBackToRoundLevelWeatherSlots()
     {
         // A round with a weekend block whose RACE authors no per-session weather, but the round-level
-        // setupGuide DOES — the composer must fall back to it and emit one Race weather row per slot.
+        // setupGuide DOES, the composer must fall back to it and emit one Race weather row per slot.
         var pack = TestPackBuilder.TwoRoundPack();
         var round = pack.Season.Rounds[0] with
         {
@@ -147,7 +147,7 @@ public class BriefingComposerTests
                 .Select(s => (s.Label, s.Value)));
 
         // Practice/Qualifying authored neither a duration nor weather → no section rows for them
-        // (and they never fall back to the round-level weather — that is the race's).
+        // (and they never fall back to the round-level weather, that is the race's).
         Assert.DoesNotContain(briefing.Settings, s => s.Section == "Practice");
         Assert.DoesNotContain(briefing.Settings, s => s.Section == "Qualifying");
     }

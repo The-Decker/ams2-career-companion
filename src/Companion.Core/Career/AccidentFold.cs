@@ -41,7 +41,7 @@ public static class AccidentFold
 {
     public static AccidentFoldResult Apply(AccidentFoldContext ctx)
     {
-        // ONE draw, from a fresh per-round stream — independent of every other stream, so re-creating it
+        // ONE draw, from a fresh per-round stream, independent of every other stream, so re-creating it
         // on replay rolls the same d500 and nothing else shifts.
         int roll = new StreamFactory(ctx.MasterSeed)
             .CreateStream(CareerStreams.Accident, ctx.Year, ctx.Round, "player")
@@ -116,9 +116,9 @@ public static class AccidentFold
         return outcome.Kind switch
         {
             AccidentOutcomeKind.MinorInjury => outcome.MissRaces == 1
-                ? $"{who} shaken in a crash — ruled out of the next race"
-                : $"{who} injured in a crash — out for the next {outcome.MissRaces} races",
-            AccidentOutcomeKind.SeasonEnding => $"{who}'s season ends in the barriers — out until next year",
+                ? $"{who} shaken in a crash, ruled out of the next race"
+                : $"{who} injured in a crash, out for the next {outcome.MissRaces} races",
+            AccidentOutcomeKind.SeasonEnding => $"{who}'s season ends in the barriers, out until next year",
             AccidentOutcomeKind.Death => $"Tragedy: {who} killed in a racing accident",
             _ => null,
         };

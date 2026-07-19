@@ -6,7 +6,7 @@ namespace Companion.ViewModels.Services;
 /// The ONE competitor-id → display-name rule for every screen (standings tabs, round matrix,
 /// confirm movements, season review): driver ids resolve through the pack's drivers.json,
 /// constructor keys through the pack's teams.json (career-mode constructor standings carry
-/// the pack teamId — the grid seats' TeamId feeds the engine's ConstructorId — so
+/// the pack teamId, the grid seats' TeamId feeds the engine's ConstructorId, so
 /// "team.brabham" resolves to the pack-authored historical name "Brabham-Repco"), and
 /// anything unknown falls back to the raw id. Community packs author their own names;
 /// nothing is hardcoded here.

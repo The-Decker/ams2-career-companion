@@ -9,7 +9,7 @@ namespace Companion.Tests.Data;
 /// <summary>
 /// The opt-in alternate-track mechanism at career creation (Mike's rule): the flagged round is
 /// swapped to its mod alternate ONLY when the player ticked it on AND the mod is installed; with the
-/// tick off, or the mod missing, the pinned season keeps its base default — no round ever silently
+/// tick off, or the mod missing, the pinned season keeps its base default, no round ever silently
 /// depends on a mod. The transformed pack is pinned, so it replays byte-identically.
 /// </summary>
 public sealed class AlternateTracksCreationTests : IDisposable

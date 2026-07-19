@@ -66,7 +66,7 @@ public sealed class DynastyEconomyReviewFixTests : IDisposable
         Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
 
         // The terminal contract: the season is NOT completed, no season settlement banked, no
-        // offers rolled — exactly the outcome the Apply path already guarantees.
+        // offers rolled, exactly the outcome the Apply path already guarantees.
         using var verify = CareerDatabase.Open(careerPath);
         var season = CareerStore.ReadSeasons(verify).Single();
         Assert.NotEqual("complete", season.Status);
@@ -179,7 +179,7 @@ public sealed class DynastyEconomyReviewFixTests : IDisposable
         Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
 
         // Tamper the STORED (already-folded) economy.decision row into a semantically-impossible one
-        // that still parses — sign a sponsor that is not on the board. On re-fold the economy fold
+        // that still parses, sign a sponsor that is not on the board. On re-fold the economy fold
         // throws; the report-only contract requires a reported divergence, never a crash.
         using (var db = CareerDatabase.Open(careerPath))
         {
@@ -246,7 +246,7 @@ public sealed class DynastyEconomyReviewFixTests : IDisposable
 
         var statement = session.EconomyDashboard()!.Statement;
         Assert.Equal("+500", Assert.Single(statement, l => l.Label.Contains("sign sponsor", StringComparison.Ordinal)).Net);
-        // A zero-money line reads blank, matching the pending-decision display — never "+0".
+        // A zero-money line reads blank, matching the pending-decision display, never "+0".
         Assert.Equal("", Assert.Single(statement, l => l.Label.Contains("drop sponsor", StringComparison.Ordinal)).Net);
     }
 
@@ -264,7 +264,7 @@ public sealed class DynastyEconomyReviewFixTests : IDisposable
         store.Touch(path, "Revived", 1967);
         Assert.Equal("bankrupt", store.Load().Single(c => c.Path == path).TerminalState);
 
-        // An observed touch with a live (null) state clears it — the restored career un-badges.
+        // An observed touch with a live (null) state clears it, the restored career un-badges.
         store.Touch(path, "Revived", 1967, "historical", terminalState: null);
         Assert.Null(store.Load().Single(c => c.Path == path).TerminalState);
     }

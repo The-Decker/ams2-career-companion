@@ -4,7 +4,7 @@ using Companion.Core.Packs;
 namespace Companion.Ams2.Preflight;
 
 /// <summary>A modded vehicle a pack's opt-in field needs, and whether it is installed (its car is
-/// in the extracted content library, and — when the install path is known — the community livery
+/// in the extracted content library, and, when the install path is known, the community livery
 /// override folder for it exists).</summary>
 public sealed record RequiredModVehicle(string VehicleId, string ModName, bool Installed);
 
@@ -19,7 +19,7 @@ public static class ModdedVehiclePreflight
 {
     /// <summary>The pack's required mod vehicle + whether it is installed, or null when the pack
     /// declares no modded field. Installed = the vehicle id is in the library AND (when the
-    /// install path is known) its livery-override folder exists — the override is where the mod's
+    /// install path is known) its livery-override folder exists, the override is where the mod's
     /// skins live, so its absence means the cars would show default liveries.</summary>
     public static RequiredModVehicle? RequiredModVehicleFor(
         SeasonPack pack, Ams2ContentLibrary library, string? installDirectory)
@@ -35,7 +35,7 @@ public static class ModdedVehiclePreflight
     }
 
     /// <summary>True only when the pack HAS a modded field AND the required vehicle mod is
-    /// installed — the condition under which the creation-time transform may add the entries.</summary>
+    /// installed, the condition under which the creation-time transform may add the entries.</summary>
     public static bool CanApplyModdedField(
         SeasonPack pack, Ams2ContentLibrary library, string? installDirectory) =>
         RequiredModVehicleFor(pack, library, installDirectory) is { Installed: true };

@@ -5,7 +5,7 @@ namespace Companion.Core.Character;
 /// <summary>
 /// A player's authored character: the seven stats (five talent + two meta, id → 0..1), the chosen
 /// perk ids, and the CP not yet spent. This is the INPUT written once at creation (journaled as
-/// <c>player.character</c>) and folded into <c>PlayerCareerState</c> — the sim derives the
+/// <c>player.character</c>) and folded into <c>PlayerCareerState</c>, the sim derives the
 /// player-seat rating writes and the <see cref="PlayerPerkModifiers"/> from it deterministically, so
 /// the same profile reproduces the career byte-for-byte (docs/dev/character-system.md §5-6).
 /// </summary>
@@ -26,7 +26,7 @@ public sealed record CharacterProfile
 
     public required IReadOnlyList<string> PerkIds { get; init; }
 
-    /// <summary>The player's chosen driver name — the identity the whole app uses (news, standings,
+    /// <summary>The player's chosen driver name, the identity the whole app uses (news, standings,
     /// dossier), rather than the historical driver whose seat they took. Empty for a legacy
     /// character created before naming existed (then the app falls back to the seat's driver).</summary>
     public string Name { get; init; } = "";
@@ -38,11 +38,11 @@ public sealed record CharacterProfile
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string? CountryCode { get; init; }
 
-    /// <summary>The driver's REAL age in their first season — the character's own age, set at
+    /// <summary>The driver's REAL age in their first season, the character's own age, set at
     /// creation, not borrowed from the historical driver whose seat they took. Drives the season-end
     /// aging curve and the contract-offer age risk (a 19-year-old rookie and a 34-year-old veteran
     /// age and get courted very differently). Null for a legacy character created before ages existed
-    /// (then the app falls back to the seat driver's age, exactly as before) — omitted from the JSON
+    /// (then the app falls back to the seat driver's age, exactly as before), omitted from the JSON
     /// when null, so a legacy character serialises byte-for-byte unchanged.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public int? Age { get; init; }
@@ -55,7 +55,7 @@ public sealed record CharacterProfile
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string? ChosenFlavor { get; init; }
 
-    /// <summary>Character Points left over at CREATION (immutable) — the starting bank. The pool
+    /// <summary>Character Points left over at CREATION (immutable), the starting bank. The pool
     /// available to spend later is this plus level grants minus <see cref="CpSpent"/>
     /// (<see cref="CharacterProgress.AvailableCp"/>).</summary>
     public int CpUnspent { get; init; }
@@ -142,9 +142,9 @@ public sealed record CharacterProfile
     // Structural equality over the collections. The compiler-generated record equality would
     // compare Stats (a dictionary) and PerkIds (a list) by REFERENCE, so two structurally-identical
     // profiles deserialized separately (e.g. a re-derived season start state vs the stored one)
-    // would compare unequal — a FALSE replay divergence at every season boundary. Comparing by value
+    // would compare unequal, a FALSE replay divergence at every season boundary. Comparing by value
     // makes PlayerCareerState's record equality (which the replay start-state gate uses) match the
-    // JSON the DB actually stores. (Increment 4a — determinism fix.)
+    // JSON the DB actually stores. (Increment 4a, determinism fix.)
     public bool Equals(CharacterProfile? other)
     {
         if (other is null)
@@ -222,7 +222,7 @@ public sealed record CharacterProfile
         return true;
     }
 
-    /// <summary>Builds the complete, in-budget character an archetype preset describes — the
+    /// <summary>Builds the complete, in-budget character an archetype preset describes, the
     /// one-click default at creation. Talent stats and meta stats merge into the one stat map.</summary>
     public static CharacterProfile FromArchetype(Archetype archetype)
     {

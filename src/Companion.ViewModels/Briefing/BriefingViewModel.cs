@@ -34,15 +34,15 @@ public enum StageLaunchState
 
 /// <summary>
 /// The Race Day briefing screen (ux-round contract, corrected briefing section): the setup
-/// guide as a manual CHECK-OFF CHECKLIST — AMS2's custom-race settings are arrow-steppers,
+/// guide as a manual CHECK-OFF CHECKLIST, AMS2's custom-race settings are arrow-steppers,
 /// nothing can be pasted, so every setting is one tickable row with a big glanceable value,
 /// ordered to match the in-game custom-race screen flow (track → class → opponents → laps →
 /// date → start time → weather slots → time progression → pit rules), with an "N of M set"
 /// progress line. Tick state is keyed to the ROUND NUMBER and session-scoped: it survives
 /// navigation within the career session and resets when the round advances (not persisted
-/// across app restarts — v1). Per-row copy buttons are gone; one Copy summary action shares
+/// across app restarts, v1). Per-row copy buttons are gone; one Copy summary action shares
 /// the whole checklist outside the game via <see cref="CopyRequested"/> (the viewmodel stays
-/// WPF-free — the view owns the real clipboard). <see cref="CompactChecklistOpen"/> drives
+/// WPF-free, the view owns the real clipboard). <see cref="CompactChecklistOpen"/> drives
 /// the App-layer always-on-top mini checklist window bound to this same instance.
 /// Staging (backup-first outcome banner, force escape hatch, external-modification watcher)
 /// is unchanged.
@@ -52,7 +52,7 @@ public sealed partial class BriefingViewModel : ObservableObject
     private readonly ICareerSession _session;
     private readonly IFileWatcher? _watcher;
 
-    /// <summary>Ticked labels per round number — the per-round reset rule falls out of the
+    /// <summary>Ticked labels per round number, the per-round reset rule falls out of the
     /// keying: a new round has no entry, so its checklist starts blank.</summary>
     private readonly Dictionary<int, HashSet<string>> _ticksByRound = [];
 
@@ -105,7 +105,7 @@ public sealed partial class BriefingViewModel : ObservableObject
     private string _circuitLayoutId = "";
 
     /// <summary>Human circuit caption ("Rio de Janeiro · 5.03 km · 11 turns · anti-clockwise circuit")
-    /// shown under the venue heading — no circuit name (the heading already shows it). Empty when no
+    /// shown under the venue heading, no circuit name (the heading already shows it). Empty when no
     /// circuit info.</summary>
     [ObservableProperty]
     private string _circuitCaption = "";
@@ -136,22 +136,22 @@ public sealed partial class BriefingViewModel : ObservableObject
 
     /// <summary>Advisory fuel-and-distance guidance for this round (the car's one-tank range vs the
     /// race length + the AMS2 "set your own fuel" gotcha). Null when no per-class fuel profile
-    /// applies — the view then hides the fuel panel.</summary>
+    /// applies, the view then hides the fuel panel.</summary>
     [ObservableProperty]
     private string? _fuelNote;
 
-    /// <summary>True once every round has an applied result — there is nothing to brief.</summary>
+    /// <summary>True once every round has an applied result, there is nothing to brief.</summary>
     public bool SeasonComplete => Briefing is null;
 
     // ---------- Setup Gamble: the pre-race called shot (4b) ----------
 
     /// <summary>The sim's expected finish for this round (from the resolved grid), the yardstick the
-    /// gamble is called against. Null when the player has no seat this round — then no gamble.</summary>
+    /// gamble is called against. Null when the player has no seat this round, then no gamble.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanGamble), nameof(CalledShotSummary))]
     private int? _expectedFinish;
 
-    /// <summary>The number of cars on this round's grid — the safe end of the call range.</summary>
+    /// <summary>The number of cars on this round's grid, the safe end of the call range.</summary>
     private int _gridSize;
 
     /// <summary>
@@ -174,7 +174,7 @@ public sealed partial class BriefingViewModel : ObservableObject
     /// <summary>True when the player has committed a call this round.</summary>
     public bool HasCalledShot => CalledShot is not null;
 
-    /// <summary>One legible line describing the current call and its reputation stake — what the view
+    /// <summary>One legible line describing the current call and its reputation stake, what the view
     /// shows so the gamble is never a silent no-op.</summary>
     public string CalledShotSummary
     {
@@ -192,7 +192,7 @@ public sealed partial class BriefingViewModel : ObservableObject
     }
 
     /// <summary>Call a bolder finish (a lower P number). From no call, starts one place better than
-    /// the expected finish — the least-ambitious real gamble. Clamped at P1.</summary>
+    /// the expected finish, the least-ambitious real gamble. Clamped at P1.</summary>
     [RelayCommand]
     private void CallBolder()
     {
@@ -211,13 +211,13 @@ public sealed partial class BriefingViewModel : ObservableObject
         CalledShot = Math.Min(_gridSize > 0 ? _gridSize : c + 1, c + 1);
     }
 
-    /// <summary>Withdraw the bet — no gamble this round.</summary>
+    /// <summary>Withdraw the bet, no gamble this round.</summary>
     [RelayCommand]
     private void ClearCall() => CalledShot = null;
 
     // ---------- SMGP rival panel (M3 slice 5) ----------
 
-    /// <summary>The SMGP panel's data, or null — every non-smgp career, so the panel never
+    /// <summary>The SMGP panel's data, or null, every non-smgp career, so the panel never
     /// renders outside the mode.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SmgpActive), nameof(SmgpForced), nameof(SmgpRoundHeader),
@@ -241,14 +241,14 @@ public sealed partial class BriefingViewModel : ObservableObject
     public bool SmgpPickEnabled => !SmgpForced;
 
     /// <summary>The rival the player is LOOKING AT in the picker (the dossier card previews
-    /// them) — browsing only; nothing rides the result until the YES button NAMES them.</summary>
+    /// them), browsing only; nothing rides the result until the YES button NAMES them.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SmgpHasRival), nameof(SmgpLadderLine), nameof(SmgpCanName),
         nameof(SmgpRivalPrompt), nameof(SmgpNameButtonLabel), nameof(SmgpRivalIntro))]
     private SmgpRivalOption? _selectedSmgpRival;
 
     /// <summary>The rival the player has NAMED for this round (the YES confirmation, or the
-    /// forced challenger) — the commitment the result fold counts the two-wins ladder against.
+    /// forced challenger), the commitment the result fold counts the two-wins ladder against.
     /// Null = no rival named. Reset each round; survives same-round re-navigation.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SmgpRivalNamed), nameof(SmgpNamedLine), nameof(SmgpNamedRivalQuote),
@@ -256,7 +256,7 @@ public sealed partial class BriefingViewModel : ObservableObject
     private SmgpRivalOption? _namedSmgpRival;
 
     /// <summary>The standing answer to a seat-swap offer, should this round's win trigger one
-    /// ("you may get an offer to join his team!") — asked up front so the result entry needs no
+    /// ("you may get an offer to join his team!"), asked up front so the result entry needs no
     /// extra prompt; stored on the rival call only when the offer can actually arise.</summary>
     [ObservableProperty]
     private bool _smgpSwapAccept = true;
@@ -265,7 +265,7 @@ public sealed partial class BriefingViewModel : ObservableObject
 
     public bool SmgpCareerOver => SmgpBriefing?.CareerOver == true;
 
-    /// <summary>True when the title defense forces the challenger — the pick is locked.</summary>
+    /// <summary>True when the title defense forces the challenger, the pick is locked.</summary>
     public bool SmgpForced => SmgpBriefing?.ForcedChallengerDriverId is not null;
 
     public bool SmgpHasRival => SelectedSmgpRival is not null;
@@ -277,28 +277,28 @@ public sealed partial class BriefingViewModel : ObservableObject
     public bool SmgpCanName => SelectedSmgpRival is not null &&
         !ReferenceEquals(SelectedSmgpRival, NamedSmgpRival);
 
-    /// <summary>The commitment banner — deadpan, the game's register. Streak-aware: once you have
+    /// <summary>The commitment banner, deadpan, the game's register. Streak-aware: once you have
     /// already beaten him once (a win banked from a PAST race you named him in), it says so, so the
     /// two-wins ladder never reads as "start over".</summary>
     public string SmgpNamedLine => NamedSmgpRival switch
     {
         { OfferOnWin: true } named =>
-            $"{named.DriverName.ToUpperInvariant()} IS YOUR RIVAL — and you have beaten {named.Pronouns.Object} once already. " +
+            $"{named.DriverName.ToUpperInvariant()} IS YOUR RIVAL, and you have beaten {named.Pronouns.Object} once already. " +
             $"Finish ahead of {named.Pronouns.Object} again THIS race and {named.Pronouns.Possessive} seat is yours.",
         { } named =>
-            $"{named.DriverName.ToUpperInvariant()} IS YOUR RIVAL. Beat {named.Pronouns.Object} this race and once more — two wins " +
-            $"without losing to {named.Pronouns.Object} — and you take {named.Pronouns.Possessive} seat.",
+            $"{named.DriverName.ToUpperInvariant()} IS YOUR RIVAL. Beat {named.Pronouns.Object} this race and once more, two wins " +
+            $"without losing to {named.Pronouns.Object}, and you take {named.Pronouns.Possessive} seat.",
         null => "",
     };
 
     /// <summary>The named rival's own words back at you (the mood-aware trash-talk from
-    /// <c>rival-quotes.json</c>) — shown as their REACTION once you commit them, not as a static line under
+    /// <c>rival-quotes.json</c>), shown as their REACTION once you commit them, not as a static line under
     /// the stats. Empty until a rival is named.</summary>
     public string SmgpNamedRivalQuote => NamedSmgpRival?.Quote ?? "";
 
     public string SmgpRoundHeader => SmgpBriefing?.RoundHeader ?? "";
 
-    /// <summary>The grand-campaign progress line — "SEASON 6 / 17" (Mike's 17-season SMGP arc). Empty
+    /// <summary>The grand-campaign progress line, "SEASON 6 / 17" (Mike's 17-season SMGP arc). Empty
     /// outside the mode.</summary>
     public string SmgpCampaignLine => SmgpBriefing is { } b ? $"SEASON {b.SeasonOrdinal} / {b.SeasonsTotal}" : "";
 
@@ -313,34 +313,34 @@ public sealed partial class BriefingViewModel : ObservableObject
     public IReadOnlyList<SmgpRivalOption> SmgpRivals => SmgpBriefing?.Rivals ?? [];
 
     /// <summary>The game's prompt (docs/dev/smgp-design.md, sourced verbatim); a forced challenge
-    /// gets plain app copy instead — the doc supplies no in-game sentence for it, and the
+    /// gets plain app copy instead, the doc supplies no in-game sentence for it, and the
     /// accuracy rule is "nothing invented".</summary>
     public string SmgpRivalPrompt => SmgpForced
-        ? "A forced challenge — your rival is already named."
+        ? "A forced challenge, your rival is already named."
         : $"WILL YOU NAME {(SelectedSmgpRival?.Pronouns.Object ?? "them").ToUpperInvariant()} AS YOUR RIVAL?";
 
-    /// <summary>The YES button's gender-aware label ("YES — name her as my rival"). The RivalScreenView binds
+    /// <summary>The YES button's gender-aware label ("YES, name her as my rival"). The RivalScreenView binds
     /// its Content here so a female rival (Mika) is never misgendered.</summary>
     public string SmgpNameButtonLabel =>
-        $"YES — name {SelectedSmgpRival?.Pronouns.Object ?? "them"} as my rival";
+        $"YES, name {SelectedSmgpRival?.Pronouns.Object ?? "them"} as my rival";
 
     /// <summary>The rival-screen intro subtitle, gender-aware (uses the previewed rival's pronoun, else the
     /// neutral "their"). The RivalScreenView binds its subtitle here.</summary>
     public string SmgpRivalIntro =>
-        $"Name a rival to challenge this round — finish ahead of the same driver twice without losing and you " +
+        $"Name a rival to challenge this round, finish ahead of the same driver twice without losing and you " +
         $"may take {SelectedSmgpRival?.Pronouns.Possessive ?? "their"} seat. Or race with no rival named.";
 
-    /// <summary>What this rival's ladder telegraphs — streak-aware so the two-wins path and your
+    /// <summary>What this rival's ladder telegraphs, streak-aware so the two-wins path and your
     /// progress along it are always explicit (Mike's fix: "beat him once, then it said two races").
     /// A win only counts in a race you NAMED him for, so the fresh-rival line spells that out.</summary>
     public string SmgpLadderLine => SelectedSmgpRival switch
     {
         { OfferOnWin: true } r =>
-            $"You have beaten {r.Pronouns.Object} once — finish ahead of {r.Pronouns.Object} again THIS race and you take {r.Pronouns.Possessive} seat!",
+            $"You have beaten {r.Pronouns.Object} once, finish ahead of {r.Pronouns.Object} again THIS race and you take {r.Pronouns.Possessive} seat!",
         { ForfeitOnLoss: true } r =>
-            $"{r.Pronouns.SubjectCap} has beaten you once — lose to {r.Pronouns.Object} again this race and {r.Pronouns.Subject} takes YOUR seat.",
+            $"{r.Pronouns.SubjectCap} has beaten you once, lose to {r.Pronouns.Object} again this race and {r.Pronouns.Subject} takes YOUR seat.",
         { } r =>
-            $"Beat {r.Pronouns.Object} twice without losing to take {r.Pronouns.Possessive} seat. Name {r.Pronouns.Object} each race you mean to beat — a win only counts when {r.Pronouns.Subject} is your named rival.",
+            $"Beat {r.Pronouns.Object} twice without losing to take {r.Pronouns.Possessive} seat. Name {r.Pronouns.Object} each race you mean to beat, a win only counts when {r.Pronouns.Subject} is your named rival.",
         null => "",
     };
 
@@ -348,12 +348,12 @@ public sealed partial class BriefingViewModel : ObservableObject
     /// round has been NAMED.</summary>
     public bool SmgpSwapPromptVisible => NamedSmgpRival?.OfferOnWin == true;
 
-    /// <summary>The swap-accept checkbox label — gender-aware ("Join her team if the offer comes"). Bound by
+    /// <summary>The swap-accept checkbox label, gender-aware ("Join her team if the offer comes"). Bound by
     /// RivalScreenView so a female named rival (Mika) is not misgendered.</summary>
     public string SmgpSwapAcceptLabel =>
         $"Join {NamedSmgpRival?.Pronouns.Possessive ?? "their"} team if the offer comes";
 
-    /// <summary>The YES button: commit the previewed rival — this is what the result fold
+    /// <summary>The YES button: commit the previewed rival, this is what the result fold
     /// counts the two-wins ladder against when the round's result lands.</summary>
     [RelayCommand]
     private void SmgpNameRival()
@@ -372,7 +372,7 @@ public sealed partial class BriefingViewModel : ObservableObject
         SelectedSmgpRival = null;
     }
 
-    /// <summary>The rival call the result draft stores for this round, or null — nothing NAMED
+    /// <summary>The rival call the result draft stores for this round, or null, nothing NAMED
     /// (browsing the picker commits nothing), or not an smgp career. The swap answer rides only
     /// when the offer can arise this round.</summary>
     public Companion.Data.SmgpRivalCall? BuildSmgpRival() => NamedSmgpRival is not { } rival
@@ -430,7 +430,7 @@ public sealed partial class BriefingViewModel : ObservableObject
             VenueDisplayName = briefing.VenueDisplayName;
             TrackId = briefing.Round.Track.Id;
             // The real circuit for this round (from the shipped history data) drives the vector circuit
-            // map + caption on the race-setup screen — resolved through the shared lookup rule
+            // map + caption on the race-setup screen, resolved through the shared lookup rule
             // (the round's authored history pointer, else the PACK year's same-numbered round).
             // Keying the PACK's authored year, not the career's current season year, keeps a
             // CARRYOVER season on the venue the round actually races; the pointer keeps a
@@ -444,7 +444,7 @@ public sealed partial class BriefingViewModel : ObservableObject
             IsPlaceholder = briefing.IsPlaceholder;
             SetupNotes = briefing.SetupNotes;
             DifficultyRecommendation = briefing.RecommendedSlider is { } slider
-                ? $"Recommended Opponent Skill: {slider}% — calibrated from your pace so far (never auto-applied)."
+                ? $"Recommended Opponent Skill: {slider}%, calibrated from your pace so far (never auto-applied)."
                 : null;
             FuelNote = briefing.FuelNote;
 
@@ -455,10 +455,10 @@ public sealed partial class BriefingViewModel : ObservableObject
             _gridSize = _session.CurrentGrid().Count;
             CalledShot = null;
 
-            // SMGP rival panel (null outside the mode): a fresh round starts unnamed — unless
+            // SMGP rival panel (null outside the mode): a fresh round starts unnamed, unless
             // the title defense forces the challenger, which NAMES him outright. On a
             // re-navigation WITHIN the same round (show result entry, peek back at the
-            // briefing) the NAMED rival and swap answer are PRESERVED — resetting them here
+            // briefing) the NAMED rival and swap answer are PRESERVED, resetting them here
             // would silently drop the committed battle from the draft.
             bool sameRound = previousRoundNumber == briefing.Round.Round;
             string? namedRivalId = sameRound ? NamedSmgpRival?.DriverId : null;
@@ -496,7 +496,7 @@ public sealed partial class BriefingViewModel : ObservableObject
             SmgpBriefing = null;
             SelectedSmgpRival = null;
             NamedSmgpRival = null;
-            CompactChecklistOpen = false; // nothing left to tick — close the overlay
+            CompactChecklistOpen = false; // nothing left to tick, close the overlay
         }
         OnPropertyChanged(nameof(SeasonComplete));
         OnPropertyChanged(nameof(CanGamble));
@@ -513,7 +513,7 @@ public sealed partial class BriefingViewModel : ObservableObject
     public string ChecklistProgressText =>
         $"{Settings.Count(i => i.IsChecked)} of {Settings.Count} set";
 
-    /// <summary>True when every row is ticked — the view flips the progress chip green.</summary>
+    /// <summary>True when every row is ticked, the view flips the progress chip green.</summary>
     public bool AllSet => Settings.Count > 0 && Settings.All(i => i.IsChecked);
 
     /// <summary>Row-click toggle (the whole row is the hit target, not just the checkbox).</summary>
@@ -544,7 +544,7 @@ public sealed partial class BriefingViewModel : ObservableObject
         OnPropertyChanged(nameof(AllSet));
     }
 
-    // ---------- copy summary (the one remaining copy action — for sharing, not pasting) ----------
+    // ---------- copy summary (the one remaining copy action, for sharing, not pasting) ----------
 
     [RelayCommand]
     private void CopySummary() => CopyRequested?.Invoke(this, ComposeSummary());
@@ -606,7 +606,7 @@ public sealed partial class BriefingViewModel : ObservableObject
     private string _stageBanner = "";
 
     /// <summary>⚠ state: the staged XML changed on disk after we wrote it (the user or
-    /// another tool touched it) — re-stage before racing.</summary>
+    /// another tool touched it), re-stage before racing.</summary>
     [ObservableProperty]
     private bool _stagedFileTouchedExternally;
 
@@ -657,7 +657,7 @@ public sealed partial class BriefingViewModel : ObservableObject
     };
 
     /// <summary>Per-file detail lines (e.g. the livery scan's unreadable files) behind the
-    /// aggregate <see cref="StageMessages"/> — collapsed by default.</summary>
+    /// aggregate <see cref="StageMessages"/>, collapsed by default.</summary>
     public IReadOnlyList<string> StageDetails => LastStageOutcome?.Details ?? [];
 
     public bool HasStageDetails => StageDetails.Count > 0;
@@ -841,19 +841,19 @@ public sealed partial class BriefingViewModel : ObservableObject
     private static string ComposeBanner(StageOutcome outcome)
     {
         if (outcome.BlockedByForceGate)
-            // Not a failure — a deliberate safety pause. Tell the user exactly what to click and
+            // Not a failure, a deliberate safety pause. Tell the user exactly what to click and
             // that nothing is at risk, so the community-file gate never reads as an error.
             return "Your installed AI is a community file, so the app only overwrites it when you " +
-                   "confirm — click “Overwrite anyway (backup first)” to set up this race. A timestamped " +
+                   "confirm, click “Overwrite anyway (backup first)” to set up this race. A timestamped " +
                    "backup is taken first, so nothing is lost.";
 
         if (!outcome.Success)
             return outcome.Messages.Count > 0
-                ? $"Couldn't set up the race — {outcome.Messages[^1]}"
+                ? $"Couldn't set up the race, {outcome.Messages[^1]}"
                 : "Couldn't set up the race.";
 
         if (outcome.NoOpAlreadyMatches)
-            return "✔ AMS2 is already set up for this race — your installed drivers + skins match, nothing to change.";
+            return "✔ AMS2 is already set up for this race, your installed drivers + skins match, nothing to change.";
 
         // Surface WHAT was done (this race's drivers written, its skins activated, any bubble-car swap,
         // the base-game fallback) so each reason is visible, then where it went + the backup + what next.
@@ -862,7 +862,7 @@ public sealed partial class BriefingViewModel : ObservableObject
         if (outcome.WrittenPath is { Length: > 0 } written)
             lines.Add($"Written into your live AMS2 file: {written}.");
         lines.Add(outcome.BackupPath is { Length: > 0 } backup
-            ? $"Your previous file was backed up to {backup} — a safety copy AMS2 ignores; season-end can restore it."
+            ? $"Your previous file was backed up to {backup}, a safety copy AMS2 ignores; season-end can restore it."
             : "No previous file existed, so nothing was backed up.");
         lines.Add("Close AMS2 first if it's open, then launch and race.");
         return string.Join("\n\n", lines);

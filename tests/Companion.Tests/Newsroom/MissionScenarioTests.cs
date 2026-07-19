@@ -9,15 +9,15 @@ namespace Companion.Tests.Newsroom;
 
 /// <summary>
 /// THE MISSION FIXTURE (newsroom overhaul acceptance): a user-created driver joins a real
-/// historical season (1967 — the shipped verified record), qualifies midfield, suffers a major
-/// incident alongside a championship-level opponent, finishes outside the points — and the
+/// historical season (1967, the shipped verified record), qualifies midfield, suffers a major
+/// incident alongside a championship-level opponent, finishes outside the points, and the
 /// engine produces several DISTINCT but CONNECTED stories for the weekend, plus the
 /// real-history comparison, deterministically. Nothing here is hardcoded into production
 /// behavior; the scenario validates the engine end to end over the real machinery.
 /// </summary>
 public sealed class MissionScenarioTests : IDisposable
 {
-    private const string PlayerSeat = "Stock Livery #3"; // team.c — the user-created entrant's seat
+    private const string PlayerSeat = "Stock Livery #3"; // team.c, the user-created entrant's seat
     private const long Seed = 19670101;
 
     private readonly string _root = Directory.CreateTempSubdirectory("companion-mission-").FullName;
@@ -47,11 +47,11 @@ public sealed class MissionScenarioTests : IDisposable
         using var session = NewCareer();
         var playerId = session.Summary.PlayerDriverId;
 
-        // Round 1 — qualifies midfield (P3 of 5); a major incident takes out both the player
+        // Round 1, qualifies midfield (P3 of 5); a major incident takes out both the player
         // and the pre-race favourite (the tier-5 team's driver); the player scores nothing.
         var grid = session.CurrentGrid().Select(s => s.DriverId).ToList();
         var others = grid.Where(id => id != playerId).ToList();
-        var favourite = "driver.a"; // team.a, prestige 5 — the championship-level opponent
+        var favourite = "driver.a"; // team.a, prestige 5, the championship-level opponent
         var quali = new List<string> { others[1], others[2], playerId }
             .Concat(others.Where(id => id != others[1] && id != others[2]))
             .ToList();
@@ -120,7 +120,7 @@ public sealed class MissionScenarioTests : IDisposable
         var others = session.CurrentGrid().Select(s => s.DriverId).Where(id => id != playerId).ToList();
 
         // Round 1: the incident. Round 2 and 3: back-to-back wins while round one's winner
-        // fades — by round 3 the user-created driver heads the championship.
+        // fades, by round 3 the user-created driver heads the championship.
         session.Apply(new ResultDraft
         {
             Classified = ["driver.b", "driver.d", "driver.e"],
@@ -156,7 +156,7 @@ public sealed class MissionScenarioTests : IDisposable
         var titleThread = Assert.Single(session.StoryThreads(), t => t.Type == StoryThreadType.TitleFight);
         Assert.NotEmpty(titleThread.Entries);
 
-        // And the whole newsroom re-renders byte-identically — nothing rewrites itself.
+        // And the whole newsroom re-renders byte-identically, nothing rewrites itself.
         var feed = session.NewsroomFeed();
         var again = session.NewsroomFeed();
         Assert.Equal(

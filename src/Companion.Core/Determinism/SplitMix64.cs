@@ -6,7 +6,7 @@ namespace Companion.Core.Determinism;
 /// the variant-13 murmur-style finalizer. This is the standard recipe for turning one 64-bit
 /// seed into the several independent words another generator needs.
 ///
-/// API guarantee: byte-stable forever — stream seeding depends on it (see
+/// API guarantee: byte-stable forever, stream seeding depends on it (see
 /// <see cref="StreamFactory"/>).
 /// </summary>
 public struct SplitMix64

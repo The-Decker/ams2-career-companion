@@ -5,7 +5,7 @@ namespace Companion.Tests.Career;
 /// <summary>
 /// The pure milestone-timeline detector (Slice 1): given shaped per-season/per-round facts, it emits an
 /// ordered career story. These tests pin the detection + ordering rules that the ViewModels feed real folded
-/// state into — the "firsts" fire once across the career, promotions/demotions come from seat-tier moves,
+/// state into, the "firsts" fire once across the career, promotions/demotions come from seat-tier moves,
 /// rivalries come from the journal trigger (folded into a lost battle's tier drop), and the finale unlocks at
 /// the 17-season summit.
 /// </summary>
@@ -60,7 +60,7 @@ public sealed class SmgpCareerBeatsTests
             SmgpBeatKind.FirstWin,
             SmgpBeatKind.FirstPole,
         ], kinds);
-        // Each "first" appears exactly once — round 2 adds nothing.
+        // Each "first" appears exactly once, round 2 adds nothing.
         Assert.Single(beats, b => b.Kind == SmgpBeatKind.FirstWin);
         Assert.Equal("Season 1", beats[0].WhenLabel);
         Assert.Equal("Season 1 · Monaco", beats[1].WhenLabel);
@@ -151,7 +151,7 @@ public sealed class SmgpCareerBeatsTests
         var lost = Assert.Single(beats, b => b.Kind == SmgpBeatKind.RivalryLost);
         Assert.Contains("G. Ceara", lost.Detail);
         Assert.Contains("Zeroforce", lost.Detail);
-        // The tier drop is folded into the rivalry-lost beat — no separate demotion for the same round.
+        // The tier drop is folded into the rivalry-lost beat, no separate demotion for the same round.
         Assert.DoesNotContain(beats, b => b.Kind == SmgpBeatKind.Demotion);
     }
 
@@ -180,7 +180,7 @@ public sealed class SmgpCareerBeatsTests
             [
                 Round("Monaco", team: "Zeroforce", prestige: 2, floorLosses: 3),
                 Round("Spa", team: "Zeroforce", prestige: 2, floorLosses: 4, careerOver: true, lost: "G. Ceara"),
-                Round("Monza"), // never reached — the career ended
+                Round("Monza"), // never reached, the career ended
             ]),
             Season(2, [Round("Monaco")]), // never reached
         ]);
@@ -253,7 +253,7 @@ public sealed class SmgpCareerBeatsTests
             [
                 Round("Monaco", finish: 3, scored: true),
                 Round("Spa", accident: "death"),
-                Round("Monza"), // never reached — the driver died
+                Round("Monza"), // never reached, the driver died
             ]),
             Season(2, [Round("Interlagos")]), // never reached
         ]);

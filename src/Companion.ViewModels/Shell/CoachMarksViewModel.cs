@@ -5,10 +5,10 @@ using Companion.ViewModels.Settings;
 namespace Companion.ViewModels.Shell;
 
 /// <summary>
-/// First-run coach marks (ux-round contract section 4): three dismissable callouts — the
+/// First-run coach marks (ux-round contract section 4): three dismissable callouts, the
 /// briefing setup checklist, result entry's "type OR drag", and the standings rules chip.
 /// Each shows until its "Got it" is clicked, then the dismissal persists in settings and the
-/// callout never returns (Reset-to-defaults un-dismisses, by design — it resets everything).
+/// callout never returns (Reset-to-defaults un-dismisses, by design, it resets everything).
 /// Owned by <see cref="HomeViewModel"/> so all three career screens bind to one instance;
 /// WPF-free so show/dismiss/persist is unit-tested without a view.
 /// </summary>

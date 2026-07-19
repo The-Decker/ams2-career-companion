@@ -29,7 +29,7 @@ public sealed class SmgpRivalGenderTests
         var vm = NewVm();
         vm.SelectedSmgpRival = Rival(SmgpPronouns.She);
 
-        Assert.Equal("YES — name her as my rival", vm.SmgpNameButtonLabel);
+        Assert.Equal("YES, name her as my rival", vm.SmgpNameButtonLabel);
         Assert.Contains("HER", vm.SmgpRivalPrompt);
         Assert.Contains("take her seat", vm.SmgpLadderLine);
         Assert.Contains("take her seat", vm.SmgpRivalIntro);
@@ -72,7 +72,7 @@ public sealed class SmgpRivalGenderTests
         var vm = NewVm();
         vm.SelectedSmgpRival = Rival(SmgpPronouns.Default); // he/him
 
-        Assert.Equal("YES — name him as my rival", vm.SmgpNameButtonLabel);
+        Assert.Equal("YES, name him as my rival", vm.SmgpNameButtonLabel);
         Assert.Contains("HIM", vm.SmgpRivalPrompt);
         Assert.Contains("take his seat", vm.SmgpLadderLine);
     }

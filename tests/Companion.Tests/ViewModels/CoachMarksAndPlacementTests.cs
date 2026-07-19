@@ -197,7 +197,7 @@ public sealed class CoachMarksAndPlacementTests
 
         Assert.Equal(920, clamped.Left);   // right edge lands on the screen edge
         Assert.Equal(0, clamped.Top);
-        Assert.Equal(1000, clamped.Width); // size untouched — it fits
+        Assert.Equal(1000, clamped.Width); // size untouched, it fits
         Assert.Equal(700, clamped.Height);
     }
 

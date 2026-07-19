@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Companion.Tests.HistoryArchive;
 
-/// <summary>Schema v6 reading state (user preference — survives replay wipes) + unified search.</summary>
+/// <summary>Schema v6 reading state (user preference, survives replay wipes) + unified search.</summary>
 public sealed class ReadingStateAndSearchTests : IDisposable
 {
     private readonly string _root = Directory.CreateTempSubdirectory("companion-readingstate-").FullName;

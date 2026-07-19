@@ -17,7 +17,7 @@ public sealed record ScenarioApplyResult
 /// <summary>
 /// Applies a round's <see cref="ScenarioSwap"/>s: for each, backs up the current active override
 /// (<c>&lt;model&gt;.xml</c>) into a sibling <c>_companion-backups\</c> folder, then copies the round's
-/// variant over it — exactly what the community scenario .bat does, but backup-first and from the app.
+/// variant over it, exactly what the community scenario .bat does, but backup-first and from the app.
 /// Purely a skin-file operation (livery overrides), so it never touches the career DB / sim / oracle.
 /// </summary>
 public static class ScenarioApplier

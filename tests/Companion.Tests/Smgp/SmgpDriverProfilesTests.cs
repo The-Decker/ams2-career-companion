@@ -5,7 +5,7 @@ namespace Companion.Tests.Smgp;
 /// <summary>
 /// The SMGP-universe driver biographies (<c>data/rules/smgp/driver-profiles.json</c>): each driver's
 /// epithet + ~3-paragraph bio + quotes, shown on the Paddock driver-preview tab. DISPLAY-ONLY. These
-/// pin the loader and — the important guard — that the SHIPPED catalog authors EVERY driver on the
+/// pin the loader and, the important guard, that the SHIPPED catalog authors EVERY driver on the
 /// smgp-1 grid, so no driver card ever renders blank.
 /// </summary>
 public sealed class SmgpDriverProfilesTests

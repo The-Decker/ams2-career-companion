@@ -25,7 +25,7 @@ public sealed class CareerModeMenuTests : IDisposable
                 Assert.Equal(CareerExperienceModes.GrandPrixDynasty, dynasty.Id);
                 Assert.Equal("Grand Prix Dynasty", dynasty.DisplayName);
                 Assert.True(dynasty.IsAvailable);
-                Assert.Contains("FIRST PASS", dynasty.AvailabilityLabel, StringComparison.Ordinal);
+                Assert.Contains("IN DEVELOPMENT", dynasty.AvailabilityLabel, StringComparison.Ordinal);
             },
             smgp =>
             {
@@ -38,8 +38,8 @@ public sealed class CareerModeMenuTests : IDisposable
             {
                 Assert.Equal(CareerExperienceModes.RacingPassport, passport.Id);
                 Assert.Equal("Racing Passport", passport.DisplayName);
-                Assert.False(passport.IsAvailable);
-                Assert.Contains("COMING", passport.AvailabilityLabel, StringComparison.Ordinal);
+                Assert.True(passport.IsAvailable);
+                Assert.Contains("PLAYABLE NOW", passport.AvailabilityLabel, StringComparison.Ordinal);
             });
 
         Assert.All(start.CareerModes, mode =>
@@ -49,10 +49,26 @@ public sealed class CareerModeMenuTests : IDisposable
             Assert.False(string.IsNullOrWhiteSpace(mode.PersistenceSummary));
             Assert.False(string.IsNullOrWhiteSpace(mode.AvailabilityLabel));
         });
+
+        // The pure-racing decision (2026-07-18): the card must not promise the superseded
+        // shared-progression Passport (global XP, portfolios, persistent-driver threads).
+        var passportCard = start.CareerModes.Single(mode =>
+            mode.Id == CareerExperienceModes.RacingPassport);
+        foreach (string copy in new[]
+                 {
+                     passportCard.Tagline, passportCard.Description,
+                     passportCard.PersistenceSummary, passportCard.AvailabilityLabel,
+                 })
+        {
+            Assert.DoesNotContain("portfolio", copy, StringComparison.OrdinalIgnoreCase);
+            Assert.DoesNotContain("global", copy, StringComparison.OrdinalIgnoreCase);
+            Assert.DoesNotContain("thread", copy, StringComparison.OrdinalIgnoreCase);
+            Assert.DoesNotContain("persistent driver", copy, StringComparison.OrdinalIgnoreCase);
+        }
     }
 
     [Fact]
-    public void ModeCommandRaisesStableIdsForPlayableCardsAndRefusesPassport()
+    public void ModeCommandRaisesStableIdsForEveryPlayableCard()
     {
         var start = new StartViewModel(new EmptyRecentStore());
         var requested = new List<string>();
@@ -68,11 +84,13 @@ public sealed class CareerModeMenuTests : IDisposable
         start.StartCareerModeCommand.Execute(dynasty);
         Assert.True(start.StartCareerModeCommand.CanExecute(CareerExperienceModes.Smgp));
         start.StartCareerModeCommand.Execute(CareerExperienceModes.Smgp);
+        Assert.True(start.StartCareerModeCommand.CanExecute(passport));
+        start.StartCareerModeCommand.Execute(passport);
 
-        Assert.False(start.StartCareerModeCommand.CanExecute(passport));
-        start.StartCareerModeCommand.Execute(passport); // direct invocation repeats the guard
         Assert.Equal(
-            [CareerExperienceModes.GrandPrixDynasty, CareerExperienceModes.Smgp],
+            [CareerExperienceModes.GrandPrixDynasty,
+             CareerExperienceModes.Smgp,
+             CareerExperienceModes.RacingPassport],
             requested);
     }
 
@@ -91,6 +109,7 @@ public sealed class CareerModeMenuTests : IDisposable
     [Theory]
     [InlineData(CareerExperienceModes.GrandPrixDynasty, WizardStep.SeasonPick)]
     [InlineData(CareerExperienceModes.Smgp, WizardStep.Verification)]
+    [InlineData(CareerExperienceModes.RacingPassport, WizardStep.SeasonPick)]
     public void ShellRoutesPlayableCardsIntoAnExplicitModeWizard(string mode, WizardStep expectedStep)
     {
         using var shell = CreateShell();
@@ -186,7 +205,7 @@ public sealed class CareerModeMenuTests : IDisposable
     }
 
     [Fact]
-    public void ShellKeepsPassportOnTheMenuUntilItsContainerExists()
+    public void ShellRoutesPassportIntoThePureRacingWizard()
     {
         using var shell = CreateShell();
         var passport = shell.Start.CareerModes.Single(entry =>
@@ -194,8 +213,13 @@ public sealed class CareerModeMenuTests : IDisposable
 
         shell.Start.StartCareerModeCommand.Execute(passport);
 
-        Assert.Same(shell.Start, shell.Current);
-        Assert.Null(shell.Wizard);
+        var wizard = Assert.IsType<NewCareerWizardViewModel>(shell.Current);
+        Assert.Same(wizard, shell.Wizard);
+        Assert.True(wizard.IsRacingPassport);
+        Assert.False(wizard.HasCharacterStep);
+        Assert.False(wizard.HasGridStep);
+        Assert.Equal(CareerExperienceModes.RacingPassport, wizard.ExperienceMode);
+        Assert.Equal(WizardStep.SeasonPick, wizard.Step);
     }
 
     [Fact]

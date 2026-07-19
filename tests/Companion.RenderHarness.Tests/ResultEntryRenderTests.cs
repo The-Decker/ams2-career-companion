@@ -14,12 +14,12 @@ namespace Companion.RenderHarness.Tests;
 
 /// <summary>
 /// Off-screen render tests for the two v0.3.1 DNF result-entry regressions, driven through the
-/// REAL ResultEntryView over a REAL ResultEntryViewModel — the VM logic is already covered and
+/// REAL ResultEntryView over a REAL ResultEntryViewModel, the VM logic is already covered and
 /// correct, so these exercise the view layer that only a live render exposes:
 ///
-/// BUG A — clicking into the DNF custom-cause box or the DSQ reason box must leave the caret
+/// BUG A, clicking into the DNF custom-cause box or the DSQ reason box must leave the caret
 ///          there; the old OnPreviewMouseUp yanked focus back to InputBox on every left release.
-/// BUG B — after Mech/Acc, a single Ctrl+Z through the view's key path must revert the DNF
+/// BUG B, after Mech/Acc, a single Ctrl+Z through the view's key path must revert the DNF
 ///          reason (and the row must reflect it).
 ///
 /// Every test hops onto an STA thread with a live Dispatcher via <see cref="WpfRenderHarness"/>;
@@ -245,7 +245,7 @@ public sealed class ResultEntryRenderTests
         });
     }
 
-    /// <summary>Click-to-edit re-opens a DONE row seeded with its current value — no remove/re-add
+    /// <summary>Click-to-edit re-opens a DONE row seeded with its current value, no remove/re-add
     /// (Mike: "when you click on the driver, the box comes back up with the options"). Save a DSQ
     /// reason, close, then click the row again: the editor reappears and its box is seeded with the
     /// saved reason.</summary>
@@ -329,7 +329,7 @@ public sealed class ResultEntryRenderTests
             using var host = ViewHost.Show(vm);
 
             // MarkDnf/MarkDsq do NOT open the editor themselves (the drop handler sets the picker
-            // id separately), so both rows render in their compact DISPLAY state — which is exactly
+            // id separately), so both rows render in their compact DISPLAY state, which is exactly
             // where the team name must show.
             Assert.True(vm.MarkDnf("d.clark"));
             Assert.True(vm.MarkDsq("d.hulme"));
@@ -343,7 +343,7 @@ public sealed class ResultEntryRenderTests
 
     /// <summary>The grammar STILL gets Enter when the InputBox is focused (requirement 1 / 7): a
     /// placement via the grammar works. With focus in InputBox the key-routing guard stands down,
-    /// so the UserControl's OnPreviewKeyDown runs Submit — placing the highlighted candidate.</summary>
+    /// so the UserControl's OnPreviewKeyDown runs Submit, placing the highlighted candidate.</summary>
     [Fact]
     public void GrammarStillGetsEnter_WhenInputBoxFocused_PlacesTheCandidate()
     {
@@ -472,7 +472,7 @@ public sealed class ResultEntryRenderTests
     }
 
     /// <summary>Changing a DNF reason from the editor is dynamic and undoable (requirements 6/7):
-    /// on a done Mechanical DNF, click-to-edit then pick Accident — the row updates and a single
+    /// on a done Mechanical DNF, click-to-edit then pick Accident, the row updates and a single
     /// Ctrl+Z (vm.Undo) reverts it, all with no remove/re-add.</summary>
     [Fact]
     public void ClickToEdit_ChangeDnfReason_IsDynamicAndUndoable()
@@ -500,7 +500,7 @@ public sealed class ResultEntryRenderTests
             Assert.Equal("accident", host.RenderedDnfReasonText(id));
             Assert.Null(vm.EditingReasonDriverId); // picking a/m closes the editor
 
-            // One undo reverts the reason change — no remove/re-add.
+            // One undo reverts the reason change, no remove/re-add.
             vm.UndoCommand.Execute(null);
             host.Layout();
             Assert.Equal("m", vm.Dnfs.Single(d => d.Seat.DriverId == id).Reason);
@@ -529,7 +529,7 @@ public sealed class ResultEntryRenderTests
             host.RaiseLeftMouseUp(order);
             WpfRenderHarness.Pump();
 
-            // Decision 8: typing the grammar must always work — the pin still fires here.
+            // Decision 8: typing the grammar must always work, the pin still fires here.
             Assert.Same(host.InputBox, Keyboard.FocusedElement);
         });
     }
@@ -538,10 +538,10 @@ public sealed class ResultEntryRenderTests
 
     /// <summary>The substance of BUG B, end-to-end through the live view: mark DNF "Other", open
     /// the picker, click the REAL "Mech" button (the row's reason label renders "mechanical"),
-    /// then invoke the undo command — the exact call the view's Ctrl+Z branch makes
-    /// (<c>vm.UndoCommand.Execute(null)</c>) — and confirm the VM reason is back to "o" AND the
+    /// then invoke the undo command, the exact call the view's Ctrl+Z branch makes
+    /// (<c>vm.UndoCommand.Execute(null)</c>), and confirm the VM reason is back to "o" AND the
     /// rendered reason label on the row has visibly changed back from "mechanical" to "retired".
-    /// A single undo, and the row reflects it — which the v0.3.1 build did not deliver.</summary>
+    /// A single undo, and the row reflects it, which the v0.3.1 build did not deliver.</summary>
     [Fact]
     public void AfterMech_Undo_RevertsReason_AndTheRenderedRowUpdates()
     {
@@ -581,7 +581,7 @@ public sealed class ResultEntryRenderTests
     /// own built-in Ctrl+Z undo) can swallow it. This asserts the tunnel order deterministically:
     /// the UserControl-level handler fires ahead of the InputBox in the preview route, so once it
     /// marks the event Handled, the TextBox never sees the chord. (The modifier state itself can't
-    /// be injected in a headless off-screen host — see WpfRenderHarness remarks — so the chord's
+    /// be injected in a headless off-screen host, see WpfRenderHarness remarks, so the chord's
     /// Control flag is covered by the direct handler test below and by code inspection.)</summary>
     [Fact]
     public void CtrlZ_ReachesUserControlBeforeInputBox_InThePreviewTunnel()
@@ -622,12 +622,12 @@ public sealed class ResultEntryRenderTests
 
     /// <summary>The handler's Ctrl+Z is genuinely MODIFIER-GATED: invoking the real
     /// <c>OnPreviewKeyDown</c> with a bare Z (no Control) must neither undo nor mark the event
-    /// handled — so a lone "z" typed into the grammar box is never mistaken for undo, and, read the
+    /// handled, so a lone "z" typed into the grammar box is never mistaken for undo, and, read the
     /// other way, undo only ever fires under Control. Combined with the tunnel-order test above and
     /// the live undo/rebind test, this pins the chord→Undo mapping. (Driving a genuinely-Control
     /// Z through the handler is impossible in this headless off-screen host: WPF's
     /// Win32KeyboardDevice.Modifiers ignores SetKeyboardState/GetKeyState and only updates from a
-    /// real OS keyboard report delivered to a foreground window — see the verification notes.)</summary>
+    /// real OS keyboard report delivered to a foreground window, see the verification notes.)</summary>
     [Fact]
     public void OnPreviewKeyDown_PlainZ_WithoutControl_DoesNotUndo_NorHandle()
     {
@@ -759,7 +759,7 @@ public sealed class ResultEntryRenderTests
 
         public T? Find<T>(string name) where T : FrameworkElement => FindByName<T>(View, name);
 
-        /// <summary>The DNF custom-cause TextBox on a given driver's row — the one bound to
+        /// <summary>The DNF custom-cause TextBox on a given driver's row, the one bound to
         /// <c>Detail</c>, width 150.</summary>
         public TextBox? FindDnfDetailBox(string driverId) =>
             Descendants<TextBox>(View)
@@ -800,8 +800,8 @@ public sealed class ResultEntryRenderTests
 
         /// <summary>Raise a real key-down for <paramref name="key"/> FROM <paramref name="source"/>,
         /// modelling WPF's own two-phase input dispatch: first the tunneling PreviewKeyDown
-        /// (root→leaf — this is where the UserControl's OnPreviewKeyDown key-routing guard lives),
-        /// and, ONLY if that left the event unhandled, the bubbling KeyDown (leaf→root — where the
+        /// (root→leaf, this is where the UserControl's OnPreviewKeyDown key-routing guard lives),
+        /// and, ONLY if that left the event unhandled, the bubbling KeyDown (leaf→root, where the
         /// box's own OnDnfDetailKeyDown / OnDsqReasonKeyDown handlers live). Returns whether the
         /// event ended up handled. This is exactly the routing that decides "does Enter belong to
         /// the grammar or to the box": if the guard fails, the preview handler eats Enter here and
@@ -841,14 +841,14 @@ public sealed class ResultEntryRenderTests
             return element is not null;
         }
 
-        /// <summary>Every team-name string rendered anywhere in the realised visual tree — the
-        /// TextBlocks whose Text was produced by the " — {0}" TeamName StringFormat. Used to prove
+        /// <summary>Every team-name string rendered anywhere in the realised visual tree, the
+        /// TextBlocks whose Text was produced by the ", {0}" TeamName StringFormat. Used to prove
         /// a DNF/DSQ row actually shows its team.</summary>
         public IReadOnlyList<string> RenderedTeamNameTexts() =>
             Descendants<System.Windows.Controls.TextBlock>(View)
                 .Where(tb => IsEffectivelyVisible(tb))
                 .Select(tb => tb.Text)
-                .Where(t => !string.IsNullOrEmpty(t) && t.Contains('—'))
+                .Where(t => !string.IsNullOrEmpty(t) && t.Contains(", "))
                 .ToArray();
 
         /// <summary>The DSQ row's compact DISPLAY reason label text (after the " · " separator) —
@@ -869,7 +869,7 @@ public sealed class ResultEntryRenderTests
             return null;
         }
 
-        /// <summary>The reason text actually rendered on a driver's DNF row — read straight out of
+        /// <summary>The reason text actually rendered on a driver's DNF row, read straight out of
         /// the realised visual tree (the <c>DnfReasonConverter</c> output shown to the user), so an
         /// assertion on it proves the ROW updated, not just the viewmodel. Returns e.g. "mechanical"
         /// or "retired" (the word the converter yields for "m" / "o-without-detail").</summary>
@@ -879,7 +879,7 @@ public sealed class ResultEntryRenderTests
             // separator (" · ") and the DnfReasonConverter output. A TextBlock composed of explicit
             // Runs reports Text="" (the Text property only mirrors simple content), so read the Runs
             // directly. The team-name TextBlock on the same row is Text-bound (no Runs), so the only
-            // Run-bearing TextBlock for this DnfEntry is the reason label — return its last run,
+            // Run-bearing TextBlock for this DnfEntry is the reason label, return its last run,
             // trimmed of the leading separator. (v0.3.3 split the row into DISPLAY/EDIT states and
             // moved the reason to a "·" separator; this reads whichever run carries the word.)
             foreach (var tb in Descendants<System.Windows.Controls.TextBlock>(View))
@@ -888,8 +888,8 @@ public sealed class ResultEntryRenderTests
                     continue;
                 var runs = tb.Inlines.OfType<System.Windows.Documents.Run>().Select(r => r.Text).ToArray();
                 string joined = string.Concat(runs);
-                // The reason label is the only TextBlock whose runs carry the "·" separator — the
-                // team-name TextBlock uses " — " and the badge/name carry no separator, so "·"
+                // The reason label is the only TextBlock whose runs carry the "·" separator, the
+                // team-name TextBlock uses ", " and the badge/name carry no separator, so "·"
                 // uniquely identifies the reason word (e.g. "mechanical" / "retired").
                 int i = joined.IndexOf('·');
                 if (i >= 0)

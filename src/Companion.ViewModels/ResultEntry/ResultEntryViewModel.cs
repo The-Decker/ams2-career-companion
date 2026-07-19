@@ -29,13 +29,13 @@ public sealed record DnfEntry(GridSeat Seat, string Reason, string? Detail = nul
 /// commands. Every rule of the grammar lives here so it is unit-testable:
 ///
 /// <list type="bullet">
-/// <item>car number (exact, then prefix) or ≥2-letter surname prefix — UNPLACED drivers only;</item>
+/// <item>car number (exact, then prefix) or ≥2-letter surname prefix, UNPLACED drivers only;</item>
 /// <item>"me" is reserved for the player (never a surname prefix);</item>
 /// <item>unambiguous match auto-selects; ambiguous shows <see cref="Candidates"/>, Tab cycles,
 ///   Enter commits the highlighted candidate;</item>
 /// <item>F8 toggles the DNF phase: remaining drivers are the candidates, bare Enter marks them
 ///   in list order (↵↵↵ bulk works), optional " m"/" a"/" o" reason after the match text;</item>
-/// <item>trailing 'q' on a match — DSQ (unplaced or placed; a placed driver is pulled out of
+/// <item>trailing 'q' on a match, DSQ (unplaced or placed; a placed driver is pulled out of
 ///   the classification);</item>
 /// <item>digits after a PLACED driver's match re-position it (penalty), shifting the others;</item>
 /// <item>Ctrl+Z unlimited undo across every mutation kind; Esc clears the input;</item>
@@ -86,7 +86,7 @@ public sealed partial class ResultEntryViewModel : ObservableObject
 
     /// <summary>Optional per-session heading shown above the grammar (Increment 2b.3): set to
     /// "Qualifying" when this entry captures the weekend's qualifying grid order rather than a race
-    /// result. Null on a plain race entry — the screen then renders exactly as the shipped
+    /// result. Null on a plain race entry, the screen then renders exactly as the shipped
     /// single-race loop. Display only; the grammar itself is identical for every session.</summary>
     public string? SessionLabel { get; init; }
 
@@ -102,7 +102,7 @@ public sealed partial class ResultEntryViewModel : ObservableObject
     /// readout is unchanged for every unmarked driver. Display-only.</summary>
     public Companion.Core.Smgp.SmgpPronouns RivalPronouns { get; init; } = Companion.Core.Smgp.SmgpPronouns.Default;
 
-    /// <summary>True when a driver id is the named rival — the LOGIC behind the red RIVAL badge (the row
+    /// <summary>True when a driver id is the named rival, the LOGIC behind the red RIVAL badge (the row
     /// template can't call this from a DataTemplate, so it renders the badge via an equivalent
     /// <c>StringsEqualVisible</c> MultiBinding of <see cref="RivalDriverId"/> vs the row's DriverId; this
     /// predicate is the unit-testable form of that same gate). Null/empty rival (every non-SMGP round) →
@@ -110,7 +110,7 @@ public sealed partial class ResultEntryViewModel : ObservableObject
     public bool IsRival(string? driverId) =>
         !string.IsNullOrEmpty(RivalDriverId) && string.Equals(driverId, RivalDriverId, StringComparison.Ordinal);
 
-    /// <summary>A live readout of the named rival's position as results are entered — "RIVAL  G. CEARA
+    /// <summary>A live readout of the named rival's position as results are entered, "RIVAL  G. CEARA
     /// finishes P3 · you are AHEAD". Empty when no rival is named (every non-SMGP round). Recomputed on
     /// every placement via <see cref="RaiseStateChanged"/>.</summary>
     public string RivalStatusLine
@@ -132,10 +132,10 @@ public sealed partial class ResultEntryViewModel : ObservableObject
                 return $"RIVAL  {who} {verb} P{rivalPos + 1}{rel}";
             }
             if (_dnfs.Any(d => string.Equals(d.Seat.DriverId, RivalDriverId, StringComparison.Ordinal)))
-                return $"RIVAL  {who} is OUT — beat {RivalPronouns.Object} home to bank the win";
+                return $"RIVAL  {who} is OUT, beat {RivalPronouns.Object} home to bank the win";
             if (_disqualified.Any(s => string.Equals(s.DriverId, RivalDriverId, StringComparison.Ordinal)))
-                return $"RIVAL  {who} — DISQUALIFIED";
-            return $"RIVAL  {who} — not placed yet";
+                return $"RIVAL  {who}: DISQUALIFIED";
+            return $"RIVAL  {who}, not placed yet";
         }
     }
 
@@ -164,13 +164,13 @@ public sealed partial class ResultEntryViewModel : ObservableObject
             SliderUsed = clamped;
     }
 
-    /// <summary>Whether the round was run in the WET — captured for the weather-conditional perks
+    /// <summary>Whether the round was run in the WET, captured for the weather-conditional perks
     /// (Rain Man, Sunshine Specialist). Defaults dry; stored in the raw envelope on Apply. Harmless
     /// for a character-free career (the fold never reads it).</summary>
     [ObservableProperty]
     private bool isWet;
 
-    /// <summary>The severity of the player's OWN accident DNF (Light/Medium/Heavy) — bound by the result
+    /// <summary>The severity of the player's OWN accident DNF (Light/Medium/Heavy), bound by the result
     /// screen's severity picker, which is shown ONLY when <see cref="PlayerHasAccidentDnf"/> (the player
     /// marked their own retirement as an accident). Defaults Medium the moment an accident is marked and
     /// clears when it is undone (see <see cref="RaiseStateChanged"/>). Stored on the raw envelope (v7);
@@ -178,7 +178,7 @@ public sealed partial class ResultEntryViewModel : ObservableObject
     [ObservableProperty]
     private Companion.Core.Career.AccidentSeverity? playerAccidentSeverity;
 
-    /// <summary>True when the player's OWN retirement this round is an accident ("a") — the gate the
+    /// <summary>True when the player's OWN retirement this round is an accident ("a"), the gate the
     /// view uses to reveal the severity picker.</summary>
     public bool PlayerHasAccidentDnf =>
         _dnfs.Any(d => string.Equals(d.Seat.DriverId, _playerDriverId, StringComparison.Ordinal)
@@ -191,7 +191,7 @@ public sealed partial class ResultEntryViewModel : ObservableObject
     private ResultEntryPhase phase = ResultEntryPhase.Classified;
 
     /// <summary>Seats the current input matches, in list (grid) order. When the input is
-    /// empty in the DNF phase this is the remaining drivers — bare Enter marks the selected
+    /// empty in the DNF phase this is the remaining drivers, bare Enter marks the selected
     /// one, which is how ↵↵↵ bulk-confirm works.</summary>
     [ObservableProperty]
     private IReadOnlyList<GridSeat> candidates = [];
@@ -216,7 +216,7 @@ public sealed partial class ResultEntryViewModel : ObservableObject
     /// <summary>Classified seats in finishing order (index 0 = P1).</summary>
     public IReadOnlyList<GridSeat> Classified => _classified.ToArray();
 
-    /// <summary>Unresolved seats, in grid order — the DNF phase's list.</summary>
+    /// <summary>Unresolved seats, in grid order, the DNF phase's list.</summary>
     public IReadOnlyList<GridSeat> Remaining => _grid.Where(s => !IsResolved(s.DriverId)).ToArray();
 
     /// <summary>DNF'd seats in the order they were marked, each with its reason.</summary>
@@ -234,7 +234,7 @@ public sealed partial class ResultEntryViewModel : ObservableObject
     /// <summary>Footer progress, e.g. "14/26 placed".</summary>
     public string ProgressText => $"{ResolvedCount}/{_grid.Count} placed";
 
-    /// <summary>True when every seat is classified, DNF'd, or DSQ'd — the draft is complete.</summary>
+    /// <summary>True when every seat is classified, DNF'd, or DSQ'd, the draft is complete.</summary>
     public bool IsComplete => ResolvedCount == _grid.Count;
 
     public bool CanUndo => _undoStack.Count > 0;
@@ -261,10 +261,10 @@ public sealed partial class ResultEntryViewModel : ObservableObject
     public ResultDraft BuildDraft() => new()
     {
         Classified = _classified.Select(s => s.DriverId).ToArray(),
-        // The letter map stays pure m/a/o — the stable seam every existing consumer reads.
+        // The letter map stays pure m/a/o, the stable seam every existing consumer reads.
         DidNotFinish = _dnfs.ToDictionary(d => d.Seat.DriverId, d => d.Reason, StringComparer.Ordinal),
         // Custom text / driver-error attribution rides alongside, only for the "o" rows that
-        // actually carry it — untouched DNFs never appear here.
+        // actually carry it, untouched DNFs never appear here.
         DidNotFinishDetail = _dnfs
             .Where(d => !string.IsNullOrEmpty(d.Detail) || d.DriverAttributed)
             .ToDictionary(
@@ -436,7 +436,7 @@ public sealed partial class ResultEntryViewModel : ObservableObject
             return;
         }
 
-        // 2. Trailing 'q' — DSQ. Unplaced first, then placed (a placed driver is pulled out).
+        // 2. Trailing 'q', DSQ. Unplaced first, then placed (a placed driver is pulled out).
         if (text.Length >= 2 && char.ToLowerInvariant(text[^1]) == 'q')
         {
             string rest = text[..^1].TrimEnd();
@@ -452,7 +452,7 @@ public sealed partial class ResultEntryViewModel : ObservableObject
             }
         }
 
-        // 3. DNF phase: "<match> <m|a|o>" — the space is required so the reason letter can
+        // 3. DNF phase: "<match> <m|a|o>", the space is required so the reason letter can
         // never be mistaken for part of a surname prefix.
         if (Phase == ResultEntryPhase.Dnf && text.Length >= 3)
         {
@@ -469,7 +469,7 @@ public sealed partial class ResultEntryViewModel : ObservableObject
             }
         }
 
-        // 4. Digits after a PLACED driver's match — penalty re-position.
+        // 4. Digits after a PLACED driver's match, penalty re-position.
         if (TryParseReposition(text, out string matchText, out int position))
         {
             var placed = Match(matchText, _classified);
@@ -532,7 +532,7 @@ public sealed partial class ResultEntryViewModel : ObservableObject
     /// <summary>Case- AND accent-insensitive prefix test: a surname typed WITHOUT its diacritics
     /// still matches (e.g. "perez" → "Pérez-Sala", "raik" → "Räikkönen", "hakk" → "Häkkinen"), since
     /// most keyboards can't type the accent. IgnoreNonSpace folds combining marks; IgnoreCase folds
-    /// case. Typing the accent works too — the fold is symmetric.</summary>
+    /// case. Typing the accent works too, the fold is symmetric.</summary>
     private static bool StartsWithLoose(string source, string prefix) =>
         CultureInfo.InvariantCulture.CompareInfo.IsPrefix(
             source, prefix, CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase);

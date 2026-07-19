@@ -5,7 +5,7 @@ namespace Companion.Core.Career;
 
 /// <summary>
 /// Era-shifted driver aging curves (data/rules/career-aging-curves.json): peak-age plateaus
-/// and drift rates per era, plus the retirement hazard parameters. Pure data — Core does no
+/// and drift rates per era, plus the retirement hazard parameters. Pure data, Core does no
 /// file I/O; callers read the file and hand the JSON to <see cref="Parse"/>.
 /// </summary>
 public sealed class AgingCurveSet
@@ -79,7 +79,7 @@ public sealed record AgingCurve
     public required RetirementHazard Retirement { get; init; }
 
     /// <summary>The curve's deterministic annual rating delta at a given age (noise excluded).
-    /// Strictly decreasing past the peak when declineAccelPerYear &gt; 0 — tested invariant.</summary>
+    /// Strictly decreasing past the peak when declineAccelPerYear &gt; 0, tested invariant.</summary>
     public double AnnualDelta(int age) =>
         age < PeakAgeStart
             ? RisePerYear

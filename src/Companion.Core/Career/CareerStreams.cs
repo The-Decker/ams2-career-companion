@@ -2,7 +2,7 @@ namespace Companion.Core.Career;
 
 /// <summary>The named RNG streams of the career sim (docs/dev/career-sim.md, Determinism).
 /// One stream per (subsystem, year, round, entity); these are the only subsystem names the
-/// sim may consume. String values are part of the save format — never rename.</summary>
+/// sim may consume. String values are part of the save format, never rename.</summary>
 public static class CareerStreams
 {
     public const string Offers = "offers";
@@ -24,33 +24,33 @@ public static class CareerStreams
 
     /// <summary>The per-ROUND accident d500 roll (character death &amp; injury §3.2): drawn ONLY when the
     /// career opted into mortality (<see cref="MortalityMode"/> != Off), has a character, AND this round
-    /// is the player's own accident-DNF with a captured severity — so an Off / no-character / non-accident
+    /// is the player's own accident-DNF with a captured severity, so an Off / no-character / non-accident
     /// career consumes zero new draws and stays byte-identical. A round-level companion to the season-level
     /// <see cref="Injury"/> stream, keyed (accident, year, round, "player").</summary>
     public const string Accident = "accident";
 
     /// <summary>The per-ROUND auto-simulated field jitter (character death &amp; injury §5): drawn per
     /// non-player seat ONLY when the injured player sits a round out and the app must simulate the race.
-    /// Keyed (auto-race, year, round, driverId) — a fresh generator per seat, so no other stream shifts
+    /// Keyed (auto-race, year, round, driverId), a fresh generator per seat, so no other stream shifts
     /// and a career that is never injured draws zero from it and stays byte-identical.</summary>
     public const string AutoRace = "auto-race";
 }
 
 /// <summary>Journal phase names emitted by the career sim. Part of the save format (the news
-/// feed, "why?" inspector, and headline template bank key on them) — never rename.</summary>
+/// feed, "why?" inspector, and headline template bank key on them), never rename.</summary>
 public static class JournalPhases
 {
     public const string Championship = "season.championship";
     public const string PlayerOpi = "player.opi";
     public const string PlayerReputation = "player.reputation";
 
-    /// <summary>The player's character, written ONCE at creation (round = null) — an INPUT the
+    /// <summary>The player's character, written ONCE at creation (round = null), an INPUT the
     /// round fold never regenerates, so it is provenance-excluded from the replay byte-compare
     /// while its data rides in the start player state. (Increment 4a.)</summary>
     public const string PlayerCharacter = "player.character";
 
     /// <summary>The player's chosen season field (v0.6.0 "choose the entire grid"), written ONCE at
-    /// creation (round = null) — an INPUT the round fold never regenerates, so it is
+    /// creation (round = null), an INPUT the round fold never regenerates, so it is
     /// provenance-excluded from the byte-compare while its data rides in the start player state.</summary>
     public const string PlayerGridSelection = "player.gridSelection";
 
@@ -81,7 +81,7 @@ public static class JournalPhases
     /// provenance-excluded; its carried CharacterProfile effect is checked in the next start state.</summary>
     public const string PlayerRespec = "player.respec";
 
-    /// <summary>The player's character XP update for the round — a DERIVED fold output (a pure
+    /// <summary>The player's character XP update for the round, a DERIVED fold output (a pure
     /// function of the result), emitted only for a character career after the reputation row, so a
     /// pre-character career's journal sequence is unchanged. (Increment 4a.)</summary>
     public const string PlayerXp = "player.xp";
@@ -93,14 +93,14 @@ public static class JournalPhases
     public const string PlayerCall = "player.call";
 
     /// <summary>A season-end injury (character depth 6): a DERIVED row emitted only when a
-    /// character carrying an injury-stream perk fails the season-end injury roll. OPI-neutral — a
+    /// character carrying an injury-stream perk fails the season-end injury roll. OPI-neutral, a
     /// setback to standing, never a finishing position. Absent for every other career, so their
     /// journal sequence is unchanged.</summary>
     public const string PlayerInjury = "player.injury";
 
     /// <summary>An in-race ACCIDENT resolution (character death &amp; injury §3.2/§3.3): a DERIVED row
     /// emitted only when a mortality-enabled character has an accident-DNF with a captured severity and
-    /// the d500 roll is folded. Carries { severity, roll, effectiveRoll, outcome, missRaces } — the
+    /// the d500 roll is folded. Carries { severity, roll, effectiveRoll, outcome, missRaces }, the
     /// none/minor-injury/season-ending/death ladder. Absent for every other career, so their journal
     /// sequence is unchanged; DERIVED, so it is byte-compared (never provenance-excluded).</summary>
     public const string PlayerAccident = "player.accident";
@@ -117,7 +117,7 @@ public static class JournalPhases
     public const string PlayerExperience = "player.experience";
     public const string PlayerPaceAnchor = "player.paceAnchor";
 
-    /// <summary>The player's qualifying (one-lap) anchor update — emitted ONLY on rounds that ran
+    /// <summary>The player's qualifying (one-lap) anchor update, emitted ONLY on rounds that ran
     /// a qualifying session, so single-race careers never carry it and stay byte-identical. (Inc 2.)</summary>
     public const string PlayerQualiAnchor = "player.qualiAnchor";
     public const string RaceResult = "race.result";
@@ -131,7 +131,7 @@ public static class JournalPhases
 
     /// <summary>An SMGP rival battle's resolution (M3, careerStyle "smgp"): a DERIVED row emitted
     /// only when the round's raw envelope stored a rival call AND the career carries the mode's
-    /// folded state — every other career's journal sequence is unchanged. Carries both finishes,
+    /// folded state, every other career's journal sequence is unchanged. Carries both finishes,
     /// the outcome, the post-battle streaks and what they triggered (the Why? inspector's view of
     /// the two-wins ladder).</summary>
     public const string SmgpBattle = "smgp.battle";
@@ -142,7 +142,7 @@ public static class JournalPhases
 
     /// <summary>The player's post-race answer to a two-wins seat-swap offer, captured on the
     /// promotion screen (3c-2, two-phase careers). A raw player-choice INPUT the fold cannot
-    /// re-derive — journaled here and PROVENANCE-EXCLUDED (the round fold never regenerates it),
+    /// re-derive, journaled here and PROVENANCE-EXCLUDED (the round fold never regenerates it),
     /// then read back at re-fold to resolve the pending offer, exactly like the character spends.
     /// Absent = the offer was left unresolved / a legacy career (the standing up-front answer
     /// already applied inline).</summary>
@@ -160,7 +160,7 @@ public static class JournalPhases
     /// <summary>An entity (team or driver) that does not reach the next era pack.</summary>
     public const string EraDeparted = "era.departed";
 
-    /// <summary>The Budget-Unit rescale note across an era boundary (v1: identity — the
+    /// <summary>The Budget-Unit rescale note across an era boundary (v1: identity, the
     /// seam for the Phase-2 economy).</summary>
     public const string EraEconomy = "era.economy";
 
@@ -170,7 +170,7 @@ public static class JournalPhases
     // byte-compared.
 
     /// <summary>A player economic decision (sign/drop sponsor, buy development, staff, the second
-    /// seat's deal) declared for the next UNFOLDED round — a raw player-choice INPUT the fold
+    /// seat's deal) declared for the next UNFOLDED round, a raw player-choice INPUT the fold
     /// cannot re-derive. Journaled once and PROVENANCE-EXCLUDED, then read back by that round's
     /// fold (live and replay) and applied in seq order, exactly like the smgp.swap decision. Its
     /// DERIVED <see cref="EconomyApplied"/> effects ARE byte-compared.</summary>
@@ -189,7 +189,7 @@ public static class JournalPhases
     /// sponsor season/title bonuses, contract expiries and the development carryover.</summary>
     public const string EconomySeason = "economy.season";
 
-    /// <summary>The team went bankrupt (a DERIVED row) — TERMINAL, the economy's CareerOver.
+    /// <summary>The team went bankrupt (a DERIVED row), TERMINAL, the economy's CareerOver.
     /// Emitted once by the round settlement that crossed the line.</summary>
     public const string EconomyBankruptcy = "economy.bankruptcy";
 }

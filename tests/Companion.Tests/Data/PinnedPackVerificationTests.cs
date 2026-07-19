@@ -7,7 +7,7 @@ namespace Companion.Tests.Data;
 /// <summary>
 /// Structural fix (integration report): the app pins packs as the five-file
 /// <see cref="PinnedPackEnvelope"/> blob, while replay verification used to demand the
-/// legacy canonical-serialization blob — so a career created through the real wizard path
+/// legacy canonical-serialization blob, so a career created through the real wizard path
 /// could never re-simulate. Both formats must verify, through the ONE shared loader.
 /// </summary>
 public sealed class PinnedPackVerificationTests : IDisposable
@@ -28,7 +28,7 @@ public sealed class PinnedPackVerificationTests : IDisposable
     }
 
     /// <summary>THE regression: create a career through the app's real service (five-file
-    /// envelope pinning), apply a round through the live path, then re-simulate — the pack
+    /// envelope pinning), apply a round through the live path, then re-simulate, the pack
     /// verification must accept the envelope and the whole career must replay identically.</summary>
     [Fact]
     public void VmCreatedCareer_PassesResimulatePackVerification_AndReplaysIdentical()
@@ -87,7 +87,7 @@ public sealed class PinnedPackVerificationTests : IDisposable
         Assert.True(report.ComparedRows > 0);
     }
 
-    /// <summary>A tampered pack (any content difference) must still be rejected — accepting
+    /// <summary>A tampered pack (any content difference) must still be rejected, accepting
     /// the envelope format must not weaken the pinned-bytes guarantee.</summary>
     [Fact]
     public void DifferentPackContent_IsStillRejected()

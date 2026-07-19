@@ -1,6 +1,7 @@
 using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Companion.Core.Career;
 using Companion.ViewModels.Debug;
 using Companion.ViewModels.Hub;
 using Companion.ViewModels.Services;
@@ -67,6 +68,17 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private ObservableObject _current;
 
+    /// <summary>The era medium of the career currently ON SCREEN, or null outside a career
+    /// (gallery, wizard, menus, overlays), the one-way era-skin token the App pushes to its
+    /// audio controller (<c>SetEraSkin</c>) whenever it changes (era-theming-assets-brief.md,
+    /// Workstream B: era changes how a cue is voiced, never when/whether it fires; the audio
+    /// layer is TOLD the skin and never observes career state or outcomes). Raises
+    /// PropertyChanged on every navigation through <see cref="Current"/>.</summary>
+    public EraMedium? ActiveCareerEraMedium => Current is HubViewModel hub ? hub.EraMedium : null;
+
+    partial void OnCurrentChanged(ObservableObject value) =>
+        OnPropertyChanged(nameof(ActiveCareerEraMedium));
+
     /// <summary>Shell-level failure banner (e.g. a career file that would not open).</summary>
     [ObservableProperty]
     private string? _statusError;
@@ -104,7 +116,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>The gallery badge state for a career as observed from its opened session:
-    /// "deceased" (Normal-mode death — the file stays as a viewable archive), "careerOver" (the
+    /// "deceased" (Normal-mode death, the file stays as a viewable archive), "careerOver" (the
     /// SMGP floor knock-out), "bankrupt" (the Dynasty team folded), or null for a live career.</summary>
     private static string? TerminalState(ICareerSession session)
     {
@@ -127,7 +139,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
         catch (Exception ex) when (ex is not (OutOfMemoryException or StackOverflowException))
         {
             // Opening an arbitrary *.ams2career file can fail many ways (missing, corrupt,
-            // locked, not a database). The shell reports and stays up — never crashes.
+            // locked, not a database). The shell reports and stays up, never crashes.
             StatusError = $"Could not open the career: {ex.Message}";
             return;
         }
@@ -150,7 +162,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>Sign-and-continue (M6): the new season is persisted but the open session
-    /// still points at the finished one — dispose it and reopen the career file, which lands
+    /// still points at the finished one, dispose it and reopen the career file, which lands
     /// in the new season's round 1 briefing (OpenCareer opens the LATEST season).</summary>
     private void OnNextSeasonStarted(object? sender, EventArgs e)
     {
@@ -166,7 +178,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
         if (Current is HubViewModel)
             return;
 
-        // The reopen failed (StatusError explains) — never leave a disposed screen showing.
+        // The reopen failed (StatusError explains), never leave a disposed screen showing.
         Start.Refresh();
         Current = Start;
     }
@@ -252,7 +264,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>The debug OPEN/CLOSE chord (Ctrl+Shift+D): opens the overlay over the current screen,
-    /// or closes it when it is already open. A NO-OP while <see cref="DeveloperMode"/> is off — a
+    /// or closes it when it is already open. A NO-OP while <see cref="DeveloperMode"/> is off, a
     /// shipped Release with the flag off shows nothing and costs nothing.</summary>
     [RelayCommand]
     private void ToggleDebug()
@@ -276,7 +288,8 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
             _environment,
             _factory,
             DebugCareersDirectory,
-            currentSession: () => _hub?.Home.Session);
+            currentSession: () => _hub?.Home.Session,
+            currentCareerPath: () => _currentCareerPath);
         debug.CloseRequested += (_, _) => CloseDebug();
         debug.RealCareerRequested += OnDebugRealCareerRequested;
         debug.PreviewRequested += OnDebugPreviewRequested;
@@ -284,7 +297,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
 
         // Stash the pre-debug screen ONLY when opening from a non-debug context. Re-opening the menu
         // from a debug-spawned leaf (a promotion/demotion preview) must not overwrite the real
-        // location with that transient leaf — so closing later still returns where the user was.
+        // location with that transient leaf, so closing later still returns where the user was.
         _beforeDebug ??= Current;
         Current = debug;
     }
@@ -297,7 +310,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
         _beforeDebug = null;
     }
 
-    /// <summary>Tier-1: a REAL throwaway career the debug menu created — recorded in the gallery and
+    /// <summary>Tier-1: a REAL throwaway career the debug menu created, recorded in the gallery and
     /// opened exactly like any career (it reopens, signs, and resimulates like a normal save).</summary>
     private void OnDebugRealCareerRequested(object? sender, DebugCareerOpenedEventArgs e)
     {
@@ -310,7 +323,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>Tier-2: a display-only preview session hosted in a hub. It is pathless (never signs or
-    /// reopens) and is NOT recorded in the gallery — nothing about it touches disk.</summary>
+    /// reopens) and is NOT recorded in the gallery, nothing about it touches disk.</summary>
     private void OnDebugPreviewRequested(object? sender, ICareerSession session)
     {
         _beforeDebug = null;
@@ -330,7 +343,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
     /// <summary>Shell-level Esc: one non-destructive step back. Settings → previous screen;
     /// wizard → previous step (or Start from the first step, where nothing is lost yet);
     /// Home delegates to its content (standings/confirm know their way back). Returns false
-    /// when Esc means nothing here (e.g. mid result entry — the grammar owns the keyboard).</summary>
+    /// when Esc means nothing here (e.g. mid result entry, the grammar owns the keyboard).</summary>
     public bool TryEscapeBack()
     {
         switch (Current)
@@ -366,7 +379,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
         {
             var install = environment.LocateInstall();
             return install is null
-                ? "⚠ AMS2 install not found via Steam — staging will be unavailable until it is."
+                ? "⚠ AMS2 install not found via Steam, staging will be unavailable until it is."
                 : $"AMS2 install detected: {install.InstallDirectory}";
         }
         catch (Exception ex) when (ex is not (OutOfMemoryException or StackOverflowException))

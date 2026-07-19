@@ -7,7 +7,7 @@ namespace Companion.Tests.Packs;
 
 /// <summary>
 /// M6 verification (added by the adversarial-verification pass): the era transition across
-/// the SHIPPED reference packs — f1-1967 → f1-1969, bridging 1968 — reproduces facts
+/// the SHIPPED reference packs, f1-1967 → f1-1969, bridging 1968, reproduces facts
 /// hand-verified against f1db (github.com/f1db/f1db):
 ///   · drivers who raced both seasons (f1db season_driver 1967 ∩ 1969) carry by lineage id
 ///     and arrive in 1969 exactly two years older than their 1967 season age;
@@ -33,7 +33,7 @@ public class EraTransitionReferencePackTests
     }
 
     /// <summary>Both-season drivers per f1db (subset shipped in both packs), with f1db birth
-    /// years — the pack Born fields were independently checked against f1db driver rows.</summary>
+    /// years, the pack Born fields were independently checked against f1db driver rows.</summary>
     private static readonly (string Id, int Born)[] CarriedDrivers =
     [
         ("driver.graham_hill", 1929),

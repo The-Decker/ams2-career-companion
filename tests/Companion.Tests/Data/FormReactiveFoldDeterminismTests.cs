@@ -8,11 +8,11 @@ using Companion.ViewModels.Services;
 namespace Companion.Tests.Data;
 
 /// <summary>
-/// Determinism gate for Ratings Phase 3 — the FOLD reacts to the pack's per-race
+/// Determinism gate for Ratings Phase 3, the FOLD reacts to the pack's per-race
 /// <see cref="SeasonDefinition.DriverForm"/> when the career is <see cref="PlayerCareerState.FormAware"/>.
 /// Proves three things: (1) the overlay nudges an AI seat's pace rating by the round's form and leaves
 /// the PLAYER seat untouched (a hot rival moves the field, never the player's own strength); (2) the
-/// fold actually consumes it — a FormAware career's folded pace anchor differs from an otherwise
+/// fold actually consumes it, a FormAware career's folded pace anchor differs from an otherwise
 /// identical form-inert one; (3) the FormAware career re-simulates BYTE-IDENTICALLY. The sibling
 /// <see cref="FormFoldDeterminismTests"/> is the OFF-path gate (a pre-Phase-3 career folds form-inert).
 /// </summary>
@@ -28,7 +28,7 @@ public sealed class FormReactiveFoldDeterminismTests : IDisposable
     }
 
     /// <summary>The round-1 form overlay: a big up-nudge on the AI (brabham) and a down-nudge on the
-    /// player (hulme) — large enough that a leak into the fold would diverge. The player's is excluded,
+    /// player (hulme), large enough that a leak into the fold would diverge. The player's is excluded,
     /// so the resolved player seat must stay at its baseline.</summary>
     private static SeasonPack FormPack() => TestPackBuilder.TwoRoundPack() is var basePack
         ? basePack with
@@ -64,13 +64,13 @@ public sealed class FormReactiveFoldDeterminismTests : IDisposable
         GridSeat Rival(GridPlan g) => g.Seats.Single(s => s.DriverId == "driver.brabham");
         GridSeat Player(GridPlan g) => g.Seats.Single(s => s.IsPlayer);
 
-        // Off: the overlay is inert — baseline verbatim.
+        // Off: the overlay is inert, baseline verbatim.
         Assert.Equal(0.80, Rival(off).Ratings.RaceSkill, 6);
         // On: the rival gets the additive, clamped nudge (0.80 + 0.07); qualifying too (0.85 + 0.05).
         Assert.Equal(0.87, Rival(on).Ratings.RaceSkill, 6);
         Assert.Equal(0.90, Rival(on).Ratings.QualifyingSkill, 6);
 
-        // The player seat is EXCLUDED — its down-nudge (-0.06) is never applied, on either path.
+        // The player seat is EXCLUDED, its down-nudge (-0.06) is never applied, on either path.
         Assert.Equal(0.80, Player(off).Ratings.RaceSkill, 6);
         Assert.Equal(0.80, Player(on).Ratings.RaceSkill, 6);
         Assert.Equal(0.85, Player(on).Ratings.QualifyingSkill, 6);
@@ -94,7 +94,7 @@ public sealed class FormReactiveFoldDeterminismTests : IDisposable
         double anchorOff = FoldTwoRounds(packDirectory, environment, seed, "form-off.ams2career", formAware: false, out _);
 
         // The fold CONSUMES the overlay: the FormAware career's round-1 pace anchor differs from the
-        // form-inert one, given identical results — a hot rival (brabham 0.80 -> 0.87) reshapes the
+        // form-inert one, given identical results, a hot rival (brabham 0.80 -> 0.87) reshapes the
         // field the player's pace is measured against. (Both are non-zero: the anchor calibrated.)
         Assert.NotEqual(0.0, anchorOn);
         Assert.NotEqual(anchorOff, anchorOn);

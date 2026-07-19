@@ -14,8 +14,8 @@ namespace Companion.RenderHarness.Tests;
 /// <summary>
 /// Off-screen render coverage for the season-scoped "Why?" inspector wired into the REAL HistoryView
 /// (career-hub-design.md §4/§5, decision 18): a scrapbook card's final-standing number is a click
-/// target that opens the shared inspector overlay for THAT card's season — including a FINISHED
-/// earlier season, not just the current one — and Close clears it. Mirrors the Standings inspector
+/// target that opens the shared inspector overlay for THAT card's season, including a FINISHED
+/// earlier season, not just the current one, and Close clears it. Mirrors the Standings inspector
 /// render test; self-skips off Windows.
 /// </summary>
 public sealed class HistoryInspectorRenderTests
@@ -47,7 +47,7 @@ public sealed class HistoryInspectorRenderTests
                 SeasonChain = new JournalChain
                 {
                     Entity = "player",
-                    Title = "Why P4 — You, 1967",
+                    Title = "Why P4, You, 1967",
                     Summary = "You finished P4, below your expected P2.",
                     Contributions =
                     [
@@ -71,7 +71,7 @@ public sealed class HistoryInspectorRenderTests
             Assert.True(vm.IsInspectorOpen);
 
             var texts = host.VisibleTexts();
-            Assert.Contains("Why P4 — You, 1967", texts);
+            Assert.Contains("Why P4, You, 1967", texts);
             Assert.Contains("You finished P4, below your expected P2.", texts);
             Assert.Contains(texts, t => t.Contains("Expected finish"));
             Assert.Contains(texts, t => t.Contains("P4"));
@@ -163,16 +163,16 @@ public sealed class HistoryInspectorRenderTests
                         new SmgpWorldRace
                         {
                             Round = 1, VenueName = "San Marino", IsRevealed = true,
-                            Title = "SAN MARINO — THE OPENER", Circuit = "the season's lights-out",
+                            Title = "SAN MARINO, THE OPENER", Circuit = "the season's lights-out",
                             Champion = "A. Senna · Madonna",
                             Body = ["The king sets the tone."], Notes = ["A note about the king."],
                         },
-                        // SEALED — carries lore, but IsRevealed=false must keep every word of it hidden
+                        // SEALED, carries lore, but IsRevealed=false must keep every word of it hidden
                         // (the exact inverted-visibility trap a render test exists to catch).
                         new SmgpWorldRace
                         {
                             Round = 2, VenueName = "Brazil", IsRevealed = false,
-                            Title = "SHOULD NOT SHOW — TITLE", Champion = "HIDDEN CHAMPION",
+                            Title = "SHOULD NOT SHOW, TITLE", Champion = "HIDDEN CHAMPION",
                             Body = ["SECRET BODY PARAGRAPH"], Notes = ["SECRET NOTE"],
                         },
                     ],
@@ -193,7 +193,7 @@ public sealed class HistoryInspectorRenderTests
             // The panel header + progress, and the REVEALED circuit's full legend, all render.
             Assert.Contains(texts, t => t.Contains("What the world remembers"));
             Assert.Contains(texts, t => t.Contains("1 of 2 circuits unlocked"));
-            Assert.Contains(texts, t => t.Contains("SAN MARINO — THE OPENER"));
+            Assert.Contains(texts, t => t.Contains("SAN MARINO, THE OPENER"));
             Assert.Contains(texts, t => t.Contains("A. Senna · Madonna"));
             Assert.Contains(texts, t => t.Contains("The king sets the tone."));
             Assert.Contains(texts, t => t.Contains("A note about the king."));

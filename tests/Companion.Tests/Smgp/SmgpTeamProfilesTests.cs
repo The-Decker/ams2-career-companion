@@ -6,7 +6,7 @@ namespace Companion.Tests.Smgp;
 /// The SMGP-universe team profiles (<c>data/rules/smgp/team-profiles.json</c>): each SEGA-world team's
 /// motto, ~5-paragraph history and quotes, shown on the promotion/demotion screen when the player joins
 /// a team. DISPLAY-ONLY (never a fold input, like the rival quotes + almanac + news corpora). These pin
-/// the loader (parse, team lookup, empty/absent = omitted) and — the important guard — that the SHIPPED
+/// the loader (parse, team lookup, empty/absent = omitted) and, the important guard, that the SHIPPED
 /// catalog authors EVERY team on the smgp-1 grid, so a promotion to any team always has a story.
 /// </summary>
 public sealed class SmgpTeamProfilesTests

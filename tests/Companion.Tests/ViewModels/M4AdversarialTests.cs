@@ -6,7 +6,7 @@ namespace Companion.Tests.ViewModels;
 
 /// <summary>
 /// Adversarial M4 verification (docs/dev/app-shell.md): spec-rule edge cases that the main
-/// grammar and session suites did not pin down — 2-letters-ambiguous/3-letters-unique
+/// grammar and session suites did not pin down, 2-letters-ambiguous/3-letters-unique
 /// surname collisions, bulk DNF with nothing left to retire, and Preview purity (calling it
 /// twice must be identical and commit nothing) plus full standings equality across a
 /// close/reopen of the career file.
@@ -60,7 +60,7 @@ public sealed class M4AdversarialTests : IDisposable
 
         Assert.Equal(new[] { "d.stuck" }, vm.Classified.Select(s => s.DriverId));
 
-        vm.Input = "st"; // only Stewart is left unplaced — no longer ambiguous
+        vm.Input = "st"; // only Stewart is left unplaced, no longer ambiguous
         Assert.Equal(new[] { "d.stewart" }, vm.Candidates.Select(s => s.DriverId));
         Assert.False(vm.IsAmbiguous);
     }
@@ -89,7 +89,7 @@ public sealed class M4AdversarialTests : IDisposable
 
         int undoDepthBefore = 3;
         vm.SubmitCommand.Execute(null); // ↵
-        vm.SubmitCommand.Execute(null); // ↵↵ — must not throw, mutate, or push undo
+        vm.SubmitCommand.Execute(null); // ↵↵, must not throw, mutate, or push undo
         Assert.Null(vm.ErrorText);
         Assert.Empty(vm.Dnfs);
         Assert.Equal("3/3 placed", vm.ProgressText);

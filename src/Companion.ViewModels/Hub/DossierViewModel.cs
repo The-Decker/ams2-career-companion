@@ -128,7 +128,7 @@ public sealed partial class DossierViewModel : ObservableObject
     /// <summary>The driver's current availability, ready for display.</summary>
     public string AvailabilityLabel => Dossier?.AvailabilityLabel ?? "Fit";
 
-    /// <summary>True when this career has a character to show — the hub adds the Driver tab only then.</summary>
+    /// <summary>True when this career has a character to show, the hub adds the Driver tab only then.</summary>
     public bool HasCharacter => Dossier is not null;
 
     /// <summary>The player's persisted three-letter country code, or null for a legacy profile.</summary>
@@ -142,7 +142,7 @@ public sealed partial class DossierViewModel : ObservableObject
 
     public bool HasCountry => CountryFlagKey is not null;
 
-    /// <summary>"Team · year" — who the driver races for this season; null when unknown.</summary>
+    /// <summary>"Team · year", who the driver races for this season; null when unknown.</summary>
     public string? TeamLine => _teamLine;
 
     /// <summary>The team-coloured PLAYER portrait (<c>player.&lt;team&gt;</c>), keyed off the player's
@@ -150,7 +150,7 @@ public sealed partial class DossierViewModel : ObservableObject
     [ObservableProperty]
     private string? _playerImageKey;
 
-    /// <summary>The car the player currently drives — its preview image key
+    /// <summary>The car the player currently drives, its preview image key
     /// (<c>cars/&lt;driverId&gt;.png</c>). Null when the player's seat has no car-preview driver id.</summary>
     [ObservableProperty]
     private string? _playerCarKey;
@@ -160,7 +160,7 @@ public sealed partial class DossierViewModel : ObservableObject
     [ObservableProperty]
     private CarSpecCardViewModel? _playerCarSpec;
 
-    /// <summary>The SMGP evolving-narrative TIMELINE for the player (Task 2/3.3) — the milestone beats
+    /// <summary>The SMGP evolving-narrative TIMELINE for the player (Task 2/3.3), the milestone beats
     /// (arrived, first win, promotions, titles, rivalries…) surfaced on the Driver tab as the story
     /// progression. Empty for a non-SMGP career.</summary>
     [ObservableProperty]
@@ -189,7 +189,7 @@ public sealed partial class DossierViewModel : ObservableObject
     }
 
     /// <summary>Key prefix for persisted level-up acknowledgments in the career's reading-state
-    /// preference store (schema v6 — user preference, survives re-simulation, never a fold input).</summary>
+    /// preference store (schema v6, user preference, survives re-simulation, never a fold input).</summary>
     private const string LevelAckKeyPrefix = "character:levelup:";
 
     /// <summary>The highest level the player has acknowledged (0 = no marker yet).</summary>
@@ -212,7 +212,7 @@ public sealed partial class DossierViewModel : ObservableObject
     }
 
     /// <summary>The career's immutable mortality setting, readable mid-career (the wizard was the
-    /// only surface that showed it). Display-only — the mode cannot change on an active career.</summary>
+    /// only surface that showed it). Display-only, the mode cannot change on an active career.</summary>
     public string MortalityLabel => _session.Mortality switch
     {
         Companion.Core.Career.MortalityMode.Normal => "MORTALITY: NORMAL",
@@ -220,7 +220,7 @@ public sealed partial class DossierViewModel : ObservableObject
         _ => "MORTALITY: OFF",
     };
 
-    /// <summary>The career's medical record — every journaled accident outcome, oldest first.</summary>
+    /// <summary>The career's medical record, every journaled accident outcome, oldest first.</summary>
     [ObservableProperty]
     private IReadOnlyList<InjuryHistoryEntry> _injuryHistory = [];
 
@@ -408,7 +408,7 @@ public sealed partial class DossierViewModel : ObservableObject
         {
             // Session (re)opened: the banner derives from the persisted acknowledgment marker so
             // an unacknowledged level-up survives an app restart. A career with no marker yet is
-            // seeded at its current level (silently — no banner for history already lived).
+            // seeded at its current level (silently, no banner for history already lived).
             int acknowledged = LastAcknowledgedLevel();
             if (acknowledged == 0)
             {
@@ -452,7 +452,7 @@ public sealed partial class DossierViewModel : ObservableObject
         PlayerCarKey = playerSeat?.DriverId;
         PlayerCarSpec = _session.PlayerCarSpec();
 
-        // The evolving SMGP story lives on the player's Paddock card (Task 2) — surface it here too.
+        // The evolving SMGP story lives on the player's Paddock card (Task 2), surface it here too.
         var playerCard = _session.SmgpPaddock()?.Drivers.FirstOrDefault(d => d.IsPlayer);
         Timeline = playerCard?.Timeline ?? [];
         NarrativeIntro = playerCard?.NarrativeIntro ?? "";
@@ -546,6 +546,8 @@ public sealed partial class DossierViewModel : ObservableObject
         SkillPlanDirty = _pendingSkillNodeIds.Count > 0;
     }
 
+    private string? _skillTreeFingerprint;
+
     private void SetSkillTree(SkillTreeSnapshot? snapshot, string? selectedId = null)
     {
         selectedId ??= SelectedSkillNode?.Id;
@@ -554,8 +556,20 @@ public sealed partial class DossierViewModel : ObservableObject
             SkillTree = [];
             AttributeRails = [];
             SelectedSkillNode = null;
+            _skillTreeFingerprint = null;
             return;
         }
+
+        // The full 209-node rebuild + re-render only pays when the projection actually changed:
+        // identical state/cost/rail structure keeps the existing viewmodels (and their visuals)
+        // untouched, which is what makes repeat dossier opens instant.
+        string fingerprint = string.Join(";",
+            snapshot.Branches.SelectMany(branch => branch.Nodes)
+                .Select(node => $"{node.Id}:{node.State}:{node.Cost}:{node.AttributeValueAfter}"));
+        if (fingerprint == _skillTreeFingerprint && SkillTree.Count > 0)
+            return;
+
+        _skillTreeFingerprint = fingerprint;
 
         var names = snapshot.Branches.SelectMany(branch => branch.Nodes)
             .ToDictionary(node => node.Id, node => node.Name, StringComparer.Ordinal);

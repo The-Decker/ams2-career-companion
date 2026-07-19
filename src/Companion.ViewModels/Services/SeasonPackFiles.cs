@@ -31,7 +31,7 @@ public sealed record SeasonPackFiles
         PackLoader.Parse(ManifestJson, SeasonJson, TeamsJson, DriversJson, EntriesJson);
 
     /// <summary>The five verbatim parts as the app's pinned form (the Data layer's
-    /// <see cref="PinnedPackEnvelope"/> — one pinning format for the whole app).</summary>
+    /// <see cref="PinnedPackEnvelope"/>, one pinning format for the whole app).</summary>
     public PinnedPackEnvelope ToPinnedEnvelope() =>
         PinnedPackEnvelope.From(ManifestJson, SeasonJson, TeamsJson, DriversJson, EntriesJson);
 
@@ -40,7 +40,7 @@ public sealed record SeasonPackFiles
         string path = Path.Combine(packDirectory, fileName);
         if (!File.Exists(path))
             throw new FileNotFoundException(
-                $"Season pack part '{fileName}' not found in '{packDirectory}' — a pack folder needs " +
+                $"Season pack part '{fileName}' not found in '{packDirectory}', a pack folder needs " +
                 "pack.json, season.json, teams.json, drivers.json and entries.json.", path);
         return File.ReadAllText(path);
     }

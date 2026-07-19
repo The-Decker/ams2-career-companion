@@ -4,7 +4,7 @@ using Microsoft.Data.Sqlite;
 namespace Companion.Data;
 
 /// <summary>Journal phases the Data layer itself emits (the sim's phases live in
-/// <see cref="JournalPhases"/>). String values are part of the save format — never rename.</summary>
+/// <see cref="JournalPhases"/>). String values are part of the save format, never rename.</summary>
 public static class DataJournalPhases
 {
     /// <summary>Per-round standings rows, refolded from raw results after every import and
@@ -20,10 +20,10 @@ public static class DataJournalPhases
     public const string ImportResult = "import.result";
 
     /// <summary>App-level career-creation provenance row: wizard facts about the OUTSIDE
-    /// world (pack directory, seat pick, seed), not derived sim state — replay excludes it.</summary>
+    /// world (pack directory, seat pick, seed), not derived sim state, replay excludes it.</summary>
     public const string CareerProvenance = "career";
 
-    /// <summary>App-level "a result was entered" provenance row — bookkeeping about the
+    /// <summary>App-level "a result was entered" provenance row, bookkeeping about the
     /// import event itself (like the import.* rows), not derived sim state.</summary>
     public const string ResultProvenance = "result";
 
@@ -33,17 +33,17 @@ public static class DataJournalPhases
     public const string EraTransition = "era.transition";
 
     /// <summary>True for journal rows that record provenance about the outside world rather
-    /// than derived sim state — exactly the rows the replay byte-compare excludes.</summary>
+    /// than derived sim state, exactly the rows the replay byte-compare excludes.</summary>
     public static bool IsProvenance(string phase) =>
         phase.StartsWith(AuditPrefix, StringComparison.Ordinal)
         || string.Equals(phase, CareerProvenance, StringComparison.Ordinal)
         || string.Equals(phase, ResultProvenance, StringComparison.Ordinal)
         // The player.character creation row is a one-time INPUT (its data rides in the start
-        // player state, which survives WipeDerived) — the round fold never regenerates it, so
+        // player state, which survives WipeDerived), the round fold never regenerates it, so
         // the replay byte-compare must exclude it. (Increment 4a.)
         || string.Equals(phase, JournalPhases.PlayerCharacter, StringComparison.Ordinal)
         // player.statSpend is a between-season player choice re-applied at the transition (character
-        // depth 4) — an INPUT the round fold never regenerates, so exclude it too.
+        // depth 4), an INPUT the round fold never regenerates, so exclude it too.
         || string.Equals(phase, JournalPhases.PlayerStatSpend, StringComparison.Ordinal)
         // player.skillPlan is the progression-v2 ordered, atomic replacement for several
         // player.statSpend rows. Its resulting next-season character state is replay-checked.
@@ -56,10 +56,10 @@ public static class DataJournalPhases
         // never regenerates the source row, so only its derived effects are byte-compared.
         || string.Equals(phase, JournalPhases.PlayerRoundConditions, StringComparison.Ordinal)
         || string.Equals(phase, JournalPhases.PlayerRespec, StringComparison.Ordinal)
-        // player.gridSelection is the creation-time chosen field (v0.6.0) — its data rides in the
+        // player.gridSelection is the creation-time chosen field (v0.6.0), its data rides in the
         // start player state (survives WipeDerived); the round fold never regenerates it, so exclude.
         || string.Equals(phase, JournalPhases.PlayerGridSelection, StringComparison.Ordinal)
-        // smgp.swap is the player's post-race promotion decision (3c-2) — a two-phase INPUT the round
+        // smgp.swap is the player's post-race promotion decision (3c-2), a two-phase INPUT the round
         // fold never regenerates (it is READ back to resolve the pending offer, like the stat spends),
         // so the byte-compare must exclude it. Its DERIVED effect (the smgp.seat row) IS compared.
         || string.Equals(phase, JournalPhases.SmgpSwap, StringComparison.Ordinal)
@@ -100,7 +100,7 @@ public sealed record JournalRow
 }
 
 /// <summary>Append-only journal persistence. seq is storage-assigned (AUTOINCREMENT,
-/// monotonic); utc ALWAYS comes from the caller so replay can pass a fixed clock — the
+/// monotonic); utc ALWAYS comes from the caller so replay can pass a fixed clock, the
 /// Data layer never reads the machine clock.</summary>
 public static class JournalStore
 {

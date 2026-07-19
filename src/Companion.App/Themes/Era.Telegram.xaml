@@ -1,0 +1,379 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:conv="clr-namespace:Companion.App.Converters"
+                    xmlns:career="clr-namespace:Companion.Core.Career;assembly=Companion.Core"
+                    xmlns:views="clr-namespace:Companion.App.Views">
+
+    <!-- ======================================================================
+         ERA MEDIUM: TELEGRAM (season years <= 1979)
+         The ochre wire-paper skin: sepia ink on aged paper, a double-rule chrome
+         frame and a ring-stamp letterhead. Tokens are MEDIUM-PREFIXED so all three
+         era dictionaries merge together without a key collision; the shared
+         document contract at the bottom keys its swap on EraMedium via DataTrigger
+         ("immersive docs, legible tools": only document surfaces take this skin).
+
+         Typography: the contract font stack (Consolas, Courier New, monospace) is
+         an OS stack, every supported Windows box carries at least one face, so no
+         era-doc font is bundled (see Assets/Era/README.md for the licensing call).
+         The paper grain is a vector DrawingBrush tile (lean, packaging-free); the
+         matching raster master lives at Assets/Era/ochre-wire.png.
+         ====================================================================== -->
+
+    <!-- ===== telegram tokens ===== -->
+    <Color x:Key="EraTelegramPaperColor">#E7D5A5</Color>
+    <Color x:Key="EraTelegramInkColor">#332714</Color>
+
+    <SolidColorBrush x:Key="EraTelegramPaperSolidBrush" Color="#E7D5A5" />
+    <SolidColorBrush x:Key="EraTelegramBandBrush" Color="#DCC48A" />
+    <SolidColorBrush x:Key="EraTelegramInkBrush" Color="#332714" />
+    <SolidColorBrush x:Key="EraTelegramInkFaintBrush" Color="#6E5B35" />
+    <SolidColorBrush x:Key="EraTelegramAccentBrush" Color="#C8922E" />
+    <SolidColorBrush x:Key="EraTelegramAccentDimBrush" Color="#33C8922E" />
+    <SolidColorBrush x:Key="EraTelegramChromeBrush" Color="#8A6A2A" />
+    <FontFamily x:Key="EraTelegramDocFont">Consolas, Courier New, monospace</FontFamily>
+
+    <!-- The aged ochre paper itself: a tileable vector grain (twin of
+         Assets/Era/ochre-wire.png) over the paper color, one Background brush. -->
+    <DrawingBrush x:Key="EraTelegramPaperBrush" TileMode="Tile"
+                  Viewport="0,0,96,96" ViewportUnits="Absolute" Stretch="None"
+                  AlignmentX="Left" AlignmentY="Top">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#E7D5A5">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="0,0,96,96" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#228A6A2A">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="0,21,96,2" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#228A6A2A">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="0,71,96,2" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#2E8A6A2A">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="18,19,4,4" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#2E8A6A2A">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="66,69,4,4" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#1A8A6A2A">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="40,44,2,2" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#1A8A6A2A">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="80,10,2,2" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#1A8A6A2A">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="8,84,2,2" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <!-- The wire letterhead: ring stamp with a relay bolt, punched-tape dots and the
+         medium label, the letterhead line in the wire face. Binds the document
+         view-model (Letterhead + EraSkin.Label). -->
+    <DataTemplate x:Key="EraTelegramLetterhead">
+        <Border Background="{DynamicResource EraTelegramBandBrush}"
+                BorderBrush="{DynamicResource EraTelegramChromeBrush}" BorderThickness="0,1.5,0,1.5"
+                Padding="14,7" CornerRadius="2,2,0,0">
+            <DockPanel LastChildFill="True">
+                <Border DockPanel.Dock="Left" Width="28" Height="28" Margin="0,0,10,0"
+                        BorderBrush="{DynamicResource EraTelegramChromeBrush}" BorderThickness="2"
+                        CornerRadius="14" VerticalAlignment="Center">
+                    <TextBlock Text="&#xE945;" FontFamily="{StaticResource IconFont}" FontSize="12"
+                               Foreground="{DynamicResource EraTelegramChromeBrush}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center"
+                            Margin="10,0,0,0">
+                    <Border Width="6" Height="6" CornerRadius="1" Opacity="0.75" Margin="0,0,4,0"
+                            Background="{DynamicResource EraTelegramChromeBrush}" />
+                    <Border Width="6" Height="6" CornerRadius="1" Opacity="0.75" Margin="0,0,4,0"
+                            Background="{DynamicResource EraTelegramChromeBrush}" />
+                    <Border Width="6" Height="6" CornerRadius="1" Opacity="0.75" Margin="0,0,6,0"
+                            Background="{DynamicResource EraTelegramChromeBrush}" />
+                    <TextBlock Text="{Binding EraSkin.Label}" FontFamily="{DynamicResource EraTelegramDocFont}"
+                               FontSize="10" FontWeight="Bold" VerticalAlignment="Center"
+                               Foreground="{DynamicResource EraTelegramChromeBrush}" />
+                </StackPanel>
+                <TextBlock Text="{Binding Letterhead}" FontFamily="{DynamicResource EraTelegramDocFont}"
+                           FontWeight="Bold" FontSize="13" VerticalAlignment="Center"
+                           Foreground="{DynamicResource EraTelegramInkBrush}"
+                           TextTrimming="CharacterEllipsis" />
+            </DockPanel>
+        </Border>
+    </DataTemplate>
+
+    <!-- ======================================================================
+         SHARED ERA-DOCUMENT CONTRACT (identical block in Era.Telegram.xaml,
+         Era.Fax.xaml and Era.Email.xaml): merge any one dictionary and the full
+         swap is present; merging all three is a no-op for these keys (the last
+         identical definition wins). Document surfaces key on the flattened
+         EraMedium via DataTrigger; typography and accent bind EraSkin directly
+         so a data/rules/era-themes.json decade override still restyles them.
+         Every trigger pair ends with the EraThemingEnabled gate trigger LAST,
+         so the master switch restores neutral chrome when off.
+         ====================================================================== -->
+    <conv:EraThemingGateConverter x:Key="EraThemingGate" />
+
+    <!-- The plain letterhead (gate off, or a surface with no medium). -->
+    <DataTemplate x:Key="EraNeutralLetterhead">
+        <TextBlock Text="{Binding Letterhead}" FontWeight="SemiBold" FontSize="13"
+                   VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+    </DataTemplate>
+
+    <!-- The document surface: neutral panel by default, period paper per medium. -->
+    <Style x:Key="EraDocumentSurface" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource EdgeBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding EraMedium}" Value="{x:Static career:EraMedium.Telegram}">
+                <Setter Property="Background" Value="{DynamicResource EraTelegramPaperBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource EraTelegramChromeBrush}" />
+                <Setter Property="BorderThickness" Value="1.5" />
+                <Setter Property="CornerRadius" Value="2" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding EraMedium}" Value="{x:Static career:EraMedium.Fax}">
+                <Setter Property="Background" Value="{DynamicResource EraFaxPaperBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource EraFaxChromeBrush}" />
+                <Setter Property="BorderThickness" Value="1.5" />
+                <Setter Property="CornerRadius" Value="2" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding EraMedium}" Value="{x:Static career:EraMedium.Email}">
+                <Setter Property="Background" Value="{DynamicResource EraEmailPaperBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource EraEmailChromeBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="4" />
+            </DataTrigger>
+            <DataTrigger Value="False">
+                <DataTrigger.Binding>
+                    <MultiBinding Converter="{StaticResource EraThemingGate}">
+                        <Binding Path="DataContext.EraThemingEnabled"
+                                 RelativeSource="{RelativeSource AncestorType=views:HubView}" />
+                        <Binding Path="Tag.EraThemingEnabled"
+                                 RelativeSource="{RelativeSource AncestorType=Window}" />
+                    </MultiBinding>
+                </DataTrigger.Binding>
+                <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource EdgeBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="8" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- The letterhead band: swaps the whole per-medium DataTemplate. -->
+    <Style x:Key="EraDocumentLetterhead" TargetType="ContentControl">
+        <Setter Property="Content" Value="{Binding}" />
+        <Setter Property="ContentTemplate" Value="{DynamicResource EraNeutralLetterhead}" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding EraMedium}" Value="{x:Static career:EraMedium.Telegram}">
+                <Setter Property="ContentTemplate" Value="{DynamicResource EraTelegramLetterhead}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding EraMedium}" Value="{x:Static career:EraMedium.Fax}">
+                <Setter Property="ContentTemplate" Value="{DynamicResource EraFaxLetterhead}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding EraMedium}" Value="{x:Static career:EraMedium.Email}">
+                <Setter Property="ContentTemplate" Value="{DynamicResource EraEmailLetterhead}" />
+            </DataTrigger>
+            <DataTrigger Value="False">
+                <DataTrigger.Binding>
+                    <MultiBinding Converter="{StaticResource EraThemingGate}">
+                        <Binding Path="DataContext.EraThemingEnabled"
+                                 RelativeSource="{RelativeSource AncestorType=views:HubView}" />
+                        <Binding Path="Tag.EraThemingEnabled"
+                                 RelativeSource="{RelativeSource AncestorType=Window}" />
+                    </MultiBinding>
+                </DataTrigger.Binding>
+                <Setter Property="ContentTemplate" Value="{DynamicResource EraNeutralLetterhead}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Document headline: the era document face + ink on paper. -->
+    <Style x:Key="EraDocumentHeadline" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+        <Setter Property="FontFamily" Value="{Binding EraSkin.DocumentFontStack}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="TextTrimming" Value="None" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding EraMedium}" Value="{x:Static career:EraMedium.Telegram}">
+                <Setter Property="Foreground" Value="{DynamicResource EraTelegramInkBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding EraMedium}" Value="{x:Static career:EraMedium.Fax}">
+                <Setter Property="Foreground" Value="{DynamicResource EraFaxInkBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding EraMedium}" Value="{x:Static career:EraMedium.Email}">
+                <Setter Property="Foreground" Value="{DynamicResource EraEmailInkBrush}" />
+            </DataTrigger>
+            <DataTrigger Value="False">
+                <DataTrigger.Binding>
+                    <MultiBinding Converter="{StaticResource EraThemingGate}">
+                        <Binding Path="DataContext.EraThemingEnabled"
+                                 RelativeSource="{RelativeSource AncestorType=views:HubView}" />
+                        <Binding Path="Tag.EraThemingEnabled"
+                                 RelativeSource="{RelativeSource AncestorType=Window}" />
+                    </MultiBinding>
+                </DataTrigger.Binding>
+                <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+                <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Document body copy: the era document face + ink on paper. -->
+    <Style x:Key="EraDocumentBody" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+        <Setter Property="FontFamily" Value="{Binding EraSkin.DocumentFontStack}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="TextTrimming" Value="None" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding EraMedium}" Value="{x:Static career:EraMedium.Telegram}">
+                <Setter Property="Foreground" Value="{DynamicResource EraTelegramInkBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding EraMedium}" Value="{x:Static career:EraMedium.Fax}">
+                <Setter Property="Foreground" Value="{DynamicResource EraFaxInkBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding EraMedium}" Value="{x:Static career:EraMedium.Email}">
+                <Setter Property="Foreground" Value="{DynamicResource EraEmailInkBrush}" />
+            </DataTrigger>
+            <DataTrigger Value="False">
+                <DataTrigger.Binding>
+                    <MultiBinding Converter="{StaticResource EraThemingGate}">
+                        <Binding Path="DataContext.EraThemingEnabled"
+                                 RelativeSource="{RelativeSource AncestorType=views:HubView}" />
+                        <Binding Path="Tag.EraThemingEnabled"
+                                 RelativeSource="{RelativeSource AncestorType=Window}" />
+                    </MultiBinding>
+                </DataTrigger.Binding>
+                <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+                <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- The dateline: small era face, faint ink. -->
+    <Style x:Key="EraDocumentDateline" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+        <Setter Property="FontFamily" Value="{Binding EraSkin.DocumentFontStack}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+        <Setter Property="FontSize" Value="11" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding EraMedium}" Value="{x:Static career:EraMedium.Telegram}">
+                <Setter Property="Foreground" Value="{DynamicResource EraTelegramInkFaintBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding EraMedium}" Value="{x:Static career:EraMedium.Fax}">
+                <Setter Property="Foreground" Value="{DynamicResource EraFaxInkFaintBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding EraMedium}" Value="{x:Static career:EraMedium.Email}">
+                <Setter Property="Foreground" Value="{DynamicResource EraEmailInkFaintBrush}" />
+            </DataTrigger>
+            <DataTrigger Value="False">
+                <DataTrigger.Binding>
+                    <MultiBinding Converter="{StaticResource EraThemingGate}">
+                        <Binding Path="DataContext.EraThemingEnabled"
+                                 RelativeSource="{RelativeSource AncestorType=views:HubView}" />
+                        <Binding Path="Tag.EraThemingEnabled"
+                                 RelativeSource="{RelativeSource AncestorType=Window}" />
+                    </MultiBinding>
+                </DataTrigger.Binding>
+                <Setter Property="FontFamily" Value="{StaticResource MonoFont}" />
+                <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- The section rule inside a document. -->
+    <Style x:Key="EraDocumentRule" TargetType="Border">
+        <Setter Property="Height" Value="1" />
+        <Setter Property="Background" Value="{DynamicResource EdgeBrush}" />
+        <Setter Property="Margin" Value="0,12,0,12" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding EraMedium}" Value="{x:Static career:EraMedium.Telegram}">
+                <Setter Property="Height" Value="2" />
+                <Setter Property="Background" Value="{DynamicResource EraTelegramChromeBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding EraMedium}" Value="{x:Static career:EraMedium.Fax}">
+                <Setter Property="Background" Value="{DynamicResource EraFaxChromeBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding EraMedium}" Value="{x:Static career:EraMedium.Email}">
+                <Setter Property="Background" Value="{DynamicResource EraEmailChromeBrush}" />
+            </DataTrigger>
+            <DataTrigger Value="False">
+                <DataTrigger.Binding>
+                    <MultiBinding Converter="{StaticResource EraThemingGate}">
+                        <Binding Path="DataContext.EraThemingEnabled"
+                                 RelativeSource="{RelativeSource AncestorType=views:HubView}" />
+                        <Binding Path="Tag.EraThemingEnabled"
+                                 RelativeSource="{RelativeSource AncestorType=Window}" />
+                    </MultiBinding>
+                </DataTrigger.Binding>
+                <Setter Property="Height" Value="1" />
+                <Setter Property="Background" Value="{DynamicResource EdgeBrush}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- An accent frame inside a document (quote/callout edge): era accent hex, so a
+         decade override restamps it; neutral edge when the gate is off. -->
+    <Style x:Key="EraDocumentAccentFrame" TargetType="Border">
+        <Setter Property="BorderBrush" Value="{Binding EraSkin.AccentHex, Converter={StaticResource HexBrush}}" />
+        <Setter Property="BorderThickness" Value="3,0,0,0" />
+        <Style.Triggers>
+            <DataTrigger Value="False">
+                <DataTrigger.Binding>
+                    <MultiBinding Converter="{StaticResource EraThemingGate}">
+                        <Binding Path="DataContext.EraThemingEnabled"
+                                 RelativeSource="{RelativeSource AncestorType=views:HubView}" />
+                        <Binding Path="Tag.EraThemingEnabled"
+                                 RelativeSource="{RelativeSource AncestorType=Window}" />
+                    </MultiBinding>
+                </DataTrigger.Binding>
+                <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- The reusable period offer letter (era-theming-assets-brief.md A4 shape): the
+         offer's facts composed as the era document, wherever offers appear. The
+         accept action stays with the hosting screen; this is the document only. -->
+    <DataTemplate x:Key="EraOfferDocumentTemplate">
+        <Border Style="{StaticResource EraDocumentSurface}" Padding="0" Margin="0,4">
+            <StackPanel>
+                <ContentControl Style="{StaticResource EraDocumentLetterhead}" />
+                <StackPanel Margin="16,10,16,14">
+                    <TextBlock Text="{Binding Dateline}" Style="{StaticResource EraDocumentDateline}" />
+                    <Border Style="{StaticResource EraDocumentRule}" />
+                    <TextBlock Text="{Binding BodyText}" Style="{StaticResource EraDocumentBody}"
+                               FontSize="13.5" LineHeight="20" />
+                    <WrapPanel Margin="0,12,0,0">
+                        <Border Style="{StaticResource CompactChip}" Margin="0,0,6,0">
+                            <TextBlock Text="{Binding TierText}" Style="{StaticResource Mono}" FontSize="10.5" />
+                        </Border>
+                        <Border Style="{StaticResource CompactChip}">
+                            <TextBlock Text="{Binding SalaryText}" Style="{StaticResource Mono}" FontSize="10.5" />
+                        </Border>
+                    </WrapPanel>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </DataTemplate>
+</ResourceDictionary>

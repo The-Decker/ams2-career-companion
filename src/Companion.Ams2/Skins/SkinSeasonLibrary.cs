@@ -4,7 +4,7 @@ namespace Companion.Ams2.Skins;
 /// One season's set of ACTIVE override pointer files: vehicle-model folder name →
 /// the <c>&lt;model&gt;.xml</c> text that puts that model on this season's skins. Two season
 /// packs for the same car model (1983↔1985, 1990↔SMGP, 1996↔1997, 1974↔1975, 2010↔2012)
-/// collide ONLY on this one file — every pack keeps its textures in its own subfolder — so
+/// collide ONLY on this one file, every pack keeps its textures in its own subfolder, so
 /// swapping seasons is swapping these pointer files.
 /// </summary>
 public sealed record SkinSeasonSet
@@ -14,6 +14,11 @@ public sealed record SkinSeasonSet
     /// <summary>Vehicle model folder name (e.g. <c>formula_retro_g3</c>) → the season's
     /// <c>&lt;model&gt;.xml</c> content.</summary>
     public required IReadOnlyDictionary<string, string> ModelXml { get; init; }
+
+    /// <summary>The app-owned payload manifest (<c>ownership.json</c> beside the pointer files):
+    /// which install-side texture folders the app vaults and can repair for each model. Null =
+    /// inspect-only set, the ownership feature does not cover it.</summary>
+    public SkinSeasonOwnership? Ownership { get; init; }
 }
 
 /// <summary>
@@ -39,7 +44,7 @@ public sealed class SkinSeasonLibrary
         Sets.Values.Where(s => s.ModelXml.ContainsKey(model));
 
     /// <summary>Loads every <c>&lt;directory&gt;/&lt;key&gt;/*.xml</c>. A missing directory is an
-    /// empty library (the feature is simply absent). <c>*_dist.xml</c> files are skipped — they
+    /// empty library (the feature is simply absent). <c>*_dist.xml</c> files are skipped, they
     /// are the packs' inert "copy me without the _dist part" distribution templates, never read
     /// by the game.</summary>
     public static SkinSeasonLibrary Load(string directory)
@@ -63,6 +68,7 @@ public sealed class SkinSeasonLibrary
                 {
                     Key = Path.GetFileName(setDir),
                     ModelXml = models,
+                    Ownership = SkinSeasonOwnership.Load(setDir),
                 };
         }
         return new SkinSeasonLibrary { Sets = sets };

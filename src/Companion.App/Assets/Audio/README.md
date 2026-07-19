@@ -79,16 +79,37 @@ No cue contains a recording, sample-library asset, voice, engine, crowd, broadca
 | Skill unlock | `Sfx/skill-unlock.wav` | Skill-tree Unlock button |
 
 All cues are deterministic 48 kHz, 16-bit mono PCM WAV files, with short tails and peaks from
--12.5 to -9.5 dBFS. The frequent navigation and bucket cues are intentionally quieter. Regenerate the
-complete pack from the repository root with both tracked generators:
+-13.0 to -9.5 dBFS. The frequent navigation and bucket cues are intentionally quieter. Regenerate the
+complete pack from the repository root with the tracked generators:
 
 ```powershell
 .\tools\generate_sfx.ps1
 .\src\Companion.App\Audio\Generation\generate-seat-confirm.ps1
+.\src\Companion.App\Audio\Generation\generate-era-sfx.ps1
 ```
 
 The generators produce the exact audited masters; the seat-confirm source prints its file size and
 is hash-stable across repeated runs. Generated WAV files and generators must be updated together.
+
+## Era-medium voicings
+
+Inside a career, the four immersive cues (Navigate, Confirm, Back, SeatConfirm) are re-voiced for
+the career's period medium; menus, the gallery, and all other cues stay on the era-neutral base
+masters above. The era skin only changes timbre: trigger rules, gain, cooldowns, dedupe, ducking,
+and the silence zones are identical in every era. The twelve era masters ship as
+`Sfx/<cue>-telegram.wav`, `Sfx/<cue>-fax.wav`, and `Sfx/<cue>-email.wav`:
+
+| Medium | Voicing | Cues |
+|---|---|---|
+| Telegram | Relay/telegraph-key tick with a small bell | Navigate, Confirm, SeatConfirm, Back |
+| Fax | Thermal-print chirp with a handshake warble | Navigate, Confirm, SeatConfirm, Back |
+| Email | Soft FM chime | Navigate, Confirm, SeatConfirm, Back |
+
+Each voicing keeps its base cue's duration, peak, and melodic contour. The App pushes the era skin
+one-way to the audio controller (`SetEraSkin`) when a career opens, closes, or moves behind a menu;
+the controller is told the skin and never observes navigation or career state. All era masters are
+original deterministic synthesis from `Audio/Generation/generate-era-sfx.ps1`, with no recordings
+or signal captures.
 
 Every SFX request comes from an explicitly opted-in button click, the visible seat-card choice, or
 the result-entry drag behavior. Button cooldown history is scoped to the originating control, so

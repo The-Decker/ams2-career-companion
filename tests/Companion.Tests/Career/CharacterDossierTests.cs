@@ -330,13 +330,13 @@ public sealed class CharacterDossierTests
     }
 
     [Theory]
-    [InlineData(1, false, false, AvailabilityStatus.Injured, "Injured — out 1 race")]
-    [InlineData(2, false, false, AvailabilityStatus.Injured, "Injured — out 2 races")]
-    [InlineData(0, true, false, AvailabilityStatus.SeasonOver, "Season over — recovering")]
+    [InlineData(1, false, false, AvailabilityStatus.Injured, "Injured, out 1 race")]
+    [InlineData(2, false, false, AvailabilityStatus.Injured, "Injured, out 2 races")]
+    [InlineData(0, true, false, AvailabilityStatus.SeasonOver, "Season over, recovering")]
     [InlineData(0, false, true, AvailabilityStatus.Deceased, "Deceased")]
-    // Precedence — deceased trumps a season-ending injury trumps a suspension (mirrors IsFit).
+    // Precedence, deceased trumps a season-ending injury trumps a suspension (mirrors IsFit).
     [InlineData(3, true, true, AvailabilityStatus.Deceased, "Deceased")]
-    [InlineData(3, true, false, AvailabilityStatus.SeasonOver, "Season over — recovering")]
+    [InlineData(3, true, false, AvailabilityStatus.SeasonOver, "Season over, recovering")]
     public void Build_ProjectsAvailabilityFromFoldedInjuryState(
         int suspension, bool seasonEnding, bool deceased, AvailabilityStatus expected, string expectedLabel)
     {

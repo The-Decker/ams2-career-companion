@@ -1,0 +1,102 @@
+{
+  "$comment": "Season dossier pack S15, The Insurgent's Last Climb (Golden Circus). Season-scoped coverage keyed to the underdog's year: the whip-round garages, the thousand small names on the bodywork, the backstreet's final assault on the establishment's summit. Ids are stable rendezvous keys, never rename. Read-side only.",
+  "version": 1,
+  "templates": [
+    {
+      "id": "s15.season-started.passed-hat",
+      "event": "seasonStarted",
+      "eras": ["smgp"],
+      "seasons": [15],
+      "headline": "THE INSURGENT'S LAST CLIMB: the circus passes the hat",
+      "deck": "A thousand small names against the establishment's gold",
+      "summary": "Season fifteen opens as the underdogs' great year: garages funded by whip-rounds and faith, aimed squarely at the summit.",
+      "sections": {
+        "lead": "{pool:dateline} Somewhere down the pit lane this winter, a garage sold everything not bolted to its car and lettered a thousand small names where the sponsors ought to be. That is the spirit of the season they are calling the insurgent's last climb: the backstreet's final, total assault on the establishment's gold.",
+        "context": "The grandees arrived with polished budgets and heritage. The believers arrived with collection tins and tools they own outright. The big board, blessedly, cannot tell the difference. {pool:swLadder}",
+        "close": "Sixteen rounds of climbing ahead. The summit does not care how anybody got up."
+      }
+    },
+    {
+      "id": "s15.race-won.whip-round",
+      "event": "raceWon",
+      "eras": ["smgp"],
+      "seasons": [15],
+      "headline": "{subject} wins[[?venue: at {venue}]], and every small name on the car wins too",
+      "deck": "The collection tin beats the chequebook",
+      "summary": "{subject} won[[?venue: at {venue}]][[?round: in round {round}]].",
+      "sections": {
+        "lead": "{pool:dateline} Read the names on the flanks of the winning car tonight, because every one of them owns a piece of this. {subject} took the flag[[?venue: at {venue}]] for the people the establishment never sees, and the grandstand read the roll of honour aloud. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: The climb's account: {subject} at {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s15.podium.defiant-step",
+      "event": "podiumFinish",
+      "eras": ["smgp"],
+      "seasons": [15],
+      "headline": "{subject} on the podium[[?venue: at {venue}]], chin up at the aristocracy",
+      "deck": "A rung the backstreet paid for",
+      "summary": "{subject} finished on the podium[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The insurgent's year measures itself in afternoons like this: {subject} on the podium, helmet off, looking down at garages that spent more on hospitality than some teams spent on everything. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: Championship: {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s15.pole.reserved-seat",
+      "event": "polePosition",
+      "eras": ["smgp"],
+      "seasons": [15],
+      "headline": "POLE for {subject}[[?venue: at {venue}]], a front row nobody booked",
+      "deck": "The establishment's reserved seat, taken",
+      "summary": "{subject} took pole position[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The front row of a golden-age grid is supposed to be reserved seating, bought with budget and pedigree. {subject} took it anyway[[?venue: at {venue}]], with a lap paid for in nerve and a garage's whole winter. {pool:swBoard}",
+        "close": "The grandees will want the seat back tomorrow. They are welcome to try."
+      }
+    },
+    {
+      "id": "s15.lead-taken.ridge-in-sight",
+      "event": "championshipLeadTaken",
+      "eras": ["smgp"],
+      "seasons": [15],
+      "headline": "{subject} leads the insurgent's season: the climb reaches the ridge",
+      "deck": "A backstreet name on top of the establishment's board",
+      "summary": "{subject} took the championship lead in season fifteen.",
+      "sections": {
+        "lead": "{pool:dateline} The ridge is in sight, and the name on top of the big board belongs to the climb: {subject} leads the championship. Somewhere tonight a garage that mortgaged its future is reading the standings by lamplight and saying nothing at all. {pool:swBoard}",
+        "stats": "{pool:rrStatLine}",
+        "close": "The last stretch of any climb is the steepest. The summit has been warned."
+      }
+    },
+    {
+      "id": "s15.retired-mechanical.thin-margin",
+      "event": "retiredMechanical",
+      "eras": ["smgp"],
+      "seasons": [15],
+      "headline": "The gamble shows its price: {subject} parks it[[?venue: at {venue}]]",
+      "deck": "A garage with no spare anything loses a day",
+      "summary": "{subject} retired with mechanical failure[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} When a garage bets everything on one car, the car carries everything, and today something underneath {subject} stopped carrying[[?venue: at {venue}]]. No spare programme, no second string, just a quiet machine and a long evening. {pool:wrenchNote}",
+        "context": "The climb does not end at one broken afternoon; it merely gets more expensive. {pool:swLadder}",
+        "close": "The crew will mend it with what they have. What they have has been enough so far."
+      }
+    },
+    {
+      "id": "s15.retired-driver-error.borrowed-courage",
+      "event": "retiredDriverError",
+      "eras": ["smgp"],
+      "seasons": [15],
+      "headline": "{subject} in the wall[[?venue: at {venue}]], the reach exceeds the grip",
+      "deck": "The climb's oldest danger claims one",
+      "summary": "{subject} crashed out[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} On a climb like this, the temptation is always to carry one corner more courage than the car can cash. {subject} carried it[[?venue: at {venue}]], and the wall banked the difference. The driver climbed out with the season's resolve intact and the car considerably less so. {pool:swCrowd}",
+        "close": "The believers will pass the hat once more. It has never stayed empty yet."
+      }
+    }
+  ]
+}

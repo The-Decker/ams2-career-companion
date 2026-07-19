@@ -5,10 +5,10 @@ namespace Companion.ViewModels.Services;
 /// <c>data/ams2/&lt;kind&gt;-art/</c> folder beside the exe and the matching view resolves them by a
 /// key, most-specific-first, falling back cleanly when nothing is present. It is the shared primitive
 /// behind the gallery's era art (<see cref="EraArtResolver"/>, keyed by season year), track-layout
-/// thumbnails (keyed by track id) and any future story/event art — all "folder + key + resolver with
+/// thumbnails (keyed by track id) and any future story/event art, all "folder + key + resolver with
 /// fallback", mirroring the untracked era-art pattern (user art is never committed).
 ///
-/// <para>Pure ordering plus a single <see cref="File.Exists"/> probe — no image is decoded here — so
+/// <para>Pure ordering plus a single <see cref="File.Exists"/> probe, no image is decoded here, so
 /// it lives in the ViewModels layer (not <c>Companion.Core</c>, which forbids I/O) and unit-tests with
 /// plain temp files. The WPF bitmap load happens in the view-layer converter.</para>
 /// </summary>
@@ -23,7 +23,7 @@ public static class UserImageResolver
     /// <summary>The first candidate file under <paramref name="directory"/> that exists on disk, as a
     /// full path; <c>null</c> when the directory is blank/missing or holds none of the candidates (the
     /// caller then shows its placeholder). <paramref name="candidateFileNames"/> are relative file
-    /// names in most-specific-first order — the first that exists wins.</summary>
+    /// names in most-specific-first order, the first that exists wins.</summary>
     public static string? FirstExisting(string? directory, IEnumerable<string> candidateFileNames)
     {
         if (string.IsNullOrEmpty(directory))
@@ -39,7 +39,7 @@ public static class UserImageResolver
         return null;
     }
 
-    /// <summary>The candidate file names for a simple keyed asset (e.g. a track id) — <c>&lt;key&gt;.jpg</c>,
+    /// <summary>The candidate file names for a simple keyed asset (e.g. a track id), <c>&lt;key&gt;.jpg</c>,
     /// <c>&lt;key&gt;.jpeg</c>, <c>&lt;key&gt;.png</c>, in preference order. Returns nothing for a blank key.</summary>
     public static IReadOnlyList<string> CandidatesForKey(string? key)
     {

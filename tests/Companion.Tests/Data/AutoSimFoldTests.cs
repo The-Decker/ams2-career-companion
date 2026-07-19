@@ -10,9 +10,9 @@ using Companion.ViewModels.Services;
 namespace Companion.Tests.Data;
 
 /// <summary>
-/// Character death &amp; injury, Slice 4 — the AUTO-SIMULATED skipped-round fold (the highest replay-risk
+/// Character death &amp; injury, Slice 4, the AUTO-SIMULATED skipped-round fold (the highest replay-risk
 /// slice). An injured player sits a round out; AMS2 cannot spectate, so the app simulates the AI field
-/// deterministically (player DNS — OPI-neutral, zero points) and folds it. A minor suspension decrements
+/// deterministically (player DNS, OPI-neutral, zero points) and folds it. A minor suspension decrements
 /// and heals; a season-ending injury skips the rest of the season and clears at the reset. A career that
 /// is never injured draws zero from the auto-race stream and stays byte-identical. Outcomes are forced
 /// deterministically by engineering the driver's durability against the (known) accident roll.
@@ -87,7 +87,7 @@ public sealed class AutoSimFoldTests : IDisposable
     };
 
     /// <summary>The durability that makes round 1's (known, seeded) accident roll resolve to a target
-    /// effective d500 — so an injury outcome is forced deterministically. offset = (durability-0.5)*scale;
+    /// effective d500, so an injury outcome is forced deterministically. offset = (durability-0.5)*scale;
     /// effective = roll - offset ⇒ durability = 0.5 + (roll - target)/scale.</summary>
     private static double DurabilityForEffective(int targetEffective)
     {
@@ -123,7 +123,7 @@ public sealed class AutoSimFoldTests : IDisposable
         for (int n = 3; n <= rounds; n++)
             list.Add(TestPackBuilder.Round(n, $"1967-{n:D2}-01"));
         // The Entry helper hardcodes Rounds = "1-2"; widen every entry to cover the added rounds so the
-        // full field is entered all season (otherwise later rounds resolve to just the player — no AI).
+        // full field is entered all season (otherwise later rounds resolve to just the player, no AI).
         return basePack with
         {
             Season = basePack.Season with { Rounds = list },
@@ -180,7 +180,7 @@ public sealed class AutoSimFoldTests : IDisposable
             ApplyPlayerAccident(session);                          // round 1: injured, miss 1
             Assert.Equal(1, session.PlayerMortality().RaceSuspensionRemaining);
 
-            // Round 2: the player must sit out — the round is auto-simulated.
+            // Round 2: the player must sit out, the round is auto-simulated.
             var sitOut = session.CurrentSitOut();
             Assert.NotNull(sitOut);
             Assert.Contains("1 remaining", sitOut!.Headline);
@@ -257,7 +257,7 @@ public sealed class AutoSimFoldTests : IDisposable
         using (var db = CareerDatabase.Open(careerPath))
         {
             long seasonId = CareerStore.ReadSeasons(db).Single().Id;
-            // The season-end 'end' state cleared the transient injury — the driver returns next year.
+            // The season-end 'end' state cleared the transient injury, the driver returns next year.
             var endState = StateStore.ReadPlayerState(db, seasonId, StateStore.StageEnd);
             Assert.NotNull(endState);
             Assert.False(endState!.SeasonEndingInjury);

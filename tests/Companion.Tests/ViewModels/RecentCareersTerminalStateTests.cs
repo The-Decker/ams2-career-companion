@@ -36,7 +36,7 @@ public sealed class RecentCareersTerminalStateTests : IDisposable
         var store = Store();
         store.Touch(@"C:\careers\ayrton.ams2career", "Ayrton", 1990, "smgp", "deceased");
 
-        // Re-opening the archive is a plain 4-arg Touch — it must not wipe the memorial badge.
+        // Re-opening the archive is a plain 4-arg Touch, it must not wipe the memorial badge.
         store.Touch(@"C:\careers\ayrton.ams2career", "Ayrton", 1990, "smgp");
 
         var entry = Assert.Single(store.Load());

@@ -9,7 +9,7 @@
              PreviewMouseUp="OnPreviewMouseUp"
              Focusable="False">
     <UserControl.Resources>
-        <!-- Visible on the ONE row currently being edited (EditingReasonDriverId == row id) — the
+        <!-- Visible on the ONE row currently being edited (EditingReasonDriverId == row id), the
              EDIT state's editor. The inverted twin drives the compact DISPLAY state. -->
         <b:StringsEqualToVisibilityConverter x:Key="StringsEqualVisible" />
         <b:StringsEqualToVisibilityConverter x:Key="StringsEqualHidden" Invert="True" />
@@ -47,7 +47,7 @@
                     <TextBlock Text="RIVAL" Foreground="{DynamicResource ErrorBrush}"
                                FontFamily="{StaticResource DisplayFont}" FontSize="9" FontWeight="Bold" />
                 </Border>
-                <TextBlock Text="{Binding TeamName, StringFormat=' — {0}'}">
+                <TextBlock Text="{Binding TeamName, StringFormat=', {0}'}">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
                             <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
@@ -69,7 +69,7 @@
             <MenuItem Header="Place next" Click="OnCtxPlaceNext"
                       ToolTip="Append at the next open finishing position" />
             <MenuItem Header="Insert at position…" Click="OnCtxInsertAtPosition"
-                      ToolTip="Insert before a specific position — followers shift down" />
+                      ToolTip="Insert before a specific position, followers shift down" />
             <Separator />
             <MenuItem Header="DNF">
                 <MenuItem Header="Mechanical" Tag="m" Click="OnCtxDnf" />
@@ -141,7 +141,7 @@
                 </StackPanel>
             </Border>
 
-            <!-- weekend session heading (Increment 2): names the current session — "Qualifying",
+            <!-- weekend session heading (Increment 2): names the current session, "Qualifying",
                  "Feature", "Sprint". Only weekend sessions set a SessionLabel, so a plain single-race
                  entry (SessionLabel null) renders exactly as the shipped loop. -->
             <Border Style="{StaticResource Chip}" Background="{DynamicResource AccentDimBrush}"
@@ -174,7 +174,7 @@
                             Command="{Binding DataContext.CoachMarks.DismissResultEntryTypeOrDragCommand,
                                       RelativeSource={RelativeSource AncestorType=views:HomeView}}" />
                     <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource TextSecondaryBrush}"
-                               Text="Enter the result your way: TYPE in the box (car number or a few letters, Enter places the next finisher — fastest), or DRAG drivers from Remaining into the finishing order and the DNF/DSQ zones. Both feed the same result and the same undo (Ctrl+Z); right-click any driver for every action." />
+                               Text="Enter the result your way: TYPE in the box (car number or a few letters, Enter places the next finisher, fastest), or DRAG drivers from Remaining into the finishing order and the DNF/DSQ zones. Both feed the same result and the same undo (Ctrl+Z); right-click any driver for every action." />
                 </DockPanel>
             </Border>
 
@@ -182,12 +182,12 @@
                 <Border Style="{StaticResource Chip}" Background="{DynamicResource AccentDimBrush}"
                         Visibility="{Binding IsDnfPhase, Converter={StaticResource BoolCollapsed}}">
                     <TextBlock FontSize="12" Foreground="{DynamicResource AccentTextBrush}"
-                               Text="Type OR drag — car number / 2–3 letters + Enter assigns the next position ('me' = you), or drag drivers into the finishing order" />
+                               Text="Type OR drag, car number / 2–3 letters + Enter assigns the next position ('me' = you), or drag drivers into the finishing order" />
                 </Border>
                 <Border Style="{StaticResource Chip}" Background="{DynamicResource WarningDimBrush}"
                         Visibility="{Binding IsDnfPhase, Converter={StaticResource BoolVisible}}">
                     <TextBlock FontSize="12" Foreground="{DynamicResource WarningBrush}"
-                               Text="DNF phase — Enter marks the highlighted driver (↵↵↵ retires the rest in list order); add ' m' / ' a' / ' o' for the reason; F8 returns" />
+                               Text="DNF phase, Enter marks the highlighted driver (↵↵↵ retires the rest in list order); add ' m' / ' a' / ' o' for the reason; F8 returns" />
                 </Border>
             </StackPanel>
 
@@ -198,7 +198,7 @@
                         ToolTip="Clear the input box (Esc)" />
                 <Button DockPanel.Dock="Right" Margin="8,0,0,0" VerticalAlignment="Stretch"
                         Command="{Binding ToggleDnfPhaseCommand}"
-                        ToolTip="Toggle the DNF phase — Enter then retires drivers instead of placing them (F8)">
+                        ToolTip="Toggle the DNF phase, Enter then retires drivers instead of placing them (F8)">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                             <Setter Property="Content" Value="DNF phase" />
@@ -215,7 +215,7 @@
                 </Button>
                 <Button DockPanel.Dock="Right" Content="Undo" Margin="10,0,0,0" VerticalAlignment="Stretch"
                         Command="{Binding UndoCommand}" IsEnabled="{Binding CanUndo}"
-                        ToolTip="Undo the last placement, DNF, DSQ, or reorder — keyboard or mouse (Ctrl+Z)" />
+                        ToolTip="Undo the last placement, DNF, DSQ, or reorder, keyboard or mouse (Ctrl+Z)" />
 
                 <!-- IsUndoEnabled=False ON PURPOSE (BUG B): the grammar owns Ctrl+Z (unlimited undo
                      across every placement / DNF / DSQ / reorder, via OnPreviewKeyDown → vm.Undo).
@@ -289,19 +289,19 @@
 
                 <TextBlock Grid.Column="1" Style="{StaticResource Faint}" Margin="24,0,12,0"
                            VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
-                           ToolTip="Enter assign · Tab cycle · «name pos» penalty · trailing q DSQ · F8 DNF · Ctrl+Z undo — or drag drivers; right-click any row for more"
-                           Text="Enter assign · Tab cycle · «name pos» penalty · trailing q DSQ · F8 DNF · Ctrl+Z undo — or drag drivers; right-click any row for more" />
+                           ToolTip="Enter assign · Tab cycle · «name pos» penalty · trailing q DSQ · F8 DNF · Ctrl+Z undo, or drag drivers; right-click any row for more"
+                           Text="Enter assign · Tab cycle · «name pos» penalty · trailing q DSQ · F8 DNF · Ctrl+Z undo, or drag drivers; right-click any row for more" />
 
                 <!-- weather: mark a wet round for the weather-conditional perks (Rain Man, etc.) -->
                 <CheckBox Grid.Column="2" Content="Wet race" VerticalAlignment="Center"
                           Margin="0,0,18,0" IsChecked="{Binding IsWet}" Focusable="False"
-                          ToolTip="Tick if you raced in the wet — it feeds weather perks like Rain Man, and is saved with the result." />
+                          ToolTip="Tick if you raced in the wet, it feeds weather perks like Rain Man, and is saved with the result." />
 
                 <!-- the slider prompt: the in-game Opponent Skill this round was DRIVEN at
                      (prefilled with the pace-anchor recommendation, stored in the envelope) -->
                 <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center"
                             Margin="0,0,18,0"
-                            ToolTip="The in-game Opponent Skill you actually raced at — prefilled with the recommendation, saved with the result (it calibrates your pace anchor)">
+                            ToolTip="The in-game Opponent Skill you actually raced at, prefilled with the recommendation, saved with the result (it calibrates your pace anchor)">
                     <TextBlock Text="Opponent Skill raced at" Style="{StaticResource Muted}"
                                VerticalAlignment="Center" />
                     <Slider Width="150" Margin="10,0,8,0" VerticalAlignment="Center" Focusable="False"
@@ -351,7 +351,7 @@
                     <TextBlock DockPanel.Dock="Top" FontWeight="SemiBold" Margin="4,0,0,2"
                                Text="{Binding Remaining.Count, StringFormat='Remaining ({0}, grid order)'}" />
                     <TextBlock DockPanel.Dock="Top" Style="{StaticResource Faint}" Margin="4,0,0,6" TextWrapping="Wrap"
-                               Text="Drag into the order — Ctrl/Shift-click to select several, drop back here to unmark" />
+                               Text="Drag into the order, Ctrl/Shift-click to select several, drop back here to unmark" />
                     <ListBox x:Name="RemainingList" ItemsSource="{Binding Remaining}"
                              ItemTemplate="{StaticResource SeatLine}" SelectionMode="Extended"
                              Background="Transparent" BorderThickness="0"
@@ -386,7 +386,7 @@
                 <DockPanel>
                     <TextBlock DockPanel.Dock="Top" Text="Finishing order" FontWeight="SemiBold" Margin="4,0,0,2" />
                     <TextBlock DockPanel.Dock="Top" Style="{StaticResource Faint}" Margin="4,0,0,6" TextWrapping="Wrap"
-                               Text="Drop between rows to insert — dropping on a filled slot inserts before it; drag rows to reorder (a stewards' re-position)" />
+                               Text="Drop between rows to insert, dropping on a filled slot inserts before it; drag rows to reorder (a stewards' re-position)" />
                     <!-- IsVirtualizing=False ON PURPOSE: P1..Pn comes from AlternationIndex,
                          which renumbers realized containers under virtualization; the list is
                          bounded by the grid size, so correctness wins (ux-round §4 caveat) -->
@@ -438,7 +438,7 @@
                     </Border.Style>
                     <DockPanel>
                         <TextBlock DockPanel.Dock="Top" FontWeight="SemiBold" Margin="4,0,0,2"
-                                   Foreground="{DynamicResource WarningBrush}" Text="DNF — drop drivers here" />
+                                   Foreground="{DynamicResource WarningBrush}" Text="DNF, drop drivers here" />
                         <TextBlock DockPanel.Dock="Top" Style="{StaticResource Faint}" Margin="4,0,0,6" TextWrapping="Wrap"
                                    Text="Multi-select drops retire in bulk; pick the reason on the dropped row" />
                         <!-- Only the player's own accident DNF needs an impact report. Keep this at
@@ -452,7 +452,7 @@
                                 CornerRadius="5"
                                 Visibility="{Binding PlayerHasAccidentDnf, Converter={StaticResource BoolVisible}}">
                             <StackPanel>
-                                <TextBlock Text="YOUR ACCIDENT — IMPACT SEVERITY" Style="{StaticResource Eyebrow}"
+                                <TextBlock Text="YOUR ACCIDENT: IMPACT SEVERITY" Style="{StaticResource Eyebrow}"
                                            Foreground="{DynamicResource WarningBrush}" />
                                 <ListBox x:Name="AccidentSeverityPicker"
                                          ItemsSource="{StaticResource AccidentSeverityOptions}"
@@ -564,7 +564,7 @@
                                                            FontWeight="SemiBold" VerticalAlignment="Center" />
                                                 <TextBlock Text="{Binding Seat.DriverName}" FontWeight="SemiBold"
                                                            VerticalAlignment="Center" />
-                                                <TextBlock Text="{Binding Seat.TeamName, StringFormat=' — {0}'}"
+                                                <TextBlock Text="{Binding Seat.TeamName, StringFormat=', {0}'}"
                                                            Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
                                                 <!-- reason label: custom text when present, else the m/a/o word -->
                                                 <TextBlock Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center">
@@ -574,7 +574,7 @@
 
                                             <!-- ===== EDIT state: shown on the ONE row being edited (fresh drop, or a
                                                  click on a done row). M/A/O picker + (when Other) custom box + fault
-                                                 toggle + Remove. NON-BLOCKING — the DNF is already recorded; Remove takes
+                                                 toggle + Remove. NON-BLOCKING, the DNF is already recorded; Remove takes
                                                  it straight back to Remaining whether or not a reason was chosen. ===== -->
                                             <StackPanel Background="Transparent">
                                                 <StackPanel.Visibility>
@@ -589,7 +589,7 @@
                                                                FontWeight="SemiBold" VerticalAlignment="Center" />
                                                     <TextBlock Text="{Binding Seat.DriverName}" FontWeight="SemiBold"
                                                                VerticalAlignment="Center" />
-                                                    <TextBlock Text="{Binding Seat.TeamName, StringFormat=' — {0}'}"
+                                                    <TextBlock Text="{Binding Seat.TeamName, StringFormat=', {0}'}"
                                                                Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
                                                 </StackPanel>
                                                 <StackPanel Orientation="Horizontal" Margin="46,3,0,0">
@@ -598,10 +598,10 @@
                                                     <Button Style="{StaticResource ReasonButton}" Content="Acc" Tag="a"
                                                             Click="OnReasonPickClick" ToolTip="Accident (driver error)" />
                                                     <Button Style="{StaticResource ReasonButton}" Content="Other" Tag="o"
-                                                            Click="OnReasonPickClick" ToolTip="Other — name a custom cause" />
+                                                            Click="OnReasonPickClick" ToolTip="Other: name a custom cause" />
                                                     <Button Style="{StaticResource ReasonButton}" Content="Done"
                                                             Click="OnReasonPickDone"
-                                                            ToolTip="Finish — hide the editor (also: press Enter in the box)" />
+                                                            ToolTip="Finish: hide the editor (also: press Enter in the box)" />
                                                     <Button Style="{StaticResource ReasonButton}" Content="Remove"
                                                             Foreground="{DynamicResource WarningBrush}"
                                                             Click="OnReasonPickRemove"
@@ -644,7 +644,7 @@
                     </Border.Style>
                     <DockPanel>
                         <TextBlock DockPanel.Dock="Top" FontWeight="SemiBold" Margin="4,0,0,2"
-                                   Foreground="{DynamicResource ErrorBrush}" Text="DSQ — drop drivers here" />
+                                   Foreground="{DynamicResource ErrorBrush}" Text="DSQ, drop drivers here" />
                         <TextBlock DockPanel.Dock="Top" Style="{StaticResource Faint}" Margin="4,0,0,6" TextWrapping="Wrap"
                                    Text="A placed driver is pulled out of the classification" />
                         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
@@ -670,7 +670,7 @@
                                                            FontWeight="SemiBold" VerticalAlignment="Center" />
                                                 <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold"
                                                            VerticalAlignment="Center" />
-                                                <TextBlock Text="{Binding TeamName, StringFormat=' — {0}'}"
+                                                <TextBlock Text="{Binding TeamName, StringFormat=', {0}'}"
                                                            Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
                                                 <TextBlock Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center">
                                                     <Run Text=" · " /><Run>
@@ -698,7 +698,7 @@
                                                                FontWeight="SemiBold" VerticalAlignment="Center" />
                                                     <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold"
                                                                VerticalAlignment="Center" />
-                                                    <TextBlock Text="{Binding TeamName, StringFormat=' — {0}'}"
+                                                    <TextBlock Text="{Binding TeamName, StringFormat=', {0}'}"
                                                                Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
                                                 </StackPanel>
                                                 <StackPanel Orientation="Horizontal" Margin="46,3,0,0">
@@ -707,10 +707,10 @@
                                                              VerticalAlignment="Center"
                                                              Loaded="OnDsqReasonLoaded"
                                                              LostFocus="OnDsqReasonChanged" KeyDown="OnDsqReasonKeyDown"
-                                                             ToolTip="Reason for disqualification (Enter to confirm) — optional" />
+                                                             ToolTip="Reason for disqualification (Enter to confirm), optional" />
                                                     <Button Style="{StaticResource ReasonButton}" Content="Done"
                                                             Click="OnReasonPickDone"
-                                                            ToolTip="Finish — hide the editor (also: press Enter in the box)" />
+                                                            ToolTip="Finish: hide the editor (also: press Enter in the box)" />
                                                     <Button Style="{StaticResource ReasonButton}" Content="Remove"
                                                             Foreground="{DynamicResource ErrorBrush}"
                                                             Click="OnReasonPickRemove"

@@ -8,7 +8,7 @@
     <!-- The Paddock lens (SMGP driver/team preview): a DRIVERS/TEAMS toggle over a master list (left)
          and a dossier detail pane (right). Click a driver for their bio + predetermined career stats +
          team; click a team for its motto, history, quotes and roster. Display-only. Codex owns the
-         visual polish (see docs/dev/codex-gui-brief.md) — this is the functional layout. -->
+         visual polish (see docs/dev/codex-gui-brief.md), this is the functional layout. -->
     <UserControl.Resources>
 
         <!-- compact driver list row: portrait thumb + name/team/epithet -->
@@ -55,13 +55,14 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid Width="46" Height="46">
-                    <Border CornerRadius="6" Background="{DynamicResource SurfaceAltBrush}">
+                    <Border CornerRadius="6" Background="{DynamicResource SurfaceAltBrush}"
+                            Visibility="{Binding ElementName=TeamRowLogoImage, Path=Source, Converter={StaticResource NullVisible}}">
                         <TextBlock Text="&#xE7C1;" FontFamily="{StaticResource IconFont}" FontSize="18"
                                    Foreground="{DynamicResource TextMutedBrush}" Opacity="0.45"
                                    HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <Border CornerRadius="6" ClipToBounds="True">
-                        <Image Stretch="Uniform" Margin="4"
+                        <Image x:Name="TeamRowLogoImage" Stretch="Uniform" Margin="4"
                                Style="{StaticResource TeamLogoImage}"
                                Source="{Binding LogoKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
                                Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
@@ -91,13 +92,16 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Border Width="52" Height="42" CornerRadius="6" Background="{DynamicResource SurfaceAltBrush}"
+                <Border Width="52" Height="42" CornerRadius="6"
                         BorderBrush="{Binding BrandColorHex, Converter={StaticResource HexBrush}}" BorderThickness="2">
                     <Grid>
-                        <TextBlock Text="&#xE8F9;" FontFamily="{StaticResource IconFont}" FontSize="18"
-                                   Foreground="{DynamicResource TextMutedBrush}" Opacity="0.42"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        <Image Stretch="Uniform" Margin="5"
+                        <Border CornerRadius="4" Background="{DynamicResource SurfaceAltBrush}"
+                                Visibility="{Binding ElementName=SponsorRowLogoImage, Path=Source, Converter={StaticResource NullVisible}}">
+                            <TextBlock Text="&#xE8F9;" FontFamily="{StaticResource IconFont}" FontSize="18"
+                                       Foreground="{DynamicResource TextMutedBrush}" Opacity="0.42"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <Image x:Name="SponsorRowLogoImage" Stretch="Uniform" Margin="5"
                                Source="{Binding LogoKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/sponsors}"
                                Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
                     </Grid>
@@ -336,13 +340,14 @@
                         </Grid.ColumnDefinitions>
                         <Grid Width="120" Height="120" VerticalAlignment="Top"
                               ToolTip="Drop the team logo at data\ams2\smgp\logos\&lt;teamId&gt;.png">
-                            <Border CornerRadius="10" Background="{DynamicResource SurfaceAltBrush}">
+                            <Border CornerRadius="10" Background="{DynamicResource SurfaceAltBrush}"
+                                    Visibility="{Binding ElementName=TeamCardLogoImage, Path=Source, Converter={StaticResource NullVisible}}">
                                 <TextBlock Text="&#xE7C1;" FontFamily="{StaticResource IconFont}" FontSize="44"
                                            Foreground="{DynamicResource TextMutedBrush}" Opacity="0.4"
                                            HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                             <Border CornerRadius="10" ClipToBounds="True">
-                                <Image Stretch="Uniform" Margin="10"
+                                <Image x:Name="TeamCardLogoImage" Stretch="Uniform" Margin="10"
                                        Style="{StaticResource TeamLogoImage}"
                                        Source="{Binding LogoKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
                                        Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
@@ -434,13 +439,16 @@
                             <ColumnDefinition Width="140" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Border Width="124" Height="104" CornerRadius="8" Background="{DynamicResource SurfaceAltBrush}"
+                        <Border Width="124" Height="104" CornerRadius="8"
                                 BorderBrush="{Binding BrandColorHex, Converter={StaticResource HexBrush}}" BorderThickness="1">
                             <Grid>
-                                <TextBlock Text="&#xE8F9;" FontFamily="{StaticResource IconFont}" FontSize="36"
-                                           Foreground="{DynamicResource TextMutedBrush}" Opacity="0.35"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                <Image Stretch="Uniform" Margin="12"
+                                <Border CornerRadius="7" Background="{DynamicResource SurfaceAltBrush}"
+                                        Visibility="{Binding ElementName=SponsorDetailLogoImage, Path=Source, Converter={StaticResource NullVisible}}">
+                                    <TextBlock Text="&#xE8F9;" FontFamily="{StaticResource IconFont}" FontSize="36"
+                                               Foreground="{DynamicResource TextMutedBrush}" Opacity="0.35"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <Image x:Name="SponsorDetailLogoImage" Stretch="Uniform" Margin="12"
                                        Source="{Binding LogoKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/sponsors}"
                                        Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
                             </Grid>

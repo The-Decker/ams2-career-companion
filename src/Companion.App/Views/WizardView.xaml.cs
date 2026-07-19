@@ -21,7 +21,7 @@ public partial class WizardView : UserControl
         InitializeComponent();
     }
 
-    /// <summary>RefreshPacks is a plain method on the viewmodel (not a command) — bridge it.</summary>
+    /// <summary>RefreshPacks is a plain method on the viewmodel (not a command), bridge it.</summary>
     private void OnRefreshPacks(object sender, RoutedEventArgs e)
     {
         if (DataContext is NewCareerWizardViewModel vm)

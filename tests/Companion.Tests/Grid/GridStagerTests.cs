@@ -290,7 +290,7 @@ public class GridStagerTests
         // over UTF-8 bytes makes strict parsers reject the file)...
         Assert.StartsWith("<?xml version=\"1.0\" encoding=\"utf-8\"?>", text);
 
-        // ...and it re-parses FROM DISK — byte-level decode, not just string parse: root
+        // ...and it re-parses FROM DISK, byte-level decode, not just string parse: root
         // element, one driver, exact livery binding, and stat values that round-trip through
         // the writer's "0.0###" format.
         var doc = XDocument.Load(written);
@@ -328,10 +328,10 @@ public class GridStagerTests
         Assert.Equal(plan.Seats.Count, liveries.Count);
         Assert.Contains("1988 Williams #5 - M. Brundle", liveries);
         Assert.DoesNotContain("1988 Williams #5 - N. Mansell", liveries);
-        // Every livery is unique — the duplicate-livery gate held.
+        // Every livery is unique, the duplicate-livery gate held.
         Assert.Equal(liveries.Count, liveries.Distinct(StringComparer.Ordinal).Count());
         // The grid-cap fix: Martini (Minardi #23) DNQ'd the 1988 Belgian GP in the preset-matched
-        // grids, so he is NOT on round 11's grid even though his entry covers the round — only the
+        // grids, so he is NOT on round 11's grid even though his entry covers the round, only the
         // round's listed starters seat.
         Assert.DoesNotContain("1988 Minardi #23 - P. Martini", liveries);
     }

@@ -5,10 +5,10 @@ namespace Companion.Core.Smgp;
 
 /// <summary>
 /// The authored 17-season SMGP campaign lore (<c>data/rules/smgp/seasons.json</c>): every season's
-/// unique identity — title, era, overview, preseason/technical/safety context, themes, canon
+/// unique identity, title, era, overview, preseason/technical/safety context, themes, canon
 /// timeline beats, story arcs, newsroom hooks, contenders, and milestone opportunities. SMGP CANON
 /// (fiction), authored so no two seasons read alike while the closed 34-driver universe stays
-/// coherent across the campaign arc. DISPLAY-ONLY — never a fold input (exactly like
+/// coherent across the campaign arc. DISPLAY-ONLY, never a fold input (exactly like
 /// <see cref="SmgpWhatReallyHappened"/>): season outcomes remain the sim's alone, so the lore
 /// never asserts a campaign result. An absent file resolves to <see cref="Empty"/>, so an
 /// un-updated data folder simply shows the plain "SEASON n / 17" header.
@@ -71,7 +71,7 @@ public sealed class SmgpSeasonLore
 /// <summary>One campaign season's authored identity. All prose is SMGP canon (fiction) written to
 /// be outcome-agnostic: the sim decides every result; the lore supplies the world around it.
 ///
-/// The player's OWN team is not baked into the canon — the player is a synthetic entry who joins
+/// The player's OWN team is not baked into the canon, the player is a synthetic entry who joins
 /// whichever team they chose at creation and moves between teams across the campaign. Wherever the
 /// lore names the player's team it uses the <see cref="PlayerTeamToken"/> placeholder, resolved to
 /// the driver's ACTUAL team for the season being shown by <see cref="WithPlayerTeam"/>. The world's
@@ -131,7 +131,7 @@ public sealed record SmgpSeasonLoreEntry
     /// driver the player replaced is out racing. The world-narrative PROSE (overview/preseason/…)
     /// is the season's preseason canon and is left intact. Returns the same instance when the
     /// surname is empty or unmatched (a career that replaced no named driver is untouched). The raw
-    /// authored lore is unchanged — this is a per-career display projection, like
+    /// authored lore is unchanged, this is a per-career display projection, like
     /// <see cref="WithPlayerTeam"/>.</summary>
     public SmgpSeasonLoreEntry WithoutReplacedDriver(string? driverSurname)
     {
@@ -188,7 +188,7 @@ public sealed record SmgpSeasonLoreEntry
 
     /// <summary>Resolves every <see cref="PlayerTeamToken"/> to the driver's ACTUAL team for the
     /// season being shown, so the lore names the player's real team (dynamic across the campaign)
-    /// instead of a baked-in one. An empty team name (a career with no seat — never a live SMGP
+    /// instead of a baked-in one. An empty team name (a career with no seat, never a live SMGP
     /// career) reads "the home"; the surrounding prose always frames the token as "the {token}
     /// &lt;noun&gt;" so that fallback stays grammatical. Returns the same instance when nothing
     /// carries the token, so a lore file without player references is untouched.</summary>

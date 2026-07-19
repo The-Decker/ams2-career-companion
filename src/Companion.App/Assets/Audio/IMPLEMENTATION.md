@@ -15,13 +15,13 @@ authority if this handoff and the source ever disagree. The product contract is 
 
 | File | Responsibility |
 |---|---|
-| `Audio/AppAudioController.cs` | App-lifetime owner. Applies persisted mix settings, owns the player/backend, enforces cue cooldown/dedupe, and accepts explicit SFX requests. |
+| `Audio/AppAudioController.cs` | App-lifetime owner. Applies persisted mix settings, owns the player/backend, enforces cue cooldown/dedupe, accepts explicit SFX requests, and receives the pushed era skin. |
 | `Audio/MusicPlayerViewModel.cs` | Binding contract for track selection, play/pause, previous/next, natural-end advance, recovery, and persisted music volume. It has no shell/navigation dependency. |
-| `Audio/SoundscapeCatalog.cs` | Canonical playlist, playback trims, semantic cue enum, asset paths, cue gains, cooldowns, dedupe groups, and duck policy. |
+| `Audio/SoundscapeCatalog.cs` | Canonical playlist, playback trims, semantic cue enum, asset paths, per-medium era variant sets, cue gains, cooldowns, dedupe groups, and duck policy. |
 | `Audio/WpfAudioEngine.cs` | WPF `MediaPlayer` backend: one music transport, four one-shot SFX channels, safe path resolution, focus/sound gates, and duck timing. |
 | `Audio/SoundAssist.cs` | Attached XAML behavior that converts an explicitly opted-in `ButtonBase.Click` into a semantic cue request, carries weak source identity, and can suppress an explicitly bound no-op. |
 | `Behaviors/ListDragDropBehavior.cs` | Shared qualifying/race-result drag graph. Requests BucketPickup after the drag threshold and BucketPlace only after a successful mutation. |
-| `App.xaml.cs` | Fail-soft composition, `SoundAssist` connection, app activation/deactivation bridge, and disposal. |
+| `App.xaml.cs` | Fail-soft composition, `SoundAssist` connection, the one-way era-skin push from the shell token, app activation/deactivation bridge, and disposal. |
 | `MainWindow.xaml` / `MainWindow.xaml.cs` | Persistent header host and separate `MusicPlayerDataContext`; the player does not replace the shell data context. |
 | `Views/MusicPlayerControl.xaml` | Previous, Play/Pause, Next, track selector, and the only music-volume slider. Media controls are intentionally silent. |
 | `Views/SettingsView.xaml` | Sound enabled, Master, Menu effects, Preview, and mute-when-unfocused controls. There is no duplicate music slider here. |
@@ -31,6 +31,7 @@ authority if this handoff and the source ever disagree. The product contract is 
 | `Assets/Audio/LICENSES.md` | Music ownership and generated-SFX provenance. |
 | `tools/generate_sfx.ps1` | Deterministic source generator for the eight WAV masters. |
 | `Audio/Generation/generate-seat-confirm.ps1` | Deterministic original FM source for the dedicated SMGP seat-choice master. |
+| `Audio/Generation/generate-era-sfx.ps1` | Deterministic source generator for the twelve era-medium voicings of the four immersive cues. |
 | `tests/Companion.RenderHarness.Tests/SettingsAudioRenderTests.cs` | Executable contract for playlist, media files, player behavior, mix policy, ducking, failure handling, and the complete XAML cue map. |
 
 `App.xaml.cs` constructs audio after the shell, but inside a fail-soft `TryInitializeAudio` boundary.
@@ -164,8 +165,18 @@ history is held in a `ConditionalWeakTable` keyed by the originating control. Tw
 can therefore sound in the same instant, while duplicate requests from one control remain guarded
 without retaining dead views. Explicit non-button requests share the unscoped history. The controller
 timestamps a request only after the backend accepts it, so a disabled, muted, unfocused, missing-file,
-or synchronously failed request does not consume the next audible click. Each cue currently has one
-variant, though the catalog's round-robin variant mechanism is ready for more.
+or synchronously failed request does not consume the next audible click.
+
+### Era skins
+
+The four immersive cues (Navigate, Confirm, Back, SeatConfirm) carry one re-voiced master per period
+medium in `SoundEffectDefinition.EraVariants`; every other cue has only its era-neutral base set.
+`AppAudioController.SetEraSkin(EraMedium?)` is the one-way push seam (era-theming-assets-brief.md,
+Workstream B): the App reads `ShellViewModel.ActiveCareerEraMedium` on every navigation and tells the
+controller the skin, pushing the current value once at startup. A null skin (menus, gallery, no active
+career) selects the base set, and any medium without its own variant falls back to base. The catalog
+round-robins per cue and skin; gain, cooldown, dedupe, mix, and ducking live on the shared definition
+and are identical for every voicing, so era color is timbre only and never changes triggering.
 
 The backend has four one-shot channels. It uses a free channel first and reuses channels round-robin
 when the pool is full. Warning, Destructive, and SkillUnlock duck music; the other six do not.
@@ -239,12 +250,13 @@ silent. Do not add a global routed-event listener.
 
 Run `tools/generate_sfx.ps1` from the repository root for the original eight masters, then run
 `src/Companion.App/Audio/Generation/generate-seat-confirm.ps1` for the dedicated SMGP seat-choice
-master. Both use mathematical oscillators and decaying FM synthesis; there are no recordings,
+master, and `src/Companion.App/Audio/Generation/generate-era-sfx.ps1` for the twelve era-medium
+voicings. All use mathematical oscillators and seeded deterministic noise; there are no recordings,
 third-party samples, Microsoft/Windows sounds, or SEGA/game audio. Do not hand-edit generated files.
 
 The generators write RIFF PCM format 1, 48,000 Hz, 16-bit, mono masters. They remove DC, apply a
 3 ms sine fade at both ends, normalizes to the declared peak, and reports duration, byte count, peak,
-and RMS where applicable. The render test pins the exact nine-file directory, format headers, frame counts, zero first
+and RMS where applicable. The render test pins the exact 21-file directory, format headers, frame counts, zero first
 and last samples, and peak within 0.02 dB:
 
 | WAV | Duration | Frames | Target peak |
@@ -259,6 +271,16 @@ and last samples, and peak within 0.02 dB:
 | `destructive.wav` | 0.720 s | 34,560 | -9.5 dBFS |
 | `skill-unlock.wav` | 0.900 s | 43,200 | -9.5 dBFS |
 
+The twelve era voicings mirror their base cue's duration, frame count, and peak exactly; only the
+synthesis recipe (the timbre) differs:
+
+| WAV | Duration | Frames | Target peak |
+|---|---:|---:|---:|
+| `navigate-telegram.wav` / `navigate-fax.wav` / `navigate-email.wav` | 0.090 s | 4,320 | -13.0 dBFS |
+| `commit-telegram.wav` / `commit-fax.wav` / `commit-email.wav` | 0.320 s | 15,360 | -10.5 dBFS |
+| `seat-confirm-telegram.wav` / `seat-confirm-fax.wav` / `seat-confirm-email.wav` | 0.480 s | 23,040 | -10.0 dBFS |
+| `back-telegram.wav` / `back-fax.wav` / `back-email.wav` | 0.280 s | 13,440 | -11.0 dBFS |
+
 The generators overwrite declared outputs but do not make undeclared stale WAVs valid. When a cue
 is retired, remove its source WAV as part of the same change; the exact-directory test rejects extras.
 Update the appropriate generator, generated WAV, catalog, tests, README, and provenance together.
@@ -267,8 +289,8 @@ Update the appropriate generator, generated WAV, catalog, tests, README, and pro
 
 `SettingsAudioRenderTests` currently pins:
 
-- the 23-item order, titles, paths, dB trims, calculated linear gains, nine typed SFX paths, unique
-  safe relative paths, and the total 32 declared assets;
+- the 23-item order, titles, paths, dB trims, calculated linear gains, nine typed SFX cues with their
+  twelve era voicings, unique safe relative paths, and the total 44 declared assets;
 - exact WAV headers, frame counts, boundary samples, peaks, cue gains, cooldowns, dedupe, and ducks;
 - paused startup, play/pause, direct selection, wrapping Previous/Next, natural-end advance, retained
   pause/play intent, persisted volume, missing-track skips, async failure reset, retry, and one-cycle
@@ -277,6 +299,8 @@ Update the appropriate generator, generated WAV, catalog, tests, README, and pro
 - top-bar layout, two-way bindings, and dynamic Play/Pause automation names;
 - attached-cue connection/change/detach, no-op suppression, source-scoped rapid-click/cooldown behavior, focus/effects-bus gates,
   deferred duck start, early reset, hold extension, and the full 260 ms release math;
+- the era-skin contract: per-medium voicing selection with base fallback, `SetEraSkin(null)`
+  restoring the base set, skin-independent cooldown/dedupe/ducking, and the one-way App push wiring;
 - the complete file-by-file XAML cue map, Wizard's dynamic cue setters, and required silence for the
   music player, Sit Out, and Death screen.
 - the result-entry drag behavior's explicit BucketPickup and successful BucketPlace requests.

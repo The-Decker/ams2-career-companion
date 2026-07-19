@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:audio="clr-namespace:Companion.App.Audio"
              Focusable="False">
-    <!-- The SMGP promotion / demotion screen (3c-3) — its own full-immersion step after the confirm,
+    <!-- The SMGP promotion / demotion screen (3c-3), its own full-immersion step after the confirm,
          when the round moved seats. DataContext is a PromotionViewModel; its Model carries the new
          team's photo, story and car, and its Accept/Decline commands resolve the offer (or acknowledge
          a forced drop) and advance the round. A promotion offers accept/decline; a demotion only
@@ -91,7 +91,7 @@
                         Visibility="{Binding Model.RivalName, Converter={StaticResource StringVisible}}">
                     <TextBlock TextAlignment="Center" HorizontalAlignment="Stretch"
                                Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap">
-                        <Run Text="You beat " /><Run Text="{Binding Model.RivalName, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" twice without losing — the seat is yours if you want it." />
+                        <Run Text="You beat " /><Run Text="{Binding Model.RivalName, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" twice without losing, the seat is yours if you want it." />
                     </TextBlock>
                 </Border>
                     </StackPanel>

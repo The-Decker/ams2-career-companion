@@ -10,14 +10,14 @@ namespace Companion.Core.Packs;
 /// true for an era/character filler stand-in).
 ///
 /// Pure string transform run at CAREER CREATION, gated upstream by the "use alternate tracks" tick AND
-/// an install check (all required mods present) — the TRANSFORMED season.json is what gets pinned, so
+/// an install check (all required mods present), the TRANSFORMED season.json is what gets pinned, so
 /// the fold reads the alternates and replays stay byte-identical without any seed or fold change. A
 /// round with no alternate is left exactly as authored, so a pack with zero alternates round-trips
 /// unchanged in content.
 /// </summary>
 public static class AlternateTrackTransform
 {
-    /// <summary>True when the pack declares at least one round with a <c>track.alternate</c> — i.e.
+    /// <summary>True when the pack declares at least one round with a <c>track.alternate</c>, i.e.
     /// there is anything for the transform to do.</summary>
     public static bool HasAlternates(SeasonPack pack) =>
         pack.Season.Rounds.Any(r => r.Track.Alternate is not null);
@@ -46,14 +46,14 @@ public static class AlternateTrackTransform
             // stand-in stays a labelled placeholder so the briefing keeps naming it honestly.
             track["isPlaceholder"] = !isRealVenue;
 
-            // Rewrite the round's setup note so the briefing matches the swapped track + laps — the
+            // Rewrite the round's setup note so the briefing matches the swapped track + laps, the
             // authored note describes the ORIGINAL base stand-in, which would otherwise contradict the
             // new venue/distance/placeholder state (display-only, but the player reads it).
             if (round["setupGuide"] is JsonObject guide)
             {
                 string venue = (string?)track["realVenue"] is { Length: > 0 } v ? v : altId;
                 guide["notes"] = isRealVenue
-                    ? $"Racing the authentic {venue}, available in AMS2 as the mod track \"{altId}\" — its historical {altLaps} laps."
+                    ? $"Racing the authentic {venue}, available in AMS2 as the mod track \"{altId}\", its historical {altLaps} laps."
                     : $"Alternate track for {venue} (not in AMS2 base): reproduced on the mod track \"{altId}\" at {altLaps} laps.";
             }
         }

@@ -4,13 +4,475 @@
              xmlns:audio="clr-namespace:Companion.App.Audio"
              xmlns:views="clr-namespace:Companion.App.Views"
              xmlns:smgp="clr-namespace:Companion.Core.Smgp;assembly=Companion.Core"
+             xmlns:career="clr-namespace:Companion.Core.Career;assembly=Companion.Core"
              Focusable="False">
     <UserControl.InputBindings>
         <KeyBinding Key='Escape' Command='{Binding CloseArticleCommand}' />
     </UserControl.InputBindings>
     <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- The era-medium skins (telegram/fax/email document tokens + the shared
+                     document-surface swap contract). The newsroom keys its era styling on the
+                     flattened EraMedium via DataTrigger; the EraThemingEnabled gate in every
+                     style restores neutral chrome when the immersion switch is off. -->
+                <ResourceDictionary Source="../Themes/Era.Telegram.xaml" />
+                <ResourceDictionary Source="../Themes/Era.Fax.xaml" />
+                <ResourceDictionary Source="../Themes/Era.Email.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
         <!-- Live bookmark state for the reader toggle (declared in NewsView.xaml.cs). -->
         <views:NewsBookmarkStateConverter x:Key='NewsBookmarkState' />
+
+        <!-- ===== newsroom era skin (document-surface scoped) =====
+             These styles key on the newsroom's flattened EraMedium (bound from the UserControl's
+             DataContext so they work from inside story templates whose DataContext is the story)
+             and every one ends with the EraThemingEnabled gate trigger LAST, so the immersion
+             switch restores the neutral base chrome. Story CARDS take only the document
+             typography (the dark card surface stays); the article READER takes the full period
+             document (paper, letterhead band, dateline flourish, era face). -->
+
+        <!-- Card headline: the era document face, theme ink (the card stays a dark card). -->
+        <Style x:Key='NewsEraCardHeadline' TargetType='TextBlock' BasedOn='{StaticResource {x:Type TextBlock}}'>
+            <Setter Property='FontFamily'
+                    Value='{Binding DataContext.EraSkin.DocumentFontStack, RelativeSource={RelativeSource AncestorType=UserControl}}' />
+            <Style.Triggers>
+                <DataTrigger Value='False'>
+                    <DataTrigger.Binding>
+                        <MultiBinding Converter='{StaticResource EraThemingGate}'>
+                            <Binding Path='DataContext.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=views:HubView}' />
+                            <Binding Path='Tag.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=Window}' />
+                        </MultiBinding>
+                    </DataTrigger.Binding>
+                    <Setter Property='FontFamily' Value='{StaticResource DisplayFont}' />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- The reader's period document surface: neutral panel by default, period paper per medium. -->
+        <Style x:Key='NewsEraDocSurface' TargetType='Border'>
+            <Setter Property='Background' Value='{DynamicResource SurfaceBrush}' />
+            <Setter Property='BorderBrush' Value='{DynamicResource EdgeBrush}' />
+            <Setter Property='BorderThickness' Value='1' />
+            <Setter Property='CornerRadius' Value='8' />
+            <Style.Triggers>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Telegram}'>
+                    <Setter Property='Background' Value='{DynamicResource EraTelegramPaperBrush}' />
+                    <Setter Property='BorderBrush' Value='{DynamicResource EraTelegramChromeBrush}' />
+                    <Setter Property='BorderThickness' Value='1.5' />
+                    <Setter Property='CornerRadius' Value='2' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Fax}'>
+                    <Setter Property='Background' Value='{DynamicResource EraFaxPaperBrush}' />
+                    <Setter Property='BorderBrush' Value='{DynamicResource EraFaxChromeBrush}' />
+                    <Setter Property='BorderThickness' Value='1.5' />
+                    <Setter Property='CornerRadius' Value='2' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Email}'>
+                    <Setter Property='Background' Value='{DynamicResource EraEmailPaperBrush}' />
+                    <Setter Property='BorderBrush' Value='{DynamicResource EraEmailChromeBrush}' />
+                    <Setter Property='BorderThickness' Value='1' />
+                    <Setter Property='CornerRadius' Value='4' />
+                </DataTrigger>
+                <DataTrigger Value='False'>
+                    <DataTrigger.Binding>
+                        <MultiBinding Converter='{StaticResource EraThemingGate}'>
+                            <Binding Path='DataContext.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=views:HubView}' />
+                            <Binding Path='Tag.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=Window}' />
+                        </MultiBinding>
+                    </DataTrigger.Binding>
+                    <Setter Property='Background' Value='{DynamicResource SurfaceBrush}' />
+                    <Setter Property='BorderBrush' Value='{DynamicResource EdgeBrush}' />
+                    <Setter Property='BorderThickness' Value='1' />
+                    <Setter Property='CornerRadius' Value='8' />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- The reader letterhead band: collapsed (neutral) unless an era medium skins it. -->
+        <Style x:Key='NewsEraLetterheadBand' TargetType='Border'>
+            <Setter Property='Visibility' Value='Collapsed' />
+            <Style.Triggers>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Telegram}'>
+                    <Setter Property='Visibility' Value='Visible' />
+                    <Setter Property='Background' Value='{DynamicResource EraTelegramBandBrush}' />
+                    <Setter Property='BorderBrush' Value='{DynamicResource EraTelegramChromeBrush}' />
+                    <Setter Property='BorderThickness' Value='0,1.5,0,1.5' />
+                    <Setter Property='CornerRadius' Value='2,2,0,0' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Fax}'>
+                    <Setter Property='Visibility' Value='Visible' />
+                    <Setter Property='Background' Value='{DynamicResource EraFaxBandBrush}' />
+                    <Setter Property='CornerRadius' Value='2,2,0,0' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Email}'>
+                    <Setter Property='Visibility' Value='Visible' />
+                    <Setter Property='Background' Value='{DynamicResource EraEmailBandBrush}' />
+                    <Setter Property='BorderBrush' Value='{DynamicResource EraEmailChromeBrush}' />
+                    <Setter Property='BorderThickness' Value='0,0,0,1' />
+                    <Setter Property='CornerRadius' Value='4,4,0,0' />
+                </DataTrigger>
+                <DataTrigger Value='False'>
+                    <DataTrigger.Binding>
+                        <MultiBinding Converter='{StaticResource EraThemingGate}'>
+                            <Binding Path='DataContext.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=views:HubView}' />
+                            <Binding Path='Tag.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=Window}' />
+                        </MultiBinding>
+                    </DataTrigger.Binding>
+                    <Setter Property='Visibility' Value='Collapsed' />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Letterhead parts: the desk name line and the medium stamp, one visible per medium. -->
+        <Style x:Key='NewsEraLetterheadText' TargetType='TextBlock' BasedOn='{StaticResource {x:Type TextBlock}}'>
+            <Setter Property='FontFamily'
+                    Value='{Binding DataContext.EraSkin.DocumentFontStack, RelativeSource={RelativeSource AncestorType=UserControl}}' />
+            <Setter Property='FontWeight' Value='Bold' />
+            <Setter Property='FontSize' Value='13' />
+            <Setter Property='VerticalAlignment' Value='Center' />
+            <Style.Triggers>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Telegram}'>
+                    <Setter Property='Foreground' Value='{DynamicResource EraTelegramInkBrush}' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Fax}'>
+                    <Setter Property='Foreground' Value='{DynamicResource EraFaxBandTextBrush}' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Email}'>
+                    <Setter Property='Foreground' Value='{DynamicResource EraEmailInkBrush}' />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key='NewsEraLetterheadLabel' TargetType='TextBlock' BasedOn='{StaticResource {x:Type TextBlock}}'>
+            <Setter Property='FontFamily'
+                    Value='{Binding DataContext.EraSkin.DocumentFontStack, RelativeSource={RelativeSource AncestorType=UserControl}}' />
+            <Setter Property='FontSize' Value='10' />
+            <Setter Property='FontWeight' Value='Bold' />
+            <Setter Property='VerticalAlignment' Value='Center' />
+            <Style.Triggers>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Telegram}'>
+                    <Setter Property='Foreground' Value='{DynamicResource EraTelegramChromeBrush}' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Fax}'>
+                    <Setter Property='Foreground' Value='{DynamicResource EraFaxBandTextBrush}' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Email}'>
+                    <Setter Property='Foreground' Value='{DynamicResource EraEmailAccentBrush}' />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key='NewsEraStamp' TargetType='Border'>
+            <Setter Property='Width' Value='28' />
+            <Setter Property='Height' Value='28' />
+            <Setter Property='BorderThickness' Value='2' />
+            <Setter Property='CornerRadius' Value='14' />
+            <Setter Property='BorderBrush' Value='{DynamicResource EraTelegramChromeBrush}' />
+            <Setter Property='VerticalAlignment' Value='Center' />
+            <Setter Property='Visibility' Value='Collapsed' />
+            <Style.Triggers>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Telegram}'>
+                    <Setter Property='Visibility' Value='Visible' />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key='NewsEraStripes' TargetType='StackPanel'>
+            <Setter Property='Visibility' Value='Collapsed' />
+            <Style.Triggers>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Fax}'>
+                    <Setter Property='Visibility' Value='Visible' />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key='NewsEraGlyph' TargetType='Canvas'>
+            <Setter Property='Visibility' Value='Collapsed' />
+            <Style.Triggers>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Email}'>
+                    <Setter Property='Visibility' Value='Visible' />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Document text inside the reader paper: era face + period ink. -->
+        <Style x:Key='NewsEraDocHeadline' TargetType='TextBlock' BasedOn='{StaticResource {x:Type TextBlock}}'>
+            <Setter Property='FontFamily'
+                    Value='{Binding DataContext.EraSkin.DocumentFontStack, RelativeSource={RelativeSource AncestorType=UserControl}}' />
+            <Setter Property='Foreground' Value='{DynamicResource TextBrush}' />
+            <Setter Property='FontWeight' Value='Bold' />
+            <Setter Property='TextWrapping' Value='Wrap' />
+            <Setter Property='TextTrimming' Value='None' />
+            <Style.Triggers>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Telegram}'>
+                    <Setter Property='Foreground' Value='{DynamicResource EraTelegramInkBrush}' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Fax}'>
+                    <Setter Property='Foreground' Value='{DynamicResource EraFaxInkBrush}' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Email}'>
+                    <Setter Property='Foreground' Value='{DynamicResource EraEmailInkBrush}' />
+                </DataTrigger>
+                <DataTrigger Value='False'>
+                    <DataTrigger.Binding>
+                        <MultiBinding Converter='{StaticResource EraThemingGate}'>
+                            <Binding Path='DataContext.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=views:HubView}' />
+                            <Binding Path='Tag.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=Window}' />
+                        </MultiBinding>
+                    </DataTrigger.Binding>
+                    <Setter Property='FontFamily' Value='{StaticResource DisplayFont}' />
+                    <Setter Property='Foreground' Value='{DynamicResource TextBrush}' />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key='NewsEraDocInk' TargetType='TextBlock' BasedOn='{StaticResource {x:Type TextBlock}}'>
+            <Setter Property='FontFamily'
+                    Value='{Binding DataContext.EraSkin.DocumentFontStack, RelativeSource={RelativeSource AncestorType=UserControl}}' />
+            <Setter Property='Foreground' Value='{DynamicResource TextSecondaryBrush}' />
+            <Style.Triggers>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Telegram}'>
+                    <Setter Property='Foreground' Value='{DynamicResource EraTelegramInkBrush}' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Fax}'>
+                    <Setter Property='Foreground' Value='{DynamicResource EraFaxInkBrush}' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Email}'>
+                    <Setter Property='Foreground' Value='{DynamicResource EraEmailInkBrush}' />
+                </DataTrigger>
+                <DataTrigger Value='False'>
+                    <DataTrigger.Binding>
+                        <MultiBinding Converter='{StaticResource EraThemingGate}'>
+                            <Binding Path='DataContext.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=views:HubView}' />
+                            <Binding Path='Tag.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=Window}' />
+                        </MultiBinding>
+                    </DataTrigger.Binding>
+                    <Setter Property='FontFamily' Value='{StaticResource BodyFont}' />
+                    <Setter Property='Foreground' Value='{DynamicResource TextSecondaryBrush}' />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key='NewsEraDocMuted' TargetType='TextBlock' BasedOn='{StaticResource {x:Type TextBlock}}'>
+            <Setter Property='FontFamily'
+                    Value='{Binding DataContext.EraSkin.DocumentFontStack, RelativeSource={RelativeSource AncestorType=UserControl}}' />
+            <Setter Property='Foreground' Value='{DynamicResource TextMutedBrush}' />
+            <Style.Triggers>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Telegram}'>
+                    <Setter Property='Foreground' Value='{DynamicResource EraTelegramInkFaintBrush}' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Fax}'>
+                    <Setter Property='Foreground' Value='{DynamicResource EraFaxInkFaintBrush}' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Email}'>
+                    <Setter Property='Foreground' Value='{DynamicResource EraEmailInkFaintBrush}' />
+                </DataTrigger>
+                <DataTrigger Value='False'>
+                    <DataTrigger.Binding>
+                        <MultiBinding Converter='{StaticResource EraThemingGate}'>
+                            <Binding Path='DataContext.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=views:HubView}' />
+                            <Binding Path='Tag.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=Window}' />
+                        </MultiBinding>
+                    </DataTrigger.Binding>
+                    <Setter Property='FontFamily' Value='{StaticResource BodyFont}' />
+                    <Setter Property='Foreground' Value='{DynamicResource TextMutedBrush}' />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key='NewsEraDocDateline' TargetType='TextBlock' BasedOn='{StaticResource {x:Type TextBlock}}'>
+            <Setter Property='FontFamily'
+                    Value='{Binding DataContext.EraSkin.DocumentFontStack, RelativeSource={RelativeSource AncestorType=UserControl}}' />
+            <Setter Property='Foreground' Value='{DynamicResource TextMutedBrush}' />
+            <Setter Property='FontSize' Value='11' />
+            <Style.Triggers>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Telegram}'>
+                    <Setter Property='Foreground' Value='{DynamicResource EraTelegramInkFaintBrush}' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Fax}'>
+                    <Setter Property='Foreground' Value='{DynamicResource EraFaxInkFaintBrush}' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Email}'>
+                    <Setter Property='Foreground' Value='{DynamicResource EraEmailInkFaintBrush}' />
+                </DataTrigger>
+                <DataTrigger Value='False'>
+                    <DataTrigger.Binding>
+                        <MultiBinding Converter='{StaticResource EraThemingGate}'>
+                            <Binding Path='DataContext.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=views:HubView}' />
+                            <Binding Path='Tag.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=Window}' />
+                        </MultiBinding>
+                    </DataTrigger.Binding>
+                    <Setter Property='FontFamily' Value='{StaticResource MonoFont}' />
+                    <Setter Property='Foreground' Value='{DynamicResource TextMutedBrush}' />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- The telegram dateline flourish ("STOP"), empty for the other media. -->
+        <Style x:Key='NewsEraDocFlourish' TargetType='TextBlock' BasedOn='{StaticResource NewsEraDocDateline}'>
+            <Setter Property='FontWeight' Value='Bold' />
+            <Setter Property='Visibility'
+                    Value='{Binding DataContext.EraSkin.DatelineFlourish, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource StringVisible}}' />
+            <Style.Triggers>
+                <DataTrigger Value='False'>
+                    <DataTrigger.Binding>
+                        <MultiBinding Converter='{StaticResource EraThemingGate}'>
+                            <Binding Path='DataContext.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=views:HubView}' />
+                            <Binding Path='Tag.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=Window}' />
+                        </MultiBinding>
+                    </DataTrigger.Binding>
+                    <Setter Property='Visibility' Value='Collapsed' />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- The document rule and the body's accent frame. -->
+        <Style x:Key='NewsEraDocRule' TargetType='Border'>
+            <Setter Property='Height' Value='1' />
+            <Setter Property='Background' Value='{DynamicResource EdgeBrush}' />
+            <Setter Property='Margin' Value='0,16,0,15' />
+            <Style.Triggers>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Telegram}'>
+                    <Setter Property='Height' Value='2' />
+                    <Setter Property='Background' Value='{DynamicResource EraTelegramChromeBrush}' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Fax}'>
+                    <Setter Property='Background' Value='{DynamicResource EraFaxChromeBrush}' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Email}'>
+                    <Setter Property='Background' Value='{DynamicResource EraEmailChromeBrush}' />
+                </DataTrigger>
+                <DataTrigger Value='False'>
+                    <DataTrigger.Binding>
+                        <MultiBinding Converter='{StaticResource EraThemingGate}'>
+                            <Binding Path='DataContext.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=views:HubView}' />
+                            <Binding Path='Tag.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=Window}' />
+                        </MultiBinding>
+                    </DataTrigger.Binding>
+                    <Setter Property='Height' Value='1' />
+                    <Setter Property='Background' Value='{DynamicResource EdgeBrush}' />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key='NewsEraDocAccentFrame' TargetType='Border'>
+            <Setter Property='BorderThickness' Value='3,0,0,0' />
+            <Setter Property='BorderBrush'
+                    Value='{Binding DataContext.EraSkin.AccentHex, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource HexBrush}}' />
+            <Style.Triggers>
+                <DataTrigger Value='False'>
+                    <DataTrigger.Binding>
+                        <MultiBinding Converter='{StaticResource EraThemingGate}'>
+                            <Binding Path='DataContext.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=views:HubView}' />
+                            <Binding Path='Tag.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=Window}' />
+                        </MultiBinding>
+                    </DataTrigger.Binding>
+                    <Setter Property='BorderBrush' Value='{DynamicResource AccentBrush}' />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Masthead: the editorial rule and the era-medium chip. -->
+        <Style x:Key='NewsEraMastheadRule' TargetType='Border' BasedOn='{StaticResource EditorialRule}'>
+            <Style.Triggers>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Telegram}'>
+                    <Setter Property='Background' Value='{DynamicResource EraTelegramAccentBrush}' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Fax}'>
+                    <Setter Property='Background' Value='{DynamicResource EraFaxAccentBrush}' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Email}'>
+                    <Setter Property='Background' Value='{DynamicResource EraEmailAccentBrush}' />
+                </DataTrigger>
+                <DataTrigger Value='False'>
+                    <DataTrigger.Binding>
+                        <MultiBinding Converter='{StaticResource EraThemingGate}'>
+                            <Binding Path='DataContext.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=views:HubView}' />
+                            <Binding Path='Tag.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=Window}' />
+                        </MultiBinding>
+                    </DataTrigger.Binding>
+                    <Setter Property='Background' Value='{DynamicResource AccentBrush}' />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key='NewsEraMediumChip' TargetType='Border' BasedOn='{StaticResource CompactChip}'>
+            <Setter Property='Padding' Value='7,3' />
+            <Style.Triggers>
+                <DataTrigger Binding='{Binding EraSkin.Label}' Value=''>
+                    <Setter Property='Visibility' Value='Collapsed' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding EraSkin.Label}' Value='{x:Null}'>
+                    <Setter Property='Visibility' Value='Collapsed' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Telegram}'>
+                    <Setter Property='Background' Value='{DynamicResource EraTelegramAccentDimBrush}' />
+                    <Setter Property='BorderBrush' Value='{DynamicResource EraTelegramAccentBrush}' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Fax}'>
+                    <Setter Property='Background' Value='{DynamicResource EraFaxAccentDimBrush}' />
+                    <Setter Property='BorderBrush' Value='{DynamicResource EraFaxAccentBrush}' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Email}'>
+                    <Setter Property='Background' Value='{DynamicResource EraEmailAccentDimBrush}' />
+                    <Setter Property='BorderBrush' Value='{DynamicResource EraEmailAccentBrush}' />
+                </DataTrigger>
+                <DataTrigger Value='False'>
+                    <DataTrigger.Binding>
+                        <MultiBinding Converter='{StaticResource EraThemingGate}'>
+                            <Binding Path='DataContext.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=views:HubView}' />
+                            <Binding Path='Tag.EraThemingEnabled' RelativeSource='{RelativeSource AncestorType=Window}' />
+                        </MultiBinding>
+                    </DataTrigger.Binding>
+                    <Setter Property='Visibility' Value='Collapsed' />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key='NewsEraMediumChipText' TargetType='TextBlock' BasedOn='{StaticResource Eyebrow}'>
+            <Style.Triggers>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Telegram}'>
+                    <Setter Property='Foreground' Value='{DynamicResource EraTelegramAccentBrush}' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Fax}'>
+                    <Setter Property='Foreground' Value='{DynamicResource EraFaxAccentBrush}' />
+                </DataTrigger>
+                <DataTrigger Binding='{Binding DataContext.EraMedium, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                             Value='{x:Static career:EraMedium.Email}'>
+                    <Setter Property='Foreground' Value='{DynamicResource EraEmailAccentBrush}' />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
 
         <!-- One editorial badge row shared by every story card and the reader. Every chip
              carries its own text so no meaning ever rides on colour alone; the provenance chip
@@ -124,7 +586,7 @@
                                 </Grid>
                             </DockPanel>
                             <TextBlock x:Name='SecondaryStoryHeadline'
-                                       Text='{Binding Headline, Mode=OneWay}' FontFamily='{StaticResource DisplayFont}'
+                                       Text='{Binding Headline, Mode=OneWay}' Style='{StaticResource NewsEraCardHeadline}'
                                        FontWeight='SemiBold' FontSize='16' TextWrapping='Wrap' TextTrimming='None'
                                        Margin='0,6,0,0' />
                             <WrapPanel x:Name='SecondaryStoryIdentity' Margin='0,5,0,0'>
@@ -240,7 +702,7 @@
                                 <TextBlock Text='{Binding DateLabel, Mode=OneWay}' Style='{StaticResource Mono}' FontSize='10.5'
                                            Foreground='{DynamicResource TextMutedBrush}' />
                             </DockPanel>
-                            <TextBlock Text='{Binding Headline, Mode=OneWay}' FontFamily='{StaticResource DisplayFont}'
+                            <TextBlock Text='{Binding Headline, Mode=OneWay}' Style='{StaticResource NewsEraCardHeadline}'
                                        FontWeight='SemiBold' FontSize='16' TextWrapping='Wrap' TextTrimming='None'
                                        Margin='0,6,0,0' />
                             <TextBlock Text='{Binding Standfirst, Mode=OneWay}' Style='{StaticResource Muted}'
@@ -253,6 +715,7 @@
                 </Border>
             </Button>
         </DataTemplate>
+        </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
     <DockPanel Visibility='Collapsed' IsHitTestVisible='False'>
@@ -489,7 +952,7 @@
         <Border x:Name='NewsMasthead' DockPanel.Dock='Top' Padding='24,12,20,10'
                 AutomationProperties.Name='SMGP newsroom masthead'>
             <StackPanel>
-                <Border Style='{StaticResource EditorialRule}' />
+                <Border x:Name='NewsMastheadRule' Style='{StaticResource NewsEraMastheadRule}' />
                 <DockPanel Margin='0,9,0,0'>
                     <Button x:Name='PopOutButton' DockPanel.Dock='Right' Style='{StaticResource SubtleButton}'
                             audio:SoundAssist.Cue='Navigate' Click='OnPopOut' Padding='9,5'
@@ -516,6 +979,12 @@
                         </DockPanel>
                         <StackPanel Grid.Row='1' Orientation='Horizontal' Margin='0,2,0,0'>
                             <TextBlock Text='SMGP NEWSROOM' Style='{StaticResource EditorialMasthead}' />
+                            <Border x:Name='EraMediumChip' Style='{StaticResource NewsEraMediumChip}'
+                                    Margin='12,2,0,0' VerticalAlignment='Center'
+                                    ToolTip='The period medium this career is skinned as, it ages telegram, fax, email across the decades'
+                                    AutomationProperties.Name='Era medium'>
+                                <TextBlock Text='{Binding EraSkin.Label}' Style='{StaticResource NewsEraMediumChipText}' />
+                            </Border>
                             <Border x:Name='UnreadCountChip' Style='{StaticResource CompactChip}' Margin='12,2,0,0'
                                     VerticalAlignment='Center' ToolTip='Stories you have not opened yet'
                                     Visibility='{Binding HasUnread, Converter={StaticResource BoolVisible}}'>
@@ -691,11 +1160,11 @@
                                 </WrapPanel>
                                 <ContentControl Focusable='False' IsTabStop='False' Content='{Binding}'
                                                 ContentTemplate='{StaticResource NewsStoryBadgesTemplate}' />
-                                <TextBlock Text='{Binding Headline, Mode=OneWay}' FontFamily='{StaticResource DisplayFont}'
+                                <TextBlock Text='{Binding Headline, Mode=OneWay}'
                                            FontWeight='Bold' TextWrapping='Wrap' TextTrimming='None'
                                            Margin='0,7,0,0'>
                                     <TextBlock.Style>
-                                        <Style TargetType='TextBlock' BasedOn='{StaticResource {x:Type TextBlock}}'>
+                                        <Style TargetType='TextBlock' BasedOn='{StaticResource NewsEraCardHeadline}'>
                                             <Setter Property='FontSize' Value='22' />
                                             <Style.Triggers>
                                                 <DataTrigger Binding='{Binding TierLabel}' Value='LEAD'>
@@ -1121,24 +1590,85 @@
                                     </StackPanel>
                                 </DockPanel>
                             </Border>
-                            <TextBlock Text='{Binding Headline, Mode=OneWay}' FontFamily='{StaticResource DisplayFont}'
-                                       FontSize='31' FontWeight='Bold' TextWrapping='Wrap' TextTrimming='None'
-                                       Margin='0,8,0,0'
-                                       AutomationProperties.Name='{Binding Headline, Mode=OneWay}' />
-                            <TextBlock Text='{Binding Deck, Mode=OneWay}' Style='{StaticResource Muted}'
-                                       FontSize='15.5' FontStyle='Italic' TextWrapping='Wrap' TextTrimming='None'
-                                       Margin='0,7,0,0'
-                                       Visibility='{Binding HasDeck, Converter={StaticResource BoolVisible}}' />
-                            <TextBlock Text='{Binding Standfirst, Mode=OneWay}' Style='{StaticResource Body}'
-                                       FontSize='16' FontWeight='SemiBold' TextWrapping='Wrap' TextTrimming='None'
-                                       Margin='0,11,0,0'
-                                       Visibility='{Binding HasStandfirst, Converter={StaticResource BoolVisible}}' />
-                            <Border Height='1' Background='{DynamicResource EdgeBrush}' Margin='0,18,0,17' />
-                            <Border BorderBrush='{DynamicResource AccentBrush}' BorderThickness='3,0,0,0'
-                                    Padding='15,1,0,1'
-                                    Visibility='{Binding HasBody, Converter={StaticResource BoolVisible}}'>
-                                <TextBlock Text='{Binding Body, Mode=OneWay}' Style='{StaticResource Body}'
-                                           FontSize='14.5' LineHeight='22' TextWrapping='Wrap' TextTrimming='None' />
+                            <!-- The article as a period document: paper, letterhead band, dateline
+                                 (with the era flourish) and the era document face, all restored to
+                                 neutral chrome when era theming is off. Filing metadata (badges,
+                                 byline) stays above the document; the Why? and History link below. -->
+                            <Border x:Name='ArticleDocument' Style='{StaticResource NewsEraDocSurface}'
+                                    Margin='0,12,0,0' AutomationProperties.Name='Article as period document'>
+                                <StackPanel>
+                                    <Border x:Name='ArticleDocLetterhead' Style='{StaticResource NewsEraLetterheadBand}'>
+                                        <DockPanel LastChildFill='True' Margin='14,8'>
+                                            <Border x:Name='ArticleDocStamp' Style='{StaticResource NewsEraStamp}'
+                                                    DockPanel.Dock='Left' Margin='0,0,10,0'>
+                                                <TextBlock Text='&#xE945;' FontFamily='{StaticResource IconFont}' FontSize='12'
+                                                           Foreground='{DynamicResource EraTelegramChromeBrush}'
+                                                           HorizontalAlignment='Center' VerticalAlignment='Center' />
+                                            </Border>
+                                            <StackPanel x:Name='ArticleDocStripes' Style='{StaticResource NewsEraStripes}'
+                                                        DockPanel.Dock='Left' Orientation='Horizontal'
+                                                        VerticalAlignment='Center' Margin='0,0,12,0'>
+                                                <Border Width='4' Height='18' Margin='0,0,4,0'
+                                                        Background='{DynamicResource EraFaxBandTextBrush}' />
+                                                <Border Width='6' Height='18' Margin='0,0,4,0'
+                                                        Background='{DynamicResource EraFaxBandTextBrush}' />
+                                                <Border Width='4' Height='18'
+                                                        Background='{DynamicResource EraFaxBandTextBrush}' />
+                                            </StackPanel>
+                                            <Canvas x:Name='ArticleDocGlyph' Style='{StaticResource NewsEraGlyph}'
+                                                    DockPanel.Dock='Left' Width='18' Height='14' Margin='0,1,10,0'
+                                                    VerticalAlignment='Center'>
+                                                <Rectangle Width='18' Height='14' RadiusX='1.5' RadiusY='1.5'
+                                                           Stroke='{DynamicResource EraEmailAccentBrush}' StrokeThickness='1.6' />
+                                                <Line X1='1.5' Y1='2' X2='9' Y2='8'
+                                                      Stroke='{DynamicResource EraEmailAccentBrush}' StrokeThickness='1.4' />
+                                                <Line X1='16.5' Y1='2' X2='9' Y2='8'
+                                                      Stroke='{DynamicResource EraEmailAccentBrush}' StrokeThickness='1.4' />
+                                            </Canvas>
+                                            <TextBlock DockPanel.Dock='Right' Margin='12,0,0,0'
+                                                       Style='{StaticResource NewsEraLetterheadLabel}'
+                                                       Text='{Binding DataContext.EraSkin.Label, RelativeSource={RelativeSource AncestorType=UserControl}}' />
+                                            <TextBlock TextTrimming='CharacterEllipsis'>
+                                                <TextBlock.Style>
+                                                    <Style TargetType='TextBlock' BasedOn='{StaticResource NewsEraLetterheadText}'>
+                                                        <Setter Property='Text' Value='SMGP NEWSROOM' />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding='{Binding HasDesk}' Value='True'>
+                                                                <Setter Property='Text' Value='{Binding DeskName}' />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </DockPanel>
+                                    </Border>
+                                    <StackPanel Margin='18,12,18,16'>
+                                        <DockPanel LastChildFill='True'>
+                                            <TextBlock DockPanel.Dock='Right' Margin='8,0,0,0'
+                                                       Style='{StaticResource NewsEraDocFlourish}'
+                                                       Text='{Binding DataContext.EraSkin.DatelineFlourish, RelativeSource={RelativeSource AncestorType=UserControl}}' />
+                                            <TextBlock Style='{StaticResource NewsEraDocDateline}'
+                                                       Text='{Binding DateLabel, Mode=OneWay}' />
+                                        </DockPanel>
+                                        <TextBlock Text='{Binding Headline, Mode=OneWay}' Style='{StaticResource NewsEraDocHeadline}'
+                                                   FontSize='31' Margin='0,8,0,0'
+                                                   AutomationProperties.Name='{Binding Headline, Mode=OneWay}' />
+                                        <TextBlock Text='{Binding Deck, Mode=OneWay}' Style='{StaticResource NewsEraDocMuted}'
+                                                   FontSize='15.5' FontStyle='Italic' TextWrapping='Wrap' TextTrimming='None'
+                                                   Margin='0,7,0,0'
+                                                   Visibility='{Binding HasDeck, Converter={StaticResource BoolVisible}}' />
+                                        <TextBlock Text='{Binding Standfirst, Mode=OneWay}' Style='{StaticResource NewsEraDocInk}'
+                                                   FontSize='16' FontWeight='SemiBold' TextWrapping='Wrap' TextTrimming='None'
+                                                   Margin='0,11,0,0'
+                                                   Visibility='{Binding HasStandfirst, Converter={StaticResource BoolVisible}}' />
+                                        <Border Style='{StaticResource NewsEraDocRule}' />
+                                        <Border Style='{StaticResource NewsEraDocAccentFrame}' Padding='15,1,0,1'
+                                                Visibility='{Binding HasBody, Converter={StaticResource BoolVisible}}'>
+                                            <TextBlock Text='{Binding Body, Mode=OneWay}' Style='{StaticResource NewsEraDocInk}'
+                                                       FontSize='14.5' LineHeight='22' TextWrapping='Wrap' TextTrimming='None' />
+                                        </Border>
+                                    </StackPanel>
+                                </StackPanel>
                             </Border>
 
                             <Border Style='{StaticResource Callout}' Padding='12,9' Margin='0,18,0,0'

@@ -100,11 +100,11 @@ public sealed class BriefingGambleRenderTests
             Assert.True(view.ActualWidth > 0);
             Assert.True(view.ActualHeight > 0);
 
-            // Pin the panel's ACTUAL visibility — CanGamble is true, so the gamble panel must be
+            // Pin the panel's ACTUAL visibility, CanGamble is true, so the gamble panel must be
             // Visible (it shipped inverted through the BoolCollapsed converter and no assertion
             // caught it), and the SMGP panel must stay collapsed on a non-smgp career.
             Assert.Equal(Visibility.Visible, ((FrameworkElement)view.FindName("GamblePanel")).Visibility);
-            // (the SMGP rival panel moved to its own RivalScreenView — no longer in the briefing)
+            // (the SMGP rival panel moved to its own RivalScreenView, no longer in the briefing)
             Assert.Null(view.FindName("SmgpCareerOverPanel"));
 
             // "No bet" is the WITHDRAW action: hidden while there is nothing to withdraw,

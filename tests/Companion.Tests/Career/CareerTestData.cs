@@ -8,8 +8,8 @@ namespace Companion.Tests.Career;
 
 /// <summary>
 /// Test data for the career sim: the real career rules files (linked into the test output by
-/// the csproj) plus a small synthetic 1967-style pack — three teams across the tier range,
-/// six drivers, two rounds, constructors championship — and helpers to build grids, results,
+/// the csproj) plus a small synthetic 1967-style pack, three teams across the tier range,
+/// six drivers, two rounds, constructors championship, and helpers to build grids, results,
 /// and pipeline contexts.
 /// </summary>
 internal static class CareerTestData
@@ -20,7 +20,7 @@ internal static class CareerTestData
     {
         string path = Path.Combine(RulesDirectory, fileName);
         Assert.True(File.Exists(path),
-            $"Rules file '{path}' was not copied to the test output — rebuild tests/Companion.Tests.");
+            $"Rules file '{path}' was not copied to the test output, rebuild tests/Companion.Tests.");
         return File.ReadAllText(path);
     }
 
@@ -139,7 +139,7 @@ internal static class CareerTestData
     }
 
     /// <summary>Both rounds finish in the same order:
-    /// old, canon_now, player, canon_next, a, b — the minnow team wins the constructors
+    /// old, canon_now, player, canon_next, a, b, the minnow team wins the constructors
     /// title (overachieves), the top team flops (underachieves), the player is P3.</summary>
     public static IReadOnlyList<RoundResult> Rounds()
     {

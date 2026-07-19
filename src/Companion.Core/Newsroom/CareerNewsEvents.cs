@@ -1,7 +1,7 @@
 namespace Companion.Core.Newsroom;
 
 /// <summary>
-/// The mode-agnostic career event detector — the newsroom's single trigger source. A pure
+/// The mode-agnostic career event detector, the newsroom's single trigger source. A pure
 /// projection over shaped, already-folded facts (<see cref="NewsroomSeason"/>): no I/O, no RNG,
 /// no fold input, so it is free to evolve without touching replay. Walks the career
 /// chronologically carrying career-wide memory (firsts, streaks, droughts, milestones, best
@@ -101,7 +101,7 @@ public static class CareerNewsEvents
         {
             events.Add(Player(season, round.Round, NewsEventKind.SatOutRound, season.PlayerTeamName,
                 new NewsEventFacts { MissRaces = round.AccidentMissRaces }, round.Venue));
-            // Injury sit-outs are today's only DNS cause — remember the absence so the next
+            // Injury sit-outs are today's only DNS cause, remember the absence so the next
             // genuine start reads as the comeback story.
             memory.PendingInjuryReturn = true;
             memory.MissedWhileInjured++;
@@ -134,7 +134,7 @@ public static class CareerNewsEvents
         }
     }
 
-    /// <summary>Dynasty owner-economy stories (economy §8) — pure projections of the shaped
+    /// <summary>Dynasty owner-economy stories (economy §8), pure projections of the shaped
     /// ledger facts. Every field is empty/default for a non-economy career, so this emits
     /// nothing there and older careers' event sets are unchanged.</summary>
     private static void DetectEconomy(
@@ -144,7 +144,7 @@ public static class CareerNewsEvents
         SeasonMemory perSeason,
         List<NewsEvent> events)
     {
-        // Sponsors signed at this round's decision window — one story each (the sponsor name
+        // Sponsors signed at this round's decision window, one story each (the sponsor name
         // disambiguates same-round signings).
         foreach (string sponsor in round.EconomySponsorsSigned)
         {
@@ -161,7 +161,7 @@ public static class CareerNewsEvents
                 new NewsEventFacts { MoneyAmount = round.EconomyRepairAmount }, round.Venue));
         }
 
-        // Terminal: the settlement folded the team — the economy's PlayerDied.
+        // Terminal: the settlement folded the team, the economy's PlayerDied.
         if (round.EconomyBankrupt)
         {
             events.Add(Player(season, round.Round, NewsEventKind.BankruptcyDeclared, season.PlayerTeamName,
@@ -218,7 +218,7 @@ public static class CareerNewsEvents
                 venue: round.Venue));
         }
 
-        // The first genuine start after injury sit-out rounds is the comeback story — emitted
+        // The first genuine start after injury sit-out rounds is the comeback story, emitted
         // once per absence (the dedupe key is the comeback round itself).
         if (memory.PendingInjuryReturn)
         {
@@ -240,7 +240,7 @@ public static class CareerNewsEvents
         var finish = round.PlayerFinish;
         var dnf = finish is null;
         var upset = round.ExpectedFinish is int expected && finish is int actual ? expected - actual : 0;
-        // perSeason.LeaderId still holds the PRE-round leader here — championship movement
+        // perSeason.LeaderId still holds the PRE-round leader here, championship movement
         // (which updates it) runs after result detection in DetectRound.
         var tookLead = round.Championship
             && round.LeaderId == "player"

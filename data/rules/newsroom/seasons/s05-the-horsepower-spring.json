@@ -1,0 +1,102 @@
+{
+  "$comment": "Season dossier pack S05, The Horsepower Spring (Horsepower War act opener). Season-scoped coverage for the Gen-4 arrival year: new thunder, the smoke plague, engine allocations as currency, speed outrunning the old circuits. Ids are stable rendezvous keys, never rename. Read-side only: editing this file changes display, never replay.",
+  "version": 1,
+  "templates": [
+    {
+      "id": "s05.season-started.new-thunder",
+      "event": "seasonStarted",
+      "eras": ["smgp"],
+      "seasons": [5],
+      "headline": "THE HORSEPOWER SPRING: the new engines are awake, and nothing is gentle anymore",
+      "deck": "A faster formula, a louder paddock, sixteen rounds of thunder",
+      "summary": "Season five opens with the new horsepower formula, the fastest machinery the circus has ever fielded, and a form book torn up overnight.",
+      "sections": {
+        "lead": "{pool:dateline} There is a new sound in this paddock, and every garage door is open to hear it. The Gen-4 formula has arrived: bigger engines, lighter rules, and machinery so fast the timing beams are being checked twice. They are calling it the horsepower spring, and the winter belonged to the men with the dynamometers.",
+        "context": "The form book was torn up in a single test. Houses that ruled the old dispensation woke up chasing, houses that chased woke up rich, and down the pit lane the little teams are already counting what a starting allocation of engines costs. {pool:paddockBuzz}",
+        "close": "Sixteen rounds of thunder ahead. Somebody is going to tame these monsters; the paddock just does not know who yet."
+      }
+    },
+    {
+      "id": "s05.race-won.tamed-the-monster",
+      "event": "raceWon",
+      "eras": ["smgp"],
+      "seasons": [5],
+      "headline": "{subject} WINS[[?venue: at {venue}]], and the monster gets a master",
+      "deck": "The new formula has a verdict, delivered at full volume",
+      "summary": "{subject} won[[?venue: at {venue}]][[?round: in round {round}]].",
+      "sections": {
+        "lead": "{pool:dateline} The new machinery does not forgive passengers, and today it carried a driver. {subject} wrestled the angriest cars the sport has ever built to a win[[?venue: at {venue}]], and the horsepower spring has its answer in letters ten feet tall. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: The board files {subject} at {ord:champPosition}, in the fastest season the circus has ever timed.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s05.podium.through-the-smoke",
+      "event": "podiumFinish",
+      "eras": ["smgp"],
+      "seasons": [5],
+      "headline": "{subject} on the podium[[?venue: at {venue}]], home through the smoke",
+      "deck": "In a season of expiring engines, finishing is a talent",
+      "summary": "{subject} finished on the podium[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} Half the story of this season is written in smoke, and {subject} read it best: fast enough to matter, gentle enough to finish. The podium[[?venue: at {venue}]] is the proof, and the engine underneath deserves its own champagne. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: Championship account: {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s05.pole.stopwatch-thunder",
+      "event": "polePosition",
+      "eras": ["smgp"],
+      "seasons": [5],
+      "headline": "POLE for {subject}[[?venue: at {venue}]], the loudest number of the year",
+      "deck": "The stopwatch meets the new horsepower, and blinks",
+      "summary": "{subject} took pole position[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} Some numbers this season do not look real until the second glance. {subject} holds pole[[?venue: at {venue}]] with a lap the old formula would have filed under fiction, and the pit lane is still reading the timing sheet. {pool:swBoard}",
+        "close": "Tomorrow asks the harder question: whether that much speed can be lived with for a whole race distance."
+      }
+    },
+    {
+      "id": "s05.lead-taken.fastest-field",
+      "event": "championshipLeadTaken",
+      "eras": ["smgp"],
+      "seasons": [5],
+      "headline": "{subject} leads the horsepower spring, top of the fastest field ever",
+      "deck": "The summit of a season with no ceiling",
+      "summary": "{subject} took the championship lead in season five.",
+      "sections": {
+        "lead": "{pool:dateline} The big board has a new name on top, and it belongs to the driver making the most sense of the fastest formula the circus has ever run. {subject} leads the horsepower spring, and every garage below is recalculating what the new era will cost them. {pool:swBoard}",
+        "stats": "{pool:rrStatLine}",
+        "close": "Speed this raw does not hold still. The lead is rented by the round."
+      }
+    },
+    {
+      "id": "s05.retired-mechanical.smoke-plague",
+      "event": "retiredMechanical",
+      "eras": ["smgp"],
+      "seasons": [5],
+      "headline": "The smoke takes {subject}[[?venue: at {venue}]], the season's toll climbs",
+      "deck": "Another engine pays the new formula's price",
+      "summary": "{subject} retired with mechanical failure[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The season's soundtrack played again[[?venue: at {venue}]]: the cough, the smoke, the long coast to the grass. {subject} climbed out with nothing to answer for; the engine made its own confession in front of everyone. {pool:wrenchNote}",
+        "context": "Engine allocations are this year's real currency, and the exchange rate is brutal. {pool:swLadder}",
+        "close": "The crew starts the rebuild. The ledger does not care how well it was driven."
+      }
+    },
+    {
+      "id": "s05.retired-driver-error.heartbeat-early",
+      "event": "retiredDriverError",
+      "eras": ["smgp"],
+      "seasons": [5],
+      "headline": "{subject} in the barriers[[?venue: at {venue}]], arriving a heartbeat early",
+      "deck": "The new speeds meet braking zones drawn for slower cars",
+      "summary": "{subject} crashed out[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The new machinery arrives at every corner sooner than the corner was drawn to expect, and today {subject} discovered the gap between the two. The driver walked away; the braking zone will be re-measured by morning. {pool:swCrowd}",
+        "close": "The flatbed takes the car. The whisper about the old circuits gets one voice louder."
+      }
+    }
+  ]
+}

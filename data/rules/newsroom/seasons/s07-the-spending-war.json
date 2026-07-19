@@ -1,0 +1,102 @@
+{
+  "$comment": "Season dossier pack S07, The Spending War (Horsepower War act). Season-scoped coverage for the year money became the story: chequebook war at the summit, counted coins at the floor, and a paddock that kept proving the flag is not for sale. Ids are stable rendezvous keys, never rename. Read-side only: editing this file changes display, never replay.",
+  "version": 1,
+  "templates": [
+    {
+      "id": "s07.season-started.ledger-season",
+      "event": "seasonStarted",
+      "eras": ["smgp"],
+      "seasons": [7],
+      "headline": "THE SPENDING WAR: the entry list reads like a ledger",
+      "deck": "Gold freight at the summit, counted coins at the floor",
+      "summary": "Season seven opens with the richest teams in open chequebook war and the widest gap the circus has ever known.",
+      "sections": {
+        "lead": "{pool:dateline} The first number of the season was not a lap time. It was a figure with too many zeroes, announced by one gold garage and answered by two more, and the spending war was declared before a wheel turned. The gap between the summit and the LEVEL D floor has never been wider, and it has never been more resented.",
+        "context": "The rich run fresh power every Sunday; the floor rebuilds the same tired unit and calls it a programme. Between them sits a paddock that still believes the stopwatch cannot read a bank statement. {pool:paddockBuzz}",
+        "close": "Sixteen rounds to find out what gold can buy, and what it cannot."
+      }
+    },
+    {
+      "id": "s07.race-won.priceless",
+      "event": "raceWon",
+      "eras": ["smgp"],
+      "seasons": [7],
+      "headline": "{subject} WINS[[?venue: at {venue}]], the one thing money cannot buy",
+      "deck": "The freight rolls past, the flag stays free",
+      "summary": "{subject} won[[?venue: at {venue}]][[?round: in round {round}]].",
+      "sections": {
+        "lead": "{pool:dateline} Every spare car, every qualifying special, every crate of fresh engines came to nothing against sixty laps of driving. {subject} wins[[?venue: at {venue}]], and the spending war gets its weekly reminder that the flag is the one item no budget line covers. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: The board reads {ord:champPosition} for {subject}, purchased at the old price: talent.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s07.podium.small-garage-gold",
+      "event": "podiumFinish",
+      "eras": ["smgp"],
+      "seasons": [7],
+      "headline": "{subject} on the podium[[?venue: at {venue}]], worth every coin it did not cost",
+      "deck": "The champagne tastes different on a tight budget",
+      "summary": "{subject} finished on the podium[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} There are podiums the gold garages buy in bulk, and there are podiums like this one: {subject} on the rostrum[[?venue: at {venue}]] with half the paddock's respect and none of its invoices. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: Championship: {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s07.pole.earned-not-bought",
+      "event": "polePosition",
+      "eras": ["smgp"],
+      "seasons": [7],
+      "headline": "POLE for {subject}[[?venue: at {venue}]], earned, not invoiced",
+      "deck": "The clock still refuses to read bank statements",
+      "summary": "{subject} took pole position[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The qualifying specials came out with their fresh rubber and their fresh engines, and the number at the top still belongs to {subject}. Pole[[?venue: at {venue}]] in the spending war is a line item no accountant can authorise. {pool:swBoard}",
+        "close": "Sunday is longer and more expensive. The number is only the down payment."
+      }
+    },
+    {
+      "id": "s07.lead-taken.summit-market",
+      "event": "championshipLeadTaken",
+      "eras": ["smgp"],
+      "seasons": [7],
+      "headline": "{subject} leads the spending war, and the summit is not for sale",
+      "deck": "Top of the board in the most expensive season ever run",
+      "summary": "{subject} took the championship lead in season seven.",
+      "sections": {
+        "lead": "{pool:dateline} In the year the paddock priced everything, the top line of the big board stays priceless. {subject} leads the championship, and the gold garages below are learning the difference between buying speed and owning Sundays. {pool:swBoard}",
+        "stats": "{pool:rrStatLine}",
+        "close": "The freight will keep rolling. The lead answers to a different currency, and it is called the chequered flag."
+      }
+    },
+    {
+      "id": "s07.retired-mechanical.rebuilt-once-too-often",
+      "event": "retiredMechanical",
+      "eras": ["smgp"],
+      "seasons": [7],
+      "headline": "{subject} coasts out[[?venue: at {venue}]], the tired unit gives its last",
+      "deck": "The oldest engine on the floor runs out of rebuilds",
+      "summary": "{subject} retired with mechanical failure[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} Some garages bolt in fresh power every Sunday. Some garages nurse the same engine like a family heirloom, and today the heirloom came apart under {subject}[[?venue: at {venue}]]. The driver did nothing wrong; the budget did it for him. {pool:wrenchNote}",
+        "context": "This is the spending war's quietest column: the retirements that were decided in a bank office in January. {pool:swLadder}",
+        "close": "The crew strips it down one more time. There is no other engine coming."
+      }
+    },
+    {
+      "id": "s07.retired-driver-error.overdraft",
+      "event": "retiredDriverError",
+      "eras": ["smgp"],
+      "seasons": [7],
+      "headline": "{subject} in the wall[[?venue: at {venue}]], an overdraft of ambition",
+      "deck": "The wall charges no interest and gives no credit",
+      "summary": "{subject} crashed out[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The spending war has one account nobody can top up: grip. {subject} spent more than the tyres had in the bank[[?venue: at {venue}]], and the armco collected immediately, in full, with no appeals department. {pool:swCrowd}",
+        "close": "The repair bill lands on a garage that counts every coin. The driver walked away; the ledger limps."
+      }
+    }
+  ]
+}

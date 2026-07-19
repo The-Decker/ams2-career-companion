@@ -90,9 +90,9 @@ public static class CharacterProgress
         };
     }
 
-    /// <summary>Applies a spend to the character — raise a stat by one step (capped at
+    /// <summary>Applies a spend to the character, raise a stat by one step (capped at
     /// <c>statCapPerRating</c>, which is higher than the creation cap, so a driver develops beyond
-    /// where they started) or add a perk — and charges the version-selected lifetime-spend field
+    /// where they started) or add a perk, and charges the version-selected lifetime-spend field
     /// (<see cref="CharacterProfile.CpSpent"/> for v0/v1; <see cref="CharacterProfile.SkillPointsSpent"/>
     /// for v2). Pure; the caller validates affordability first.</summary>
     public static CharacterProfile Apply(CharacterProfile character, CharacterSpend spend, CharacterRules rules)

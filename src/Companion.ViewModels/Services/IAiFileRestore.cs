@@ -3,7 +3,7 @@ namespace Companion.ViewModels.Services;
 /// <summary>
 /// Additive season-end companion interface of the <see cref="ICareerSession"/> seam (like
 /// <see cref="IForceStaging"/>): one-click restore of the user's pre-season AI file (locked
-/// decision #7c). The current live file is ALWAYS re-backed-up first — restore never
+/// decision #7c). The current live file is ALWAYS re-backed-up first, restore never
 /// destroys state. The season-review screen exposes this.
 /// </summary>
 public interface IAiFileRestore

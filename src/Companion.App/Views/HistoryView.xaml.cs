@@ -7,7 +7,7 @@ using Companion.ViewModels.Hub;
 
 namespace Companion.App.Views;
 
-/// <summary>The History / Scrapbook tab: a read-only scrapbook of the whole career — a records
+/// <summary>The History / Scrapbook tab: a read-only scrapbook of the whole career, a records
 /// book, per-season cards down a lineage timeline, and every dispatch archived forever. Pure
 /// bindings to <see cref="Companion.ViewModels.Hub.HistoryViewModel"/>; the archived-article
 /// expand/collapse rides the same command-bound toggle the News ticker uses, so there is no
@@ -19,6 +19,13 @@ public partial class HistoryView : UserControl
         InitializeComponent();
         Loaded += OnLoaded;
     }
+
+    /// <summary>The campaign timeline strip is a self-contained control with its own namescope;
+    /// forward <c>FindName</c> into it so the History-level render contract
+    /// (CampaignTimelinePanel / CampaignTimelineSlots / CampaignTimelineScroll) still resolves
+    /// from this view exactly as it did when the strip was inline XAML.</summary>
+    public new object? FindName(string name) =>
+        base.FindName(name) ?? CampaignTimelineStrip.FindName(name);
 
     private void OnLoaded(object sender, RoutedEventArgs e) =>
         SoundAssist.SetSuppressWhen(OpenNewsButton, ResolveHub() is null);

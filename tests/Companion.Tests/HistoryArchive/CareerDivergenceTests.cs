@@ -86,7 +86,7 @@ public class CareerDivergenceTests
         Assert.Equal("player", playerWin.SubjectId);
         Assert.Equal("James Hunt", playerWin.Facts.RivalName); // the displaced historical winner
 
-        // Distinct keys — the champion verdict never collides with a round divergence.
+        // Distinct keys, the champion verdict never collides with a round divergence.
         Assert.Equal(events.Count, events.Select(e => e.DedupeKey).Distinct().Count());
     }
 

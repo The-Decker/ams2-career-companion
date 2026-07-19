@@ -20,6 +20,6 @@ public sealed record PackEntry
     /// expression: "1-11", "4", or "1,3,5-8" (ranges/lists for mid-season swaps).</summary>
     public required string Rounds { get; init; }
 
-    /// <summary>EXACT livery display name (case-sensitive) — the load-bearing binding.</summary>
+    /// <summary>EXACT livery display name (case-sensitive), the load-bearing binding.</summary>
     public required string Ams2LiveryName { get; init; }
 }

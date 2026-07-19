@@ -7,9 +7,9 @@ namespace Companion.Core.Career;
 /// A DETERMINISTIC field-result generator for an auto-simulated round (character death &amp; injury §5).
 /// AMS2 cannot spectate a single-player race, so a round the injured player must sit out is simulated by
 /// the app: rank every NON-player seat by its resolved <see cref="SeatStrengthModel.Strength"/> plus a
-/// seeded ±jitter (race-day variance), highest first, ties broken by driver id — a pure function of
+/// seeded ±jitter (race-day variance), highest first, ties broken by driver id, a pure function of
 /// (masterSeed, year, round) + the resolved grid, so it re-derives byte-identically. The player is
-/// EXCLUDED (they did not start). Deliberately a reusable generator — the seed of a future "simulate a
+/// EXCLUDED (they did not start). Deliberately a reusable generator, the seed of a future "simulate a
 /// race I don't want to drive" feature.
 /// </summary>
 public static class AutoRaceModel
@@ -18,7 +18,7 @@ public static class AutoRaceModel
     public const double JitterMagnitude = 0.25;
 
     /// <summary>The non-player field's finishing ORDER (driver ids, winner first) for a skipped round.
-    /// The player seat (<see cref="GridSeat.IsPlayer"/>) is excluded — they sat it out (DNS).</summary>
+    /// The player seat (<see cref="GridSeat.IsPlayer"/>) is excluded, they sat it out (DNS).</summary>
     public static IReadOnlyList<string> ClassifiedOrder(
         IReadOnlyList<GridSeat> seats, ulong masterSeed, int year, int round)
     {

@@ -266,10 +266,10 @@ public sealed partial class HistoryViewModel
                 },
                 row.HistoricalWinner.Length > 0
                     ? $"{row.HistoricalWinner}{(row.HistoricalWinnerTeam.Length > 0 ? $" · {row.HistoricalWinnerTeam}" : "")}"
-                    : "—",
+                    : "-",
                 row.CareerWinner.Length > 0
                     ? $"{row.CareerWinner}{(row.CareerWinnerTeam.Length > 0 ? $" · {row.CareerWinnerTeam}" : "")}"
-                    : "—",
+                    : "-",
                 row.Kind == DivergenceKind.AlternateOutcome));
         }
 

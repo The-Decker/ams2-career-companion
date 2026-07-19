@@ -4,7 +4,7 @@ namespace Companion.Tests.ViewModels;
 
 /// <summary>The drop-in era-art resolver (career-hub-design.md §11): a pure most-specific-first
 /// candidate ordering plus a filesystem probe. A year-specific file beats the era-medium file; a
-/// missing image resolves to null (the card then shows its coloured placeholder). No WPF — the
+/// missing image resolves to null (the card then shows its coloured placeholder). No WPF, the
 /// resolver lives in the ViewModels layer so it unit-tests with plain temp files.</summary>
 public sealed class EraArtResolverTests
 {
@@ -34,7 +34,7 @@ public sealed class EraArtResolverTests
     public void IdentityKey_resolves_the_smgp_art_beside_a_colliding_year()
     {
         // SMGP shares 1990 with the f1-1990 pack, so it keys its own art by identity ("smgp"),
-        // never the year — CandidateFileNamesForKey is just <key>.jpg / <key>.png.
+        // never the year, CandidateFileNamesForKey is just <key>.jpg / <key>.png.
         Assert.Equal("smgp", EraArtResolver.SmgpArtKey);
         Assert.Equal(["smgp.jpg", "smgp.png"], EraArtResolver.CandidateFileNamesForKey("smgp"));
 
@@ -123,7 +123,7 @@ public sealed class EraArtResolverTests
     [Fact]
     public void YearForEntry_uses_the_stored_season_year_even_when_the_name_disagrees()
     {
-        // The stored year is authoritative — a name with a DIFFERENT (or no) year never overrides it.
+        // The stored year is authoritative, a name with a DIFFERENT (or no) year never overrides it.
         var entry = Entry(name: "My 1972 rebuild", seasonYear: 1967);
 
         Assert.Equal(1967, EraArtResolver.YearForEntry(entry));

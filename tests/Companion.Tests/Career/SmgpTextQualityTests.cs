@@ -5,13 +5,13 @@ namespace Companion.Tests.Career;
 /// <summary>
 /// Guards the authored SMGP display text against the double-encoding MOJIBAKE that plagued the
 /// PowerShell-assembled corpora (an em-dash / curly quote written as UTF-8, misread through CP1252,
-/// then re-saved — surfacing in-app as "â€"" etc.). The tell-tale is 'â'(U+00E2) immediately followed by
+/// then re-saved, surfacing in-app as "â€"" etc.). The tell-tale is 'â'(U+00E2) immediately followed by
 /// '€'(U+20AC). Fixed for driver-profiles (regenerated ASCII) + team-profiles (cleaned to real em-dashes);
 /// this keeps it from creeping back.
 /// </summary>
 public sealed class SmgpTextQualityTests
 {
-    private const string Mojibake = "â€"; // "â€" — the double-encoding marker
+    private const string Mojibake = "â€"; // "â€", the double-encoding marker
 
     [Theory]
     [InlineData("driver-profiles.json")]
@@ -26,7 +26,7 @@ public sealed class SmgpTextQualityTests
         string text = File.ReadAllText(path, System.Text.Encoding.UTF8);
         Assert.False(
             text.Contains(Mojibake, StringComparison.Ordinal),
-            $"{fileName} contains double-encoding mojibake (â€…) — re-clean it and write UTF-8 (no BOM).");
+            $"{fileName} contains double-encoding mojibake (â€…), re-clean it and write UTF-8 (no BOM).");
     }
 
     // Parse with the SAME reader the app uses, so a mojibake-cleanup that accidentally injects a raw

@@ -22,7 +22,7 @@ public enum StoryThreadState
     Historic,
 }
 
-/// <summary>One development inside a thread — a reference to the article that covers it.</summary>
+/// <summary>One development inside a thread, a reference to the article that covers it.</summary>
 public sealed record StoryThreadEntry
 {
     /// <summary>The event/article dedupe key this development links to.</summary>
@@ -34,7 +34,7 @@ public sealed record StoryThreadEntry
 
 /// <summary>
 /// A remembered, developing story: stable <see cref="Key"/>, a typed lifecycle, and the ordered
-/// developments that got it here. Pure derivation over the event spine — re-derived on read,
+/// developments that got it here. Pure derivation over the event spine, re-derived on read,
 /// deterministic, never stored (docs/dev/newsroom-history-overhaul.md D1/D3).
 /// </summary>
 public sealed record StoryThread
@@ -281,7 +281,7 @@ public static class StoryThreads
 
     private static string Summarize(NewsEvent e)
     {
-        var venue = e.VenueName.Length > 0 ? $" — {e.VenueName}" : "";
+        var venue = e.VenueName.Length > 0 ? $", {e.VenueName}" : "";
         return e.Kind switch
         {
             NewsEventKind.ChampionshipLeadTaken => $"Takes the championship lead{venue}",

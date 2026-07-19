@@ -1,3 +1,4 @@
+using Companion.Core.Career;
 using Companion.ViewModels.Settings;
 using System.Runtime.CompilerServices;
 
@@ -6,6 +7,9 @@ namespace Companion.App.Audio;
 /// <summary>
 /// App-lifetime owner for the manual player and opt-in interaction SFX. This class intentionally
 /// has no ShellViewModel dependency; it cannot observe or react to navigation or career outcomes.
+/// The one era input is the pushed era skin (<see cref="SetEraSkin"/>): the App TELLS the
+/// controller which period medium voices the immersive cues, the same one-way push model as
+/// settings, and the controller never watches navigation or career state to learn it.
 /// </summary>
 internal sealed class AppAudioController : IDisposable
 {
@@ -15,6 +19,7 @@ internal sealed class AppAudioController : IDisposable
     private readonly TimeProvider _clock;
     private readonly ConditionalWeakTable<object, PlaybackHistory> _sourceHistories = new();
     private readonly PlaybackHistory _unscopedHistory = new();
+    private EraMedium? _eraSkin;
     private bool _disposed;
 
     internal AppAudioController(ISettingsService settings)
@@ -60,6 +65,16 @@ internal sealed class AppAudioController : IDisposable
             _engine.SetApplicationActive(active);
     }
 
+    /// <summary>TOLD the era skin for the immersive cues (era-theming-assets brief, Workstream B).
+    /// Null selects the era-neutral base set (menus, gallery, no active career). Timbre only, never
+    /// triggering: this changes how Navigate/Confirm/Back/SeatConfirm are voiced, never when or
+    /// whether any cue fires, and cooldown, dedupe, mix, and ducking are identical for every skin.</summary>
+    internal void SetEraSkin(EraMedium? skin)
+    {
+        if (!_disposed)
+            _eraSkin = skin;
+    }
+
     /// <summary>Plays only an explicitly requested SoundAssist cue. There are no implicit state,
     /// screen, outcome, or milestone requests anywhere in this controller.</summary>
     internal void PlayEffect(SoundEffectCue cue) => PlayEffect(cue, source: null);
@@ -86,7 +101,7 @@ internal sealed class AppAudioController : IDisposable
             return;
 
         if (!_engine.PlayEffect(
-                _catalog.NextEffect(cue, definition),
+                _catalog.NextEffect(cue, definition, _eraSkin),
                 definition.MusicDuck,
                 definition.DuckDuration))
             return;

@@ -20,7 +20,7 @@ public class RoundGridResolverTests
 
         var plan = RoundGridResolver.Resolve(pack, 1);
 
-        // entries.json order, filtered to rounds expressions containing 1 — since the max-grid
+        // entries.json order, filtered to rounds expressions containing 1, since the max-grid
         // roster pass, Kyalami fields the FULL 20-car skinpack roster (no more 11-car round 1).
         string[] expected =
         [
@@ -89,7 +89,7 @@ public class RoundGridResolverTests
         Assert.Equal("Ferrari #18 L. Bandini", seat3.Ams2LiveryName);
         Assert.Equal("driver.mike_parkes", seat3.DriverId);
 
-        // Round 5: nobody covers the seat — but the player still races, seated from their own
+        // Round 5: nobody covers the seat, but the player still races, seated from their own
         // livery entry, instead of being benched (the old behaviour returned no player seat).
         var seat5 = Assert.Single(RoundGridResolver.Resolve(pack, 5, player).Seats, s => s.IsPlayer);
         Assert.Equal("Ferrari #18 L. Bandini", seat5.Ams2LiveryName);
@@ -104,7 +104,7 @@ public class RoundGridResolverTests
     public void Resolve_PlayerSeat_LiveryMatchingNoEntry_SeatsAnOwnEntrant()
     {
         // Player-as-own-entrant: a custom livery no pack driver holds seats the player as their own
-        // independent synthetic entrant (stable id) rather than throwing — so custom skins work.
+        // independent synthetic entrant (stable id) rather than throwing, so custom skins work.
         var pack = GridTestData.LoadReferencePack("f1-1967");
         var seat = Assert.Single(
             RoundGridResolver.Resolve(pack, 1, new PlayerSeat { Ams2LiveryName = "My Custom Skin #99" }).Seats,
@@ -128,7 +128,7 @@ public class RoundGridResolverTests
         Assert.Equal("5", brundle.Number);
         Assert.Equal("1988 Williams #5 - M. Brundle", brundle.Ams2LiveryName);
 
-        // Exactly one car #5 for Williams — the swap replaces, it does not add.
+        // Exactly one car #5 for Williams, the swap replaces, it does not add.
         Assert.Single(round11.Seats, s => s.TeamId == "team.williams" && s.Number == "5");
     }
 
@@ -218,7 +218,7 @@ public class RoundGridResolverTests
         Assert.Equal(1.0, atForm.Ratings.QualifyingSkill);              // 0.98 + 0.05 -> clamp 1.0
         Assert.Equal(0.50, atForm.Ratings.Aggression);                  // character fields untouched
 
-        // The nudge is keyed by the round's track id — a different venue gets the baseline.
+        // The nudge is keyed by the round's track id, a different venue gets the baseline.
         var elsewhere = Assert.Single(RoundGridResolver.Resolve(pack, 2).Seats);
         Assert.Equal(0.94, elsewhere.Ratings.RaceSkill);
         Assert.Equal(0.98, elsewhere.Ratings.QualifyingSkill);
@@ -335,7 +335,7 @@ public class RoundGridResolverTests
         var pack = GridTestData.LoadReferencePack("f1-1967");
 
         // Bruce McLaren does not run round 1 (rounds "2-3,8-11"), but the player who took his seat
-        // still races round 1 — seated from McLaren's entry — rather than being benched. (The player
+        // still races round 1, seated from McLaren's entry, rather than being benched. (The player
         // races the full season regardless of the historical driver's schedule.)
         var seat = Assert.Single(
             RoundGridResolver.Resolve(pack, 1, new PlayerSeat { Ams2LiveryName = "McLaren-BRM #14 B. McLaren" }).Seats,
@@ -348,10 +348,10 @@ public class RoundGridResolverTests
     public void Resolve_1988Round1_PlayerOnADnqCar_IsSeated_HoldingTheHardcodedGridSize()
     {
         // 1988 was a pre-qualifying year: ~30 cars for 26 slots, so 4-5 DNQ each round. Coloni's
-        // Tarquini (#31, entry "1-16") did NOT qualify for round 1 (Brazil) — his driver id is not in
+        // Tarquini (#31, entry "1-16") did NOT qualify for round 1 (Brazil), his driver id is not in
         // that round's starterDriverIds. A player who picked his car must still appear on the grid AMS2
         // loads (the grid size is hardcoded), so the resolver seats the player and CapToGridSize drops
-        // the slowest qualifier — a peer backmarker, never a front-runner.
+        // the slowest qualifier, a peer backmarker, never a front-runner.
         var pack = GridTestData.LoadReferencePack("f1-1988");
         int size = pack.Season.Rounds.First(r => r.Round == 1).Grid!.Size;   // 26
         const string tarquini = "driver.gabriele_tarquini";
@@ -380,7 +380,7 @@ public class RoundGridResolverTests
     public void Resolve_Uncapped_KeepsTheCarTheGridCapWouldDrop()
     {
         // The zero-stock staging pass resolves the full qualified field (capToGridSize:false) so it can
-        // name every active livery — including the peer the cap dropped to seat a DNQ player — instead of
+        // name every active livery, including the peer the cap dropped to seat a DNQ player, instead of
         // leaving AMS2 to stock-fill that slot. The sim always uses the capped grid.
         var pack = GridTestData.LoadReferencePack("f1-1988");
         var player = new PlayerSeat
@@ -388,7 +388,7 @@ public class RoundGridResolverTests
             Ams2LiveryName = pack.Entries.First(e => e.DriverId == "driver.gabriele_tarquini").Ams2LiveryName,
         };
 
-        var capped = RoundGridResolver.Resolve(pack, 1, player);                     // 26 — one qualifier dropped
+        var capped = RoundGridResolver.Resolve(pack, 1, player);                     // 26, one qualifier dropped
         var full = RoundGridResolver.Resolve(pack, 1, player, capToGridSize: false); // nothing dropped
 
         Assert.True(full.Seats.Count > capped.Seats.Count);
@@ -401,7 +401,7 @@ public class RoundGridResolverTests
     public void Resolve_PlayerSeat_LiveryMatchIsCaseSensitive_WrongCaseBecomesAnOwnEntrant()
     {
         // Binding stays exact/case-sensitive: an almost-right livery (wrong case) does NOT bind the real
-        // seat — it is treated as a custom livery and seats the player as their own entrant.
+        // seat, it is treated as a custom livery and seats the player as their own entrant.
         var pack = GridTestData.LoadReferencePack("f1-1967");
         var seat = Assert.Single(
             RoundGridResolver.Resolve(pack, 1, new PlayerSeat { Ams2LiveryName = "LOTUS-FORD COSWORTH #5 J. CLARK" }).Seats,
@@ -435,13 +435,13 @@ public class RoundGridResolverTests
             entries:
             [
                 // Legal on paper (different rounds ranges would make this a swap), but both
-                // cover round 2 — the resolved grid would double-bind the livery.
+                // cover round 2, the resolved grid would double-bind the livery.
                 GridTestData.Entry("team.a", "driver.one", "1", "1-2", "Team A #1"),
                 GridTestData.Entry("team.a", "driver.two", "1", "2-3", "Team A #1"),
             ],
             rounds: [GridTestData.Round(1), GridTestData.Round(2), GridTestData.Round(3)]);
 
-        // Rounds 1 and 3 are fine — only one entry covers each.
+        // Rounds 1 and 3 are fine, only one entry covers each.
         Assert.Single(RoundGridResolver.Resolve(pack, 1).Seats);
         Assert.Single(RoundGridResolver.Resolve(pack, 3).Seats);
 
@@ -483,7 +483,7 @@ public class RoundGridResolverTests
 
     /// <summary>Six entries cover the round; the grid lists only three as historical starters.
     /// The resolved grid seats exactly those three (in entries.json order), and the other three —
-    /// pre-qualifiers / non-starters — stay OUT of the grid though they remain in the pack.</summary>
+    /// pre-qualifiers / non-starters, stay OUT of the grid though they remain in the pack.</summary>
     [Fact]
     public void Resolve_GridStarters_SeatOnlyTheStartersAmongCoveringEntries()
     {
@@ -547,7 +547,7 @@ public class RoundGridResolverTests
     }
 
     /// <summary>Empty starterDriverIds behaves like an absent list for seating (every covering
-    /// entry seats), but grid.size still caps the field — the trim keeps the highest raceSkill.</summary>
+    /// entry seats), but grid.size still caps the field, the trim keeps the highest raceSkill.</summary>
     [Fact]
     public void Resolve_GridSizeSmallerThanField_CapsKeepingHighestRaceSkill()
     {
@@ -620,7 +620,7 @@ public class RoundGridResolverTests
                     "driver.one", "driver.two", "driver.three", "driver.five", "driver.six")),
             ]);
 
-        // Player drives the slow #1 (0.30) — kept regardless of rating.
+        // Player drives the slow #1 (0.30), kept regardless of rating.
         var plan = RoundGridResolver.Resolve(pack, 1, new PlayerSeat { Ams2LiveryName = "Team A #1" });
 
         Assert.Equal(4, plan.Seats.Count);

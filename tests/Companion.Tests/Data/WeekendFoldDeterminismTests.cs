@@ -10,8 +10,8 @@ namespace Companion.Tests.Data;
 /// Increment 2 determinism gate for the qualifying weekend path (design §13.2 / the CI matrix):
 /// a career whose round carries a captured qualifying order (2b.3) folds the one-lap anchor
 /// (2d.2) AND replays byte-identically. Asserts (a) the <c>player.qualiAnchor</c> row is emitted
-/// only for the qualified round — a single-race round emits the identical journal sequence it
-/// always has — and (b) <see cref="ReplayService.Resimulate"/> reproduces the whole career,
+/// only for the qualified round, a single-race round emits the identical journal sequence it
+/// always has, and (b) <see cref="ReplayService.Resimulate"/> reproduces the whole career,
 /// qualifying anchor included, with no divergence.
 /// </summary>
 public sealed class WeekendFoldDeterminismTests : IDisposable
@@ -69,7 +69,7 @@ public sealed class WeekendFoldDeterminismTests : IDisposable
                 QualifyingOrder = ["driver.brabham", playerId],
             });
 
-            // Round 2: a plain single-race round — no qualifying order, so no qualiAnchor row.
+            // Round 2: a plain single-race round, no qualifying order, so no qualiAnchor row.
             var grid2 = session.CurrentGrid();
             session.Apply(new ResultDraft
             {
@@ -88,13 +88,13 @@ public sealed class WeekendFoldDeterminismTests : IDisposable
         Assert.Equal(new[] { "driver.brabham", playerId }, stored[0].ToEnvelope().QualifyingOrder);
         Assert.Null(stored[1].ToEnvelope().QualifyingOrder);
 
-        // The one-lap anchor row is emitted for the qualified round ONLY — round 2's journal
+        // The one-lap anchor row is emitted for the qualified round ONLY, round 2's journal
         // sequence is byte-identical to a pre-weekend single-race career.
         var journal = JournalStore.ReadSeason(db, seasonId);
         Assert.Contains(journal, r => r.Round == 1 && r.Phase == JournalPhases.PlayerQualiAnchor);
         Assert.DoesNotContain(journal, r => r.Round == 2 && r.Phase == JournalPhases.PlayerQualiAnchor);
 
-        // The whole career — qualifying anchor included — re-simulates byte-identically
+        // The whole career, qualifying anchor included, re-simulates byte-identically
         // (positional per-row compare, so this asserts row-count equality, not just values).
         var rules = CareerRulesData.Load(ViewModelTestData.RulesDirectory);
         var inputs = new ReplaySimInputs
@@ -169,7 +169,7 @@ public sealed class WeekendFoldDeterminismTests : IDisposable
         // Qualifying calibrates ONCE per weekend (it sets the grid), not per race.
         Assert.Equal(1, journal.Count(r => r.Round == 1 && r.Phase == JournalPhases.PlayerQualiAnchor));
 
-        // The two-race career — two per-race folds included — re-simulates byte-identically.
+        // The two-race career, two per-race folds included, re-simulates byte-identically.
         var report = ReplayService.Resimulate(db, pack, unchecked((ulong)seed), Inputs(playerId));
         Assert.True(report.Identical,
             $"diverged: {report.FirstDivergence?.Reason} stored={report.FirstDivergence?.StoredDeltaJson} " +

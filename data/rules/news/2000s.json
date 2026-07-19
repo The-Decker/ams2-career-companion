@@ -6,17 +6,17 @@
   "pools": {
     "dateline": {
       "2000s": [
-        "LIVE TIMING REPORT — {race}, {year}.",
+        "LIVE TIMING REPORT: {race}, {year}.",
         "RACE CENTRE: {race}, round {round}.",
         "FROM THE MEDIA CENTRE AT {race}.",
-        "ONLINE RACE REPORT — {race}, {year}.",
-        "PADDOCK WIRE — {race}, round {round}.",
-        "TIMING SCREEN UPDATE — {race}, {year}.",
-        "PRESS ROOM FEED — {race}, round {round}.",
-        "TRACKSIDE DATA WIRE — {race}, {year}.",
-        "RACE DESK — {race}, round {round}.",
-        "OFFICIAL CLASSIFICATION — {race}, {year}.",
-        "PIT WALL BULLETIN — {race}, round {round}."
+        "ONLINE RACE REPORT: {race}, {year}.",
+        "PADDOCK WIRE: {race}, round {round}.",
+        "TIMING SCREEN UPDATE: {race}, {year}.",
+        "PRESS ROOM FEED: {race}, round {round}.",
+        "TRACKSIDE DATA WIRE: {race}, {year}.",
+        "RACE DESK: {race}, round {round}.",
+        "OFFICIAL CLASSIFICATION: {race}, {year}.",
+        "PIT WALL BULLETIN: {race}, round {round}."
       ],
       "default": [
         "Race report, {race}.",
@@ -70,14 +70,14 @@
     "champLine": {
       "2000s": [
         "In the standings {player} sits {champPosition}, {champMove}.",
-        "The championship table now reads {player} {champPosition} — {champMove} on the season.",
+        "The championship table now reads {player} {champPosition}: {champMove} on the season.",
         "That leaves {player} {champPosition} in the title race, {champMove}.",
         "On the published standings {player} holds {champPosition}, {champMove}.",
         "Crunch the numbers and {player} is {champPosition}, {champMove} on the year.",
-        "The points ledger has {player} {champPosition} now — {champMove}.",
+        "The points ledger has {player} {champPosition} now: {champMove}.",
         "Standings update: {player} {champPosition}, {champMove}.",
         "That's {player} {champPosition} on the championship page, {champMove}.",
-        "By the season's running totals, {player} sits {champPosition} — {champMove}."
+        "By the season's running totals, {player} sits {champPosition}: {champMove}."
       ],
       "default": [
         "{player} is {champPosition} in the standings, {champMove}.",
@@ -202,12 +202,12 @@
       "2000s": [
         "{pool:dateline} {player} is on the podium at {race}, home {position} for {team} in a {fieldSize}-car field. {winner} took the win. {pool:webDesk} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} A rostrum result: {player} finishes {position} at {race}. {winner} wins and {team} records a top-three finish. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Podium for {player} — {position} at {race} for {team}, with {winner} first in the classification. {pool:webDesk} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Podium for {player}: {position} at {race} for {team}, with {winner} first in the classification. {pool:webDesk} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} banks a podium at {race}, {position} for {team} from a {fieldSize}-car field. {winner} won the race. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} Rostrum for {player}: {position} at {race}. The result page lists {winner} first and {team} in the top three. {pool:webDesk} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} climbs the podium at {race}, classified {position} for {team}. Victory belongs to {winner}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} A top-three for {player} at {race}: {position} for {team}, with {winner} winning a {fieldSize}-car field. {pool:webDesk} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} is on the box at {race} — {position} at the flag. {winner} heads the official order. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} is on the box at {race}: {position} at the flag. {winner} heads the official order. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} Podium logged: {player} {position} at {race} for {team}. The final result records {winner} first. {pool:webDesk} {pool:champLine} {pool:closeGood}"
       ],
       "default": [
@@ -217,12 +217,12 @@
     "race.result|points": {
       "2000s": [
         "{pool:dateline} {player} banks championship points at {race}, {position} for {team} from a {fieldSize}-car field. {winner} won the day. {pool:webDesk} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} A points-scoring result for {player} — {position} at {race}, added to the drivers' ledger. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A points-scoring result for {player}: {position} at {race}, added to the drivers' ledger. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} adds championship points at {race}, finishing {position} for {team}. {winner} wins the race. {pool:webDesk} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} Points on the board for {player}: {position} at {race} from {fieldSize} starters. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} The official result gives {player} {position} and a points finish for {team} at {race}. {pool:webDesk} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} scores at {race}, {position} at the flag for {team}. The points are entered in the ledger. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Championship points for {player} — {position} at {race}, while {winner} takes the victory. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Championship points for {player}: {position} at {race}, while {winner} takes the victory. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} brings the {team} car home {position} at {race}, inside the points. The classification is final. {pool:webDesk} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} A scoring finish for {player}: {position} at {race} for {team} from a field of {fieldSize}. {pool:champLine} {pool:closeGood}"
       ],
@@ -235,7 +235,7 @@
         "{pool:dateline} Overachievement at {race}: {player} brings the {team} car home {position} {pool:expectationBeat}. {pool:webDesk} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} beats the pre-race model at {race}, {position} from a {fieldSize}-car field against a projection of {expected}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} beats the projection at {race}: {position} for {team} {pool:expectationBeat}. {pool:webDesk} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Above the forecast at {race} — {player} takes {position} when the numbers said {expected} for {team}. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Above the forecast at {race}: {player} takes {position} when the numbers said {expected} for {team}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} rewrites the form guide at {race}, {position} from a {fieldSize}-car field with {expected} projected. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} A result beyond the projection: {player} {position} at {race} for {team}, with {expected} predicted. {winner} won. {pool:webDesk} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} outperforms the pre-race line at {race}, finishing {position} for {team} against a forecast of {expected}. {pool:champLine} {pool:closeGood}",
@@ -312,31 +312,31 @@
     },
     "season.digest|player-champion": {
       "2000s": [
-        "SEASON REVIEW — {year}. {player} closes the campaign as world champion, {champPosition} in the final drivers' standings for {team}. {pool:reviewNote} {pool:seasonClose}",
+        "SEASON REVIEW: {year}. {player} closes the campaign as world champion, {champPosition} in the final drivers' standings for {team}. {pool:reviewNote} {pool:seasonClose}",
         "The {year} title is settled: {player} is World Drivers' Champion for {team}. {pool:reviewNote} {pool:seasonClose}",
-        "SEASON REVIEW — {year}. Champion: {player}. The final table puts the {team} driver first. {pool:reviewNote} {pool:seasonClose}",
+        "SEASON REVIEW: {year}. Champion: {player}. The final table puts the {team} driver first. {pool:reviewNote} {pool:seasonClose}",
         "The {year} title belongs to {player}, world champion at {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}",
-        "SEASON REVIEW — {year}. {player} wins the drivers' championship for {team}; the final order is official. {pool:reviewNote} {pool:seasonClose}",
-        "The standings are final and {player} sits {champPosition} — world champion for {team}. {pool:reviewNote} {pool:seasonClose}",
-        "SEASON REVIEW — {year}. {player} closes the championship on top for {team}. The drivers' title is secured. {pool:reviewNote} {pool:seasonClose}",
+        "SEASON REVIEW: {year}. {player} wins the drivers' championship for {team}; the final order is official. {pool:reviewNote} {pool:seasonClose}",
+        "The standings are final and {player} sits {champPosition}: world champion for {team}. {pool:reviewNote} {pool:seasonClose}",
+        "SEASON REVIEW: {year}. {player} closes the championship on top for {team}. The drivers' title is secured. {pool:reviewNote} {pool:seasonClose}",
         "It reads {champPosition} in the final table: {player}, {year} world champion for {team}. {pool:reviewNote} {pool:seasonClose}",
-        "WORLD CHAMPION — {player}. The {year} drivers' standings end with the {team} racer first. {pool:reviewNote} {pool:seasonClose}"
+        "WORLD CHAMPION: {player}. The {year} drivers' standings end with the {team} racer first. {pool:reviewNote} {pool:seasonClose}"
       ],
       "default": [
-        "{player} tops the final {year} standings — champion, and a title season logged for {team}. {pool:seasonClose}"
+        "{player} tops the final {year} standings: champion, and a title season logged for {team}. {pool:seasonClose}"
       ]
     },
     "season.digest|season-complete": {
       "2000s": [
-        "SEASON REVIEW — {year}. {champLeader} takes the championship; {player} signs off {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}",
+        "SEASON REVIEW: {year}. {champLeader} takes the championship; {player} signs off {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}",
         "The {year} campaign is complete: {champLeader} is champion, with {player} classified {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}",
-        "SEASON REVIEW — {year}. {champLeader} is champion; {player} ends the drivers' standings {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}",
+        "SEASON REVIEW: {year}. {champLeader} is champion; {player} ends the drivers' standings {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}",
         "The {year} campaign is done: {champLeader} takes the title and {player} is {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}",
-        "SEASON REVIEW — {year}. {champLeader} tops the standings; {player} ends the year {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}",
+        "SEASON REVIEW: {year}. {champLeader} tops the standings; {player} ends the year {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}",
         "Final numbers for {year}: {champLeader} champion, {player} {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}",
-        "SEASON REVIEW — {year}. The title goes to {champLeader}; {player} finishes {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}",
-        "The {year} standings are locked — {champLeader} champion, {player} {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}",
-        "FINAL TABLE — {year}. {champLeader} takes the crown; {player} closes the campaign {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}"
+        "SEASON REVIEW: {year}. The title goes to {champLeader}; {player} finishes {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}",
+        "The {year} standings are locked: {champLeader} champion, {player} {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}",
+        "FINAL TABLE: {year}. {champLeader} takes the crown; {player} closes the campaign {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}"
       ],
       "default": [
         "{champLeader} took the {year} title; {player} finished the year {champPosition} for {team}. {pool:seasonClose}"

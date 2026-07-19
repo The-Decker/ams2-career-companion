@@ -29,11 +29,11 @@ public sealed record StandingsRow(
     /// <summary>True when gross differs from counted (drops or adjustments applied).</summary>
     public bool ShowGross => GrossText != CountedText;
 
-    /// <summary>True for the player's own row — the table highlights it. Init-only (not a positional param,
+    /// <summary>True for the player's own row, the table highlights it. Init-only (not a positional param,
     /// so the record's deconstruction arity is unchanged). Display-only.</summary>
     public bool IsPlayer { get; init; }
 
-    /// <summary>True for the player's currently named SMGP rival's row — highlighted (with the red rival
+    /// <summary>True for the player's currently named SMGP rival's row, highlighted (with the red rival
     /// accent) so the two are easy to track down the table. False off-SMGP. Display-only.</summary>
     public bool IsRival { get; init; }
 }
@@ -46,7 +46,7 @@ public sealed record StandingsRow(
 public sealed record RoundMatrixCell(
     string Text, bool IsDropped, string DriverId = "", int Round = 0)
 {
-    /// <summary>The click target for this cell's "Why?" inspector — the driver + round it belongs
+    /// <summary>The click target for this cell's "Why?" inspector, the driver + round it belongs
     /// to. Null when the cell has no driver/round (a blank cell), so the number renders plain.</summary>
     public RoundMatrixCellRef? InspectorRef =>
         DriverId.Length > 0 && Round > 0 ? new RoundMatrixCellRef(DriverId, Round) : null;
@@ -64,7 +64,7 @@ public sealed record RoundMatrixRow(
     IReadOnlyList<RoundMatrixCell> Cells);
 
 /// <summary>Which standings table a tab shows. The int values are the persisted
-/// <c>StandingsTabIndex</c> slots — Drivers 0, Constructors 1, Round matrix 2 — so a saved
+/// <c>StandingsTabIndex</c> slots, Drivers 0, Constructors 1, Round matrix 2, so a saved
 /// index maps straight onto a tab kind even when a hidden tab shifts the visible order.</summary>
 public enum StandingsTabKind
 {
@@ -75,7 +75,7 @@ public enum StandingsTabKind
 
 /// <summary>One tab of the standings screen: its kind, header text, and the fixed selection
 /// index the view's TabControl uses. Only the tabs that actually apply to this season appear
-/// in <see cref="StandingsViewModel.Tabs"/> — the Constructors tab is present only when the
+/// in <see cref="StandingsViewModel.Tabs"/>, the Constructors tab is present only when the
 /// season runs a constructors championship (pre-1958 seasons legitimately omit it), and every
 /// tab is present only once at least one round has been applied.</summary>
 public sealed record StandingsTab(StandingsTabKind Kind, string Header, int Index);
@@ -176,7 +176,7 @@ public sealed partial class StandingsViewModel : InspectorHostViewModel
         // The tab set for this season: Drivers + Round matrix once a round is applied, plus
         // Constructors only when the season runs a constructors championship. The view binds
         // each TabItem's visibility to Show*Tab (all derived from this list) so a tab is never
-        // hard-hidden in XAML — the VM alone decides which tabs exist, and the host tests can
+        // hard-hidden in XAML, the VM alone decides which tabs exist, and the host tests can
         // read exactly what the user can reach. Indexes stay the fixed persistence slots
         // (Drivers 0 / Constructors 1 / Matrix 2) so a hidden Constructors tab leaves gaps
         // rather than renumbering the others.
@@ -192,7 +192,7 @@ public sealed partial class StandingsViewModel : InspectorHostViewModel
         Tabs = tabs;
 
         // Tab memory: reopen on the tab last used (0 drivers, 1 constructors, 2 matrix), but
-        // never land on a tab this season does not show — a remembered Constructors tab (or a
+        // never land on a tab this season does not show, a remembered Constructors tab (or a
         // hand-edited out-of-range index) degrades to Drivers, and the round matrix stays
         // reachable. Both mouse and keyboard drive SelectedTabIndex, so this one guard keeps
         // every applicable tab switchable by either input (locked decision 8).
@@ -203,7 +203,7 @@ public sealed partial class StandingsViewModel : InspectorHostViewModel
     // ---------- tabs (persisted) ----------
 
     /// <summary>The tabs this season actually shows, in display order: Drivers, then
-    /// Constructors (only with a constructors championship), then Round matrix — and only once
+    /// Constructors (only with a constructors championship), then Round matrix, and only once
     /// a round has been applied. The view renders exactly these; host tests assert against
     /// them.</summary>
     public IReadOnlyList<StandingsTab> Tabs { get; }
@@ -296,15 +296,15 @@ public sealed partial class StandingsViewModel : InspectorHostViewModel
 
     /// <summary>True when a career session is wired, so the standings numbers are clickable
     /// walk-back targets (the view enables the number hyperlinks / accelerators on this). Without a
-    /// session — the season-review's final-standings snapshot, or a test built from raw snapshots —
+    /// session, the season-review's final-standings snapshot, or a test built from raw snapshots —
     /// the numbers render plain and the command no-ops, so nothing depends on the session.</summary>
     public bool CanInspect => _session is not null;
 
     /// <summary>Open the inspector for a driver's championship number (points/position cell): walks
-    /// the whole season's journal for that driver. The parameter is the row's competitor id — the
+    /// the whole season's journal for that driver. The parameter is the row's competitor id, the
     /// DRIVER id for a drivers-table row. A constructor row (or a null/unknown id, or no session)
     /// simply does not open a panel. Mouse (click the number) and keyboard (a bound accelerator on
-    /// the focused row) both invoke this — locked decision 8's parity.</summary>
+    /// the focused row) both invoke this, locked decision 8's parity.</summary>
     [RelayCommand]
     private void OpenInspector(string? driverId)
     {
@@ -417,7 +417,7 @@ public sealed partial class StandingsViewModel : InspectorHostViewModel
             perRound);
     }
 
-    /// <summary>Cell (driver, round k) comes from snapshot k — the RoundScore that snapshot
+    /// <summary>Cell (driver, round k) comes from snapshot k, the RoundScore that snapshot
     /// introduced for its own round. Dropped flags come from the LATEST snapshot, so the
     /// markers always reflect the current best-N state.</summary>
     private static IReadOnlyList<RoundMatrixRow> BuildMatrix(

@@ -43,7 +43,7 @@
                                        Text="{Binding Value, Mode=OneWay}" />
                             <ProgressBar Minimum="0" Maximum="{Binding Max}" Value="{Binding Value, Mode=OneWay}"
                                          Height="14" VerticalAlignment="Center" Margin="8,0"
-                                         ToolTip="{Binding Label, StringFormat='{}{0} rating — hover the abbreviation for its meaning'}" />
+                                         ToolTip="{Binding Label, StringFormat='{}{0} rating, hover the abbreviation for its meaning'}" />
                         </DockPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

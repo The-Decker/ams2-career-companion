@@ -19,7 +19,7 @@ public sealed class AccidentModelTests
     [Fact]
     public void LightShunt_IsMostlyHarmless_AndNeverFatalOrSeasonEnding()
     {
-        // Decision B (2026-07-12): a light crash is MOSTLY HARMLESS — none for the vast majority, at worst a
+        // Decision B (2026-07-12): a light crash is MOSTLY HARMLESS, none for the vast majority, at worst a
         // single missed race, and NEVER a death or a season-ender, even on the very top roll.
         Assert.Equal(AccidentOutcomeKind.None, Resolve(AccidentSeverity.Light, 1).Kind);
         Assert.Equal(AccidentOutcomeKind.None, Resolve(AccidentSeverity.Light, 490).Kind);
@@ -89,7 +89,7 @@ public sealed class AccidentModelTests
     public void EffectiveRoll_IsClampedIntoRange()
     {
         // A hugely protective driver can never exceed the safe floor; a hugely reckless one never
-        // escapes the death ceiling — the effective roll stays inside [1, 500].
+        // escapes the death ceiling, the effective roll stays inside [1, 500].
         var superSafe = new PlayerPerkModifiers { InjuryDurabilityDelta = 100.0 };
         var superReckless = new PlayerPerkModifiers { InjuryDurabilityDelta = -100.0 };
 
@@ -150,7 +150,7 @@ public sealed class AccidentModelTests
         Assert.True(glass > average, "a glass_cannon heavy shunt must be deadlier than an average driver's");
         Assert.True(prone >= glass, "injury_prone must be the most fragile of all");
 
-        // Decision B: a LIGHT crash is mostly harmless — it NEVER kills (or ends a season), even for the most
+        // Decision B: a LIGHT crash is mostly harmless, it NEVER kills (or ends a season), even for the most
         // fragile build on the worst roll (the safety-offset clamp can at most cost them one race). And a
         // heavier shunt is never safer than a lighter one, for every profile.
         foreach (var a in Archetypes)

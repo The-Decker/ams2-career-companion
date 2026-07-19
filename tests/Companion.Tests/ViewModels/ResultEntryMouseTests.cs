@@ -7,7 +7,7 @@ namespace Companion.Tests.ViewModels;
 /// The mouse primitives of ResultEntryViewModel (ux-round contract, locked decision #8):
 /// InsertAt insert-before semantics incl. edges, MoveTo == penalty reposition, mark/unmark
 /// DNF/DSQ from any state, SetDnfReason, bulk DNF as ONE undo step, multi-select state, the
-/// inline reason-picker flag, and — the load-bearing property — one undo stack shared with
+/// inline reason-picker flag, and, the load-bearing property, one undo stack shared with
 /// the keyboard grammar: a mixed keyboard+mouse sequence of ten mutations fully unwinds.
 /// The grammar tests themselves are untouched; drafts built mouse-only equal drafts built
 /// grammar-only for the same result.
@@ -257,7 +257,7 @@ public class ResultEntryMouseTests
         Assert.Equal("d.stewart", vm.EditingReasonDriverId);
         Assert.Equal("d.stewart", vm.ReasonPickerDriverId); // the alias tracks it
 
-        // Editing another resolved row replaces the open editor — only one row edits at a time.
+        // Editing another resolved row replaces the open editor, only one row edits at a time.
         vm.BeginEditingReason("d.gurney");
         Assert.Equal("d.gurney", vm.EditingReasonDriverId);
     }
@@ -271,7 +271,7 @@ public class ResultEntryMouseTests
         vm.BeginEditingReason("d.brabham"); // still Remaining
         Assert.Null(vm.EditingReasonDriverId);
 
-        vm.BeginEditingReason("d.clark"); // classified, not DNF/DSQ — no reason to edit
+        vm.BeginEditingReason("d.clark"); // classified, not DNF/DSQ, no reason to edit
         Assert.Null(vm.EditingReasonDriverId);
     }
 
@@ -345,7 +345,7 @@ public class ResultEntryMouseTests
         vm.MarkDnf("d.stewart");
         Assert.True(vm.SetDnfReason("d.stewart", "m")); // a reason was chosen
 
-        // still fully removable — no blocking state
+        // still fully removable, no blocking state
         Assert.True(vm.Unmark("d.stewart"));
         Assert.Empty(vm.Dnfs);
         Assert.Contains("d.stewart", Ids(vm.Remaining));
@@ -673,7 +673,7 @@ public class ResultEntryMouseTests
         mouse.MoveTo("d.brabham", 2);
         mouse.MarkDsq("d.ghill");
         mouse.MarkDnf("d.phill", "m");
-        mouse.MarkDnfBulk(Ids(mouse.Remaining)); // remaining, in list order — like ↵↵↵
+        mouse.MarkDnfBulk(Ids(mouse.Remaining)); // remaining, in list order, like ↵↵↵
         Assert.True(mouse.IsComplete);
 
         var expected = grammar.BuildDraft();

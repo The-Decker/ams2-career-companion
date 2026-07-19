@@ -93,4 +93,37 @@ public sealed class CarSpecTests
                 Assert.InRange(bar, 0, catalog.BarMax);
         }
     }
+
+    [Fact]
+    public void CanonOverlay_ACanonicalSmgpTeam_AlwaysGetsItsRegisteredMachineAndEngine()
+    {
+        // The SMGP-024 lock over the shared/real-world vehicle rows: Iris and Azalea race the
+        // mclaren_mp45b model, whose car-specs row is the real-world "MP4/5B / Honda V10" card
+        // (correct for the real F1 1990 pack). With the canon overlay their cards can only ever
+        // read IRIS 717 / PRISM 90 V10 and AZALEA 808 / BLOOM 88 V8; bars still derive from the
+        // vehicle row. A real-F1 (non-canon) lookup keeps the legacy row untouched.
+        var canon = Companion.Core.Smgp.SmgpCanon.Parse(
+            CareerTestData.ReadRules(System.IO.Path.Combine("smgp", "canon.json")));
+        var catalog = CarSpecCatalog.Parse(CareerTestData.ReadRules("car-specs.json"))
+            .WithSmgpCanon(canon);
+
+        var iris = catalog.For("team.iris", "mclaren_mp45b");
+        Assert.NotNull(iris);
+        Assert.Equal("IRIS 717", iris!.MachineName);
+        Assert.Equal("PRISM 90 V10", iris.Engine);
+        Assert.Equal(690, iris.MaxPowerHp);
+
+        var azalea = catalog.For("team.azalea", "mclaren_mp45b");
+        Assert.Equal("AZALEA 808", azalea!.MachineName);
+        Assert.Equal("BLOOM 88 V8", azalea.Engine);
+
+        var madonna = catalog.For("team.madonna", "formula_classic_g3m1");
+        Assert.Equal("MADONNA 456", madonna!.MachineName);
+        Assert.Equal("PALM 190 V10", madonna.Engine);
+
+        // No overlay (or a non-canon team): the legacy row survives, real-F1 careers unaffected.
+        var legacy = CarSpecCatalog.Parse(CareerTestData.ReadRules("car-specs.json"));
+        Assert.Equal("MP4/5B", legacy.For("team.iris", "mclaren_mp45b")!.MachineName);
+        Assert.Equal("MP4/5B", catalog.For("team.mclaren-real", "mclaren_mp45b")!.MachineName);
+    }
 }

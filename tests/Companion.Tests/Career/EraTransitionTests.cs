@@ -20,7 +20,7 @@ public class EraTransitionTests
     /// <summary>The 1969-style follow-on to <see cref="CareerTestData.Pack"/> (1967):
     /// team.top and team.mid carry by lineage id, team.min is gone, team.new arrives;
     /// driver.a and driver.old carry, driver.b is RENAMED to driver.bob_brakes (a new
-    /// lineage id — must not carry), driver.young and driver.new_guy arrive. team.mid's
+    /// lineage id, must not carry), driver.young and driver.new_guy arrive. team.mid's
     /// entries deliberately list a partial-season seat BEFORE the full-season one.</summary>
     private static SeasonPack ToPack(int year = 1969, bool teamNewHasEntries = true)
     {
@@ -329,7 +329,7 @@ public class EraTransitionTests
         var economy = Assert.Single(plan.Events, e => e.Phase == JournalPhases.EraEconomy);
         Assert.Equal("bu-rescale", economy.Cause);
         Assert.Contains("\"factor\":1", economy.DeltaJson);
-        // The economy note is the LAST transition event — after bridges and departures.
+        // The economy note is the LAST transition event, after bridges and departures.
         Assert.Equal(economy, plan.Events[^1]);
     }
 }

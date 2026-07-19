@@ -84,7 +84,7 @@ public sealed partial class SkinsViewModel : ObservableObject
 
     /// <summary>Legacy grid-editor overrides (renamed drivers / rebound liveries) this career still
     /// carries from before the read-only Grid Preview. Staging still applies them, so they must be
-    /// visible and clearable — never a silent hidden edit to the staged AI file.</summary>
+    /// visible and clearable, never a silent hidden edit to the staged AI file.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasStagingOverrides), nameof(StagingOverridesNote))]
     private int _stagingOverrideCount;
@@ -105,6 +105,51 @@ public sealed partial class SkinsViewModel : ObservableObject
         Refresh();
     }
 
+    // ---------- mod ownership (the anti-strip vault) ----------
+
+    /// <summary>Ownership health of every app-owned skin set against the install (sets carrying
+    /// an <c>ownership.json</c> manifest), empty when the feature covers nothing or there is no
+    /// install. The mod-manager strip detector: a set whose payload vanished shows up here.</summary>
+    public IReadOnlyList<SkinSetOwnershipStatus> Ownership { get; private set; } = [];
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasOwnershipIssues), nameof(OwnershipBanner))]
+    private int _ownershipDegradedCount;
+
+    /// <summary>The last ownership action's outcome (capture/repair), "" until one runs.</summary>
+    [ObservableProperty]
+    private string _ownershipActionNote = "";
+
+    /// <summary>True when at least one set is app-owned (the panel shows at all).</summary>
+    public bool HasOwnedSets => Ownership.Count > 0;
+
+    /// <summary>True when any owned model lost payload, the repair affordance shows.</summary>
+    public bool HasOwnershipIssues => OwnershipDegradedCount > 0;
+
+    /// <summary>The strip banner: empty when everything is intact (nothing to show).</summary>
+    public string OwnershipBanner => OwnershipDegradedCount == 0
+        ? ""
+        : $"{OwnershipDegradedCount} owned model(s) lost payload (a mod-manager strip?). " +
+          "Repair restores them from the app vault.";
+
+    /// <summary>Adopts the install's current healthy payload into the app vault for every owned
+    /// set, the copy no mod manager can strip. Run this while everything is installed.</summary>
+    [RelayCommand]
+    private void CaptureOwnership()
+    {
+        OwnershipActionNote = _session.CaptureSkinOwnership().Message;
+        Refresh();
+    }
+
+    /// <summary>Re-lays stripped payload from the app vault (backup-first), the one-click
+    /// recovery after a mod manager wipes the mods.</summary>
+    [RelayCommand]
+    private void RepairOwnership()
+    {
+        OwnershipActionNote = _session.RepairSkinOwnership().Message;
+        Refresh();
+    }
+
     public void Refresh()
     {
         string? selectedLivery = SelectedCar?.LiveryName;
@@ -113,7 +158,7 @@ public sealed partial class SkinsViewModel : ObservableObject
 
         Cars.Clear();
         foreach (var assignment in plan.Assignments)
-            Cars.Add(ToRow(assignment, authoredDriversByLivery));
+            Cars.Add(ToRow(assignment, authoredDriversByLivery, _session.GridCarArtKeyForLivery));
 
         int currentRound = _session.Summary.CurrentRound;
         DidNotQualify.Clear();
@@ -140,9 +185,13 @@ public sealed partial class SkinsViewModel : ObservableObject
 
         UpdateSelectedPositionLabel();
         StagingOverrideCount = _session.SeatStagingOverrides().Count;
+        Ownership = _session.SkinOwnership();
+        OwnershipDegradedCount = Ownership.Sum(set => set.DegradedCount);
         OnPropertyChanged(nameof(HasSelectedCar));
         OnPropertyChanged(nameof(HasDnq));
         OnPropertyChanged(nameof(DnqHeader));
+        OnPropertyChanged(nameof(Ownership));
+        OnPropertyChanged(nameof(HasOwnedSets));
     }
 
     partial void OnSelectedCarChanged(SkinRow? value) => UpdateSelectedPositionLabel();
@@ -170,6 +219,10 @@ public sealed partial class SkinsViewModel : ObservableObject
         SelectedPositionLabel = index < 0 ? "" : $"CAR {index + 1} OF {Cars.Count}";
     }
 
+    /// <summary>Fallback art map for non-SMGP careers: the CURRENT occupant of each livery this
+    /// round. In an SMGP career the runtime pack is reshuffled, so this is NOT the authored
+    /// physical-car map; SMGP rows resolve through <see cref="ICareerSession.GridCarArtKeyForLivery"/>
+    /// first (the pre-reshuffle livery map) and only unmapped liveries land here.</summary>
     private IReadOnlyDictionary<string, string> BuildAuthoredDriversByLivery()
     {
         int round = _session.Summary.CurrentRound;
@@ -185,7 +238,8 @@ public sealed partial class SkinsViewModel : ObservableObject
 
     private static SkinRow ToRow(
         SkinAssignment assignment,
-        IReadOnlyDictionary<string, string> authoredDriversByLivery)
+        IReadOnlyDictionary<string, string> authoredDriversByLivery,
+        Func<string, string?> carArtKeyForLivery)
     {
         var (label, tone, detail) = assignment.Status switch
         {
@@ -230,14 +284,22 @@ public sealed partial class SkinsViewModel : ObservableObject
             PortraitKey = assignment.IsPlayer
                 ? GridSeatChoice.PlayerImageKey(assignment.TeamId)
                 : string.IsNullOrEmpty(assignment.DriverId) ? null : assignment.DriverId,
-            CarKey = ResolveCarKey(assignment, authoredDriversByLivery),
+            CarKey = ResolveCarKey(assignment, authoredDriversByLivery, carArtKeyForLivery),
         };
     }
 
+    /// <summary>Car art follows the physical livery, never the active driver: the SMGP winter
+    /// reshuffle moves drivers between cars, so a row's image is the car itself (the same
+    /// display-only pre-reshuffle mapping the starting grid and paddock use). The reshuffled
+    /// driver id and the current-occupant map are only the non-SMGP fallbacks.</summary>
     private static string? ResolveCarKey(
         SkinAssignment assignment,
-        IReadOnlyDictionary<string, string> authoredDriversByLivery)
+        IReadOnlyDictionary<string, string> authoredDriversByLivery,
+        Func<string, string?> carArtKeyForLivery)
     {
+        if (carArtKeyForLivery(assignment.LiveryName) is { } fixedCarKey)
+            return fixedCarKey;
+
         if (!string.IsNullOrEmpty(assignment.DriverId) &&
             !string.Equals(
                 assignment.DriverId,

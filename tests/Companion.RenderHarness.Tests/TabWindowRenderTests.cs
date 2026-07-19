@@ -12,12 +12,12 @@ namespace Companion.RenderHarness.Tests;
 /// Off-screen render tests for the generic tear-off <see cref="TabWindow"/> (the hub-rail ⧉ pop-out
 /// for Standings / History / Driver / Skins). These pin the load-bearing behaviour that makes the
 /// pop-out safe for a lens whose view-model is REBUILT each round (Standings): the window binds the
-/// stable TAB and hosts its <c>Content</c>, so swapping the tab's content — exactly what the hub
-/// does on Apply — updates the pop-out live. Self-skips on a non-Windows / non-STA host.
+/// stable TAB and hosts its <c>Content</c>, so swapping the tab's content, exactly what the hub
+/// does on Apply, updates the pop-out live. Self-skips on a non-Windows / non-STA host.
 /// </summary>
 public sealed class TabWindowRenderTests
 {
-    /// <summary>A throwaway lens view-model stand-in — no DataTemplate is needed, the test asserts on
+    /// <summary>A throwaway lens view-model stand-in, no DataTemplate is needed, the test asserts on
     /// the ContentControl's <c>Content</c> property (the binding target), not a rendered visual.</summary>
     private sealed class DummyVm : ObservableObject;
 

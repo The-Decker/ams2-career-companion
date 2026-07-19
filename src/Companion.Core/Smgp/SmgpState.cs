@@ -3,13 +3,13 @@ using System.Text.Json.Serialization;
 namespace Companion.Core.Smgp;
 
 /// <summary>
-/// The SMGP replica mode's folded per-career state (M3) — rides
+/// The SMGP replica mode's folded per-career state (M3), rides
 /// <see cref="Career.PlayerCareerState.Smgp"/> and is null for every non-smgp career. The fold
 /// owns it exactly like the rest of the player state: seeded at career creation (pack
 /// careerStyle "smgp" + the explicit creation opt-in), carried forward each round via record
 /// <c>with</c>, and mutated only from journaled inputs (the envelope's rival calls) so
 /// re-simulation re-derives it byte-identically. Dictionaries are kept in ORDINAL KEY ORDER via
-/// the With* helpers — the serialized state cell must be canonical because replay byte-compares
+/// the With* helpers, the serialized state cell must be canonical because replay byte-compares
 /// these blobs.
 /// </summary>
 public sealed record SmgpState
@@ -26,7 +26,7 @@ public sealed record SmgpState
     public int Titles { get; init; }
 
     /// <summary>The game-over state: the player lost too many battles at the LEVEL D floor
-    /// (<see cref="SmgpRules.FloorLossLimit"/>) — kicked out of F1 SMGP. The one hard-fail state;
+    /// (<see cref="SmgpRules.FloorLossLimit"/>), kicked out of F1 SMGP. The one hard-fail state;
     /// the career stops accepting rounds.</summary>
     public bool CareerOver { get; init; }
 
@@ -45,21 +45,21 @@ public sealed record SmgpState
 
     /// <summary>The Madonna title defense is LIVE this season (M3 slice 4): set when the player
     /// wins the championship (next season starts in Madonna; the reserved challenger forces
-    /// battles at rounds 1 + 2), cleared when the defense resolves — or at season end, unresolved
+    /// battles at rounds 1 + 2), cleared when the defense resolves, or at season end, unresolved
     /// = survived. Omitted when false so pre-slice-4 state cells parse/serialize unchanged.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public bool TitleDefense { get; init; }
 
     /// <summary>Round 1's defense battle outcome, carried so <see cref="SmgpRules.TitleDefense"/>
     /// can resolve both rounds together at round 2. Void (the default, omitted) = not fought /
-    /// no better than a void — exactly how the resolve treats it.</summary>
+    /// no better than a void, exactly how the resolve treats it.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public SmgpBattleOutcome DefenseRound1 { get; init; }
 
     /// <summary>The TWO-PHASE promotion seam (3c-2): a career created after this shipped defers a
     /// two-wins seat-swap offer to the post-race PROMOTION SCREEN instead of applying it inline in
     /// the battle fold. Seeded true at creation for new smgp careers; OMITTED when false so every
-    /// pre-3c-2 state cell parses as false and keeps the legacy inline-apply path — the byte-identical
+    /// pre-3c-2 state cell parses as false and keeps the legacy inline-apply path, the byte-identical
     /// gate. Carried forward each round (and across the season reset / champion rollover) like every
     /// other state field.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
@@ -69,7 +69,7 @@ public sealed record SmgpState
     /// re-rolls its backmarker DNQ field for every season 2+ (each season a fresh seeded field), instead
     /// of every season sharing season 1's pinned roll. Seeded true at creation for new smgp careers with a
     /// DNQ field; OMITTED when false so every pre-change state cell parses as false and keeps the single
-    /// pinned field across all seasons — the byte-identical gate. Carried forward each round and across the
+    /// pinned field across all seasons, the byte-identical gate. Carried forward each round and across the
     /// season reset / champion rollover (it is a career-level decision, never reset). Read from the season
     /// START state to decide whether <see cref="SmgpDnqField.ForSeason"/> transforms the pack on both the
     /// live-fold and replay paths.</summary>
@@ -92,7 +92,7 @@ public sealed record SmgpState
     /// promotion screen (3c-2, two-phase careers only): the battle fold records it here INSTEAD of
     /// moving the seat, and the resolution fold (driven by the journaled <c>smgp.swap</c> input,
     /// default = the standing up-front answer) applies-or-clears it. Null (omitted) = no offer
-    /// pending — every non-smgp career, every legacy career, and every resolved round.</summary>
+    /// pending, every non-smgp career, every legacy career, and every resolved round.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public SmgpPendingOffer? PendingSwap { get; init; }
 
@@ -116,12 +116,12 @@ public sealed record SmgpState
         TitleDefense = false,
         DefenseRound1 = SmgpBattleOutcome.Void,
         FloorLosses = 0,
-        // An offer never answered by season's end lapses — the new season's ladder starts clean.
+        // An offer never answered by season's end lapses, the new season's ladder starts clean.
         // (TwoPhasePromotion is the gate, so it is NOT reset; it carries via `this with`.)
         PendingSwap = null,
     };
 
-    // STRUCTURAL equality — the record default compares the dictionaries by REFERENCE, which
+    // STRUCTURAL equality, the record default compares the dictionaries by REFERENCE, which
     // would make the rollover verifier's re-derived start state unequal to the deserialized
     // stored one and fail the byte-identical replay gate at every smgp season boundary (the
     // exact bug GridSelection/CharacterProfile hit). Both dictionaries are canonically ordered,
@@ -197,7 +197,7 @@ public sealed record SmgpState
 }
 
 /// <summary>A two-wins seat-swap offer the battle fold deferred to the promotion screen (3c-2):
-/// the rival the player beat twice and the exact car (ams2LiveryName) they are offered — the seat
+/// the rival the player beat twice and the exact car (ams2LiveryName) they are offered, the seat
 /// the resolution moves the player into on ACCEPT. A plain value record: default structural equality
 /// is exact (both fields are ordinal strings), so <see cref="SmgpState"/>'s byte-identical replay
 /// gate compares it correctly.</summary>
@@ -206,7 +206,7 @@ public sealed record SmgpPendingOffer
     /// <summary>The rival (pack driver id) the player beat twice to earn the offer.</summary>
     public required string RivalDriverId { get; init; }
 
-    /// <summary>The car the player is offered — the rival's current seat (ams2LiveryName); the
+    /// <summary>The car the player is offered, the rival's current seat (ams2LiveryName); the
     /// resolution sets <see cref="SmgpState.CurrentSeatLivery"/> to this on accept.</summary>
     public required string OfferedSeat { get; init; }
 }

@@ -1,0 +1,101 @@
+{
+  "$comment": "Season dossier pack S06, The Temple Wars (Horsepower War act). Season-scoped coverage for the slipstream season: the tow as law, wings trimmed to nothing, the power cathedrals as battlegrounds, and the quiet file of frights being kept. Ids are stable rendezvous keys, never rename. Read-side only: editing this file changes display, never replay.",
+  "version": 1,
+  "templates": [
+    {
+      "id": "s06.season-started.tow-is-law",
+      "event": "seasonStarted",
+      "eras": ["smgp"],
+      "seasons": [6],
+      "headline": "THE TEMPLE WARS: the tow is law now, and the wings come off",
+      "deck": "A season that will be settled by the length of a nose",
+      "summary": "Season six opens with every garage chasing the low-drag dare at the power cathedrals.",
+      "sections": {
+        "lead": "{pool:dateline} The winter belonged to the drag men: every garage in the paddock spent it shaving wing, chasing the trimmed-out philosophy that terrorised the fast circuits last autumn. They are calling them the temple wars now, and the temples are the straights where the slipstream decides everything.",
+        "context": "The arithmetic of the season is simple and savage: minimum downforce, maximum terminal speed, and a car that dances on the straights and prays in the corners. {pool:paddockBuzz}",
+        "close": "Sixteen rounds, and the big ones will be settled by a car's length in the final run to the line."
+      }
+    },
+    {
+      "id": "s06.race-won.final-slingshot",
+      "event": "raceWon",
+      "eras": ["smgp"],
+      "seasons": [6],
+      "headline": "{subject} WINS[[?venue: at {venue}]], slingshot out of the final tow",
+      "deck": "The temple settles its argument by a nose",
+      "summary": "{subject} won[[?venue: at {venue}]][[?round: in round {round}]].",
+      "sections": {
+        "lead": "{pool:dateline} Patience, mirrors, and one perfect run to the line: {subject} rode the tow like a drafting lesson and struck when the road ran out. The temple wars make winners exactly this way, and the grandstand has found a new patron saint. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: The D.P. account reads {ord:champPosition} for {subject}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s06.podium.three-abreast",
+      "event": "podiumFinish",
+      "eras": ["smgp"],
+      "seasons": [6],
+      "headline": "{subject} on the podium[[?venue: at {venue}]], out of the three-wide scramble",
+      "deck": "A podium auctioned off at terminal speed",
+      "summary": "{subject} finished on the podium[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The tow does not hand out podiums, it auctions them, and {subject} bid highest when the pack came through three abreast. The margin at the line was a coat of paint and a full commitment. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: Championship: {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s06.pole.trimmed-to-nothing",
+      "event": "polePosition",
+      "eras": ["smgp"],
+      "seasons": [6],
+      "headline": "POLE for {subject}[[?venue: at {venue}]], wings trimmed to nothing",
+      "deck": "The low-drag dare, taken to its ragged edge",
+      "summary": "{subject} took pole position[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The setup sheet said minimum wing and maximum nerve, and {subject} signed it in full. Pole[[?venue: at {venue}]] belongs to the bravest right foot in the paddock and the car that danced the straights without a wobble. {pool:swBoard}",
+        "close": "Sunday will ask the corners to forgive what the straights encouraged. The tow will be watching."
+      }
+    },
+    {
+      "id": "s06.lead-taken.above-the-theatre",
+      "event": "championshipLeadTaken",
+      "eras": ["smgp"],
+      "seasons": [6],
+      "headline": "{subject} leads the temple wars, above the theatre",
+      "deck": "Quiet arithmetic beats loud slipstreams",
+      "summary": "{subject} took the championship lead in season six.",
+      "sections": {
+        "lead": "{pool:dateline} While the showmen traded paint at terminal speed, {subject} banked the arithmetic, and tonight the big board files a new name at the summit. The temple wars reward the brave on Sundays; they crown the patient in autumn. {pool:swBoard}",
+        "stats": "{pool:rrStatLine}",
+        "close": "The cathedrals still have their loudest rounds to come. The lead must be defended in the tow, where everyone is faster than the car ahead."
+      }
+    },
+    {
+      "id": "s06.retired-mechanical.full-throttle-farewell",
+      "event": "retiredMechanical",
+      "eras": ["smgp"],
+      "seasons": [6],
+      "headline": "{subject} parks it[[?venue: at {venue}]], the straight claims another engine",
+      "deck": "A powerplant spent at terminal speed",
+      "summary": "{subject} retired with mechanical failure[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The tow demands full throttle for longer than engines were built to give, and today the account came due under {subject}[[?venue: at {venue}]]. A puff, a silence, a long walk back past the grandstand's sympathy. {pool:wrenchNote}",
+        "close": "The engine men will count the laps it gave against the laps it owed. The difference is the season."
+      }
+    },
+    {
+      "id": "s06.retired-driver-error.lost-the-tow",
+      "event": "retiredDriverError",
+      "eras": ["smgp"],
+      "seasons": [6],
+      "headline": "{subject} crashes out[[?venue: at {venue}]], the trimmed car bites back",
+      "deck": "A wing-stripped machine finds the corner it was praying about",
+      "summary": "{subject} crashed out[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} A car trimmed to nothing gives its driver speed on the straight and a very long moment to think in the corner. {subject} got the moment and not the corner[[?venue: at {venue}]], and the temple wars collected their due. The driver walked away; the frights file gets one entry thicker. {pool:swCrowd}",
+        "close": "Somewhere in an office, a man drafting wing regulations underlines a sentence."
+      }
+    }
+  ]
+}

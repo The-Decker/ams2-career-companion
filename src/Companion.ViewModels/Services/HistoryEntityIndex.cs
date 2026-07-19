@@ -3,7 +3,7 @@ using Companion.Core.HistoryArchive;
 namespace Companion.ViewModels.Services;
 
 /// <summary>A real driver's verified record, AGGREGATED from the shipped season files
-/// (f1db-derived, CC BY 4.0) — computed, never authored, never mixed with career results
+/// (f1db-derived, CC BY 4.0), computed, never authored, never mixed with career results
 /// (docs/dev/newsroom-history-overhaul.md D10). Name strings are the identity the data gives us.</summary>
 public sealed record DriverHistoryProfile
 {
@@ -59,7 +59,7 @@ public sealed record CircuitHistoryProfile
 
 public sealed record CircuitEdition(int Year, int Round, string RaceName, string Winner, string WinnerTeam);
 
-/// <summary>One verified-history timeline entry (year precision — the season files carry no
+/// <summary>One verified-history timeline entry (year precision, the season files carry no
 /// dates). Career-universe entries are merged by the ViewModel layer with their own provenance.</summary>
 public sealed record HistoryTimelineEntry
 {
@@ -96,7 +96,7 @@ public sealed record HistoryArchiveIndex
 
 /// <summary>
 /// Builds the archive index by one pass over every shipped season file. Pure aggregation of
-/// verified data — zero invented facts; unknown team strings stay their own entities marked
+/// verified data, zero invented facts; unknown team strings stay their own entities marked
 /// incomplete. Built once per session and cached (the reference data never changes at runtime).
 /// </summary>
 public static class HistoryEntityIndex
@@ -403,7 +403,7 @@ public static class HistoryEntityIndex
         {
             if (season.DriversChampion is not { Driver.Length: > 0 } champion)
             {
-                continue; // an in-progress reference year has no champion yet — say nothing
+                continue; // an in-progress reference year has no champion yet, say nothing
             }
 
             var summary = champion.Team is { Length: > 0 } team

@@ -10,13 +10,13 @@ namespace Companion.Tests.Data;
 
 /// <summary>
 /// The SERVICE-LEVEL injury availability gate + the medical-record projection. An injured player's
-/// round is auto-simulated, never entered manually — <see cref="CareerSessionService.Apply"/> and
+/// round is auto-simulated, never entered manually, <see cref="CareerSessionService.Apply"/> and
 /// <see cref="CareerSessionService.Preview"/> must throw for EVERY caller while the folded player
 /// state carries RaceSuspensionRemaining &gt; 0 (or a season-ending injury), and the round must still
 /// fold through <see cref="ICareerSession.AutoSimulateRound"/>, healing the suspension so the next
 /// round applies normally again. <see cref="ICareerSession.InjuryHistory"/> then projects the same
 /// journaled accident verbatim. Outcomes are forced deterministically by engineering the driver's
-/// durability against the (known) round-1 accident roll — the AutoSimFoldTests pattern.
+/// durability against the (known) round-1 accident roll, the AutoSimFoldTests pattern.
 /// </summary>
 public sealed class InjuryAvailabilityGateTests : IDisposable
 {
@@ -46,7 +46,7 @@ public sealed class InjuryAvailabilityGateTests : IDisposable
     };
 
     /// <summary>The durability that makes round 1's (known, seeded) accident roll resolve to a target
-    /// effective d500 — so an injury outcome is forced deterministically. offset = (durability-0.5)*scale;
+    /// effective d500, so an injury outcome is forced deterministically. offset = (durability-0.5)*scale;
     /// effective = roll - offset ⇒ durability = 0.5 + (roll - target)/scale.</summary>
     private static double DurabilityForEffective(int targetEffective)
     {
@@ -82,7 +82,7 @@ public sealed class InjuryAvailabilityGateTests : IDisposable
         for (int n = 3; n <= rounds; n++)
             list.Add(TestPackBuilder.Round(n, $"1967-{n:D2}-01"));
         // The Entry helper hardcodes Rounds = "1-2"; widen every entry to cover the added rounds so the
-        // full field is entered all season (otherwise later rounds resolve to just the player — no AI).
+        // full field is entered all season (otherwise later rounds resolve to just the player, no AI).
         return basePack with
         {
             Season = basePack.Season with { Rounds = list },
@@ -129,7 +129,7 @@ public sealed class InjuryAvailabilityGateTests : IDisposable
         Assert.Contains("The driver is injured", applyEx.Message);
         Assert.Contains("auto-simulated", applyEx.Message);
 
-        // (b) Preview is gated by the same rule — no path can even score an unfit player.
+        // (b) Preview is gated by the same rule, no path can even score an unfit player.
         var previewEx = Assert.Throws<InvalidOperationException>(() => session.Preview(draft));
         Assert.Contains("The driver is injured", previewEx.Message);
         Assert.Contains("auto-simulated", previewEx.Message);

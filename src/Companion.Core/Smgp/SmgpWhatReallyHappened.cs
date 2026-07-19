@@ -6,8 +6,8 @@ namespace Companion.Core.Smgp;
 /// <summary>
 /// The SMGP-universe "What Really Happened" almanac: the SEGA world's OWN account of each circuit on
 /// the Super Monaco GP calendar, keyed by the round's VENUE NAME (e.g. "San Marino", "Monaco") so the
-/// season 2+ calendar variety — a shuffled venue order — still resolves each place's legend. Loaded
-/// from <c>data/rules/smgp/what-really-happened.json</c>. DISPLAY-ONLY — never a fold input (exactly
+/// season 2+ calendar variety, a shuffled venue order, still resolves each place's legend. Loaded
+/// from <c>data/rules/smgp/what-really-happened.json</c>. DISPLAY-ONLY, never a fold input (exactly
 /// like the news corpora and <see cref="SmgpRivalQuotes"/>): the History tab reveals a venue's entry
 /// once the player has finished that race. An absent file (or an un-authored venue) resolves to null,
 /// so a non-SMGP install or an un-updated data folder is simply unaffected.
@@ -56,17 +56,17 @@ public sealed class SmgpWhatReallyHappened
     }
 }
 
-/// <summary>One circuit's SMGP-world legend — display-only reference content the History tab reveals
+/// <summary>One circuit's SMGP-world legend, display-only reference content the History tab reveals
 /// once the player has raced the venue. Fully fictional (the SEGA universe, never real F1).</summary>
 public sealed record SmgpRaceLore
 {
-    /// <summary>A bold arcade headline for this circuit's legend ("MONACO — WHERE THE CROWN IS WON").</summary>
+    /// <summary>A bold arcade headline for this circuit's legend ("MONACO: WHERE THE CROWN IS WON").</summary>
     public string Title { get; init; } = "";
 
     /// <summary>One line naming this world's circuit character/nickname.</summary>
     public string Circuit { get; init; } = "";
 
-    /// <summary>"Who the world remembers ruling here" — a roster driver + team ("A. Senna · Madonna").</summary>
+    /// <summary>"Who the world remembers ruling here", a roster" driver + team ("A. Senna · Madonna").</summary>
     public string Champion { get; init; } = "";
 
     /// <summary>2-3 short paragraphs of the circuit's SMGP-world legend.</summary>

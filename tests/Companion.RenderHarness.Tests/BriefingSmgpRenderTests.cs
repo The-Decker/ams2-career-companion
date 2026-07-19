@@ -14,7 +14,7 @@ namespace Companion.RenderHarness.Tests;
 
 /// <summary>Off-screen render of the Race Day briefing with the SMGP rival panel live (M3 slice
 /// 5): a real BriefingView over a real BriefingViewModel whose stub session reports an smgp
-/// briefing — the round header, the picker, the dossier card (with a selected rival so the
+/// briefing, the round header, the picker, the dossier card (with a selected rival so the
 /// MACHINE block, ladder telegraph and swap answer all bind) and the forced-challenge lock.
 /// Guards the binding paths a compiled-XAML build cannot. Self-skips off Windows.</summary>
 public sealed class BriefingSmgpRenderTests
@@ -145,7 +145,7 @@ public sealed class BriefingSmgpRenderTests
 
         WpfRenderHarness.RunSta(() =>
         {
-            // The rival step wraps the SHARED briefing — the pick / name-him state lives there and
+            // The rival step wraps the SHARED briefing, the pick / name-him state lives there and
             // rides into the race draft at Apply, so moving the UI onto its own screen changes nothing.
             var briefing = new BriefingViewModel(new SmgpSession());
             Assert.True(briefing.SmgpActive);
@@ -162,7 +162,7 @@ public sealed class BriefingSmgpRenderTests
             Assert.Null(briefing.BuildSmgpRival());
             Assert.False(briefing.SmgpSwapPromptVisible);
 
-            // YES — the commitment the fold counts the two-wins ladder against.
+            // YES, the commitment the fold counts the two-wins ladder against.
             briefing.SmgpNameRivalCommand.Execute(null);
             Assert.True(briefing.SmgpRivalNamed);
             Assert.False(briefing.SmgpCanName);

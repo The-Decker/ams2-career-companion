@@ -25,14 +25,14 @@ public sealed record LiveryActivationResult
 
 /// <summary>
 /// Turns a community skin-pack livery ON or OFF by editing the vehicle's <c>USER_OVERRIDES</c>
-/// XML — the same job a community "livery selector" does, done safely from inside the app. AMS2
+/// XML, the same job a community "livery selector" does, done safely from inside the app. AMS2
 /// loads a <c>LIVERY_OVERRIDE</c> only when its <c>LIVERY</c> attribute is a real slot number; a
 /// pack ships extra liveries as <c>LIVERY="##"</c> placeholders that never appear in-game until a
 /// selector assigns them a slot. Activation assigns the next free slot; deactivation puts the
 /// placeholder back.
 ///
 /// Every edit is a MINIMAL, in-place TEXTUAL replacement of the one element's <c>LIVERY</c>
-/// attribute — the rest of the file is preserved byte-for-byte. Community override files are
+/// attribute, the rest of the file is preserved byte-for-byte. Community override files are
 /// frequently not well-formed XML, so the writer never re-serializes (that could corrupt them);
 /// it operates on the raw text with the same tolerance the scanner reads them with.
 /// </summary>
@@ -58,10 +58,10 @@ public static class LiveryOverrideWriter
         RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     /// <summary>The smallest custom slot (>= <see cref="FirstCustomSlot"/>) not already used by a
-    /// numeric <c>LIVERY</c> in the file — the slot activation assigns next. Gaps are filled.</summary>
+    /// numeric <c>LIVERY</c> in the file, the slot activation assigns next. Gaps are filled.</summary>
     public static int NextFreeSlot(string xml)
     {
-        // Only COUNT slots AMS2 actually loads — strip <!-- --> comments first, so the "##"
+        // Only COUNT slots AMS2 actually loads, strip <!-- --> comments first, so the "##"
         // placeholder examples + numbered example slots that live inside comments never occupy a
         // slot number (the AMS2 diagnosis: only non-commented numeric slots are real).
         string live = LenientXml.StripComments(xml);
@@ -78,7 +78,7 @@ public static class LiveryOverrideWriter
 
     /// <summary>Every non-commented <c>LIVERY_OVERRIDE</c> in the file: its NAME and whether it is
     /// ACTIVE (a numeric <c>LIVERY</c> slot AMS2 loads) vs an inactive placeholder. The read side of
-    /// <see cref="Activate"/>/<see cref="Deactivate"/> — the per-race activator uses it to decide which
+    /// <see cref="Activate"/>/<see cref="Deactivate"/>, the per-race activator uses it to decide which
     /// liveries to switch on and which to park. Commented-out entries (AMS2 never loads them) are
     /// skipped, exactly as the writer refuses to edit them.</summary>
     public static IReadOnlyList<(string Name, bool Active)> Liveries(string xml)
@@ -120,7 +120,7 @@ public static class LiveryOverrideWriter
 
     /// <summary>
     /// Activates the FIRST placeholder <c>LIVERY_OVERRIDE</c> whose NAME matches
-    /// <paramref name="liveryName"/> exactly (case-sensitive) — sets its <c>LIVERY</c> to
+    /// <paramref name="liveryName"/> exactly (case-sensitive), sets its <c>LIVERY</c> to
     /// <paramref name="slot"/>. Returns the edited text, or null when no matching placeholder
     /// exists (already active, or the NAME is not in the file). Only the one attribute changes.
     /// </summary>
@@ -130,14 +130,14 @@ public static class LiveryOverrideWriter
         foreach (Match tag in OverrideTag.Matches(xml))
         {
             if (IsInComment(tag.Index, comments))
-                continue; // a commented-out placeholder — AMS2 never loads it, so never edit it
+                continue; // a commented-out placeholder, AMS2 never loads it, so never edit it
 
             var name = NameAttr.Match(tag.Value);
             if (!name.Success || !string.Equals(name.Groups[1].Value, liveryName, StringComparison.Ordinal))
                 continue;
 
             var livery = LiveryAttr.Match(tag.Value);
-            // Skip an entry that is already active (numeric slot) — activation targets placeholders.
+            // Skip an entry that is already active (numeric slot), activation targets placeholders.
             if (livery.Success &&
                 int.TryParse(livery.Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
                 continue;
@@ -154,7 +154,7 @@ public static class LiveryOverrideWriter
 
     /// <summary>
     /// Deactivates the FIRST active <c>LIVERY_OVERRIDE</c> whose NAME matches
-    /// <paramref name="liveryName"/> exactly — puts its <c>LIVERY</c> back to <c>##</c>. Returns
+    /// <paramref name="liveryName"/> exactly, puts its <c>LIVERY</c> back to <c>##</c>. Returns
     /// the edited text, or null when the NAME has no active entry to turn off.
     /// </summary>
     public static string? Deactivate(string xml, string liveryName)
@@ -172,7 +172,7 @@ public static class LiveryOverrideWriter
             var livery = LiveryAttr.Match(tag.Value);
             if (!livery.Success ||
                 !int.TryParse(livery.Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
-                continue; // not active — nothing to turn off here
+                continue; // not active, nothing to turn off here
 
             string newTag = tag.Value[..livery.Index] + "LIVERY=\"##\"" + tag.Value[(livery.Index + livery.Length)..];
             return xml[..tag.Index] + newTag + xml[(tag.Index + tag.Length)..];
@@ -213,18 +213,18 @@ public static class LiveryOverrideWriter
         }
 
         // AMS2 loads ONLY the single loose <vehicle>.xml (verified against the exe's ReplacementSystem
-        // loader) — sibling files like <vehicle>_dist.xml are inert templates it never reads. So the
+        // loader), sibling files like <vehicle>_dist.xml are inert templates it never reads. So the
         // free-slot search is scoped to THIS file only (comments stripped inside NextFreeSlot).
         int assigned = slot ?? NextFreeSlot(xml);
         if (!SlotIsFree(xml, assigned))
             return LiveryActivationResult.Failed(
                 $"Slot {assigned} is already in use in {Path.GetFileName(overrideXmlPath)}.");
 
-        // Respect the class's livery cap — AMS2 will not load a slot beyond the car's livery count,
+        // Respect the class's livery cap, AMS2 will not load a slot beyond the car's livery count,
         // so writing one would silently do nothing. Refuse loudly instead.
         if (maxSlot is { } max && assigned > max)
             return LiveryActivationResult.Failed(
-                $"This class is at its livery limit ({max - FirstCustomSlot + 1} liveries) — AMS2 can't show another. " +
+                $"This class is at its livery limit ({max - FirstCustomSlot + 1} liveries), AMS2 can't show another. " +
                 "Deactivate a livery you don't need first, then activate this one.");
 
         string? edited = Activate(xml, liveryName, assigned);
@@ -255,7 +255,7 @@ public static class LiveryOverrideWriter
     }
 
     /// <summary>Timestamped snapshot of the override file into a <c>_companion-backups</c> subfolder
-    /// beside it — mirrors the custom-AI backup contract (never overwrite a community file without a
+    /// beside it, mirrors the custom-AI backup contract (never overwrite a community file without a
     /// snapshot first). Same-second collisions get a <c>-n</c> suffix.</summary>
     public static string Backup(string overrideXmlPath, DateTimeOffset now)
     {

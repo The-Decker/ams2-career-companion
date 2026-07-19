@@ -158,8 +158,8 @@ internal static class EraTransitionFixture
     }
 
     /// <summary>Plays the whole transitioned career: season 1 (1967 pack), the accepted
-    /// offer, StartNextSeason into the 1969 pack (bridging 1968), and — unless
-    /// <paramref name="playSeason2"/> is false — season 2's rounds and season end.</summary>
+    /// offer, StartNextSeason into the 1969 pack (bridging 1968), and, unless
+    /// <paramref name="playSeason2"/> is false, season 2's rounds and season end.</summary>
     public static (long Season1, long Season2, SeasonPack ToPack, TransitionPlan Plan)
         PlayTransitionedCareer(CareerDatabase db, bool playSeason2 = true)
     {

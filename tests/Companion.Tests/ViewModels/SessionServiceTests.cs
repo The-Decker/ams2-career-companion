@@ -156,7 +156,7 @@ public sealed class SessionServiceTests : IDisposable
             Assert.False(briefing.IsPlaceholder);
 
             // Grid = the pack entries whose rounds range covers round 1 (the player
-            // REPLACES one of them — replacing never grows the grid).
+            // REPLACES one of them, replacing never grows the grid).
             var grid = session.CurrentGrid();
             int expectedSeats = session.Pack.Entries.Count(e =>
                 Companion.Core.Packs.RoundsRange.TryParse(e.Rounds, out var range, out _) &&
@@ -182,7 +182,7 @@ public sealed class SessionServiceTests : IDisposable
 
             var confirm = session.Preview(draft);
 
-            // 1967 points: 9-6-4-3-2-1 — the confirm model must equal engine output.
+            // 1967 points: 9-6-4-3-2-1, the confirm model must equal engine output.
             Assert.Equal(new Rational(9), confirm.RoundPoints.Single(p => p.DriverId == gridOrder[0]).Points);
             Assert.Equal(new Rational(6), confirm.RoundPoints.Single(p => p.DriverId == gridOrder[1]).Points);
             Assert.Equal(new Rational(1), confirm.RoundPoints.Single(p => p.DriverId == gridOrder[5]).Points);
@@ -198,7 +198,7 @@ public sealed class SessionServiceTests : IDisposable
             Assert.Null(winnerMove.From); // no standings before round 1
             Assert.Equal(1, winnerMove.To);
 
-            // Preview must not commit anything — not even through its fold preview.
+            // Preview must not commit anything, not even through its fold preview.
             Assert.Null(session.CurrentStandings());
             Assert.Equal(1, session.Summary.CurrentRound);
             Assert.Null(session.CurrentSliderRecommendation());
@@ -281,7 +281,7 @@ public sealed class SessionServiceTests : IDisposable
         Assert.Contains("expected", latest.WhyText); // the Why? chip explains the number
 
         // The generative grammar fills a full period-voiced article body from the round's
-        // facts — non-empty, with no unresolved slots, and mentioning the race by name.
+        // facts, non-empty, with no unresolved slots, and mentioning the race by name.
         Assert.False(string.IsNullOrWhiteSpace(latest.Body));
         Assert.DoesNotContain("{", latest.Body);
         Assert.DoesNotContain("}", latest.Body);
@@ -312,14 +312,14 @@ public sealed class SessionServiceTests : IDisposable
         Assert.NotNull(session.SeasonReview());
 
         // Several round-less headlines are season-kind (promoted/relegated, retirement
-        // foreshadow), but ONLY the season-digest gets a composed article body — so exactly one
+        // foreshadow), but ONLY the season-digest gets a composed article body, so exactly one
         // season dispatch carries a body, and that is the season-in-review.
         var seasonDispatch = Assert.Single(
             session.ReadFeed(), d => d.Kind == "season" && !string.IsNullOrWhiteSpace(d.Body));
         Assert.False(string.IsNullOrWhiteSpace(seasonDispatch.Headline));
         Assert.DoesNotContain("{", seasonDispatch.Body);
         Assert.DoesNotContain("}", seasonDispatch.Body);
-        Assert.Contains("1967", seasonDispatch.Body); // {year} — every season template names it
+        Assert.Contains("1967", seasonDispatch.Body); // {year}, every season template names it
 
         // Determinism: the derived body re-renders identically on a second read.
         var second = Assert.Single(
@@ -353,7 +353,7 @@ public sealed class SessionServiceTests : IDisposable
                     DidNotFinish = new Dictionary<string, string> { ["driver.denny_hulme"] = "m" },
                     Disqualified = [],
                 },
-                // Round 3: mid-pack — reverse the order so the player runs down the field.
+                // Round 3: mid-pack, reverse the order so the player runs down the field.
                 _ => new ResultDraft
                 {
                     Classified = Enumerable.Reverse(gridOrder).ToList(),
@@ -365,7 +365,7 @@ public sealed class SessionServiceTests : IDisposable
         }
 
         // Projection stability: the same career/journal renders byte-identical articles on
-        // every read — the body is derived, seeded, never a stored input.
+        // every read, the body is derived, seeded, never a stored input.
         var first = session.ReadFeed();
         var second = session.ReadFeed();
 
@@ -380,7 +380,7 @@ public sealed class SessionServiceTests : IDisposable
             Assert.DoesNotContain("{", first[i].Body);
         }
 
-        // Reopening the career from its pinned bytes must reproduce identical bodies — the
+        // Reopening the career from its pinned bytes must reproduce identical bodies, the
         // render is a pure function of the journal + master seed, independent of session state.
         session.Dispose();
         using var reopened = CareerSessionService.OpenCareer(CareerPath, ViewModelTestData.Environment(DocumentsDirectory));
@@ -398,7 +398,7 @@ public sealed class SessionServiceTests : IDisposable
         var environment = ViewModelTestData.Environment(DocumentsDirectory);
         using var session = CareerSessionService.CreateCareer(Request(), environment);
 
-        // The season row exists but has no applied round yet — one in-progress card, empty book.
+        // The season row exists but has no applied round yet, one in-progress card, empty book.
         var timeline = session.CareerTimeline();
         var card = Assert.Single(timeline.Seasons);
         Assert.Equal(1967, card.SeasonYear);
@@ -420,14 +420,14 @@ public sealed class SessionServiceTests : IDisposable
         var environment = ViewModelTestData.Environment(DocumentsDirectory);
         using var session = CareerSessionService.CreateCareer(Request(), environment);
 
-        // Drive the whole 1967 season with the player (Hulme) winning every round — a clean,
+        // Drive the whole 1967 season with the player (Hulme) winning every round, a clean,
         // deterministic projection to assert bests/streaks/champion against.
         int rounds = session.Summary.RoundCount;
         for (int round = 0; round < rounds; round++)
         {
             var grid = session.CurrentGrid().Select(s => s.DriverId).ToList();
             string player = session.Summary.PlayerDriverId;
-            // Player first, then the rest in grid order — a win every race.
+            // Player first, then the rest in grid order, a win every race.
             var classified = new List<string> { player };
             classified.AddRange(grid.Where(id => id != player));
             session.Apply(new ResultDraft
@@ -499,7 +499,7 @@ public sealed class SessionServiceTests : IDisposable
         var environment = ViewModelTestData.Environment(DocumentsDirectory);
         using var session = CareerSessionService.CreateCareer(Request(), environment);
 
-        // v0.4.0: the bundled packs author the real historical weekend — practice + qualifying +
+        // v0.4.0: the bundled packs author the real historical weekend, practice + qualifying +
         // ONE Grand Prix (no sprints in these eras), so scoring stays single-race shaped.
         var weekend = session.CurrentWeekend();
         Assert.NotNull(weekend);
@@ -517,7 +517,7 @@ public sealed class SessionServiceTests : IDisposable
         };
 
         // Qualifying rides in the envelope but never enters RoundResult, so the scored round is
-        // byte-identical with or without it — the standings engine (and the oracle) never see it.
+        // byte-identical with or without it, the standings engine (and the oracle) never see it.
         var withQualy = session.Preview(draft);
         var withoutQualy = session.Preview(draft with { QualifyingOrder = null });
         Assert.Equal(
@@ -558,7 +558,7 @@ public sealed class SessionServiceTests : IDisposable
     public void CreateCareer_OnACustomLivery_SeatsAnOwnEntrant()
     {
         // Player-as-own-entrant: a livery that is not a pack entry (a custom/non-standard skin) no longer
-        // refuses — the player is seated as their own independent synthetic entrant so the career runs.
+        // refuses, the player is seated as their own independent synthetic entrant so the career runs.
         var environment = ViewModelTestData.Environment(DocumentsDirectory);
         var request = Request() with { PlayerLiveryName = "No Such Livery" };
 
@@ -591,7 +591,7 @@ public sealed class SessionServiceTests : IDisposable
     [Fact]
     public void StageCurrentGrid_PreflightError_AbortsBeforeWriting()
     {
-        // An empty library makes the vehicle class unknown — a preflight ERROR.
+        // An empty library makes the vehicle class unknown, a preflight ERROR.
         var environment = ViewModelTestData.Environment(
             DocumentsDirectory, FakeInstallDirectory, ViewModelTestData.EmptyLibrary());
         using var session = CareerSessionService.CreateCareer(Request(), environment);

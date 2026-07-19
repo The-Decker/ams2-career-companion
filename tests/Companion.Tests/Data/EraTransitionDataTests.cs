@@ -8,7 +8,7 @@ namespace Companion.Tests.Data;
 /// Era transition v1 through the Data layer (PLAN M6): CareerStore.StartNextSeason persists
 /// the plan atomically and journals the transition, and the multi-pack
 /// ReplayService.Resimulate overload replays a career that crosses a pack boundary (with a
-/// bridged gap year) byte-identically — divergence rules identical to the rollover path.
+/// bridged gap year) byte-identically, divergence rules identical to the rollover path.
 /// </summary>
 public class EraTransitionDataTests
 {
@@ -71,7 +71,7 @@ public class EraTransitionDataTests
             $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");
         Assert.Null(report.FirstDivergence);
 
-        // Every non-provenance row of BOTH seasons — transition rows included — was compared.
+        // Every non-provenance row of BOTH seasons, transition rows included, was compared.
         int storedSimRows =
             JournalStore.ReadSeason(db, season1).Count(r => !DataJournalPhases.IsProvenance(r.Phase)) +
             JournalStore.ReadSeason(db, season2).Count(r => !DataJournalPhases.IsProvenance(r.Phase));
@@ -140,7 +140,7 @@ public class EraTransitionDataTests
         Assert.Equal("start-state", report.FirstDivergence.Reason);
         Assert.Equal(season2, report.FirstDivergence.SeasonId);
 
-        // Report-only: the transaction rolled back — tampered row still reads back tampered,
+        // Report-only: the transaction rolled back, tampered row still reads back tampered,
         // season-1 folds and season-2 journal untouched.
         Assert.Equal(99.0, StateStore.ReadPlayerState(db, season2, StateStore.StageStart)!.Reputation);
         Assert.Equal(journalBefore, JournalStore.ReadSeason(db, season2));
@@ -210,7 +210,7 @@ public class EraTransitionDataTests
         using var db = CareerDatabase.Open(tmp.Path);
         var (season1, fromPack) = DataCareerFixture.SetupCareer(db);
 
-        // Fold one round but never run season end — the season is still active. Build a
+        // Fold one round but never run season end, the season is still active. Build a
         // plan from a played-out copy so the plan itself is well-formed.
         var round = DataCareerFixture.Rounds()[0];
         ReplayService.ImportAndFoldRound(

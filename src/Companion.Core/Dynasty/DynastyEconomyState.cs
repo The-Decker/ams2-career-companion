@@ -4,13 +4,13 @@ using Companion.Core.Numerics;
 namespace Companion.Core.Dynasty;
 
 /// <summary>
-/// The Grand Prix Dynasty owner-economy's folded per-career state — rides
+/// The Grand Prix Dynasty owner-economy's folded per-career state, rides
 /// <see cref="Career.PlayerCareerState.Economy"/> and is null for every non-Dynasty career (and
 /// every Dynasty career created before the economy shipped). The fold owns it exactly like
 /// <see cref="Companion.Core.Smgp.SmgpState"/>: seeded once at career creation (mode
 /// grandPrixDynasty + the explicit creation opt-in), carried forward each round via record
 /// <c>with</c>, and mutated only by the deterministic economy fold over journaled results and
-/// journaled <c>economy.decision</c> INPUT rows — so re-simulation re-derives it byte-identically.
+/// journaled <c>economy.decision</c> INPUT rows, so re-simulation re-derives it byte-identically.
 /// The sponsor dictionary is kept in ORDINAL KEY ORDER via the With* helpers because the
 /// serialized state cell must be canonical (replay byte-compares these blobs).
 /// All money is exact <see cref="Rational"/> (serialized as "3"/"1/7" strings by CoreJson).
@@ -39,13 +39,13 @@ public sealed record DynastyEconomyState
     public int StaffTier { get; init; }
 
     /// <summary>The second seat's contract economics (the occupant is always the pack's authored
-    /// teammate — the faithful grid is never touched). Retained (default): the team pays the
+    /// teammate, the faithful grid is never touched). Retained (default): the team pays the
     /// salary and collects the second car's race prize. PayDriver: no salary, backing income
     /// accrues instead, and the second car's prize is forfeit. Omitted when Retained.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public SecondSeatDeal SecondSeat { get; init; }
 
-    /// <summary>Active sponsor contracts keyed by sponsor id (ordinal key order — canonical).
+    /// <summary>Active sponsor contracts keyed by sponsor id (ordinal key order, canonical).
     /// Terms resolve from the rules board by id + <see cref="Version"/>.</summary>
     public IReadOnlyDictionary<string, DynastySponsorContract> Sponsors { get; init; } = EmptySponsors;
 
@@ -55,7 +55,7 @@ public sealed record DynastyEconomyState
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public int DeficitRounds { get; init; }
 
-    /// <summary>The team went BANKRUPT — TERMINAL. The career stops accepting rounds (mirrors
+    /// <summary>The team went BANKRUPT, TERMINAL. The career stops accepting rounds (mirrors
     /// <see cref="Career.PlayerCareerState.Deceased"/> and the SMGP CareerOver floor). Carried
     /// forward verbatim, never reset. Omitted when false.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
@@ -82,7 +82,7 @@ public sealed record DynastyEconomyState
         return this with { Sponsors = remaining };
     }
 
-    // STRUCTURAL equality — the record default compares the sponsor dictionary by REFERENCE,
+    // STRUCTURAL equality, the record default compares the sponsor dictionary by REFERENCE,
     // which would make a re-derived rollover start state unequal to the deserialized stored one
     // and fail the byte-identical replay gate at every season boundary (the exact bug SmgpState
     // documents). The dictionary is canonically ordered, so sequence comparison is exact.
@@ -151,7 +151,7 @@ public enum SecondSeatDeal
     PayDriver = 1,
 }
 
-/// <summary>One active sponsor contract. A plain value record — default structural equality is
+/// <summary>One active sponsor contract. A plain value record, default structural equality is
 /// exact, so <see cref="DynastyEconomyState"/>'s replay gate compares it correctly. The deal's
 /// terms (payments, bonuses) live in the rules board, resolved by sponsor id.</summary>
 public sealed record DynastySponsorContract

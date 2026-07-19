@@ -5,7 +5,7 @@ namespace Companion.Tests.Oracle;
 /// <summary>
 /// Maps f1db oracle fixture DTOs onto the engine's input types. Fixtures are self-contained
 /// (catalog round overrides already resolved to per-round flags at generation time), so this
-/// is a straight structural translation — no rules logic lives here.
+/// is a straight structural translation, no rules logic lives here.
 /// </summary>
 public static class F1DbFixtureMapper
 {

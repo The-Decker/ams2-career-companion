@@ -9,7 +9,7 @@ namespace Companion.Tests.Data;
 /// <summary>
 /// The opt-in modded field (Mike's Iris &amp; Azalea McLaren teams): a pack that declares a
 /// <see cref="PackModdedField"/> fields the extra entries ONLY when the tick is on AND the required
-/// car mod is installed — otherwise the base field, byte-identically. Proves the gate on all four
+/// car mod is installed, otherwise the base field, byte-identically. Proves the gate on all four
 /// corners (tick+installed, tick+missing, no-tick, no-mod pack) and that a modded career
 /// re-simulates byte-identically (the transformed pack is pinned).
 /// </summary>
@@ -166,7 +166,7 @@ public sealed class ModdedFieldGateTests : IDisposable
 
         Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
         using var db = CareerDatabase.Open(careerPath);
-        // The PINNED pack carries the modded field — replay reads it, no install/tick needed.
+        // The PINNED pack carries the modded field, replay reads it, no install/tick needed.
         var pack = PinnedPackEnvelope.LoadSeasonPack(
             CareerStore.ReadPinnedPack(db, "test-pack", "1.0.0").PackJson);
         Assert.Equal(3, pack.Entries.Count);

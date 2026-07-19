@@ -10,12 +10,12 @@ using Companion.ViewModels.Standings;
 namespace Companion.Tests.ViewModels;
 
 /// <summary>
-/// Increment 2b.3 — the race-weekend result-entry flow in <see cref="HomeViewModel"/>. When a
+/// Increment 2b.3, the race-weekend result-entry flow in <see cref="HomeViewModel"/>. When a
 /// round's weekend declares a qualifying session, the loop gains a qualifying-order step BEFORE the
 /// race (reusing the result-entry grammar); the captured order rides on the race draft's
 /// <see cref="ResultDraft.QualifyingOrder"/> and seeds the race grid pole-first. A round with no
 /// weekend (every bundled pack) skips the step entirely, so the shipped single-race loop is
-/// byte-identical — asserted here too.
+/// byte-identical, asserted here too.
 /// </summary>
 public sealed class WeekendLoopTests
 {
@@ -259,7 +259,7 @@ public sealed class WeekendLoopTests
         Assert.Contains("Feature", grid.Title);
         home.ConfirmResultCommand.Execute(null); // start the race → race entry
 
-        // Race 1 (Feature) — NOT the round's last, so the primary action advances to the next race.
+        // Race 1 (Feature), NOT the round's last, so the primary action advances to the next race.
         var featureIntro = AssertIntro(home, SessionIntroKind.Race);
         Assert.Contains("Feature", featureIntro.Subtitle);
         featureIntro.ContinueCommand.Execute(null);
@@ -270,7 +270,7 @@ public sealed class WeekendLoopTests
         Order(feature, "2", "1"); // Hulme P1, Brabham P2
         home.ConfirmResultCommand.Execute(null);
 
-        // Race 2 (Sprint) — the last race, so the primary action scores the round.
+        // Race 2 (Sprint), the last race, so the primary action scores the round.
         var sprintIntro = AssertIntro(home, SessionIntroKind.Race);
         Assert.Contains("Sprint", sprintIntro.Subtitle);
         sprintIntro.ContinueCommand.Execute(null);

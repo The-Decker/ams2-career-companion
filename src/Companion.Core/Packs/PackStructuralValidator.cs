@@ -6,7 +6,7 @@ namespace Companion.Core.Packs;
 /// Structural pack validation that needs NO content library: id integrity, calendar sanity,
 /// entry coverage via rounds ranges, points-system resolution, rating ranges, and livery
 /// double-binding. Content-dependent checks (class/track/livery existence, venue AI caps)
-/// live in Companion.Ams2's preflight — Core never references them.
+/// live in Companion.Ams2's preflight, Core never references them.
 /// </summary>
 public static class PackStructuralValidator
 {
@@ -112,7 +112,7 @@ public static class PackStructuralValidator
                 if (date < prev)
                     issues.Add(Error(
                         $"Round {round.Round} ({round.Name}) date {round.Date} is earlier than the previous " +
-                        $"round's {prev:yyyy-MM-dd} — calendar dates must ascend."));
+                        $"round's {prev:yyyy-MM-dd}, calendar dates must ascend."));
                 else if (date == prev)
                     issues.Add(Warning(
                         $"Round {round.Round} ({round.Name}) shares its date {round.Date} with the previous round."));
@@ -134,7 +134,7 @@ public static class PackStructuralValidator
             // survive the substitution.
             if (round.Track.IsPlaceholder && string.IsNullOrWhiteSpace(round.Track.RealVenue))
                 issues.Add(Error(
-                    $"Round {round.Round} ({round.Name}) uses a placeholder track but names no realVenue — " +
+                    $"Round {round.Round} ({round.Name}) uses a placeholder track but names no realVenue, " +
                     "the historical venue must stay on record."));
 
             if (round.SetupGuide is null)
@@ -203,9 +203,9 @@ public static class PackStructuralValidator
 
     /// <summary>Car scalars hover around 1.0 (0.5..1.5 sane). vehicleReliability legitimately
     /// exceeds 1.0 in community sets (SMGP's 1.43) AND goes deeply NEGATIVE in the "Realistic"
-    /// per-track blocks — a −19 at one venue is the community idiom for a scripted retirement
+    /// per-track blocks, a −19 at one venue is the community idiom for a scripted retirement
     /// there (the game clamps internally), so the floor admits those. Staged-file-only data, but
-    /// a typo'd magnitude would still wreck the in-game field — validate loudly.</summary>
+    /// a typo'd magnitude would still wreck the in-game field, validate loudly.</summary>
     private static void CheckCarValue(string owner, string name, double value, List<PackIssue> issues)
     {
         bool ok = name == "vehicleReliability" ? value is >= -25.0 and <= 2.0 : value is >= 0.5 and <= 1.5;
@@ -244,7 +244,7 @@ public static class PackStructuralValidator
     /// <summary>Additive weekend-block sanity for the per-session weather + durations
     /// (SIM-INERT display data): each session/race declares at most 4 weather slots (AMS2's cap),
     /// and a declared duration is positive. Everything is optional, so a round without a weekend —
-    /// or a weekend without these fields — is not flagged, and the other bundled packs validate
+    /// or a weekend without these fields, is not flagged, and the other bundled packs validate
     /// unchanged.</summary>
     private static void CheckWeekend(IReadOnlyList<PackRound> rounds, List<PackIssue> issues)
     {
@@ -361,13 +361,13 @@ public static class PackStructuralValidator
         {
             issues.Add(Error(
                 $"Livery '{livery}' is bound by more than one entry in round(s) " +
-                $"{string.Join(", ", dupRounds)} — only one driver can bind to a livery per race."));
+                $"{string.Join(", ", dupRounds)}, only one driver can bind to a livery per race."));
         }
     }
 
     // ---------- optional historical grid ----------
 
-    /// <summary>Grid block sanity (structural half — the venue AI-cap ceiling is a content check
+    /// <summary>Grid block sanity (structural half, the venue AI-cap ceiling is a content check
     /// that lives in Companion.Ams2's preflight). grid.size must be at least 1 and must not exceed
     /// the number of entries whose rounds range covers the round (you cannot seat more historical
     /// starters than the pack has entries for that round); every starterDriverIds id must be a
@@ -408,7 +408,7 @@ public static class PackStructuralValidator
             if (grid.Size > covering)
                 issues.Add(Error(
                     $"Round {round.Round} ({round.Name}) grid.size {grid.Size} exceeds the {covering} " +
-                    "entr(y/ies) covering the round — the grid cannot seat more cars than the pack provides."));
+                    "entr(y/ies) covering the round, the grid cannot seat more cars than the pack provides."));
 
             // The setup guide is authored so the total grid is grid.size (player replaces one
             // historical starter): opponents should be exactly grid.size - 1.

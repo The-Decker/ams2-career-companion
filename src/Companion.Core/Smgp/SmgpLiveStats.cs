@@ -3,7 +3,7 @@ using Companion.Core.Scoring;
 namespace Companion.Core.Smgp;
 
 /// <summary>Per-driver result COUNTS accrued from actual races (a display-only projection over the
-/// folded results — never a fold input). Points and titles are tracked separately (they need the
+/// folded results, never a fold input). Points and titles are tracked separately (they need the
 /// standings engine / season completion); this is the pure win/pole/podium/top-5/start tally.</summary>
 public sealed record SmgpAccruedStats
 {
@@ -29,7 +29,7 @@ public sealed record SmgpAccruedStats
 /// Tallies wins / podiums / poles / top-5s / starts per driver across a set of races. Pure: the primary
 /// RACE session's classification (position 1 = win, ≤3 = podium, ≤5 = top-5) and the qualifying pole
 /// (the driver who qualified P1) are the only inputs. Used to grow the SMGP world's live record on top
-/// of the predetermined baselines — the player from zero, the AI from their pre-history.
+/// of the predetermined baselines, the player from zero, the AI from their pre-history.
 /// </summary>
 public static class SmgpLiveStats
 {

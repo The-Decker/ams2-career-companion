@@ -8,7 +8,7 @@ using Companion.ViewModels.Services;
 namespace Companion.Tests.Data;
 
 /// <summary>
-/// Character death &amp; injury, Slice 3 — the DERIVED accident d500 fold + Hardcore permadeath. The roll is
+/// Character death &amp; injury, Slice 3, the DERIVED accident d500 fold + Hardcore permadeath. The roll is
 /// QUADRUPLE-gated (mortality on + a character + not already dead + an accident severity captured), so an
 /// Off / no-accident career draws nothing and stays byte-identical. A mortality career's accident row
 /// re-simulates byte-for-byte; a fatal roll sets Deceased (terminal), and a Hardcore death physically
@@ -132,7 +132,7 @@ public sealed class AccidentFoldDeterminismTests : IDisposable
     [Fact]
     public void MortalityCareer_SurvivesAnAccident_EmitsDerivedRow_AndReplaysByteIdentically()
     {
-        // A hugely durable driver ALWAYS survives (offset floors the effective roll at None) — so the
+        // A hugely durable driver ALWAYS survives (offset floors the effective roll at None), so the
         // career plays on and we exercise the accident fold + the injury-state carry-forward over 2 rounds.
         string careerPath = Path.Combine(_root, "careers", "survive.ams2career");
         SeasonPack pack;
@@ -158,7 +158,7 @@ public sealed class AccidentFoldDeterminismTests : IDisposable
     [Fact]
     public void OffCareerWithCharacter_Accident_DrawsNothing_AndReplaysByteIdentically()
     {
-        // Off mode never rolls — even a lethal durability produces no accident row and no death, so the
+        // Off mode never rolls, even a lethal durability produces no accident row and no death, so the
         // legacy gate holds (zero accident-stream draws ⇒ byte-identical to a pre-feature career).
         string careerPath = Path.Combine(_root, "careers", "off.ams2career");
         SeasonPack pack;

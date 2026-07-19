@@ -27,7 +27,7 @@
                 <Border x:Name="PermadeathRibbon" Padding="16,7" CornerRadius="5"
                         Background="{DynamicResource ErrorBrush}" HorizontalAlignment="Center"
                         Visibility="{Binding DeathScreen.IsPermadeath, Converter={StaticResource BoolVisible}}">
-                    <TextBlock Text="H A R D C O R E   —   P E R M A D E A T H"
+                    <TextBlock Text="H A R D C O R E   :   P E R M A D E A T H"
                                Style="{StaticResource PixelBadge}" FontSize="9"
                                Foreground="{DynamicResource OnAccentBrush}" />
                 </Border>
@@ -96,7 +96,7 @@
                     <Border Style="{StaticResource StatTile}">
                         <StackPanel>
                             <TextBlock Text="BEST FINISH" Style="{StaticResource Eyebrow}" />
-                            <TextBlock Text="{Binding DeathScreen.Record.BestFinish, StringFormat=P{0}, TargetNullValue=—}"
+                            <TextBlock Text="{Binding DeathScreen.Record.BestFinish, StringFormat=P{0}, TargetNullValue=-}"
                                        Style="{StaticResource StatValue}" />
                         </StackPanel>
                     </Border>
@@ -163,7 +163,7 @@
                                         <TextBlock DockPanel.Dock="Right" Style="{StaticResource Mono}"
                                                    Foreground="{DynamicResource AccentTextBrush}"
                                                    FontWeight="Bold"
-                                                   Text="{Binding PlayerPosition, StringFormat=P{0}, TargetNullValue=—}" />
+                                                   Text="{Binding PlayerPosition, StringFormat=P{0}, TargetNullValue=-}" />
                                         <TextBlock Text="{Binding SeasonYear}" Style="{StaticResource H2}" />
                                     </DockPanel>
                                     <TextBlock Style="{StaticResource Muted}" Margin="0,5,0,0">

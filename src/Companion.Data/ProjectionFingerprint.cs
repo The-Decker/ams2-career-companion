@@ -4,7 +4,7 @@ namespace Companion.Data;
 /// A cheap monotonic fingerprint of the stored career state that display projections (the
 /// newsroom event spine, history feeds) are computed over. Any fold, auto-sim, season rollover,
 /// or resimulation appends/rewrites journal rows (MAX seq moves), stores results, or adds
-/// seasons — so fingerprint equality proves a cached projection's inputs are unchanged.
+/// seasons, so fingerprint equality proves a cached projection's inputs are unchanged.
 /// </summary>
 public readonly record struct ProjectionFingerprint(long JournalSeq, long Results, long Seasons)
 {

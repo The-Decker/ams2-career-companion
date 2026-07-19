@@ -1,22 +1,22 @@
 {
-  "$comment": "Generative news corpus for the SUPER MONACO GP replica mode's OWN fictional world (the SEGA universe — its teams Madonna/Firenze/Bullets/Minarae/..., the LEVEL A-D rival ladder, the D.P. driver-points readout, the one-lap Preliminary Race). Selected by NewsFacts.PreferredEra = 'smgp' (CareerSessionService routes smgp careers here), NEVER by year — the 'smgp' era range is a sentinel that no real career hits, so a historical 1990 career keeps the 1990s outlet. Voice: bold, colorful, exclamatory retro-arcade sports-tabloid; the World Championship circus, the hairpin, the big board. Keys under 'bodies' are 'journalPhase|cause'; era-keyed variants selected deterministically via the 'headlines' PCG32 stream (pure function of masterSeed + round). Fact tokens: {player} {team} {race} {year} {round} {position} {expected} {winner} {fieldSize} {champPosition} {champMove} {champLeader}.",
+  "$comment": "Generative news corpus for the SUPER MONACO GP replica mode's OWN fictional world (the SEGA universe, its teams Madonna/Firenze/Bullets/Minarae/..., the LEVEL A-D rival ladder, the D.P. driver-points readout, the one-lap Preliminary Race). Selected by NewsFacts.PreferredEra = 'smgp' (CareerSessionService routes smgp careers here), NEVER by year: the 'smgp' era range is a sentinel that no real career hits, so a historical 1990 career keeps the 1990s outlet. Voice: bold, colorful, exclamatory retro-arcade sports-tabloid; the World Championship circus, the hairpin, the big board. Keys under 'bodies' are 'journalPhase|cause'; era-keyed variants selected deterministically via the 'headlines' PCG32 stream (pure function of masterSeed + round). Fact tokens: {player} {team} {race} {year} {round} {position} {expected} {winner} {fieldSize} {champPosition} {champMove} {champLeader}.",
   "eras": [
     { "key": "smgp", "fromYear": 9000, "toYear": 9099 }
   ],
   "pools": {
     "dateline": {
       "smgp": [
-        "TRACKSIDE WIRE — {race}, ROUND {round}. The big board is still flashing.",
+        "TRACKSIDE WIRE: {race}, ROUND {round}. The big board is still flashing.",
         "FROM THE SUPER MONACO GP CIRCUS at {race}.",
-        "PADDOCK BULLETIN — {race}, and the crowd is on its feet.",
+        "PADDOCK BULLETIN: {race}, and the crowd is on its feet.",
         "COURSE SELECT: {race}. Here is how it played out.",
-        "THE FLAG IS OUT AT {race} — the wire crackles to life.",
+        "THE FLAG IS OUT AT {race}: the wire crackles to life.",
         "LIVE FROM THE HAIRPIN at {race}, ROUND {round}.",
         "DISPATCH FROM THE WORLD CHAMPIONSHIP at {race}.",
-        "THE GRANDSTAND ROARS AT {race} — read on.",
+        "THE GRANDSTAND ROARS AT {race}: read on.",
         "SIGNAL FROM THE PIT WALL at {race}, and it is buzzing.",
         "FROM THE FRONT ROW OF THE PACK at {race}.",
-        "THE TANNOY CALLS IT AT {race} — the story below."
+        "THE TANNOY CALLS IT AT {race}: the story below."
       ],
       "default": [
         "Race report from {race}.",
@@ -27,8 +27,8 @@
     },
     "closeGood": {
       "smgp": [
-        "The pit crew is dancing on the wall — and the rivals are watching.",
-        "The big board glows in {team} colours tonight. Insert nothing — this one was earned.",
+        "The pit crew is dancing on the wall, and the rivals are watching.",
+        "The big board glows in {team} colours tonight. Insert nothing: this one was earned.",
         "The crowd will be talking about this one all the way to the next round.",
         "The paddock circus rolls on, and it just found a new favourite.",
         "A drive to set the whole grid whispering. On to the next circuit!",
@@ -70,11 +70,11 @@
     "champLine": {
       "smgp": [
         "The D.P. board now reads {player} {champPosition}, {champMove} on the campaign.",
-        "In Driver Points it is {player} {champPosition} — {champMove}, with {champLeader} setting the pace.",
+        "In Driver Points it is {player} {champPosition}: {champMove}, with {champLeader} setting the pace.",
         "The World Championship table has {player} {champPosition}, {champMove}.",
         "Points-wise: {player} {champPosition} in the running, {champMove}, chasing {champLeader}.",
         "The big board's D.P. column: {player} {champPosition}, {champMove}.",
-        "For the title, read {player} {champPosition} — {champMove} — {champLeader} the one to catch.",
+        "For the title, read {player} {champPosition}, {champMove}, {champLeader} the one to catch.",
         "The championship ladder shows {player} {champPosition}, {champMove} since last we wired.",
         "D.P. update: {player} climbs to {champPosition}, {champMove}, eyes on {champLeader}."
       ],
@@ -125,7 +125,7 @@
       "smgp": [
         "{winner} would not be caught this day",
         "the duel with {winner} lit up the whole circuit",
-        "{winner} settled the argument out front — 'IT'S INTERESTING,' as they say in the paddock",
+        "{winner} settled the argument out front: 'IT'S INTERESTING,' as they say in the paddock",
         "{winner} proved the master where it mattered",
         "the wheel-to-wheel with {winner} had the grandstand on its feet",
         "{winner} held the top of the ladder, for now",
@@ -147,7 +147,7 @@
         "One campaign into the record board, and already the grid plots the next.",
         "The tannoy falls silent, the hairpin cools, and the championship circus rolls toward spring.",
         "The lights go down on the season; the challenge-lists start over.",
-        "The World Championship closes its book — until the flag drops anew.",
+        "The World Championship closes its book: until the flag drops anew.",
         "Winter draws over the circuits, the seats reshuffle by points, and the ladder awaits fresh challengers."
       ],
       "default": [
@@ -163,14 +163,14 @@
       "smgp": [
         "{pool:dateline} {player} TAKES {race}! The {team} car led the World Championship pack from lights to flag, first of {fieldSize} runners and never once headed. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} Victory for {player}! A commanding drive hands {team} round {round}, {pool:expectationBeat}, and {pool:ladderBuzz}. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} WINS at {race} — flag to flag, no argument, the big board glowing {team} all afternoon. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} WINS at {race}: flag to flag, no argument, the big board glowing {team} all afternoon. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} The top step belongs to {player}! Away cleanly, hard at the hairpin, and home first of {fieldSize} for {team}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} A masterclass at {race}: {player} controls it from the front, {pool:ladderBuzz}, and the {team} garage cannot stop grinning. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} conquers {race} for {team}! Round {round} of {year} could not have gone sweeter — a win to set the whole ladder talking. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} conquers {race} for {team}! Round {round} of {year} could not have gone sweeter: a win to set the whole ladder talking. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} No one could live with {player} today. The {team} machine ran faultless from flag to flag, {pool:expectationBeat}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} WIN for {player} at {race}! First of {fieldSize}, the crowd on its feet, and {pool:ladderBuzz}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} owns {race}: pole converted, gap controlled, the {team} car untouchable at the sharp end. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} A statement win for {player} — {team} first past the flag in a field of {fieldSize}, and the rivals left to wonder. {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} A statement win for {player}: {team} first past the flag in a field of {fieldSize}, and the rivals left to wonder. {pool:champLine} {pool:closeGood}"
       ],
       "default": [
         "{player} won {race} for {team}, leading a field of {fieldSize}. {pool:champLine} {pool:closeGood}",
@@ -182,11 +182,11 @@
         "{pool:dateline} A rostrum for {player}! Home {position} at {race}, champagne on the podium, and {pool:rivalTalk}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} carries {team} onto the podium at {race}, {position} of {fieldSize} and {pool:ladderBuzz}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} PODIUM! {player} home {position} at {race}, a drive {pool:expectationBeat}. {winner} took the flag; the crowd cheered the rostrum loudest. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} splits the front of the pack at {race}, {position} at the flag — {pool:rivalTalk}, but the {team} champagne sprayed just as cold. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} splits the front of the pack at {race}, {position} at the flag: {pool:rivalTalk}, but the {team} champagne sprayed just as cold. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {position} and a rostrum for {player} at {race}! The {team} car ran with the best of them in a field of {fieldSize}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} Champagne for {player}: {position} at {race}, {pool:ladderBuzz}, and the big board grinning. Only {winner} finished ahead. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} muscles the {team} machine onto the podium at {race}, {position} of {fieldSize} and every place hard-won. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} A podium's worth of work from {player} at {race} — {position} at the flag, {pool:expectationBeat}, among the great and the good. {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} A podium's worth of work from {player} at {race}: {position} at the flag, {pool:expectationBeat}, among the great and the good. {pool:champLine} {pool:closeGood}"
       ],
       "default": [
         "{player} finished {position} at {race} for {team}, behind {winner}. {pool:champLine} {pool:closeGood}",
@@ -195,7 +195,7 @@
     },
     "race.result|points": {
       "smgp": [
-        "{pool:dateline} {player} brings the {team} car home {position} at {race} — honest D.P. banked from a field of {fieldSize}, and {pool:ladderBuzz}. {winner} took the day. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} brings the {team} car home {position} at {race}: honest D.P. banked from a field of {fieldSize}, and {pool:ladderBuzz}. {winner} took the day. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} No podium, no complaints: {player} scores at {race}, {position} at the flag, and the {team} board ticks over. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} banks points at {race}, {position} of {fieldSize} for {team}. {pool:rivalTalk}, but the ledger is the fatter for it. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} A workman's afternoon for {player}: {position} at {race}, D.P. safely in the bag. Not the glamour end of the paddock, but the {team} tally smiles. {pool:champLine} {pool:closeGood}",
@@ -211,9 +211,9 @@
     "race.result|overperformed": {
       "smgp": [
         "{pool:dateline} GIANT-KILLING at {race}! {player} drags the {team} machine to {position} {pool:expectationBeat}, and {pool:ladderBuzz}. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} The drive of the day belongs to {player} — {position} at {race} from a field of {fieldSize}, {pool:expectationBeat}, and the whole paddock knows it. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} The drive of the day belongs to {player}: {position} at {race} from a field of {fieldSize}, {pool:expectationBeat}, and the whole paddock knows it. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} Where did THAT come from?! {player} hauls the {team} car to {position} at {race} {pool:expectationBeat}, and the big board can hardly believe it. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} makes a mockery of the form guide at {race}, {position} for {team} {pool:expectationBeat}. The stopwatch does not lie — and today it sang. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} makes a mockery of the form guide at {race}, {position} for {team} {pool:expectationBeat}. The stopwatch does not lie, and today it sang. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} They came to watch the favourites and stayed to cheer {player}! {position} at {race} {pool:expectationBeat}, an afternoon stolen from the front of the ladder. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} A drive to stop the circus in its tracks: {player}, {position} at {race}, {pool:expectationBeat}, and {pool:ladderBuzz}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} rewrites the odds at {race}, {position} of {fieldSize} when far less was pencilled in. {team} scarcely dared hope. {pool:champLine} {pool:closeGood}"
@@ -243,10 +243,10 @@
         "{pool:dateline} HEARTBREAK for {player}! The {team} machine expired at {race}, no fault of the driver, from what had promised {expected}. {winner} took the win. {pool:closeBad}",
         "{pool:dateline} Smoke and silence at {race}: the {team} car cries enough while running strong, and {player} coasts to a mournful halt. {pool:closeBad}",
         "{pool:dateline} THE MOTOR LETS GO at {race}. {player} out through no fault of his own, {expected} snatched away by a failing machine. {winner} won. {pool:closeBad}",
-        "{pool:dateline} A trail of oil at {race} told the tale — mechanical trouble ends {player}'s run while it yet had promise for {team}. {pool:closeBad}",
+        "{pool:dateline} A trail of oil at {race} told the tale: mechanical trouble ends {player}'s run while it yet had promise for {team}. {pool:closeBad}",
         "{pool:dateline} {player} coasts to a halt at {race}, the {team} car beaten by its own hardware. {winner} led a field of {fieldSize} home. {pool:closeBad}",
         "{pool:dateline} Cruel fortune at {race}: {player} sidelined by breakage on round {round}, the {expected} it promised gone for nothing. {pool:closeBad}",
-        "{pool:dateline} Silence from the {team} pit at {race} — the engine cried enough and {player} with it, out of the running. {pool:closeBad}",
+        "{pool:dateline} Silence from the {team} pit at {race}: the engine cried enough and {player} with it, out of the running. {pool:closeBad}",
         "{pool:dateline} No luck for {player} at {race}: a component gave way and a good drive with it, {winner} taking the honours. {pool:closeBad}"
       ],
       "default": [
@@ -259,7 +259,7 @@
         "{pool:dateline} {player} OFF at {race}! A moment's misjudgement ends the run and leaves {team} to count the cost. {winner} led home a field of {fieldSize}. {pool:closeBad}",
         "{pool:dateline} A costly slip: {player} throws away {race} by his own hand, out where {expected} had beckoned. The hairpin bites again. {pool:closeBad}",
         "{pool:dateline} INTO THE BARRIERS at {race}! {player} the author of his own misfortune, out where {expected} lay within reach. {winner} led {fieldSize} home. {pool:closeBad}",
-        "{pool:dateline} A rare error from {player} ends {race} early — the {team} car ran wide and out on round {round}. {pool:closeBad}",
+        "{pool:dateline} A rare error from {player} ends {race} early: the {team} car ran wide and out on round {round}. {pool:closeBad}",
         "{pool:dateline} {player} caught out at {race}: a lock-up, a spin, and a run that had promised {expected} is over. {winner} won the day. {pool:closeBad}",
         "{pool:dateline} One corner too brave, and {player} is done at {race}. The {team} car needs the panel-beaters; the driver, a quiet word with himself. {pool:closeBad}",
         "{pool:dateline} {player} overreached at {race} and paid the price, beached and beaten by his own hand while {winner} pressed on. {pool:closeBad}",
@@ -276,7 +276,7 @@
         "{pool:dateline} No headlines for {player} at {race}, home {position} behind {winner}. An unremarkable afternoon in the World Championship for {team}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} A steady, unglamorous shift for {player} at {race}, {position} of {fieldSize} and the {team} car home in one piece. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} runs in the great anonymous middle at {race}, {position} at the flag, {winner} up the road. No drama for {team}, but no dents either. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Nothing for the record board from {player} at {race} — {position}, a workaday afternoon, {pool:ladderBuzz} only a little. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Nothing for the record board from {player} at {race}: {position}, a workaday afternoon, {pool:ladderBuzz} only a little. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} threads the {team} machine through the pack to {position} at {race}, honest work in a field of {fieldSize}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} A day of small margins for {player}, {position} at {race} for {team}. The circus's eyes were elsewhere, and that is no bad thing. {pool:champLine} {pool:closeGood}"
       ],
@@ -287,12 +287,12 @@
     },
     "season.digest|player-champion": {
       "smgp": [
-        "THE SEASON IS RUN, and {player} stands atop the whole World Championship — CHAMPION, the {team} name struck into the record board for good. From the first Preliminary Race to the final flag, the climb up the ladder is complete. {pool:seasonClose}",
+        "THE SEASON IS RUN, and {player} stands atop the whole World Championship: CHAMPION, the {team} name struck into the record board for good. From the first Preliminary Race to the final flag, the climb up the ladder is complete. {pool:seasonClose}",
         "CHAMPION! {player} takes the crown for {team}, a campaign built one D.P. at a time until the big board could show only one name. The rivals had their say; the ladder had the last word. {pool:seasonClose}",
-        "IT IS DONE! {player} is the World Champion, the {team} colours flying over the circus tonight. A season of nerve at the hairpin and pace to spare — earned to the last point. {pool:seasonClose}",
-        "The championship board settles on {player} — CHAMPION, and no argument. {team} out-drove and out-climbed the whole field, and the crown is the reward. {pool:seasonClose}",
+        "IT IS DONE! {player} is the World Champion, the {team} colours flying over the circus tonight. A season of nerve at the hairpin and pace to spare: earned to the last point. {pool:seasonClose}",
+        "The championship board settles on {player}: CHAMPION, and no argument. {team} out-drove and out-climbed the whole field, and the crown is the reward. {pool:seasonClose}",
         "Raise the trophy high: {player} has taken the title for {team}! A season of the World Championship circus answered with a right foot that would not be denied. {pool:seasonClose}",
-        "When the last flag fell, one name stood above the rest — {player}, CHAMPION, {team} triumphant. The seat at the very top of the ladder is his. {pool:seasonClose}",
+        "When the last flag fell, one name stood above the rest: {player}, CHAMPION, {team} triumphant. The seat at the very top of the ladder is his. {pool:seasonClose}",
         "The record board reads {player}, World Champion. A full season's climb from the pack to the summit, and the {team} garage will speak of it for a generation. {pool:seasonClose}"
       ],
       "default": [
@@ -308,7 +308,7 @@
         "{champLeader} stands atop the World Championship when the transporters roll for home; {player} settles {champPosition} for {team} at the last. The rival ladder awaits a fresh assault. {pool:seasonClose}",
         "So closes the campaign: the crown to {champLeader}, {player} {champPosition} for {team} at the final flag. The record board is set; the challenge-lists reset. {pool:seasonClose}",
         "The championship is run: {champLeader} the champion, {player} home {champPosition} for {team}. The climb resumes when the flag drops anew. {pool:seasonClose}",
-        "That is the season done — {champLeader} on top, {player} {champPosition}. {team} carry the year's lessons up the ladder into the next. {pool:seasonClose}"
+        "That is the season done: {champLeader} on top, {player} {champPosition}. {team} carry the year's lessons up the ladder into the next. {pool:seasonClose}"
       ],
       "default": [
         "{champLeader} took the title; {player} finished the year {champPosition} for {team}. {pool:seasonClose}",

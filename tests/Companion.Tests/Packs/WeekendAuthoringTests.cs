@@ -4,7 +4,7 @@ namespace Companion.Tests.Packs;
 
 /// <summary>
 /// v0.4.0 pack-authoring guard: every bundled pack authors the REAL historical weekend on every
-/// round — practice + qualifying + exactly ONE race labelled "Grand Prix". Sprint races only
+/// round, practice + qualifying + exactly ONE race labelled "Grand Prix". Sprint races only
 /// happened in the real seasons historically, and none of the bundled eras (1967–2000) ran them,
 /// so no bundled round may declare a second race or a sprint table. Directory-driven like
 /// <see cref="ReferencePackTests"/>, so a newly added pack is held to the same bar automatically.
@@ -41,7 +41,7 @@ public class WeekendAuthoringTests
                 $"{packId} round {round.Round} has no qualifying session.");
 
             // The historical shape: exactly one race, the Grand Prix, on the round's default
-            // (primary/alternate-per-round) table — never a sprint, never a second race.
+            // (primary/alternate-per-round) table, never a sprint, never a second race.
             var race = Assert.Single(round.Weekend.Races);
             Assert.Equal("Grand Prix", race.Label);
             Assert.Null(race.PointsTable);

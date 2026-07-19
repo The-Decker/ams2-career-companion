@@ -5,7 +5,7 @@ namespace Companion.Tests.Ams2;
 
 /// <summary>The in-app livery activator (<see cref="LiveryOverrideWriter"/>): turns a community
 /// skin pack's "##" placeholder livery ON by assigning it a real slot in the vehicle's
-/// USER_OVERRIDES XML — a minimal, in-place textual edit that preserves the rest of the file
+/// USER_OVERRIDES XML, a minimal, in-place textual edit that preserves the rest of the file
 /// byte-for-byte (community files are frequently malformed; never re-serialize). This is the fix
 /// for Mike's 1985 Skoal #10 (installed but not switched on in-game).</summary>
 public sealed class LiveryOverrideWriterTests
@@ -55,14 +55,14 @@ public sealed class LiveryOverrideWriterTests
     public void Activate_ReturnsNull_WhenNameIsAbsentOrAlreadyActive()
     {
         Assert.Null(LiveryOverrideWriter.Activate(SkoalXml, "Nonexistent Team #1", 61));
-        // #9 is already active (numeric slot) — nothing to activate.
+        // #9 is already active (numeric slot), nothing to activate.
         Assert.Null(LiveryOverrideWriter.Activate(SkoalXml, "Skoal Bandit Formula 1 Team #9", 61));
     }
 
     // The SMGP skinpack marks inactive entries with a LETTER-prefixed placeholder ("X1"/"X3"/"XX")
-    // rather than "##" — Lares #23 and Feet #24 ship this way. Any NON-numeric slot is a
+    // rather than "##", Lares #23 and Feet #24 ship this way. Any NON-numeric slot is a
     // placeholder, so the same activator turns them on (the staging auto-activate pass depends on
-    // this — those two are the SMGP field's cap-completing cars).
+    // this, those two are the SMGP field's cap-completing cars).
     private const string SmgpXml =
         "<USER_OVERRIDES>\n" +
         "  <LIVERY_OVERRIDE LIVERY=\"53\" NAME=\"Comet #29 E. Tornio\" BASELIVERY=\"Default\"></LIVERY_OVERRIDE>\n" +
@@ -115,7 +115,7 @@ public sealed class LiveryOverrideWriterTests
     [Fact]
     public void Activate_IsCaseSensitiveOnTheName()
     {
-        // Livery names bind case-sensitively — a different case is NOT the same livery.
+        // Livery names bind case-sensitively, a different case is NOT the same livery.
         Assert.Null(LiveryOverrideWriter.Activate(SkoalXml, "skoal bandit formula 1 team #10", 61));
     }
 
@@ -160,7 +160,7 @@ public sealed class LiveryOverrideWriterTests
             File.WriteAllText(main,
                 "<USER_OVERRIDES><LIVERY_OVERRIDE LIVERY=\"51\" NAME=\"A\"/>" +
                 "<LIVERY_OVERRIDE LIVERY=\"##\" NAME=\"Target\"/></USER_OVERRIDES>");
-            // The sibling (inert template) uses 52 — but AMS2 ignores it, so 52 is still free here.
+            // The sibling (inert template) uses 52, but AMS2 ignores it, so 52 is still free here.
             File.WriteAllText(Path.Combine(dir, "car_dist.xml"),
                 "<USER_OVERRIDES><LIVERY_OVERRIDE LIVERY=\"52\" NAME=\"B\"/></USER_OVERRIDES>");
 
@@ -181,7 +181,7 @@ public sealed class LiveryOverrideWriterTests
     public void Activate_RefusesEntriesInsideXmlComments()
     {
         // The "##" placeholder is inside a <!-- --> block (the real-world shape). AMS2 never parses
-        // it, so activating it would corrupt the file for zero effect — the writer must refuse.
+        // it, so activating it would corrupt the file for zero effect, the writer must refuse.
         const string commented =
             "<USER_OVERRIDES>\n" +
             "  <LIVERY_OVERRIDE LIVERY=\"51\" NAME=\"Real\"/>\n" +

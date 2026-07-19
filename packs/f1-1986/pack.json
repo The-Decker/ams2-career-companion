@@ -24,7 +24,7 @@
     "Coverage: f1db 1986 entrant Alex Caffi (osella+alfa-romeo, rounds 13) has no livery in the referenced skinpack/AI set and is not included in this pack.",
     "The source custom-AI XML carries a large per-track (tracks=\"...\") override set; those patches are not carried into this pack's aiOverrides in this version.",
     "The source custom-AI XML carries no vehicle_reliability values on its base entries, so every team uses the generator default reliability of 0.5.",
-    "Authored display: engine acronyms are upper-cased in team names (McLaren-TAG, Brabham-BMW, Arrows-BMW, Benetton-BMW) — the generator's title-casing would emit 'Tag'/'Bmw'.",
-    "Mapping note: f1db's circuit full name for the 1986 Austrian GP venue is the modern 'Red Bull Ring'; the 1986 race ran the Österreichring at the same Spielberg site, and AMS2's Spielberg Historic (1977 layout, driven through 1987) is the era-correct binding — the round is not a placeholder."
+    "Authored display: engine acronyms are upper-cased in team names (McLaren-TAG, Brabham-BMW, Arrows-BMW, Benetton-BMW), the generator's title-casing would emit 'Tag'/'Bmw'.",
+    "Mapping note: f1db's circuit full name for the 1986 Austrian GP venue is the modern 'Red Bull Ring'; the 1986 race ran the Österreichring at the same Spielberg site, and AMS2's Spielberg Historic (1977 layout, driven through 1987) is the era-correct binding, the round is not a placeholder."
   ]
 }

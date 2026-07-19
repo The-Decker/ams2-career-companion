@@ -8,7 +8,7 @@ namespace Companion.Core.Career;
 /// Everything needed to start the first season of the next era pack, derived by
 /// <see cref="EraTransition.Build(SeasonPack, SeasonPack, SeasonEndResult, PlayerCareerState, PlayerOffer, StreamFactory, AgingCurveSet, IReadOnlyDictionary{string, int}?)"/>.
 /// The Data layer persists it via CareerStore.StartNextSeason; replay re-derives it through
-/// the same function and compares — the plan is pure derived state plus the one player choice
+/// the same function and compares, the plan is pure derived state plus the one player choice
 /// (the accepted offer) that fed it.
 /// </summary>
 public sealed record TransitionPlan
@@ -23,7 +23,7 @@ public sealed record TransitionPlan
 
     /// <summary>The seasons between the packs that nobody plays (1967 → 1969 bridges 1968),
     /// ascending. v1 BRIDGES them: everyone ages through the gap and the aging + retirement
-    /// streams run once per bridged year, keyed with that year — deterministic.</summary>
+    /// streams run once per bridged year, keyed with that year, deterministic.</summary>
     public required IReadOnlyList<int> BridgedYears { get; init; }
 
     /// <summary>The player's start-of-new-season state: reputation/OPI/pace anchor carried
@@ -58,28 +58,28 @@ public sealed record TransitionPlan
     /// <summary>The resolved seat's exact livery name, when it resolved.</summary>
     public string? PlayerSeatLiveryName { get; init; }
 
-    /// <summary>The new-pack driver whose entry the player takes — excluded from
+    /// <summary>The new-pack driver whose entry the player takes, excluded from
     /// <see cref="Drivers"/>, exactly like the wizard excludes the season-1 seat pick.</summary>
     public string? DisplacedDriverId { get; init; }
 
-    /// <summary>Budget-Unit rescale across the era boundary. v1: identity (1.0) — the seam
+    /// <summary>Budget-Unit rescale across the era boundary. v1: identity (1.0), the seam
     /// for the Phase-2 economy (era inflation rescale) lives here and is journaled.</summary>
     public double BudgetRescaleFactor { get; init; } = 1.0;
 }
 
 /// <summary>
 /// Era transition v1 (PLAN M6): carries a career from one season pack into the next. Pure
-/// function — no I/O, no clocks; every random draw comes from named, keyed streams, so the
+/// function, no I/O, no clocks; every random draw comes from named, keyed streams, so the
 /// same inputs + master seed rebuild the identical plan (the replay contract).
 ///
 /// Lineage mapping: teams match by <see cref="PackTeam.Id"/> and drivers by
-/// <see cref="PackDriver.Id"/> — lineage ids are stable across era packs (both shipped packs
+/// <see cref="PackDriver.Id"/>, lineage ids are stable across era packs (both shipped packs
 /// use the same "team.lotus" / "driver.jim_clark" convention). Unmatched new-pack entities
 /// get fresh state; entities with no new-pack match are journaled as departed.
 ///
 /// Gap years bridge (never block) as long as the target year is later than the source year:
 /// everyone ages by the gap, and the aging + retirement hazard streams run once per bridged
-/// year, keyed with the bridged year — the exact streams a played season of that year would
+/// year, keyed with the bridged year, the exact streams a played season of that year would
 /// have consumed. A target year at or before the source year throws.
 /// </summary>
 public static class EraTransition
@@ -140,7 +140,7 @@ public static class EraTransition
 
         // The SEASON years drive the transition, not the packs' nominal years: a carryover season
         // (same car reused for a later year) makes the FROM season's year run ahead of the from-pack's
-        // year, so the caller passes the real season years. Default to the pack years — for every
+        // year, so the caller passes the real season years. Default to the pack years, for every
         // non-carryover career season year == pack year, so existing careers are byte-identical.
         int fromYear = fromYearOverride ?? fromPack.Season.Year;
         int toYear = toYearOverride ?? toPack.Season.Year;
@@ -162,7 +162,7 @@ public static class EraTransition
         {
             var curve = agingCurves.TryForYear(year)
                 ?? throw new InvalidOperationException(
-                    $"No aging era covers bridged year {year} — career-aging-curves.json " +
+                    $"No aging era covers bridged year {year}, career-aging-curves.json " +
                     "must span every year between the two packs.");
 
             int aged = 0;
@@ -243,14 +243,14 @@ public static class EraTransition
         {
             errors.Add(
                 $"The accepted offer names team '{acceptedOffer.TeamId}', which does not exist in " +
-                $"pack '{toPack.Manifest.PackId}' ({toYear}) — the offer cannot be honored in the new era.");
+                $"pack '{toPack.Manifest.PackId}' ({toYear}), the offer cannot be honored in the new era.");
         }
         else
         {
             seat = ResolveSeat(toPack, offerTeam.Id);
             if (seat is null)
                 errors.Add(
-                    $"Team '{offerTeam.Id}' has no entries in pack '{toPack.Manifest.PackId}' ({toYear}) — " +
+                    $"Team '{offerTeam.Id}' has no entries in pack '{toPack.Manifest.PackId}' ({toYear}), " +
                     "there is no seat for the player to take.");
         }
 
@@ -276,7 +276,7 @@ public static class EraTransition
         {
             if (seat is not null &&
                 string.Equals(driver.Id, seat.DriverId, StringComparison.Ordinal))
-                continue; // the player's seat — excluded like the wizard's season-1 seat pick
+                continue; // the player's seat, excluded like the wizard's season-1 seat pick
 
             if (bridgedById.TryGetValue(driver.Id, out var carried))
             {
@@ -344,7 +344,7 @@ public static class EraTransition
             DeltaJson = CareerJson.Serialize(new
             {
                 factor = buRescaleFactor,
-                note = "identity rescale — the Budget-Unit economy lands in Phase 2",
+                note = "identity rescale, the Budget-Unit economy lands in Phase 2",
             }),
             Cause = "bu-rescale",
         });
@@ -397,7 +397,7 @@ public static class EraTransition
     }
 
     /// <summary>The exact livery the player takes at <paramref name="teamId"/> in
-    /// <paramref name="pack"/> — the same seat <see cref="Build"/> resolves for an era changeover,
+    /// <paramref name="pack"/>, the same seat <see cref="Build"/> resolves for an era changeover,
     /// exposed for the SAME-PACK carryover path (which seats through
     /// <see cref="SeasonRollover"/> rather than a transition plan). Null when the team has no
     /// entries.</summary>

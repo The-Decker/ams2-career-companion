@@ -23,13 +23,13 @@ public sealed record DynastyRoundSettleContext
     public required int Year { get; init; }
     public required int Round { get; init; }
 
-    /// <summary>The pinned season's total round count — the exact accrual denominator.</summary>
+    /// <summary>The pinned season's total round count, the exact accrual denominator.</summary>
     public required int RoundsInSeason { get; init; }
 
     /// <summary>The player's team budget tier this round (second-driver salary band).</summary>
     public required int PlayerTeamTier { get; init; }
 
-    /// <summary>False on an injury sit-out (DNS) or a round the player was absent from — no
+    /// <summary>False on an injury sit-out (DNS) or a round the player was absent from, no
     /// prize, no appearance money, no player repair; the team's fixed costs still run.</summary>
     public required bool PlayerStarted { get; init; }
 
@@ -71,12 +71,12 @@ public sealed record DynastyEconomyFoldResult
     public required IReadOnlyList<JournalEvent> Events { get; init; }
 
     /// <summary>The round settlement crossed into bankruptcy (terminal; for the caller's
-    /// transition detection — the screen-model capture, exactly like the death flow).</summary>
+    /// transition detection, the screen-model capture, exactly like the death flow).</summary>
     public bool WentBankrupt { get; init; }
 }
 
 /// <summary>
-/// The Grand Prix Dynasty economy fold (docs/dev/dynasty-tycoon-economy.md §3) — three pure,
+/// The Grand Prix Dynasty economy fold (docs/dev/dynasty-tycoon-economy.md §3), three pure,
 /// RNG-free entry points mirroring <see cref="AccidentFold"/>: decisions apply at the top of the
 /// round fold (a development buy is felt in the same round's expectation), the round settlement
 /// runs at the end of the round fold, and the season settlement runs in the season-end pipeline
@@ -194,7 +194,7 @@ public static class DynastyEconomyFold
     }
 
     /// <summary>The round settlement: prize + sponsor + backing income against fees, accruals and
-    /// repairs — one <c>economy.round</c> statement row, the deficit-grace update, and the
+    /// repairs, one <c>economy.round</c> statement row, the deficit-grace update, and the
     /// bankruptcy transition when the money runs out.</summary>
     public static DynastyEconomyFoldResult SettleRound(DynastyRoundSettleContext ctx)
     {
@@ -343,7 +343,7 @@ public static class DynastyEconomyFold
     }
 
     /// <summary>The season settlement: constructors' prize money + sponsor season/title bonuses,
-    /// then the between-season resets — contract decrement/expiry and the development carryover.
+    /// then the between-season resets, contract decrement/expiry and the development carryover.
     /// Runs in the season-end pipeline AFTER final standings; rollover copies the result into the
     /// next season's start state, exactly like the SMGP season fold.</summary>
     public static DynastyEconomyFoldResult SettleSeason(DynastySeasonSettleContext ctx)
@@ -419,7 +419,7 @@ public static class DynastyEconomyFold
         return new DynastyEconomyFoldResult { State = carried, Events = events };
     }
 
-    /// <summary>The journal cause string for a decision kind — shared by the INPUT row (the
+    /// <summary>The journal cause string for a decision kind, shared by the INPUT row (the
     /// declaration) and its DERIVED economy.applied row so news templates key off one name.</summary>
     public static string CauseOf(DynastyEconomyDecisionKind kind) => kind switch
     {
@@ -437,7 +437,7 @@ public static class DynastyEconomyFold
         {
             throw new InvalidOperationException(
                 $"This career's economy was created under rules schema v{state.Version}, but the " +
-                $"installed economy.json is v{rules.SchemaVersion} — the fold refuses to drift " +
+                $"installed economy.json is v{rules.SchemaVersion}, the fold refuses to drift " +
                 "balance tables under an existing career.");
         }
     }

@@ -7,18 +7,18 @@ namespace Companion.Data;
 /// THE championship-round mapping (one place, used by both the unified fold and the app's
 /// session service): a pack calendar may mix championship rounds with non-championship
 /// events (Championship = false), but the scoring engine's round domain is CHAMPIONSHIP
-/// rounds only — best-N segments, engine round numbers, and standings all use the
+/// rounds only, best-N segments, engine round numbers, and standings all use the
 /// championship ordinal, never the calendar position, and non-championship results are
 /// recorded but never scored.
 /// </summary>
 public static class ChampionshipCalendar
 {
-    /// <summary>How many rounds of the calendar are championship rounds — the round count
+    /// <summary>How many rounds of the calendar are championship rounds, the round count
     /// the season's scoring definition resolves against.</summary>
     public static int RoundCount(SeasonPack pack) =>
         pack.Season.Rounds.Count(r => r.Championship);
 
-    /// <summary>1-based position of a calendar round among championship rounds only — the
+    /// <summary>1-based position of a calendar round among championship rounds only, the
     /// round number the scoring engine and best-N segments operate on.</summary>
     public static int Ordinal(SeasonPack pack, int calendarRound) =>
         pack.Season.Rounds.Count(r => r.Championship && r.Round <= calendarRound);

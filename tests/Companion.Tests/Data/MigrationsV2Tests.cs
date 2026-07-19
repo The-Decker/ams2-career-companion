@@ -127,7 +127,7 @@ public class MigrationsV2Tests
     public void V4CareerFileGainsMortalityColumnDefaultingOff()
     {
         // A genuine v4-era file (created before the mortality feature): v5 adds the career.mortality_mode
-        // column with DEFAULT 0, so the existing career reads Off in place — no data loss, no re-author.
+        // column with DEFAULT 0, so the existing career reads Off in place, no data loss, no re-author.
         using var tmp = new TempDb();
         using (var connection = new SqliteConnection(new SqliteConnectionStringBuilder
                {

@@ -6,7 +6,7 @@ namespace Companion.Core.Smgp;
 /// The SMGP universe's own divergence layer (newsroom-history overhaul D9): the career's actual
 /// venue winners compared against the almanac's remembered rulers (<see cref="SmgpRaceLore.Champion"/>,
 /// "who the world remembers ruling here"). Emits <see cref="NewsEventKind.SmgpCanonDiverged"/> /
-/// <see cref="NewsEventKind.SmgpCanonHeld"/> events that carry <c>SmgpFiction</c> provenance — the
+/// <see cref="NewsEventKind.SmgpCanonHeld"/> events that carry <c>SmgpFiction</c> provenance, the
 /// SEGA canon is fiction and must never read as verified history, and the career universe never
 /// silently merges into it. A pure projection over shaped seasons + the display-only almanac:
 /// no I/O, no RNG, never a fold input.

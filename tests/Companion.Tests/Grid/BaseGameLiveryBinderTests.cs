@@ -29,7 +29,7 @@ public sealed class BaseGameLiveryBinderTests
         Assert.Equal(
             new[] { "United Racing #3", "United Racing #4", "McLaren MP4/4 #11" },
             result.Drivers.Select(d => d.LiveryName));
-        // The driver identities are untouched — only the livery each is painted as changes.
+        // The driver identities are untouched, only the livery each is painted as changes.
         Assert.Equal(new[] { "Driver 0", "Driver 1", "Driver 2" }, result.Drivers.Select(d => d.Name));
     }
 
@@ -77,7 +77,7 @@ public sealed class BaseGameLiveryBinderTests
     {
         var file = FileOf("1988 Lotus #1 - N. Piquet", "1988 McLaren #12 - A. Senna", "1988 Ferrari #27 - M. Alboreto");
 
-        // Only the McLaren skin is installed & active on disk — it keeps its real paint.
+        // Only the McLaren skin is installed & active on disk, it keeps its real paint.
         var result = BaseGameLiveryBinder.RebindToBaseGame(
             file,
             Base("United Racing #3", "United Racing #4", "McLaren MP4/4 #11"),

@@ -212,11 +212,11 @@ public sealed class SettingsConsumersTests : IDisposable
     {
         var vm = new ConfirmViewModel(Model("h"), () => { }, () => { });
         var row = Assert.Single(vm.Movements);
-        Assert.Equal("d1 — P5 → P2: gained 3 places", row.Tooltip);
+        Assert.Equal("d1, P5 → P2: gained 3 places", row.Tooltip);
 
-        Assert.Equal("X — P2 → P5: lost 3 places", ConfirmViewModel.MovementTooltip("X", 2, 5));
-        Assert.Equal("X — first classification: P4", ConfirmViewModel.MovementTooltip("X", null, 4));
-        Assert.Equal("X — holds P3", ConfirmViewModel.MovementTooltip("X", 3, 3));
+        Assert.Equal("X, P2 → P5: lost 3 places", ConfirmViewModel.MovementTooltip("X", 2, 5));
+        Assert.Equal("X, first classification: P4", ConfirmViewModel.MovementTooltip("X", null, 4));
+        Assert.Equal("X, holds P3", ConfirmViewModel.MovementTooltip("X", 3, 3));
     }
 
     // ---------- Esc = back (shell level, non-destructive only) ----------
@@ -272,7 +272,7 @@ public sealed class SettingsConsumersTests : IDisposable
         shell.Start.NewCareerCommand.Execute(null);
         Assert.IsType<NewCareerWizardViewModel>(shell.Current);
 
-        // First step: nothing entered yet — Esc leaves to Start (non-destructive).
+        // First step: nothing entered yet, Esc leaves to Start (non-destructive).
         Assert.True(shell.TryEscapeBack());
         Assert.Same(shell.Start, shell.Current);
     }
@@ -385,7 +385,7 @@ public sealed class SettingsConsumersTests : IDisposable
 
     // ---------- fakes ----------
 
-    /// <summary>A session that emits one news dispatch with a body — for the NewsDetail gating.</summary>
+    /// <summary>A session that emits one news dispatch with a body, for the NewsDetail gating.</summary>
     private sealed class NewsSession : ICareerSession, IDisposable
     {
         public SeasonPack Pack { get; } = TestPackBuilder.TwoRoundPack();

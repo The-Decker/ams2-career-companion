@@ -3,11 +3,11 @@ using Companion.Core.Dynasty;
 namespace Companion.ViewModels.Services;
 
 /// <summary>
-/// The Dynasty owner-economy dashboard — the complete bindable projection of the folded ledger
+/// The Dynasty owner-economy dashboard, the complete bindable projection of the folded ledger
 /// (docs/dev/dynasty-tycoon-economy.md §9). A pure DISPLAY read over the carried
 /// <see cref="DynastyEconomyState"/>, the pinned rules tables, this season's economy journal
 /// rows, and the pending (declared, not-yet-folded) decisions. All money is pre-formatted for
-/// display at this boundary — exact Rational never leaves the fold. Null for every non-economy
+/// display at this boundary, exact Rational never leaves the fold. Null for every non-economy
 /// career. Decisions go through <see cref="ICareerSession.DeclareEconomyDecision"/>; this model
 /// only reports.
 /// </summary>

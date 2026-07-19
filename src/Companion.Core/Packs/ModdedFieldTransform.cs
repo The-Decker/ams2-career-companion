@@ -7,11 +7,11 @@ namespace Companion.Core.Packs;
 /// Applies a pack's OPT-IN modded field (<see cref="PackManifest.ModdedField"/>) to its
 /// entries.json + season.json: appends the mod's extra entries, adds their drivers to every
 /// round's starter list, and bumps each round's grid size (opponents track it) up to the
-/// track's AI cap. Community CAR mods only add to the grid — the SMGP pack's two McLaren MP4/5B
+/// track's AI cap. Community CAR mods only add to the grid, the SMGP pack's two McLaren MP4/5B
 /// teams by Kobra Fleetworks round the field from 24 to 26.
 ///
 /// Pure string transform run at CAREER CREATION, gated upstream by the "use the mod" tick AND an
-/// install check (the mod vehicle is present) — the TRANSFORMED files are what get pinned, so the
+/// install check (the mod vehicle is present), the TRANSFORMED files are what get pinned, so the
 /// fold reads the fuller field and replays stay byte-identical without any seed or fold change. A
 /// pack with no modded field (every other pack) never calls this, so it round-trips unchanged.
 /// </summary>

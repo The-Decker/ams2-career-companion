@@ -17,7 +17,7 @@ namespace Companion.RenderHarness.Tests;
 /// <summary>
 /// Real-WPF coverage for the History tab's encyclopedia surface: the featured trio, era and
 /// subject browsers, record books, the verified timeline, the real-history-vs-this-universe
-/// comparison, and the unified archive search. The fixture is entirely read-side data — it
+/// comparison, and the unified archive search. The fixture is entirely read-side data, it
 /// never applies a result, creates a fold, or touches the deterministic news generator.
 /// </summary>
 public sealed class HistoryEncyclopediaRenderTests
@@ -51,7 +51,7 @@ public sealed class HistoryEncyclopediaRenderTests
             Assert.Contains("THE RECORD BOOKS", texts);
             Assert.Contains("VERIFIED TIMELINE", texts);
 
-            // The featured trio is the deterministic date-aware rotation — always populated here.
+            // The featured trio is the deterministic date-aware rotation, always populated here.
             Assert.NotNull(vm.FeaturedEra);
             Assert.NotNull(vm.FeaturedDriver);
             Assert.NotNull(vm.FeaturedTeam);
@@ -272,7 +272,7 @@ public sealed class HistoryEncyclopediaRenderTests
     }
 
     /// <summary>The stand-in session: the same shape as HistoryArchiveRenderTests' fixture plus
-    /// the encyclopedia archive index and a season divergence report — all read-side data.</summary>
+    /// the encyclopedia archive index and a season divergence report, all read-side data.</summary>
     private sealed class EncyclopediaSession : ICareerSession
     {
         public required CareerSummary SummaryValue { get; init; }

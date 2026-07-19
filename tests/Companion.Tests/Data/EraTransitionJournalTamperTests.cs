@@ -4,7 +4,7 @@ namespace Companion.Tests.Data;
 
 /// <summary>
 /// M6 verification (added by the adversarial-verification pass): proves the cross-transition
-/// replay byte-compare has teeth on the TRANSITION journal rows themselves — the
+/// replay byte-compare has teeth on the TRANSITION journal rows themselves, the
 /// byte-identical test could in principle pass with a compare that skipped the era.* rows,
 /// so tamper one and demand a divergence at exactly that row.
 /// </summary>

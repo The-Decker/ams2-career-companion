@@ -8,10 +8,10 @@ namespace Companion.ViewModels.Wizard;
 
 /// <summary>
 /// The new-career wizard's character-creation step (docs/dev/character-system.md §5). Three tiers
-/// over the same state: pick an ARCHETYPE preset (the one-click default — a pre-spent, in-budget
+/// over the same state: pick an ARCHETYPE preset (the one-click default, a pre-spent, in-budget
 /// template), then optionally FREE-CUSTOMIZE the seven stat sliders and the perk shelf with a live
 /// remaining-CP meter, with the raw numbers available for tinkerers. Produces a
-/// <see cref="CharacterProfile"/> at confirm. Pure viewmodel — no I/O, fully unit-testable.
+/// <see cref="CharacterProfile"/> at confirm. Pure viewmodel, no I/O, fully unit-testable.
 /// </summary>
 public sealed partial class CharacterViewModel : ObservableObject
 {
@@ -240,7 +240,7 @@ public sealed partial class CharacterViewModel : ObservableObject
         OnPropertyChanged(nameof(BuildReadinessSummary));
     }
 
-    /// <summary>The player's driver name — the identity the whole app will use. It is created before
+    /// <summary>The player's driver name, the identity the whole app will use. It is created before
     /// seat selection, so its default is deliberately independent of the historical driver.</summary>
     [ObservableProperty]
     private string _name;
@@ -261,7 +261,7 @@ public sealed partial class CharacterViewModel : ObservableObject
     public const int MaxAge = 45;
     public const int DefaultAge = 23;
 
-    /// <summary>The driver's REAL age in their first season — the character's own age (16–45), which
+    /// <summary>The driver's REAL age in their first season, the character's own age (16–45), which
     /// drives the sim's season-end aging and the contract-offer age risk. A young driver has years of
     /// growth ahead; a veteran is courted more warily. Independent of the historical seat.</summary>
     [ObservableProperty]
@@ -353,7 +353,7 @@ public sealed partial class CharacterViewModel : ObservableObject
 
     private const string OneTrickPerkId = "one_trick";
 
-    /// <summary>The rating fields One-Trick Pony may lock onto — every player-writable flavor rating
+    /// <summary>The rating fields One-Trick Pony may lock onto, every player-writable flavor rating
     /// except raceSkill (the auto-taxed pace lever stays out of the specialism).</summary>
     private static readonly IReadOnlyList<string> OneTrickFlavors = PerkResolver.EligibleChosenFlavors;
 
@@ -375,7 +375,7 @@ public sealed partial class CharacterViewModel : ObservableObject
         ? _racingDnaCatalog!.CreationBudget.TraitBudget
         : _rules.CharacterPoints.CreationBudget;
 
-    /// <summary>The MOST perk points a build may spend — the budget plus the drawback refund headroom
+    /// <summary>The MOST perk points a build may spend, the budget plus the drawback refund headroom
     /// (9 = 6 + 3 in the shipped rules): taking a drawback-heavy perk refunds points you can pour into
     /// one premium upside. Displayed so the meter never reads a nonsensical "8 of 6".</summary>
     public int MaxPerkPoints => IsProgressionV2
@@ -396,7 +396,7 @@ public sealed partial class CharacterViewModel : ObservableObject
         ? _racingDnaCatalog!.CreationBudget.MaxTraits
         : _rules.CharacterPoints.MaxPerks;
 
-    /// <summary>Perks fit the count cap — an archetype plus only a few more. No cap = always true.</summary>
+    /// <summary>Perks fit the count cap, an archetype plus only a few more. No cap = always true.</summary>
     public bool PerksWithinCount => MaxPerks is not int cap || SelectedPerkCount <= cap;
 
     /// <summary>Perks fit the audited CP window [minBudgetAfterSpend, budget + maxRefundHeadroom].</summary>
@@ -407,7 +407,7 @@ public sealed partial class CharacterViewModel : ObservableObject
         && NetCpSpend <= MaxPerkPoints;
 
     /// <summary>The most total talent a driver may carry across the seven stats. Redistribution is
-    /// free — being a 0.85 somewhere means being low elsewhere — but the SUM is capped, so no driver
+    /// free, being a 0.85 somewhere means being low elsewhere, but the SUM is capped, so no driver
     /// is great at everything. Data-driven (perks.json).</summary>
     public double StatCap => IsProgressionV2
         ? _racingDnaCatalog!.CreationBudget.StatSumCap
@@ -861,13 +861,13 @@ public sealed partial class CharacterViewModel : ObservableObject
             ChosenFlavor = EligibleFlavors[(int)(rng.NextUInt32() % (uint)EligibleFlavors.Count)];
         _suppressRecompute = false;
 
-        SelectedArchetype = null; // the spread is no longer the preset's — clear the selection
+        SelectedArchetype = null; // the spread is no longer the preset's, clear the selection
         Recompute();
     }
 
     /// <summary>Distributes the talent budget randomly: each stat starts at its floor, then the
     /// remaining cap mass is sprinkled across the stats (each capped at its ceiling), so the result is
-    /// always in-range and under the sum cap — a valid spread with no rejection loop.</summary>
+    /// always in-range and under the sum cap, a valid spread with no rejection loop.</summary>
     private bool CanRandomBuild() => IsProgressionV2
         ? _randomBuildSeed.HasValue &&
           _racingDnaCatalog is not null

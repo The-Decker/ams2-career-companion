@@ -7,7 +7,7 @@ using Companion.Core.Numerics;
 namespace Companion.Core.Dynasty;
 
 /// <summary>
-/// The Grand Prix Dynasty economy balance tables (<c>data\rules\dynasty\economy.json</c>) — a
+/// The Grand Prix Dynasty economy balance tables (<c>data\rules\dynasty\economy.json</c>), a
 /// REQUIRED fold input for economy careers, never hard-coded era numbers in the engine. Pure
 /// <see cref="Parse"/> with throwing validation (the <c>RacingDnaCatalog</c> discipline):
 /// <see cref="CurrentSchemaVersion"/> is pinned into each career's
@@ -166,7 +166,7 @@ public sealed record DynastyEconomyRules
     public Rational SecondSeatSalaryPerSeason(int teamTier) =>
         SecondSeat.RetainedSalaryPerSeasonByTier[Math.Clamp(teamTier, 1, 5)];
 
-    /// <summary>An exact per-round accrual: <paramref name="seasonAmount"/> ÷ rounds — the parts
+    /// <summary>An exact per-round accrual: <paramref name="seasonAmount"/> ÷ rounds, the parts
     /// sum back to the season amount with no drift.</summary>
     public static Rational PerRound(Rational seasonAmount, int roundsInSeason) =>
         roundsInSeason <= 0 ? seasonAmount : seasonAmount / roundsInSeason;
@@ -195,7 +195,7 @@ public sealed record DynastyEconomyRules
     /// <summary>Loads <c>data\rules\dynasty\economy.json</c>, or null when the file is absent.
     /// The economy is an OPTIONAL-MODE fold input: required for an economy career (the creation
     /// seed and every economy fold/decision path refuse when this is null, with a clear message),
-    /// but ABSENT for every other career — so a legacy/SMGP/Passport career on a stale-data install
+    /// but ABSENT for every other career, so a legacy/SMGP/Passport career on a stale-data install
     /// that ships no dynasty subfolder is completely unaffected (the dormancy contract). The eager
     /// <c>CareerRulesData.Load</c> must therefore never make this a hard requirement.</summary>
     public static DynastyEconomyRules? Load(string rulesDirectory)
@@ -368,7 +368,7 @@ public sealed record DynastyDevelopmentRules
     /// <summary>The fraction of the level that survives the season boundary (floor).</summary>
     public required Rational Carryover { get; init; }
 
-    /// <summary>The seat-strength adjustment each level adds in the expectation channel — NOT
+    /// <summary>The seat-strength adjustment each level adds in the expectation channel, NOT
     /// money, so a plain double like every other rating input.</summary>
     public required double StrengthPerLevel { get; init; }
 
@@ -408,7 +408,7 @@ public sealed record DynastySponsorDeal
     public required string Id { get; init; }
     public required string Name { get; init; }
 
-    /// <summary>"title" / "major" / "minor" — which slot pool the deal occupies.</summary>
+    /// <summary>"title" / "major" / "minor", which slot pool the deal occupies.</summary>
     public required string TierSlot { get; init; }
 
     /// <summary>The signing window: the deal is offered only for seasons in [FromYear, ToYear].</summary>

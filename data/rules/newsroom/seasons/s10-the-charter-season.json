@@ -1,0 +1,103 @@
+{
+  "$comment": "Season dossier pack S10, The Charter Season (Safety Reckoning act). Season-scoped coverage for the first year after the Reckoning: the sport signs its covenant of protection, and every result is read against it. Voice: restraint and craft, colder and more respectful, incident copy always serious. Ids are stable rendezvous keys, never rename. Read-side only: editing this file changes display, never replay.",
+  "version": 1,
+  "templates": [
+    {
+      "id": "s10.season-started.the-charter",
+      "event": "seasonStarted",
+      "eras": ["smgp"],
+      "seasons": [10],
+      "headline": "THE CHARTER SEASON BEGINS, with ink still drying on the covenant",
+      "deck": "Sixteen rounds under a written promise",
+      "summary": "Season ten opens as the first year of the charter, the sport's signed promise to protect its own.",
+      "sections": {
+        "lead": "{pool:dateline} The entry list for the new season comes with a second document, and for the first time in this paddock's memory the second document matters as much as the first. They are calling it the charter: barriers rebuilt, marshals retrained, medical cars standing where the fast corners used to be taken on trust. After what the last years cost, the sport has put its promise in writing.",
+        "context": "The horsepower years made the cars faster than the fences. This is the season the fences answer back. The big board will keep the score exactly as it always has; what has changed is what the sport now owes the names on it. {pool:swBoard}",
+        "close": "Sixteen rounds under a covenant nobody is allowed to forget. The signatures said as much."
+      }
+    },
+    {
+      "id": "s10.race-won.won-clean-and-whole",
+      "event": "raceWon",
+      "eras": ["smgp"],
+      "seasons": [10],
+      "headline": "{subject} wins[[?venue: at {venue}]], a victory the charter would recognise",
+      "deck": "First home, and home in one piece",
+      "summary": "{subject} won[[?venue: at {venue}]][[?round: in round {round}]].",
+      "sections": {
+        "lead": "{pool:dateline} {subject} won today the way the new era asks its winners to win: flat out where the road allows, exact where it does not, and whole at the end of it. The old years measured a victory by the noise it made. This one will be measured by how it was taken. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: The championship account stands at {ord:champPosition} for {subject}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s10.podium.measured-hands",
+      "event": "podiumFinish",
+      "eras": ["smgp"],
+      "seasons": [10],
+      "headline": "{subject} on the podium[[?venue: at {venue}]], composure rewarded",
+      "deck": "The new era's quiet currency",
+      "summary": "{subject} finished on the podium[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} There was no theatre in it, and that was the point. {subject} drove a tidy, unflinching race and stood on the podium with the air of a professional who expected to be there. The charter season pays its respects to exactly this kind of afternoon. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: The board reads {ord:champPosition} for {subject}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s10.pole.precision-is-devotion",
+      "event": "polePosition",
+      "eras": ["smgp"],
+      "seasons": [10],
+      "headline": "POLE for {subject}[[?venue: at {venue}]], precision as devotion",
+      "deck": "The stopwatch still has its say in the careful era",
+      "summary": "{subject} took pole position[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} Let nobody say the charter made the sport slow. {subject} took pole[[?venue: at {venue}]] with a lap built corner by corner, no heroics, no wasted movement, and the stopwatch bowed to it. Speed was never the problem. Speed without care was. {pool:swBoard}",
+        "close": "Tomorrow asks the harder question: the same precision for two hours, with company."
+      }
+    },
+    {
+      "id": "s10.lead-taken.the-standard-bearer",
+      "event": "championshipLeadTaken",
+      "eras": ["smgp"],
+      "seasons": [10],
+      "headline": "{subject} leads the charter season, and carries the standard with it",
+      "deck": "The first leader of the accountable era",
+      "summary": "{subject} took the championship lead in season ten.",
+      "sections": {
+        "lead": "{pool:dateline} The big board has a new top line, and this year the top line means more than points. {subject} leads the first season run under the charter, which makes the leader something new in this paddock: a standard bearer. How the lead is defended will be read as closely as the lead itself. {pool:swBoard}",
+        "stats": "{pool:rrStatLine}",
+        "close": "The covenant does not slow the arithmetic. It watches it."
+      }
+    },
+    {
+      "id": "s10.retired-mechanical.the-inquiry",
+      "event": "retiredMechanical",
+      "eras": ["smgp"],
+      "seasons": [10],
+      "headline": "{subject} parks it[[?venue: at {venue}]], and the failure will be studied",
+      "deck": "In the charter season, even a breakdown gets a hearing",
+      "summary": "{subject} retired with mechanical failure[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The machine went quiet under {subject}[[?venue: at {venue}]], and the day ended on the grass. In the old years that was the end of the story: a shrug, a flatbed, a new engine. This year the car goes home to be taken apart properly, because the era has decided that failures are lessons, not weather. {pool:wrenchNote}",
+        "context": "The crew will find the cause and write it down. That is what the covenant asks of a garage, and this garage will answer. {pool:swLadder}",
+        "close": "The board records a retirement. The notebook records why."
+      }
+    },
+    {
+      "id": "s10.retired-driver-error.the-walk-back",
+      "event": "retiredDriverError",
+      "eras": ["smgp"],
+      "seasons": [10],
+      "headline": "{subject} walks away[[?venue: at {venue}]], which is what the charter is for",
+      "deck": "A mistake, a barrier that held, a driver unhurt",
+      "summary": "{subject} crashed out[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} {subject} made the mistake[[?venue: at {venue}]], and the barrier took the car. There is no dressing that up, and this corner of the season will not try. What matters, and what the paddock said quietly to itself all evening, is that the driver climbed out and walked. A few years ago the same sentence could not always be written.",
+        "context": "The rebuilt fencing did the work it was rebuilt to do. The marshals were there in seconds, trained to be. This is what the charter bought with its ink. {pool:swCrowd}",
+        "close": "The car is a write-off. The driver is not. On the new ledger, that is the only line that counts."
+      }
+    }
+  ]
+}

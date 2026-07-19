@@ -40,7 +40,7 @@ public sealed record NewsroomArticle
     public string Body => string.Join("\n\n", Sections.Select(s => s.Text));
 }
 
-/// <summary>Facts the composer needs beyond the event itself — supplied by the session.</summary>
+/// <summary>Facts the composer needs beyond the event itself, supplied by the session.</summary>
 public sealed record NewsroomIdentity
 {
     public string PlayerName { get; init; } = "";
@@ -52,7 +52,7 @@ public sealed record NewsroomIdentity
 /// <summary>
 /// Deterministic article renderer: template + desk by rendezvous hash (stable under corpus
 /// growth), pool fragments from the display-only <c>"newsroom"</c> stream (same key = same
-/// words on every open), all grammar via <see cref="NewsroomGrammar"/>. Pure — no I/O.
+/// words on every open), all grammar via <see cref="NewsroomGrammar"/>. Pure, no I/O.
 /// </summary>
 public static class NewsroomComposer
 {
@@ -169,7 +169,7 @@ public static class NewsroomComposer
             ["missRaces"] = f.MissRaces > 0 ? Invariant(f.MissRaces) : "",
             ["wet"] = f.IsWet ? "wet" : "",
             ["finale"] = f.IsFinalRound ? "finale" : "",
-            // Dynasty economy tokens (economy §8) — empty for every non-economy story.
+            // Dynasty economy tokens (economy §8), empty for every non-economy story.
             ["sponsor"] = f.SponsorName,
             ["amount"] = f.MoneyAmount,
         };

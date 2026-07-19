@@ -12,7 +12,7 @@ namespace Companion.ViewModels.Start;
 /// <summary>
 /// The start screen (app-shell contract): recent careers (JSON MRU in
 /// %APPDATA%\AMS2CareerCompanion\recent.json), continue, and new-career entry points.
-/// Navigation is event-based — the shell decides what a "continue" or "new career" request
+/// Navigation is event-based, the shell decides what a "continue" or "new career" request
 /// means; this viewmodel only owns the MRU list.
 /// </summary>
 public sealed partial class StartViewModel : ObservableObject
@@ -25,11 +25,11 @@ public sealed partial class StartViewModel : ObservableObject
             DisplayName = "Grand Prix Dynasty",
             Tagline = "Build a legacy through racing history.",
             Description =
-                "Begin the faithful historical championship path. The current driver career is " +
-                "playable now; owner and team management will expand in later Alpha passes.",
+                "Begin the faithful historical championship path. The driver-owner mode is in " +
+                "active development; Super Monaco GP is the finished experience this Alpha.",
             PersistenceSummary =
                 "One save follows one chronological timeline. Its installed faithful seasons are pinned when you begin.",
-            AvailabilityLabel = "PLAYABLE FIRST PASS",
+            AvailabilityLabel = "IN DEVELOPMENT",
             IsAvailable = true,
         },
         new CareerModeEntry
@@ -47,14 +47,15 @@ public sealed partial class StartViewModel : ObservableObject
         {
             Id = CareerExperienceModes.RacingPassport,
             DisplayName = "Racing Passport",
-            Tagline = "One driver. Many racing timelines.",
+            Tagline = "Choose a season. Take a seat. Go racing.",
             Description =
-                "Create one persistent driver, then start and resume independent historical or " +
-                "Super Monaco GP careers from a shared portfolio.",
+                "Choose any installed faithful historical series, replace one driver, and race " +
+                "the complete season.",
             PersistenceSummary =
-                "Driver progression is global; standings, seats, age, injuries and death stay local to each timeline.",
-            AvailabilityLabel = "COMING IN A LATER ALPHA PASS",
-            IsAvailable = false,
+                "Each Passport season is an independent save focused on racing, results, standings, " +
+                "and championship history.",
+            AvailabilityLabel = "PLAYABLE NOW",
+            IsAvailable = true,
         },
     ]);
 
@@ -111,7 +112,7 @@ public sealed partial class StartViewModel : ObservableObject
     [ObservableProperty]
     private string? _openError;
 
-    /// <summary>Failure banner for the gallery's file operations — delete/rename/duplicate on a
+    /// <summary>Failure banner for the gallery's file operations, delete/rename/duplicate on a
     /// locked or permission-blocked .ams2career, or an invalid rename target. Null when there is
     /// nothing to report; cleared whenever the user moves on to another action. Distinct from
     /// <see cref="OpenError"/> so a file-operation failure never hides behind (or clobbers) an
@@ -158,7 +159,7 @@ public sealed partial class StartViewModel : ObservableObject
 
     /// <summary>"Open career…": route an arbitrary <c>.ams2career</c> path (chosen in the view's
     /// file dialog) through the same open-career flow the gallery cards use. The VM only validates
-    /// what it can without touching the career database — a blank or non-existent path — and reports
+    /// what it can without touching the career database, a blank or non-existent path, and reports
     /// it in <see cref="OpenError"/>; a file that exists but will not open is handled downstream by
     /// the shell's own open-failure banner. Takes the path (not a dialog) so it stays testable.</summary>
     [RelayCommand]
@@ -227,7 +228,7 @@ public sealed partial class StartViewModel : ObservableObject
     /// <summary>"Delete career file…": deletes the .ams2career from disk, then drops the MRU
     /// entry. The VIEW confirms first (dialogs are view-layer, same contract as the open picker);
     /// this command is the already-confirmed action. A file that cannot be deleted (locked by an
-    /// open session, permissions) reports in <see cref="GalleryError"/> and KEEPS the entry — the
+    /// open session, permissions) reports in <see cref="GalleryError"/> and KEEPS the entry, the
     /// career still exists on disk. A file that is already gone still drops the entry.</summary>
     [RelayCommand]
     private void DeleteRecent(RecentCareer? career)
@@ -241,7 +242,7 @@ public sealed partial class StartViewModel : ObservableObject
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            GalleryError = $"Could not delete '{career.CareerName}' — {ex.Message}\n" +
+            GalleryError = $"Could not delete '{career.CareerName}', {ex.Message}\n" +
                 "If this career is open in the app, close it and try again.";
             return;
         }
@@ -289,7 +290,7 @@ public sealed partial class StartViewModel : ObservableObject
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
         {
-            GalleryError = $"Could not rename '{career.CareerName}' — {ex.Message}\n" +
+            GalleryError = $"Could not rename '{career.CareerName}', {ex.Message}\n" +
                 "If this career is open in the app, close it and try again.";
             return;
         }
@@ -331,7 +332,7 @@ public sealed partial class StartViewModel : ObservableObject
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
         {
-            GalleryError = $"Could not duplicate '{career.CareerName}' — {ex.Message}";
+            GalleryError = $"Could not duplicate '{career.CareerName}', {ex.Message}";
             return;
         }
 
@@ -383,7 +384,7 @@ public sealed partial class StartViewModel : ObservableObject
     /// <summary>"Set card image…" / "Clear card image": records (a non-blank <paramref name="imagePath"/>)
     /// or clears (a blank one) the user-chosen gallery image for a career. The VIEW picks the file
     /// (dialogs are view-layer, same contract as the open picker); this method is the already-chosen
-    /// action so it stays unit-testable. Point-to-file — the image is referenced, not copied — so a
+    /// action so it stays unit-testable. Point-to-file, the image is referenced, not copied, so a
     /// moved/deleted file simply reverts the card to the year's era art.</summary>
     public void SetCareerImage(RecentCareer? career, string? imagePath)
     {

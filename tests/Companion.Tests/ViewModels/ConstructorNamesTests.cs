@@ -12,9 +12,9 @@ namespace Companion.Tests.ViewModels;
 /// Constructor historical names (fix round, user direction): everywhere constructors appear
 /// they resolve to the pack's teams.json name ("Brabham-Repco") with id fallback. Career-mode
 /// constructor standings carry the PACK TEAM ID (the grid seats' TeamId feeds the engine's
-/// ConstructorId — verified here against a real career round), not an f1db-style
+/// ConstructorId, verified here against a real career round), not an f1db-style
 /// chassis+engine key, so the teams.json lookup is the correct resolution. Community packs
-/// author their own names — nothing is hardcoded.
+/// author their own names, nothing is hardcoded.
 /// </summary>
 public sealed class ConstructorNamesTests : IDisposable
 {
@@ -81,8 +81,8 @@ public sealed class ConstructorNamesTests : IDisposable
         Assert.NotNull(standings.Constructors);
         Assert.NotEmpty(standings.Constructors);
 
-        // The key IS the pack teamId (grid seat TeamId → engine ConstructorId) — not a
-        // chassis+engine composite — so teams.json resolves every single one.
+        // The key IS the pack teamId (grid seat TeamId → engine ConstructorId), not a
+        // chassis+engine composite, so teams.json resolves every single one.
         var teamsById = session.Pack.Teams.ToDictionary(t => t.Id, StringComparer.Ordinal);
         Assert.All(standings.Constructors, c => Assert.Contains(c.ConstructorId, teamsById));
 

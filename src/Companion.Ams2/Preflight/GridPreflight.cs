@@ -12,7 +12,7 @@ public enum PreflightSeverity
     Warning,
 
     /// <summary>A neutral, non-gating note (never blocks, never an amber "proceed-anyway"
-    /// warning). Used for NAMeS-primary observations the user manages themselves — e.g. a
+    /// warning). Used for NAMeS-primary observations the user manages themselves, e.g. a
     /// name the installed AI file defines but has no deployed skin, which binds a name and
     /// falls back to the default skin (managed via the pack's own selector, not this app).</summary>
     Info,
@@ -32,8 +32,8 @@ public sealed record PreflightReport
 
 /// <summary>
 /// Validates a generated custom-AI grid before it is staged: class name against the content
-/// library (exact case — the filename IS the binding), livery names against the installed
-/// NAMeS/AI file (PRIMARY — "found before overwritten") then installed skin overrides + known
+/// library (exact case, the filename IS the binding), livery names against the installed
+/// NAMeS/AI file (PRIMARY, "found before overwritten") then installed skin overrides + known
 /// stock names, grid size against the venue's AI cap, per-track override ids against the track
 /// library.
 /// </summary>
@@ -70,7 +70,7 @@ public static class GridPreflight
         {
             Severity = PreflightSeverity.Error,
             Message = caseInsensitive is not null
-                ? $"Vehicle class '{file.VehicleClass}' does not match the game's casing '{caseInsensitive}' — " +
+                ? $"Vehicle class '{file.VehicleClass}' does not match the game's casing '{caseInsensitive}', " +
                   "the file name is case-sensitive and the game will ignore it."
                 : $"Vehicle class '{file.VehicleClass}' is not in the content library " +
                   $"(extracted from {library.ExtractedFrom}).",
@@ -81,11 +81,11 @@ public static class GridPreflight
     /// Livery validity, NAMeS-primary (Mike's requirement: the installed names/AI mod must be
     /// PRIMARY if found, "found before overwritten"). Precedence:
     /// <list type="number">
-    /// <item>A name the INSTALLED AI FILE defines is VALID — no issue at all, whatever the skin
+    /// <item>A name the INSTALLED AI FILE defines is VALID, no issue at all, whatever the skin
     /// state, because that file is the authority for what binds in-game.</item>
-    /// <item>A name in an installed SKIN OVERRIDE or the STOCK library also binds — no issue.</item>
+    /// <item>A name in an installed SKIN OVERRIDE or the STOCK library also binds, no issue.</item>
     /// <item>A name the AI file defines but with NO deployed skin is at most an INFO note (the
-    /// name binds; the skin falls back to default — managed with the pack's own selector),
+    /// name binds; the skin falls back to default, managed with the pack's own selector),
     /// never a Warning.</item>
     /// <item>A name in NEITHER the AI file NOR skins NOR stock is the only real Warning.</item>
     /// </list>
@@ -98,7 +98,7 @@ public static class GridPreflight
         List<PreflightIssue> issues)
     {
         // PRIMARY: names the installed NAMeS/AI file for this class defines. Found before
-        // overwritten — if the user's own AI file declares the livery, it is valid, period.
+        // overwritten, if the user's own AI file declares the livery, it is valid, period.
         var aiNames = installedAiNames is { LiveryNames.Count: > 0 }
             ? installedAiNames.LiveryNames.ToHashSet(StringComparer.Ordinal)
             : [];
@@ -123,13 +123,13 @@ public static class GridPreflight
             issues.Add(new PreflightIssue
             {
                 Severity = PreflightSeverity.Error,
-                Message = $"Livery '{duplicate.Key}' has {duplicate.Count()} base entries — only one driver can bind to a livery.",
+                Message = $"Livery '{duplicate.Key}' has {duplicate.Count()} base entries, only one driver can bind to a livery.",
             });
         }
 
         foreach (var driver in file.Drivers.DistinctBy(d => d.LiveryName, StringComparer.Ordinal))
         {
-            // (1) The installed AI file defines this name — it binds. The skin may or may not
+            // (1) The installed AI file defines this name, it binds. The skin may or may not
             // be deployed; either way this is never a Warning.
             if (aiNames.Contains(driver.LiveryName))
             {
@@ -139,14 +139,14 @@ public static class GridPreflight
                     {
                         Severity = PreflightSeverity.Info,
                         Message = $"Livery '{driver.LiveryName}' is defined by your installed {file.VehicleClass} " +
-                                  "AI file — the name binds. No matching skin was scanned, so it may fall back to " +
+                                  "AI file, the name binds. No matching skin was scanned, so it may fall back to " +
                                   "the default skin; manage skins with the pack's own selector.",
                     });
                 }
                 continue;
             }
 
-            // (2) A skin override or stock name also binds — no issue.
+            // (2) A skin override or stock name also binds, no issue.
             if (known.Count > 0 && known.Contains(driver.LiveryName))
                 continue;
 
@@ -160,17 +160,17 @@ public static class GridPreflight
                 {
                     Severity = PreflightSeverity.Error,
                     Message = $"Livery '{driver.LiveryName}' does not exactly match installed/known livery " +
-                              $"'{nearMiss}' (case or whitespace differs — the binding is exact-match).",
+                              $"'{nearMiss}' (case or whitespace differs, the binding is exact-match).",
                 });
             }
             else if (known.Count > 0)
             {
-                // (4) In NEITHER the AI file NOR skins NOR stock — the only real Warning.
+                // (4) In NEITHER the AI file NOR skins NOR stock, the only real Warning.
                 issues.Add(new PreflightIssue
                 {
                     Severity = PreflightSeverity.Warning,
                     Message = $"Livery '{driver.LiveryName}' was not found in your installed {file.VehicleClass} AI file, " +
-                              "installed skin overrides, or known stock names — the entry will not bind unless the pack is installed.",
+                              "installed skin overrides, or known stock names, the entry will not bind unless the pack is installed.",
                 });
             }
         }
@@ -181,7 +181,7 @@ public static class GridPreflight
             {
                 Severity = PreflightSeverity.Warning,
                 Message = $"No livery reference data for class {file.VehicleClass} (no installed AI file, no installed " +
-                          "overrides scanned, no stock library entry) — livery bindings cannot be verified.",
+                          "overrides scanned, no stock library entry), livery bindings cannot be verified.",
             });
         }
     }
@@ -189,8 +189,8 @@ public static class GridPreflight
     /// <summary>
     /// Livery-name HYGIENE (AMS2 diagnosis #7): the binding is byte-exact, so a leading/trailing
     /// space or a non-ASCII byte in the <c>livery_name</c> (Reiza dev "hook issues") silently breaks
-    /// the match — and a mismatch reverts the WHOLE class to stock names, not just one car. These are
-    /// invisible in a UI, so flag them explicitly as warnings (we never auto-mutate the name — the
+    /// the match, and a mismatch reverts the WHOLE class to stock names, not just one car. These are
+    /// invisible in a UI, so flag them explicitly as warnings (we never auto-mutate the name, the
     /// real in-game livery might genuinely carry the odd byte).
     /// </summary>
     private static void CheckLiveryNameHygiene(CustomAiFile file, List<PreflightIssue> issues)
@@ -201,7 +201,7 @@ public static class GridPreflight
                 issues.Add(new PreflightIssue
                 {
                     Severity = PreflightSeverity.Warning,
-                    Message = $"Livery name '{livery}' has leading/trailing whitespace — the binding is byte-exact, " +
+                    Message = $"Livery name '{livery}' has leading/trailing whitespace, the binding is byte-exact, " +
                               "so this likely won't match the in-game livery and can revert the whole class to stock names.",
                 });
 
@@ -209,7 +209,7 @@ public static class GridPreflight
                 issues.Add(new PreflightIssue
                 {
                     Severity = PreflightSeverity.Warning,
-                    Message = $"Livery name '{livery}' contains non-ASCII characters — a known AMS2 match ('hook') issue; " +
+                    Message = $"Livery name '{livery}' contains non-ASCII characters, a known AMS2 match ('hook') issue; " +
                               "if this class shows stock names in-game, the accented byte is the likely cause.",
                 });
         }
@@ -259,7 +259,7 @@ public static class GridPreflight
             {
                 Severity = PreflightSeverity.Error,
                 Message = $"Grid of {gridSize} exceeds {track.TrackName ?? track.Id}'s AI cap of " +
-                          $"{track.MaxAiParticipants} — the game will fill fewer cars than the entry list.",
+                          $"{track.MaxAiParticipants}, the game will fill fewer cars than the entry list.",
             });
         }
     }

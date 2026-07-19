@@ -5,7 +5,7 @@ namespace Companion.Tests.Ams2;
 /// <summary>
 /// The bubble-car graft lifts a car's three malformed block-groups (LIVERY/HELMET/OUTFIT) from a
 /// variant that has it and drops them into a displaced peer's slot in the active model file, renumbering
-/// the slot — never re-serializing (community override files are malformed with stray comment markers).
+/// the slot, never re-serializing (community override files are malformed with stray comment markers).
 /// </summary>
 public class BubbleCarGraftTests
 {

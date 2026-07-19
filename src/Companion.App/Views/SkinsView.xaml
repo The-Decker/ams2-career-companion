@@ -89,6 +89,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0">
@@ -117,7 +118,60 @@
                 </StackPanel>
             </Grid>
 
-            <Border x:Name="StagingOverridesNotice" Grid.Row="1" Style="{StaticResource WarningCallout}"
+            <!-- mod ownership (the anti-strip vault): quiet when every owned set is intact, an
+                 attention banner with one-click repair the moment a mod manager strips payload. -->
+            <Border x:Name="OwnershipPanel" Grid.Row="1" Style="{StaticResource Panel}"
+                    Padding="14,10" Margin="0,14,0,0"
+                    Visibility="{Binding HasOwnedSets, Converter={StaticResource BoolVisible}}">
+                <StackPanel>
+                    <Border x:Name="OwnershipDegradedBanner" Style="{StaticResource WarningCallout}"
+                            Padding="12,9"
+                            Visibility="{Binding HasOwnershipIssues, Converter={StaticResource BoolVisible}}">
+                        <DockPanel>
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal"
+                                        VerticalAlignment="Center" Margin="14,0,0,0">
+                                <Button Content="REPAIR FROM VAULT"
+                                        Style="{StaticResource SubtleButton}"
+                                        Foreground="{DynamicResource WarningBrush}"
+                                        Command="{Binding RepairOwnershipCommand}"
+                                        ToolTip="Re-lay the stripped payload from the app vault (backup-first)"
+                                        AutomationProperties.Name="Repair stripped mod payload from the app vault" />
+                                <Button Content="PROTECT NOW"
+                                        Style="{StaticResource SubtleButton}" Margin="8,0,0,0"
+                                        Command="{Binding CaptureOwnershipCommand}"
+                                        ToolTip="Adopt the install's current healthy payload into the app vault"
+                                        AutomationProperties.Name="Capture the installed mod payload into the app vault" />
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="MOD PAYLOAD STRIPPED" Style="{StaticResource Eyebrow}"
+                                           Foreground="{DynamicResource WarningBrush}" />
+                                <TextBlock Text="{Binding OwnershipBanner}" Style="{StaticResource Muted}"
+                                           TextWrapping="Wrap" Margin="0,3,0,0" />
+                            </StackPanel>
+                        </DockPanel>
+                    </Border>
+                    <DockPanel x:Name="OwnershipHealthyStrip"
+                               Visibility="{Binding HasOwnershipIssues, Converter={StaticResource BoolCollapsed}}">
+                        <Button DockPanel.Dock="Right" Content="PROTECT NOW"
+                                Style="{StaticResource SubtleButton}" Margin="14,0,0,0"
+                                VerticalAlignment="Center"
+                                Command="{Binding CaptureOwnershipCommand}"
+                                ToolTip="Adopt the install's current healthy payload into the app vault"
+                                AutomationProperties.Name="Capture the installed mod payload into the app vault" />
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="MOD PAYLOAD INTACT" Style="{StaticResource Eyebrow}"
+                                       Foreground="{DynamicResource SuccessBrush}" />
+                            <TextBlock Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,3,0,0"
+                                       Text="Every app-owned set is installed. Protect now so the app vault can restore it after a mod-manager strip." />
+                        </StackPanel>
+                    </DockPanel>
+                    <TextBlock x:Name="OwnershipActionNoteText" Text="{Binding OwnershipActionNote}"
+                               Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,7,0,0"
+                               Visibility="{Binding OwnershipActionNote, Converter={StaticResource StringVisible}}" />
+                </StackPanel>
+            </Border>
+
+            <Border x:Name="StagingOverridesNotice" Grid.Row="2" Style="{StaticResource WarningCallout}"
                     Margin="0,14,0,0" Padding="14,10"
                     Visibility="{Binding HasStagingOverrides, Converter={StaticResource BoolVisible}}">
                 <DockPanel>
@@ -135,7 +189,7 @@
                 </DockPanel>
             </Border>
 
-            <Border x:Name="SelectedCarPreview" Grid.Row="2" Margin="0,14,0,0" Padding="16"
+            <Border x:Name="SelectedCarPreview" Grid.Row="3" Margin="0,14,0,0" Padding="16"
                     CornerRadius="12" Background="{DynamicResource SurfaceAltBrush}"
                     BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1"
                     Visibility="{Binding HasSelectedCar, Converter={StaticResource BoolVisible}}">
@@ -269,7 +323,7 @@
                 </Grid>
             </Border>
 
-            <StackPanel Grid.Row="3" Margin="0,22,0,0">
+            <StackPanel Grid.Row="4" Margin="0,22,0,0">
                 <DockPanel Margin="0,0,0,10">
                     <Border DockPanel.Dock="Right" Style="{StaticResource CompactChip}"
                             VerticalAlignment="Bottom">
@@ -348,7 +402,7 @@
                 </Border>
             </StackPanel>
 
-            <Border x:Name="DidNotQualifyStrip" Grid.Row="4" Style="{StaticResource Panel}"
+            <Border x:Name="DidNotQualifyStrip" Grid.Row="5" Style="{StaticResource Panel}"
                     Padding="14,11" Margin="0,14,0,0" Opacity="0.78"
                     Visibility="{Binding HasDnq, Converter={StaticResource BoolVisible}}">
                 <Grid>

@@ -12,7 +12,7 @@ namespace Companion.Tests.ViewModels;
 
 /// <summary>
 /// Character death &amp; injury (Slice 3 review fix): when a fatal accident ENDS the career, the shell must
-/// hand off to the death screen from the DB-FREE mortality status — for a Hardcore death the session's DB
+/// hand off to the death screen from the DB-FREE mortality status, for a Hardcore death the session's DB
 /// is already disposed and the file deleted, so touching Summary/Briefing would crash. ApplyDraft must
 /// route to <see cref="HomeViewModel.CareerOver"/> WITHOUT querying the session's DB again.
 /// </summary>
@@ -27,7 +27,7 @@ public sealed class DeathScreenHandoffTests
         };
         using var home = new HomeViewModel(session);
 
-        // Applying the fatal round must NOT throw — the death handoff never queries Summary (which the
+        // Applying the fatal round must NOT throw, the death handoff never queries Summary (which the
         // fake makes throw once "disposed", mirroring the real deleted-DB session).
         ApplyARound(home);
 

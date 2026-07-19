@@ -6,7 +6,7 @@ namespace Companion.ViewModels.Hub;
 /// One entry in the hub's left tab rail: a stable key, a display title, a Segoe MDL2 Assets
 /// glyph for the rail icon, and the content view-model shown when it is selected. The content
 /// is settable so a lens tab (Standings, News) can be refreshed in place after a round applies
-/// without rebuilding the rail. Pure presentation state — no session coupling.
+/// without rebuilding the rail. Pure presentation state, no session coupling.
 /// </summary>
 public sealed partial class HubTabViewModel : ObservableObject
 {
@@ -19,13 +19,13 @@ public sealed partial class HubTabViewModel : ObservableObject
         ShowInRail = showInRail;
     }
 
-    /// <summary>Stable identity (not localized) — number-key + auto-select target.</summary>
+    /// <summary>Stable identity (not localized), number-key + auto-select target.</summary>
     public string Key { get; }
 
     public string Title { get; }
 
     /// <summary>True when this tab appears as a clickable entry in the left rail. The Upcoming Race
-    /// screen sets this false — it is the loop itself, reached only via the header loop buttons
+    /// screen sets this false, it is the loop itself, reached only via the header loop buttons
     /// ("Upcoming Race" / "Enter result"), never freely selected from the rail (Mike's ask).</summary>
     public bool ShowInRail { get; }
 
@@ -33,7 +33,7 @@ public sealed partial class HubTabViewModel : ObservableObject
     public string Glyph { get; }
 
     /// <summary>True when this tab can be torn off into an always-on-top companion window (the read-
-    /// only lenses — Standings, Driver, History, Skins). The Race tab IS the loop, so it never pops
+    /// only lenses, Standings, Driver, History, Skins). The Race tab IS the loop, so it never pops
     /// out; News keeps its own in-view pop-out button, so the rail affordance skips it.</summary>
     public bool CanPopOut => Key is not (HubViewModel.RaceTabKey or HubViewModel.NewsTabKey);
 

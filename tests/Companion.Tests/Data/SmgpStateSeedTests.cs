@@ -10,10 +10,10 @@ using Companion.ViewModels.Services;
 namespace Companion.Tests.Data;
 
 /// <summary>
-/// The SMGP replica mode's per-career gate (M3 slice 1) — <see cref="PlayerCareerState.Smgp"/>
+/// The SMGP replica mode's per-career gate (M3 slice 1), <see cref="PlayerCareerState.Smgp"/>
 /// seeds ONLY when the pack declares <c>careerStyle "smgp"</c> AND the creation request opted in
-/// (mirroring <see cref="PlayerCareerState.FormAware"/>). Everything else — the missing flag, a
-/// normal pack, every existing career — stays null, serializes to nothing, and folds exactly as
+/// (mirroring <see cref="PlayerCareerState.FormAware"/>). Everything else, the missing flag, a
+/// normal pack, every existing career, stays null, serializes to nothing, and folds exactly as
 /// before; the seeded career itself folds untouched state through every round and re-simulates
 /// byte-identically (no battle rows exist until slice 2 stores rival calls).
 /// </summary>
@@ -28,7 +28,7 @@ public sealed class SmgpStateSeedTests : IDisposable
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { }
     }
 
-    /// <summary>The two-round pack, smgp-styled, with the player's seat on its OWN team — the
+    /// <summary>The two-round pack, smgp-styled, with the player's seat on its OWN team, the
     /// briefing's rival list excludes teammates, so a one-team pack would offer no rivals.</summary>
     private static SeasonPack SmgpPack()
     {
@@ -46,7 +46,7 @@ public sealed class SmgpStateSeedTests : IDisposable
                     Name = "Hulme Racing",
                     CarVehicleIds = [TestPackBuilder.VintageCar],
                     Reliability = 0.9,
-                    Prestige = 2, // LEVEL D — the player's team
+                    Prestige = 2, // LEVEL D, the player's team
                     BudgetTier = 2,
                 },
             ],
@@ -69,7 +69,7 @@ public sealed class SmgpStateSeedTests : IDisposable
         Assert.False(start.Smgp.CareerOver);
         Assert.True(start.Smgp.PerSeasonVariety);
 
-        // The fold carries the state forward each round via record `with` — the last folded
+        // The fold carries the state forward each round via record `with`, the last folded
         // round still holds the seat (nothing battled it away; no rival calls exist yet).
         var lastRound = StateStore.ReadRoundPlayerState(db, seasonId, 2)!;
         Assert.NotNull(lastRound.Player.Smgp);
@@ -108,7 +108,7 @@ public sealed class SmgpStateSeedTests : IDisposable
     [Fact]
     public void NormalPack_IgnoresTheOptIn()
     {
-        // The pack's declared style is the other half of the gate — a stray flag on a normal
+        // The pack's declared style is the other half of the gate, a stray flag on a normal
         // season seeds nothing (the wizard never sets it, but the request is public surface).
         var (careerPath, seasonId) = CreateAndFoldTwoRounds(
             TestPackBuilder.TwoRoundPack(), "normal-pack.ams2career", smgpMode: true);
@@ -142,7 +142,7 @@ public sealed class SmgpStateSeedTests : IDisposable
         var briefing = session.CurrentSmgpBriefing();
         Assert.NotNull(briefing);
         Assert.Equal("ROUND 1 · ROUND 1", briefing!.RoundHeader); // the test round's name IS "Round 1"
-        Assert.Equal("SEASON  —", briefing.SeasonLine); // no round scored yet
+        Assert.Equal("SEASON  -", briefing.SeasonLine); // no round scored yet
         Assert.Equal("", briefing.CareerLine);           // the player has no record yet
         Assert.False(briefing.CareerOver);
         Assert.Null(briefing.ForcedChallengerDriverId);
@@ -165,7 +165,7 @@ public sealed class SmgpStateSeedTests : IDisposable
         Assert.Null(normal.CurrentSmgpBriefing());
     }
 
-    /// <summary>A 4-car SMGP pack whose rounds cap the grid at 3 — so one car DNQs each round, and which
+    /// <summary>A 4-car SMGP pack whose rounds cap the grid at 3, so one car DNQs each round, and which
     /// one is the seeded per-career roll under test.</summary>
     private static SeasonPack SmgpDnqPack()
     {
@@ -238,10 +238,10 @@ public sealed class SmgpStateSeedTests : IDisposable
                     round.Grid!.StarterDriverIds.ToHashSet(StringComparer.Ordinal));
         }
 
-        // ...and the two seeds rolled a different field on at least one round — per-career, not fixed.
+        // ...and the two seeds rolled a different field on at least one round, per-career, not fixed.
         Assert.True(pack.Season.Rounds.Any(r =>
             !genA[r.Round].ToHashSet(StringComparer.Ordinal).SetEquals(genB[r.Round])),
-            "both seeds pinned the identical DNQ field every round — the roll isn't per-career.");
+            "both seeds pinned the identical DNQ field every round, the roll isn't per-career.");
     }
 
     [Fact]
@@ -292,7 +292,7 @@ public sealed class SmgpStateSeedTests : IDisposable
     [Fact]
     public void PlayerStats_AccrueFromResults_IntoTheRivalReadout_AndPaddock()
     {
-        // A fresh SMGP career, then the player wins round 1 from pole — their live record must appear in
+        // A fresh SMGP career, then the player wins round 1 from pole, their live record must appear in
         // the rival readout (which retired "D.P.") and in their own Paddock card, built from zero.
         string packDirectory = Path.Combine(_root, "packs", "accrue");
         TestPackBuilder.Write(SmgpPack(), packDirectory);
@@ -312,7 +312,7 @@ public sealed class SmgpStateSeedTests : IDisposable
             environment);
 
         // Before any round: the readout is blank and the player's Paddock card is at zero.
-        Assert.Equal("SEASON  —", session.CurrentSmgpBriefing()!.SeasonLine);
+        Assert.Equal("SEASON  -", session.CurrentSmgpBriefing()!.SeasonLine);
         Assert.Equal(0, session.SmgpPaddock()!.Drivers.First(d => d.IsPlayer).Career!.Wins);
 
         // Round 1: the player wins from pole (order them first; the AI second).
@@ -349,7 +349,7 @@ public sealed class SmgpStateSeedTests : IDisposable
     {
         // The SMGP clean-swap player is their OWN distinct synthetic driver (id not in pack.Drivers),
         // sitting in a car whose authored AI is BENCHED. With no character name, every name-rendering
-        // screen must show a stable default — never the benched AI it displaced, never the raw id.
+        // screen must show a stable default, never the benched AI it displaced, never the raw id.
         string packDirectory = Path.Combine(_root, "packs", "cleanswap-name");
         TestPackBuilder.Write(SmgpPack(), packDirectory);
         var environment = ViewModelTestData.Environment(

@@ -5,7 +5,7 @@ using System.Windows.Data;
 namespace Companion.App.Behaviors;
 
 /// <summary>
-/// Visible when two bound strings are equal and non-empty — drives the inline reason editor,
+/// Visible when two bound strings are equal and non-empty, drives the inline reason editor,
 /// which only shows on the ONE row whose driver id matches
 /// ResultEntryViewModel.EditingReasonDriverId (values[0] editing id, values[1] row driver id).
 /// With <see cref="Invert"/> set it flips to Visible-when-NOT-editing, which drives the row's
@@ -15,7 +15,7 @@ namespace Companion.App.Behaviors;
 public sealed class StringsEqualToVisibilityConverter : IMultiValueConverter
 {
     /// <summary>Flip the result: Visible when the two strings are NOT equal (i.e. this row is not
-    /// the one being edited) — used for the compact DISPLAY half of a two-state row.</summary>
+    /// the one being edited), used for the compact DISPLAY half of a two-state row.</summary>
     public bool Invert { get; set; }
 
     public object Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)

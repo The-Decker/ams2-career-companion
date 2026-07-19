@@ -7,7 +7,7 @@ using Companion.ViewModels.Services;
 namespace Companion.Tests.ViewModels;
 
 /// <summary>
-/// Character death &amp; injury, Slice 5 — the rich <see cref="DeathScreenModel"/> behind the death screen. A
+/// Character death &amp; injury, Slice 5, the rich <see cref="DeathScreenModel"/> behind the death screen. A
 /// pure projection: an in-world obituary, the career record, the fatal accident's cause/venue, and (Normal)
 /// the restorable save slots. It reads folded state only (no fold change), so a dead career still replays
 /// byte-identically. On a Hardcore death the model is captured BEFORE the file is deleted, so it renders
@@ -167,7 +167,7 @@ public sealed class DeathScreenModelTests : IDisposable
             Assert.Equal(model.RestoreSlots.Count > 0, model.CanRestore);
         }
 
-        // A pure read never perturbs the fold — the dead career still re-simulates byte-for-byte.
+        // A pure read never perturbs the fold, the dead career still re-simulates byte-for-byte.
         using var db = CareerDatabase.Open(careerPath);
         var rules = CareerRulesData.Load(ViewModelTestData.RulesDirectory);
         var inputs = new ReplaySimInputs
@@ -205,7 +205,7 @@ public sealed class DeathScreenModelTests : IDisposable
         Assert.Contains("heavy accident", model.CauseOfDeath);
         Assert.Contains("Crash McTest", model.Obituary);
 
-        // Repeated reads keep working (idempotent, DB-free) — the shell may refresh the screen freely.
+        // Repeated reads keep working (idempotent, DB-free), the shell may refresh the screen freely.
         Assert.Equal(model.Obituary, session.DeathScreen()!.Obituary);
     }
 }

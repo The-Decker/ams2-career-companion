@@ -4,7 +4,7 @@ namespace Companion.Tests.Career;
 
 /// <summary>The pure "Setup Gamble" called-shot math. Deterministic (a function of the call + result
 /// + expected finish), so these lock the arithmetic a replay must reproduce, and prove the
-/// anti-exploit: a call no more ambitious than the expected finish stakes — and pays — nothing.</summary>
+/// anti-exploit: a call no more ambitious than the expected finish stakes, and pays, nothing.</summary>
 public sealed class CalledShotMathTests
 {
     [Fact]
@@ -44,7 +44,7 @@ public sealed class CalledShotMathTests
         Assert.Equal(-6.0, CalledShotMath.ReputationDelta(6, actualFinish: 8, expectedFinish: 10), 6);
         Assert.Equal(-6.0, CalledShotMath.ReputationDelta(6, actualFinish: null, expectedFinish: 10), 6);
 
-        // A non-gamble resolves to exactly 0 either way — no free reputation, no penalty.
+        // A non-gamble resolves to exactly 0 either way, no free reputation, no penalty.
         Assert.Equal(0.0, CalledShotMath.ReputationDelta(12, actualFinish: 11, expectedFinish: 10), 6);
         Assert.Equal(0.0, CalledShotMath.ReputationDelta(12, actualFinish: 20, expectedFinish: 10), 6);
     }

@@ -5,9 +5,9 @@ namespace Companion.Tests.Ams2;
 
 /// <summary>
 /// Race-by-race variant binding for packs without a scenario .bat. Community packs ship
-/// CHANGE-POINT sets — <c>02Canada</c> is "the grid from the Canadian GP on" (1986 numbers files
+/// CHANGE-POINT sets, <c>02Canada</c> is "the grid from the Canadian GP on" (1986 numbers files
 /// by change-set index, not round!), 1990's <c>15_JPN</c> carries Herbert-replaces-Donnelly to
-/// season end — so each file is ANCHORED to the round it names (venue-primary, number-fallback,
+/// season end, so each file is ANCHORED to the round it names (venue-primary, number-fallback,
 /// year-guarded) and round N binds the largest anchor ≤ N. What-if / special / other-season
 /// files never anchor.
 /// </summary>
@@ -20,7 +20,7 @@ public sealed class VariantOverrideBinderTests : IDisposable
 
     // ---------- anchoring, every observed community shape ----------
 
-    /// <summary>The real 1986 calendar — the pack's files are numbered by CHANGE-SET, not round.</summary>
+    /// <summary>The real 1986 calendar, the pack's files are numbered by CHANGE-SET, not round.</summary>
     private static readonly IReadOnlyList<CalendarRound> Season1986 =
     [
         new(1, "Brazilian Grand Prix", "Autódromo do Jacarepaguá"),
@@ -64,7 +64,7 @@ public sealed class VariantOverrideBinderTests : IDisposable
     [InlineData("15_MEX", 15)]
     [InlineData("03SMR", 3)]
     [InlineData("02SanMarino", 3)] // the tail wins over the set index
-    // Bare venue tokens (no round number) — the 1992-style files. The nickname→GP mapping is
+    // Bare venue tokens (no round number), the 1992-style files. The nickname→GP mapping is
     // venue-blind on purpose: "Interlagos" means the Brazilian GP whatever circuit hosted it.
     [InlineData("Interlagos", 1)]
     [InlineData("SIL", 9)]
@@ -100,7 +100,7 @@ public sealed class VariantOverrideBinderTests : IDisposable
     [Fact]
     public void AnchorRound_YearGuard_RejectsAnotherSeasonsFiles()
     {
-        // The 1998 skinpack shares the F-V10_Gen2 class folder with our 2000 pack — its files
+        // The 1998 skinpack shares the F-V10_Gen2 class folder with our 2000 pack, its files
         // must never bind to 2000 rounds, however well their numbers/tails fit.
         IReadOnlyList<CalendarRound> rounds2000 =
         [
@@ -180,7 +180,7 @@ public sealed class VariantOverrideBinderTests : IDisposable
     {
         string folder = Model();
 
-        // Round 3 has no file of its own — the round-2 change-point is still in force.
+        // Round 3 has no file of its own, the round-2 change-point is still in force.
         var round3 = Bind(3);
         Assert.Equal(1, round3.Swapped);
         Assert.Contains("Round 2 set", Active(folder));
@@ -246,7 +246,7 @@ public sealed class VariantOverrideBinderTests : IDisposable
             "<USER_OVERRIDES><LIVERY_OVERRIDE LIVERY=\"51\" NAME=\"1990 set\" /></USER_OVERRIDES>");
         File.WriteAllText(Path.Combine(folder, "formula_classic_g4m1_dist.xml"), "<template />");
 
-        var round1 = Bind(1); // only the what-if/1990/dist files could claim round 1 — none may
+        var round1 = Bind(1); // only the what-if/1990/dist files could claim round 1, none may
 
         Assert.False(round1.AnyChanged);
         Assert.Contains("Base set", Active(folder));
@@ -258,14 +258,14 @@ public sealed class VariantOverrideBinderTests : IDisposable
     /// the smgp round names (San Marino, Japan, Australia…) alias 1990's calendar tokens, so a
     /// 1990 change-point variant anchors cleanly onto the smgp calendar. When the ACTIVE season's
     /// base is known and the variant shares NONE of its livery names, it is a foreign file and must
-    /// not bind — the whole point of the roster fix.</summary>
+    /// not bind, the whole point of the roster fix.</summary>
     [Fact]
     public void BindRound_WithKnownSeasonBase_NeverBindsAForeignSeasonsVariant()
     {
         const string model = "formula_classic_g3m1";
         string folder = Path.Combine(_root, model);
         Directory.CreateDirectory(folder);
-        // The active season (smgp) base — fictional SMGP liveries.
+        // The active season (smgp) base, fictional SMGP liveries.
         const string smgpBase =
             "<USER_OVERRIDES><LIVERY_OVERRIDE LIVERY=\"51\" NAME=\"Madonna #1 A. Senna\" />" +
             "<LIVERY_OVERRIDE LIVERY=\"52\" NAME=\"Madonna #2 A. Asselin\" /></USER_OVERRIDES>";
@@ -286,7 +286,7 @@ public sealed class VariantOverrideBinderTests : IDisposable
         var result = BindRound(_root, [model], 2, smgp, 1990, seasonBase, Now);
 
         Assert.False(result.AnyChanged);
-        Assert.Contains("A. Senna", Active(folder)); // smgp base still active — foreign variant ignored
+        Assert.Contains("A. Senna", Active(folder)); // smgp base still active, foreign variant ignored
     }
 
     /// <summary>The guard is not over-eager: a LEGITIMATE change-point variant of the active
@@ -301,7 +301,7 @@ public sealed class VariantOverrideBinderTests : IDisposable
             "<USER_OVERRIDES><LIVERY_OVERRIDE LIVERY=\"51\" NAME=\"Ferrari #1\" />" +
             "<LIVERY_OVERRIDE LIVERY=\"52\" NAME=\"Williams #5\" /></USER_OVERRIDES>";
         File.WriteAllText(Path.Combine(folder, model + ".xml"), ownBase);
-        // A real change-point: Williams keeps its car, Ferrari swaps driver — shares "Williams #5".
+        // A real change-point: Williams keeps its car, Ferrari swaps driver, shares "Williams #5".
         File.WriteAllText(Path.Combine(folder, model + "_02Brazil.xml"),
             "<USER_OVERRIDES><LIVERY_OVERRIDE LIVERY=\"51\" NAME=\"Ferrari #2\" />" +
             "<LIVERY_OVERRIDE LIVERY=\"52\" NAME=\"Williams #5\" /></USER_OVERRIDES>");

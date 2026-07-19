@@ -7,7 +7,7 @@ namespace Companion.ViewModels.Hub;
 
 /// <summary>
 /// The Dynasty owner-economy hub lens ("Team Ledger", economy §9): the dashboard projection plus
-/// the five decision commands, following the DossierViewModel decision cycle — the SESSION is the
+/// the five decision commands, following the DossierViewModel decision cycle, the SESSION is the
 /// affordability/availability authority; a refused decision surfaces its reason in
 /// <see cref="EconomyActionError"/> and changes nothing. Present as a rail tab only when the
 /// career runs the economy (<see cref="HasEconomy"/>). The GUI lane binds this against the

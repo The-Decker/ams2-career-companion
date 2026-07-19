@@ -5,7 +5,7 @@ namespace Companion.Core.Career;
 /// <summary>
 /// Reputation 0–100. Moves on finishing vs expectation, beating the teammate, and season-end
 /// championship position; gains scale with how weak the player's car is (contract: a podium
-/// in a weak car is worth far more than one in the class of the field — tier 5 is the
+/// in a weak car is worth far more than one in the class of the field, tier 5 is the
 /// richest tier in this codebase, so the multiplier grows as tier falls).
 ///
 /// A character's marketability + reputation perks patch the deltas via an optional
@@ -82,7 +82,7 @@ public static class ReputationMath
         return delta * rate * Marketability(mods);
     }
 
-    /// <summary>The marketability pre-multiplier <c>1.0 + 0.5·(marketability − 0.5)</c> — neutral
+    /// <summary>The marketability pre-multiplier <c>1.0 + 0.5·(marketability − 0.5)</c>, neutral
     /// at the 0.5 default, so a null/identity modifier does not move the delta.</summary>
     private static double Marketability(PlayerPerkModifiers mods) => 1.0 + 0.5 * (mods.Marketability - 0.5);
 

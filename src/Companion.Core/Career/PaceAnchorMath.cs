@@ -44,7 +44,7 @@ public static class PaceAnchorMath
         return DifficultyModel.AiPacePercent(aiSkills[index], sliderPercent);
     }
 
-    /// <summary>Median merged raceSkill of the AI grid — the reference rating the difficulty
+    /// <summary>Median merged raceSkill of the AI grid, the reference rating the difficulty
     /// recommendation aims the player at (mid-grid at the recommended slider).</summary>
     public static double MedianAiRaceSkill(GridPlan grid) => MedianAiSkill(grid, race: true);
 
@@ -70,7 +70,7 @@ public static class PaceAnchorMath
         return DifficultyModel.AiPacePercent(aiSkills[index], sliderPercent);
     }
 
-    /// <summary>Median merged qualifyingSkill of the AI grid — the reference the qualifying anchor
+    /// <summary>Median merged qualifyingSkill of the AI grid, the reference the qualifying anchor
     /// aims the player at (mid-grid on one-lap pace).</summary>
     public static double MedianAiQualifyingSkill(GridPlan grid) => MedianAiSkill(grid, race: false);
 
@@ -91,7 +91,7 @@ public static class PaceAnchorMath
 
 /// <summary>
 /// The research compression note made linear (RESEARCH.md §1/§6): AMS2 race_skill compresses
-/// around the Opponent Skill slider — at 90% slider a 1.0-rated AI runs at ~95% pace and a
+/// around the Opponent Skill slider, at 90% slider a 1.0-rated AI runs at ~95% pace and a
 /// 0.0-rated AI at ~85%. Both axes interpolate linearly from those endpoints.
 /// </summary>
 public static class DifficultyModel
@@ -105,7 +105,7 @@ public static class DifficultyModel
         sliderPercent - 5.0 + 10.0 * rating;
 
     /// <summary>The Opponent Skill slider at which an AI of the target rating matches the
-    /// player's calibrated pace — i.e. the slider that puts the player mid-grid against the
+    /// player's calibrated pace, i.e. the slider that puts the player mid-grid against the
     /// target. Clamped to the in-game 70–120 range, rounded to a whole percent. Shown in the
     /// briefing, never auto-applied.</summary>
     public static int RecommendSlider(double paceAnchorPercent, double targetRating)

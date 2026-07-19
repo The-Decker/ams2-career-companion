@@ -84,7 +84,7 @@ public class StreamFactoryTests
 
     /// <summary>Key hygiene (docs/dev/m5-fix-integration.md): '|' and '\' inside entityIds
     /// are escaped before key composition, so entity ids that embed the key separator can
-    /// never collide with each other or with a differently-segmented key — and ids without
+    /// never collide with each other or with a differently-segmented key, and ids without
     /// those characters derive exactly the streams they always did.</summary>
     [Fact]
     public void PipesInEntityIdsAreEscapedIntoDistinctReproducibleStreams()
@@ -122,7 +122,7 @@ public class StreamFactoryTests
 
     /// <summary>Byte-stability regression pin: these constants are part of the save format
     /// (streams seed careers). If this test ever fails, the key derivation / hash / mixer /
-    /// generator changed and existing careers break — that is a breaking save-format change,
+    /// generator changed and existing careers break, that is a breaking save-format change,
     /// not a test to update casually.</summary>
     [Fact]
     public void StreamDerivationIsPinned()

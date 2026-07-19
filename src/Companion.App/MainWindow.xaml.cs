@@ -15,7 +15,7 @@ namespace Companion.App;
 /// screen mapped by the DataTemplates in App.xaml. The only logic here is bridging the
 /// window-level Esc key onto the viewmodel's non-destructive back navigation, plus applying/
 /// persisting the remembered window placement (ux-round contract section 4) through the
-/// settings seam — everything else lives in Companion.ViewModels.Shell.ShellViewModel.
+/// settings seam, everything else lives in Companion.ViewModels.Shell.ShellViewModel.
 /// </summary>
 public partial class MainWindow : Window
 {
@@ -33,7 +33,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        // The App assigns DataContext before Show(), so this runs pre-show — early enough
+        // The App assigns DataContext before Show(), so this runs pre-show, early enough
         // to switch the startup location to the remembered placement.
         DataContextChanged += OnDataContextChanged;
         Closing += OnClosing;
@@ -41,14 +41,14 @@ public partial class MainWindow : Window
 
     /// <summary>Window-level key routing (the reliable top of the tunnel, so it fires whatever
     /// child has focus): number keys 1–9 select hub tabs, and Esc = one non-destructive step
-    /// back (ux-round contract). Both yield to the result-entry grammar — a focused editable box
-    /// keeps its own digits/Esc — and to any modifier chord. Unhandled keys fall through.</summary>
+    /// back (ux-round contract). Both yield to the result-entry grammar, a focused editable box
+    /// keeps its own digits/Esc, and to any modifier chord. Unhandled keys fall through.</summary>
     private void OnPreviewKeyDown(object sender, KeyEventArgs e)
     {
         if (e.Handled || DataContext is not ShellViewModel shell)
             return;
 
-        // Developer chords (dynasty-passport-roadmap Piece 2) — resolved FIRST so they reach even a
+        // Developer chords (dynasty-passport-roadmap Piece 2), resolved FIRST so they reach even a
         // terminal screen (a dev may need to open the menu from a death/career-over surface). Neither
         // chord uses Alt, so there is no AltGr collision (AltGr = Ctrl+Alt on international layouts) and
         // no SystemKey remapping is needed. The persisting UNLOCK is a function key (Ctrl+Shift+F12) so
@@ -61,16 +61,18 @@ public partial class MainWindow : Window
         }
         if (e.Key == Key.D && Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift))
         {
-            shell.ToggleDebugCommand.Execute(null); // open/close the overlay — a no-op while locked
+            shell.ToggleDebugCommand.Execute(null); // open/close the overlay, a no-op while locked
             e.Handled = true;
             return;
         }
 
         // A fatal result replaces the whole Hub with the DB-free death screen. In Hardcore the
         // career database is already disposed and deleted, so no global Esc/tab accelerator may
-        // reach hidden Hub/Home commands behind that terminal surface.
+        // reach hidden Hub/Home commands behind that terminal surface. The Dynasty bankruptcy
+        // takeover is terminal too: its ledger stays viewable, but the Hub beneath stays shut.
         if (shell.Current is HubViewModel { Home.CareerOver: not null }
-            or HubViewModel { Home.Briefing.SmgpCareerOver: true })
+            or HubViewModel { Home.Briefing.SmgpCareerOver: true }
+            or HubViewModel { Home.BankruptcyScreen: not null })
             return;
 
         var hubView = FindVisualDescendant<HubView>(this);

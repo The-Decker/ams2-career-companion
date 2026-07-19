@@ -88,7 +88,7 @@ public class BriefingBannerToneTests
         vm.StageGridCommand.Execute(null);
 
         Assert.Equal(StageBannerTone.Info, vm.BannerTone);
-        // The banner is a clear, directive prompt (names the button, promises a backup) — not the
+        // The banner is a clear, directive prompt (names the button, promises a backup), not the
         // raw gate message, and never reads as a failure.
         Assert.Contains("Overwrite anyway", vm.StageBanner);
         Assert.Contains("backup", vm.StageBanner, StringComparison.OrdinalIgnoreCase);
@@ -148,7 +148,7 @@ public class BriefingBannerToneTests
             Messages =
             [
                 "Error: Vehicle class 'F-Vintage_Gen1' is not in the content library.",
-                "Staging aborted — fix the preflight errors above and stage again.",
+                "Staging aborted, fix the preflight errors above and stage again.",
             ],
         });
 

@@ -107,11 +107,11 @@
                     <Button Grid.Column="0" Style="{StaticResource StandingsHeaderButton}"
                             Content="{Binding PositionHeader}" Command="{Binding SortByCommand}"
                             CommandParameter="position" AutomationProperties.Name="Sort by championship position"
-                            ToolTip="Championship position — click to sort; click again to reverse" />
+                            ToolTip="Championship position, click to sort; click again to reverse" />
                     <Button Grid.Column="1" Style="{StaticResource StandingsHeaderButton}"
                             Content="{Binding NameHeader}" Command="{Binding SortByCommand}"
                             CommandParameter="name" AutomationProperties.Name="Sort by name"
-                            ToolTip="Driver or constructor — click to sort alphabetically" />
+                            ToolTip="Driver or constructor, click to sort alphabetically" />
                     <Button Grid.Column="2" Style="{StaticResource StandingsHeaderButton}"
                             Margin="14,0,0,0" HorizontalContentAlignment="Right"
                             Content="{Binding DroppedHeader}" Command="{Binding SortByCommand}"
@@ -251,7 +251,7 @@
                                            FontSize="11" Foreground="{DynamicResource TextMutedBrush}" />
                             </StackPanel>
                         </Border>
-                        <TextBlock Text="—" Style="{StaticResource Faint}" TextAlignment="Center"
+                        <TextBlock Text="-" Style="{StaticResource Faint}" TextAlignment="Center"
                                    Visibility="{Binding HasDroppedRounds, Converter={StaticResource BoolCollapsed}}" />
                     </Grid>
                     <StackPanel Grid.Column="3" Margin="14,0,0,0" VerticalAlignment="Center"
@@ -345,7 +345,7 @@
                 <TextBlock Text="CHAMPIONSHIP CONTROL" Style="{StaticResource PixelBadge}"
                            FontSize="9" Foreground="{DynamicResource AccentTextBrush}" />
                 <TextBlock Text="Standings" Style="{StaticResource H1}" Margin="0,3,0,0" />
-                <TextBlock Text="Every point, every drop, every round — one live championship ledger."
+                <TextBlock Text="Every point, every drop, every round, one live championship ledger."
                            Style="{StaticResource Muted}" Margin="0,3,0,0" TextWrapping="Wrap" />
             </StackPanel>
             <WrapPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="16,0,0,1">

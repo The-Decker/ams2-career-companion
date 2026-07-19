@@ -40,7 +40,7 @@ public class AlternateTrackTransformTests
         Assert.False(round.Track.IsPlaceholder); // the authentic venue is no longer a stand-in
         Assert.Equal("Zolder", round.Track.RealVenue); // venue name preserved
 
-        // Note regenerated to match the swap — no longer the stale "Placeholder … of Spa".
+        // Note regenerated to match the swap, no longer the stale "Placeholder … of Spa".
         Assert.Contains("authentic Zolder", round.SetupGuide!.Notes);
         Assert.Contains("Heusden", round.SetupGuide.Notes);
         Assert.DoesNotContain("Spa", round.SetupGuide.Notes);

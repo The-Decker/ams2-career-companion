@@ -6,7 +6,7 @@ namespace Companion.Tests.Smgp;
 /// <summary>
 /// Direct coverage of the SMGP canon-divergence comparer (D9): career venue winners measured
 /// against the almanac's remembered rulers, emitting SmgpCanonDiverged/Held events whose
-/// provenance is SmgpFiction — the SEGA canon must never read as verified history, and detection
+/// provenance is SmgpFiction, the SEGA canon must never read as verified history, and detection
 /// must be a deterministic pure projection (same seasons in, same events out).
 /// </summary>
 public sealed class SmgpCanonDivergenceTests

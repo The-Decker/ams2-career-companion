@@ -78,3 +78,8 @@ BOTH roles, run as two parallel instances against a strict lane boundary — see
 - Scoring quirks (half points, double points, Indy constructors exclusion, shortened-race tables)
   are round-level data (`PointsFactor`, `CountsForConstructors`, `AlternateRaceTableId`) — never
   hard-coded era logic in the engine.
+- **The em-dash `"—"` (U+2014) is banned from everything user-visible** (owner rule, 2026-07-17):
+  XAML, JSON content (`data/rules`, `packs`, `data/history`, `data/ams2`), and C# string literals.
+  In prose it becomes a comma, headings/labels take a colon, empty-value glyphs a plain hyphen.
+  Allowed only in code comments (users never see those). Enforced by
+  `tests/Companion.Tests/Guards/NoEmDashGuardTests.cs` — it must stay green.

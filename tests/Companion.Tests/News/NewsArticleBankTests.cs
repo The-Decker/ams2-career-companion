@@ -62,7 +62,7 @@ public sealed class NewsArticleBankTests
         var bank = NewsArticleBank.LoadDirectory(ShippedNewsDirectory);
 
         // The sentinel year range means a real career (incl. the 1990 F1 pack) never resolves to
-        // the smgp outlet by year — only the explicit PreferredEra override reaches it.
+        // the smgp outlet by year, only the explicit PreferredEra override reaches it.
         Assert.NotEqual("smgp", bank.ResolveEra(1990));
         Assert.NotEqual("smgp", bank.ResolveEra(1967));
         Assert.NotEqual("smgp", bank.ResolveEra(2020));
@@ -92,7 +92,7 @@ public sealed class NewsArticleBankTests
         }
     }
 
-    // A representative year inside each shipped era's declared range — the era files span
+    // A representative year inside each shipped era's declared range, the era files span
     // 1946..2029 contiguously (1960s/1970s/1980s/1990s/2000s/2010s), covering every bundled pack.
     public static IEnumerable<object[]> EraYears() =>
     [
@@ -171,7 +171,7 @@ public sealed class NewsArticleBankTests
 
         // Both season-digest outcomes must render a clean body in every era: player-champion
         // (the player took the title) and season-complete (someone else did). These use the
-        // season-neutral tokens only — a race token or an undeclared seasonClose pool would throw.
+        // season-neutral tokens only, a race token or an undeclared seasonClose pool would throw.
         foreach (string cause in new[] { "player-champion", "season-complete" })
         {
             bool playerChampion = cause == "player-champion";
@@ -250,7 +250,7 @@ public sealed class NewsArticleBankTests
         var bank = NewsArticleBank.LoadDirectory(ShippedNewsDirectory);
         var facts = SampleWin();
 
-        // Across a spread of seeds the grammar must not collapse to a single body — the whole
+        // Across a spread of seeds the grammar must not collapse to a single body, the whole
         // point of the generative corpus. (Any two differing is enough to prove variety.)
         var bodies = new HashSet<string>(StringComparer.Ordinal);
         for (ulong seed = 1; seed <= 12; seed++)

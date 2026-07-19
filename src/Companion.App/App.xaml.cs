@@ -1,4 +1,5 @@
 using System.IO;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -18,8 +19,8 @@ namespace Companion.App;
 ///
 /// Settings live-apply (ux-round contract section 3): the accent color mutates the shared
 /// AccentBrush/AccentDimBrush instances in place and the font scale replaces the AppUiScale
-/// resource (which every window's root LayoutTransform reads), so every open screen — and every
-/// tear-off window — restyles and rescales immediately, no restart, no view reload.
+/// resource (which every window's root LayoutTransform reads), so every open screen, and every
+/// tear-off window, restyles and rescales immediately, no restart, no view reload.
 /// </summary>
 public partial class App : Application
 {
@@ -42,7 +43,7 @@ public partial class App : Application
 
             // Alternate developer-mode unlock (dynasty-passport-roadmap Piece 2): AMS2_DEVMODE=1
             // flips the runtime gate at startup and persists it, so the debug menu is reachable via
-            // Ctrl+Shift+D. The chord Ctrl+Shift+F12 is the in-app equivalent. Default OFF — a
+            // Ctrl+Shift+D. The chord Ctrl+Shift+F12 is the in-app equivalent. Default OFF, a
             // shipped Release with neither set shows nothing.
             if (IsDevModeEnvSet() && !settings.Current.DeveloperMode)
                 settings.Update(static s => s with { DeveloperMode = true });
@@ -73,6 +74,12 @@ public partial class App : Application
                 stagedFileWatcherFactory: static () => new FileSystemFileWatcher(),
                 settings: settings);
 
+            // Era-skin push (era-theming-assets-brief.md Workstream B), the same one-way push
+            // model as the settings application above: on every navigation the App reads the
+            // shell's era token and TELLS the audio controller the skin. The controller never
+            // observes navigation or career state itself.
+            _shell.PropertyChanged += OnShellEraMediumChanged;
+
             // Audio is presentation-only and deliberately sits at the composition root. Music is
             // controlled solely by the persistent manual player; navigation only emits explicitly
             // opted-in interaction SFX. A machine without usable Windows media support still gets
@@ -102,7 +109,7 @@ public partial class App : Application
     /// <summary>Pushes the appearance settings into the theme resources: accent + derived
     /// dim accent (a 24% blend toward the window background) and the root UI scale (font scale ÷
     /// 100), which every window's root LayoutTransform multiplies by so ALL text and spacing scale
-    /// uniformly — inline sizes, headings and tear-off windows included, not just inherited body
+    /// uniformly, inline sizes, headings and tear-off windows included, not just inherited body
     /// text. Mutating the brush instances / replacing the resources updates every reference live.</summary>
     /// <summary>True when the AMS2_DEVMODE environment variable requests the developer debug menu
     /// (accepts "1"/"true"/"yes"/"on", case-insensitively). Any read failure degrades to off.</summary>
@@ -128,8 +135,8 @@ public partial class App : Application
     }
 
     // The two runtime-swappable theme slots (Codex's theme contract): a BASE palette
-    // (Theme.Dark/Light.xaml — the 32 semantic brushes) and an ACCENT (Accents/<base>/Accent.<name>.xaml
-    // — the 6 accent brushes). Merged AFTER Theme.xaml so they win, and every view consumes the brushes
+    // (Theme.Dark/Light.xaml, the 32 semantic brushes) and an ACCENT (Accents/<base>/Accent.<name>.xaml
+    //, the 6 accent brushes). Merged AFTER Theme.xaml so they win, and every view consumes the brushes
     // via DynamicResource, so replacing these recolors every open screen + tear-off window live.
     private ResourceDictionary? _baseThemeDict;
     private ResourceDictionary? _accentDict;
@@ -162,9 +169,27 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        if (_shell is not null)
+            _shell.PropertyChanged -= OnShellEraMediumChanged;
         DisposeAudio();
         _shell?.Dispose();
         base.OnExit(e);
+    }
+
+    /// <summary>Forwards the shell's era-skin token one-way to the audio controller on every
+    /// navigation (Workstream B: the controller is TOLD the skin, like a theme, and never observes
+    /// the shell, navigation, or career state itself). A null token is the era-neutral base set.</summary>
+    private void OnShellEraMediumChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (_audio is null || _shell is null ||
+            (e.PropertyName?.Length > 0 &&
+             !string.Equals(
+                 e.PropertyName,
+                 nameof(ShellViewModel.ActiveCareerEraMedium),
+                 StringComparison.Ordinal)))
+            return;
+
+        _audio.SetEraSkin(_shell.ActiveCareerEraMedium);
     }
 
     private void TryInitializeAudio(ISettingsService settings)
@@ -178,6 +203,9 @@ public partial class App : Application
             // audio = null`, and SoundAssist correctly swallowed that decorative-audio exception.
             Action<SoundEffectCue, object?> effectPlayer = audio.PlayEffect;
             SoundAssist.Connect(effectPlayer);
+            // Push the current era skin to the fresh controller (null on the start gallery, the
+            // era-neutral base set); OnShellEraMediumChanged keeps it told on every navigation.
+            audio.SetEraSkin(_shell?.ActiveCareerEraMedium);
             Activated += OnApplicationActivated;
             Deactivated += OnApplicationDeactivated;
 
@@ -254,7 +282,7 @@ public partial class App : Application
     }
 
     /// <summary>Full exception detail lands in %APPDATA%\AMS2CareerCompanion\last-crash.txt
-    /// (the message box only shows the message) — best-effort, never throws.</summary>
+    /// (the message box only shows the message), best-effort, never throws.</summary>
     private static void TryWriteCrashLog(Exception exception)
     {
         try

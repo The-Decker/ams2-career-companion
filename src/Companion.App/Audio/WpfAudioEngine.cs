@@ -50,16 +50,36 @@ internal sealed class WpfAudioEngine : ISoundscapeAudioEngine
     private sealed class OneShotChannel
     {
         internal MediaPlayer Player { get; } = new();
+
+        /// <summary>Identity of the media currently OPEN on this channel. Retained after playback
+        /// ends so a repeat of the same cue replays by rewinding instead of paying a synchronous
+        /// MediaPlayer.Open (file + codec pipeline init) on the UI thread for every click.</summary>
         internal SoundscapeTrack? Track { get; set; }
+
+        /// <summary>True while a play is in flight. Distinct from <see cref="Track"/>: a finished
+        /// channel keeps its media open (Track stays set) but is free to reuse or rewind.</summary>
+        internal bool IsBusy { get; set; }
+
         internal double PendingMusicDuck { get; set; } = 1;
         internal TimeSpan PendingDuckDuration { get; set; }
         internal double ActiveMusicDuck { get; set; } = 1;
+
+        /// <summary>Playback over, media kept open for a same-cue rewind. The duck contribution
+        /// ends here; the file handle and codec stay warm.</summary>
+        internal void FinishRetainMedia()
+        {
+            IsBusy = false;
+            PendingMusicDuck = 1;
+            PendingDuckDuration = TimeSpan.Zero;
+            ActiveMusicDuck = 1;
+        }
 
         internal void Reset()
         {
             Player.Stop();
             Player.Close();
             Track = null;
+            IsBusy = false;
             PendingMusicDuck = 1;
             PendingDuckDuration = TimeSpan.Zero;
             ActiveMusicDuck = 1;
@@ -100,7 +120,7 @@ internal sealed class WpfAudioEngine : ISoundscapeAudioEngine
                 var channel = new OneShotChannel();
                 channel.Player.MediaOpened += (_, _) => OnOneShotOpened(channel);
                 channel.Player.MediaEnded += (_, _) => OnOneShotFinished(channel);
-                channel.Player.MediaFailed += (_, _) => OnOneShotFinished(channel);
+                channel.Player.MediaFailed += (_, _) => OnOneShotFailed(channel);
                 _oneShots[i] = channel;
                 createdChannels.Add(channel);
             }
@@ -131,7 +151,7 @@ internal sealed class WpfAudioEngine : ISoundscapeAudioEngine
     public event EventHandler? MusicEnded;
     public event EventHandler? MusicFailed;
 
-    internal int ActiveEffectCount => _oneShots.Count(static channel => channel.Track is not null);
+    internal int ActiveEffectCount => _oneShots.Count(static channel => channel.IsBusy);
     internal double CurrentMusicDuck => _musicDuck;
     internal bool IsDuckActive => _duckTimer.IsEnabled;
     internal bool ShouldRunMusicTransport =>
@@ -228,20 +248,53 @@ internal sealed class WpfAudioEngine : ISoundscapeAudioEngine
         TimeSpan? duckDuration = null)
     {
         double volume = VolumeFor(track);
-        if (_disposed || !CanPlayEffects() || volume <= 0 || !TryResolve(track, out Uri? source))
+        if (_disposed || !CanPlayEffects() || volume <= 0)
             return false;
 
-        OneShotChannel channel = _oneShots.FirstOrDefault(static candidate => candidate.Track is null)
-            ?? _oneShots[_nextOneShot++ % _oneShots.Length];
-        OnOneShotFinished(channel);
-        channel.Track = track;
-        channel.PendingMusicDuck = Math.Clamp(musicDuck, 0, 1);
-        channel.PendingDuckDuration = duckDuration.GetValueOrDefault();
+        // Rewind-first channel pick: an idle channel already holding this exact media replays by
+        // rewinding, no file probe, no MediaPlayer.Open. A repeat cue (rapid result entry, bucket
+        // gestures) pays the open cost only on its first play of each variant.
+        OneShotChannel? channel = _oneShots.FirstOrDefault(
+            candidate => !candidate.IsBusy && candidate.Track == track);
+        bool rewind = channel is not null;
+
+        if (!rewind)
+        {
+            if (!TryResolve(track, out Uri? source))
+                return false;
+
+            channel = _oneShots.FirstOrDefault(static candidate => !candidate.IsBusy)
+                ?? _oneShots[_nextOneShot++ % _oneShots.Length];
+            if (channel.IsBusy)
+                OnOneShotFinished(channel); // stealing a live voice: release its duck contribution
+
+            channel.Track = track;
+            channel.PendingMusicDuck = Math.Clamp(musicDuck, 0, 1);
+            channel.PendingDuckDuration = duckDuration.GetValueOrDefault();
+            try
+            {
+                channel.Player.Open(source); // implicitly closes any retained media
+                channel.IsBusy = true;
+                channel.Player.Volume = volume;
+                channel.Player.Play();
+                return true;
+            }
+            catch (Exception ex) when (IsMediaFailure(ex))
+            {
+                TryReset(channel);
+                return false;
+            }
+        }
+
         try
         {
-            channel.Player.Open(source);
+            // The media is known-good (it played from this channel before), so the duck applies
+            // synchronously, MediaOpened only fires for a fresh Open.
+            channel!.IsBusy = true;
+            channel.Player.Position = TimeSpan.Zero;
             channel.Player.Volume = volume;
             channel.Player.Play();
+            BeginDuck(channel, Math.Clamp(musicDuck, 0, 1), duckDuration.GetValueOrDefault());
             return true;
         }
         catch (Exception ex) when (IsMediaFailure(ex))
@@ -253,14 +306,22 @@ internal sealed class WpfAudioEngine : ISoundscapeAudioEngine
 
     private void OnOneShotOpened(OneShotChannel channel)
     {
-        if (_disposed || channel.Track is null)
+        if (_disposed || !channel.IsBusy)
             return;
 
         double duck = channel.PendingMusicDuck;
         TimeSpan hold = channel.PendingDuckDuration;
         channel.PendingMusicDuck = 1;
         channel.PendingDuckDuration = TimeSpan.Zero;
-        if (duck >= 1 || hold <= TimeSpan.Zero)
+        BeginDuck(channel, duck, hold);
+    }
+
+    /// <summary>Attenuates the music bus while a ducking one-shot is audible. Shared by the
+    /// fresh-open path (deferred to MediaOpened, so a failed open never ducks into silence) and
+    /// the rewind path (applied synchronously, the retained media is already proven open).</summary>
+    private void BeginDuck(OneShotChannel channel, double duck, TimeSpan hold)
+    {
+        if (_disposed || duck >= 1 || hold <= TimeSpan.Zero)
             return;
 
         channel.ActiveMusicDuck = duck;
@@ -279,7 +340,20 @@ internal sealed class WpfAudioEngine : ISoundscapeAudioEngine
     private void OnOneShotFinished(OneShotChannel channel)
     {
         bool contributedDuck = channel.ActiveMusicDuck < 1;
-        TryReset(channel);
+        // The media stays open: a repeat of the same cue rewinds instead of reopening.
+        channel.FinishRetainMedia();
+        ReleaseDuckIfLast(channel, contributedDuck);
+    }
+
+    private void OnOneShotFailed(OneShotChannel channel)
+    {
+        bool contributedDuck = channel.ActiveMusicDuck < 1;
+        TryReset(channel); // a failed media is never retained for rewind
+        ReleaseDuckIfLast(channel, contributedDuck);
+    }
+
+    private void ReleaseDuckIfLast(OneShotChannel channel, bool contributedDuck)
+    {
         if (_disposed || !contributedDuck || !_duckClock.IsRunning ||
             _oneShots.Any(static candidate => candidate.ActiveMusicDuck < 1))
             return;

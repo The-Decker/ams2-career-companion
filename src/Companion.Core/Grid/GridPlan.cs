@@ -4,8 +4,8 @@ using Companion.Core.Packs;
 namespace Companion.Core.Grid;
 
 /// <summary>
-/// The player's seat request for a round. v1 supports exactly one mode — replace a historical
-/// driver — identified by that entry's exact <c>ams2LiveryName</c> (the same load-bearing
+/// The player's seat request for a round. v1 supports exactly one mode, replace a historical
+/// driver, identified by that entry's exact <c>ams2LiveryName</c> (the same load-bearing
 /// string the custom-AI binding uses). The replaced seat keeps its livery, team performance
 /// scalars, and reliability; only <see cref="GridSeat.IsPlayer"/> flips, because the entry is
 /// still written into the generated file so the scalars apply to the player's car (the AI
@@ -18,7 +18,7 @@ public sealed record PlayerSeat
 
     /// <summary>The player's OWN distinct driver id, when they race as their own entrant rather than
     /// impersonating the livery's authored driver (the SMGP clean-swap model: the player is a separate
-    /// driver, so the AI whose car they occupy is BENCHED — and returns the moment the player moves to
+    /// driver, so the AI whose car they occupy is BENCHED, and returns the moment the player moves to
     /// another car). When set, the resolver stamps this id onto the car at <see cref="Ams2LiveryName"/>
     /// and drops that car's authored AI; when null the historical behavior stands (the player wears the
     /// seat's own driver id, marked <see cref="GridSeat.IsPlayer"/>), so every non-SMGP career and every
@@ -28,7 +28,7 @@ public sealed record PlayerSeat
     /// <summary>The player's character applied to this seat, or null for a pre-character career.
     /// When present, the resolver patches the seat's ratings and car scalars from it (see
     /// <see cref="PlayerCharacterPatch"/>); when null the seat is exactly what the pack/track/
-    /// override chain produced — byte-identical to a character-free career.</summary>
+    /// override chain produced, byte-identical to a character-free career.</summary>
     public PlayerCharacterPatch? Character { get; init; }
 }
 
@@ -68,7 +68,7 @@ public sealed record GridPlan
 
     public required string SeriesName { get; init; }
 
-    /// <summary>EXACT vehicle-class xmlName — the custom-AI filename base.</summary>
+    /// <summary>EXACT vehicle-class xmlName, the custom-AI filename base.</summary>
     public required string Ams2Class { get; init; }
 
     /// <summary>1-based calendar round this plan was resolved for.</summary>
@@ -100,7 +100,7 @@ public sealed record GridSeat
     /// <summary>Race number as displayed; guest entries may not carry one.</summary>
     public string? Number { get; init; }
 
-    /// <summary>EXACT livery display name (case-sensitive) — the custom-AI binding.</summary>
+    /// <summary>EXACT livery display name (case-sensitive), the custom-AI binding.</summary>
     public required string Ams2LiveryName { get; init; }
 
     /// <summary>Round-final ratings: pack baseline, plus the driver's trackForm nudge for the
@@ -108,7 +108,7 @@ public sealed record GridSeat
     /// (absolute per-field values that beat the nudge).</summary>
     public required PackDriverRatings Ratings { get; init; }
 
-    /// <summary>Team reliability — maps to the custom-AI vehicle_reliability parameter.</summary>
+    /// <summary>Team reliability, maps to the custom-AI vehicle_reliability parameter.</summary>
     public required double Reliability { get; init; }
 
     /// <summary>Team performance scalars (1.0 = neutral). Applied to the file only when != 1.0.</summary>
@@ -121,7 +121,7 @@ public sealed record GridSeat
     /// <summary>STAGING-ONLY per-driver car tuning (the juppo schema): driver-level car block
     /// with the round's per-driver aiOverrides car fields applied on top (and, on the player's
     /// seat, the character's scalar perk deltas folded in). When set, the staged custom-AI file
-    /// prefers these over the team scalars/reliability — but the sim's seat-strength model NEVER
+    /// prefers these over the team scalars/reliability, but the sim's seat-strength model NEVER
     /// reads it (sim-inert; the team fields above keep feeding the sim exactly as before).</summary>
     public PackDriverCar? CarTuning { get; init; }
 
@@ -131,7 +131,7 @@ public sealed record GridSeat
     public bool PlayerCarScalarsAuthoritative { get; init; }
 
     /// <summary>True when the player drives this livery. The seat is still written to the
-    /// generated file — the team scalars must apply to the player's car — and the AI skill
+    /// generated file, the team scalars must apply to the player's car, and the AI skill
     /// fields stay: they are inert while the player is in the car.</summary>
     public bool IsPlayer { get; init; }
 

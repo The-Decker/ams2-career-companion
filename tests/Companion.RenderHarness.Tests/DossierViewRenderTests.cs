@@ -16,12 +16,12 @@ using Companion.ViewModels.Services;
 
 namespace Companion.RenderHarness.Tests;
 
-/// <summary>Off-screen render of the Driver dossier over a real <see cref="CharacterDossier"/> — the
+/// <summary>Off-screen render of the Driver dossier over a real <see cref="CharacterDossier"/>, the
 /// view binds to a host's <c>Dossier</c> property, so a lightweight stand-in exercises the view layer
 /// (stat bars, perk cards, the level progress bar) without a full session. Self-skips off Windows.</summary>
 public sealed class DossierViewRenderTests
 {
-    /// <summary>The dossier view binds <c>{Binding Dossier}</c> on its DataContext — this stands in
+    /// <summary>The dossier view binds <c>{Binding Dossier}</c> on its DataContext, this stands in
     /// for the DossierViewModel.</summary>
     private sealed class DossierHost : INotifyPropertyChanged
     {
@@ -243,8 +243,8 @@ public sealed class DossierViewRenderTests
             {
                 Id = "rain_man", Name = "Rain Man", Category = "weather",
                 Description = "Untouchable in the wet, ordinary in the dry.", Cost = 1,
-                Benefits = ["Stronger wet-weather pace — in the wet"],
-                Drawbacks = ["Weaker one-lap pace — in the dry"],
+                Benefits = ["Stronger wet-weather pace, in the wet"],
+                Drawbacks = ["Weaker one-lap pace, in the dry"],
             },
         ],
         RacingDna = new DossierRacingDna
@@ -284,7 +284,7 @@ public sealed class DossierViewRenderTests
             new DossierModifierLine("+0.020 car power", null),
         ],
         Availability = AvailabilityStatus.Injured,
-        AvailabilityLabel = "Injured — out 2 races",
+        AvailabilityLabel = "Injured, out 2 races",
     };
 
     private static SkillNodeViewModel Node(
@@ -422,9 +422,12 @@ public sealed class DossierViewRenderTests
         bool withNarrative = false,
         bool withCountry = true,
         bool atLevelCap = false,
-        bool withInjuryHistory = true)
+        bool withInjuryHistory = true,
+        bool withActiveModifiers = true)
     {
         var dossier = Dossier(atLevelCap);
+        if (!withActiveModifiers)
+            dossier = dossier with { ActiveModifiers = [] };
         return new DossierHost
         {
             Dossier = dossier,
@@ -484,7 +487,50 @@ public sealed class DossierViewRenderTests
             Assert.Equal(Visibility.Collapsed,
                 Assert.IsType<TextBlock>(view.FindName("NextLevelXpLine")).Visibility);
             Assert.Contains(Descendants<TextBlock>(view),
-                block => InlineText(block).Contains("LEVEL 300", StringComparison.Ordinal));
+                block => InlineText(block).Contains("LEVEL 300 · MAX", StringComparison.Ordinal));
+            // Lifetime/reset XP keep counting at the cap, so their line must stay visible.
+            TextBlock lifetimeLine = Descendants<TextBlock>(view).Single(
+                block => InlineText(block).Contains("lifetime XP", StringComparison.Ordinal));
+            Assert.Equal(Visibility.Visible, lifetimeLine.Visibility);
+        });
+    }
+
+    [Fact]
+    public void DossierView_ActiveEffects_ConditionalLinesCarryConditionChips_AndCollapseWhenEmpty()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var view = new DossierView { DataContext = Host() };
+            Arrange(view);
+
+            var panel = Assert.IsType<Border>(view.FindName("ActiveEffectsPanel"));
+            Assert.Equal(Visibility.Visible, panel.Visibility);
+
+            // Each line's chip sits on the DossierModifierLine DataContext: conditional lines show
+            // it, always-on lines (null Condition) collapse it and render plain.
+            Border[] chips = Descendants<Border>(panel)
+                .Where(border => border.DataContext is DossierModifierLine)
+                .ToArray();
+            Assert.Equal(2, chips.Length);
+            Assert.Equal(Visibility.Visible,
+                chips.Single(border => ((DossierModifierLine)border.DataContext).Condition is not null)
+                    .Visibility);
+            Assert.Equal(Visibility.Collapsed,
+                chips.Single(border => ((DossierModifierLine)border.DataContext).Condition is null)
+                    .Visibility);
+            Assert.Contains(Descendants<TextBlock>(panel),
+                block => block.Text.Equals("Wet rounds", StringComparison.Ordinal));
+
+            var quiet = new DossierView
+            {
+                DataContext = Host(withActiveModifiers: false),
+            };
+            Arrange(quiet);
+            Assert.Equal(Visibility.Collapsed,
+                Assert.IsType<Border>(quiet.FindName("ActiveEffectsPanel")).Visibility);
         });
     }
 

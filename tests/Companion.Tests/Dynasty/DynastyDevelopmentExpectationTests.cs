@@ -102,7 +102,7 @@ public sealed class DynastyDevelopmentExpectationTests
 
         Assert.Equal(3, plain.ExpectedFinish);
         Assert.Equal(2, developed.ExpectedFinish);
-        // A P2 finish overperforms a P3 expectation but merely meets a P2 one — the developed
+        // A P2 finish overperforms a P3 expectation but merely meets a P2 one, the developed
         // car raises the bar, so the same result banks less OPI.
         Assert.True(developed.Player.Opi < plain.Player.Opi);
     }

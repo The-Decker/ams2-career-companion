@@ -457,7 +457,7 @@ public class StandingsEngineTests
 
         var final = Compute(system, 1, round).Final;
 
-        // (25 + 1) / 2 = 13 for the race, plus the full sprint 8 — 21, not (26 + 8) / 2 = 17.
+        // (25 + 1) / 2 = 13 for the race, plus the full sprint 8, 21, not (26 + 8) / 2 = 17.
         Assert.Equal(new Rational(21), Driver(final, "max").CountedPoints);
         Assert.Equal(new Rational(16), Driver(final, "lewis").CountedPoints); // 18/2 + 7
     }
@@ -597,7 +597,7 @@ public class StandingsEngineTests
     [Fact]
     public void PerSessionPointsTable_PrimaryKeyword_MatchesTheStandardRaceTable()
     {
-        // "primary" on the only race must score identically to leaving the table unset — the
+        // "primary" on the only race must score identically to leaving the table unset, the
         // byte-identical guarantee for a single-race weekend that names its table explicitly.
         var system = ModernSystem();
         var entries = new[] { Entry("a", 1, "ta"), Entry("b", 2, "tb") };
@@ -698,7 +698,7 @@ public class StandingsEngineTests
     public void WithoutPerSessionScoring_ASprintPlusRaceStillMergesToOneRoundScore()
     {
         // The shipped shape (PerSessionScoring defaults false): sprint + race merge into ONE
-        // round score with a null SessionIndex — the byte-identical guarantee the oracle enforces.
+        // round score with a null SessionIndex, the byte-identical guarantee the oracle enforces.
         var system = new PointsSystem
         {
             RacePoints = Table(25, 18, 15),
@@ -838,7 +838,7 @@ public class StandingsEngineTests
     public void PointsEligibleFalse_ClassifiedEntryScoresNothing_AndNobodyIsPromoted()
     {
         // The annul-only shape (F2 cars at the 1958 German GP, the unregistered 1984 Monza
-        // second car): the classification stands, the points are simply withheld — drivers
+        // second car): the classification stands, the points are simply withheld, drivers
         // below keep their natural points, no redistribution.
         var system = new PointsSystem { RacePoints = Table(9, 6, 4, 3, 2, 1) };
 

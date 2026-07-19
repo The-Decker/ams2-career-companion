@@ -20,7 +20,7 @@ public sealed record Ams2Installation
 /// <summary>
 /// Finds the AMS2 install: Steam root from the registry, library folders from
 /// libraryfolders.vdf, then the app folder itself. Every step can fail on non-standard
-/// setups — the UI keeps a manual folder picker as the fallback.
+/// setups, the UI keeps a manual folder picker as the fallback.
 /// </summary>
 [SupportedOSPlatform("windows")]
 public static class SteamLocator

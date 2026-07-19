@@ -21,6 +21,23 @@ truth is the current working tree plus executable evidence, not the dated roadma
 | **#2 — per-race livery parking/rotation** | **PERMANENTLY SUPERSEDED — NEVER REVIVE** | Unchanged. |
 | **#3 — living flavour, reshuffle, and campaign celebration** | **SHIPPED** | Unchanged, plus the authored 17-season lore layer (`data/rules/smgp/seasons.json` + `SmgpSeasonLore`, validated by `SmgpSeasonLoreTests`) and SMGP canon divergence (`SmgpCanonDivergence`, SmgpFiction provenance). |
 
+## GUI wave truth (refreshed 2026-07-18)
+
+- **Codex GUI round 6 (SMGP-300 bind contracts): SHIPPED** at `dfc6b9b` (2026-07-16) — all 12
+  contracts bound (progression toast, MAX badge, active effects, campaign timeline, calendar
+  injury chips, header chips, medical record + mortality label, lore header, memorial badges,
+  legacy-edit clear, degraded save slots) + `SeasonReviewRenderTests`.
+- **Campaign timeline strip v2: SHIPPED** (2026-07-18) — `CampaignTimelineStrip` control replaces
+  the inline panel; SMGP no-spoiler arc + Dynasty locked-season previews (`CampaignSeasonPreview`)
+  + the Formula Junior prologue slot.
+- **Dynasty Team Ledger + bankruptcy takeover: SHIPPED** (2026-07-18) — `EconomyView` tab +
+  `BankruptcyView` takeover, per `codex-gui-dynasty-economy-brief.md`.
+- **Era-theming: SHIPPED** (2026-07-18) — era dictionaries + document-surface swap + era-skinned
+  newsroom + fallback photos/textures + `SetEraSkin` era-aware click SFX (sound-bible amendment).
+- **Skins tab mod-ownership banner + Passport wizard polish: SHIPPED** (2026-07-18).
+- **Remaining blocker:** the Pit Wall Command Rail acceptance pass (Mike's sign-off + the four
+  size/scale renders). When green, cut the SMGP-1.0-alpha RC.
+
 ## SMGP-300 finalization wave (2026-07-16)
 
 The Level-300 / 17-season / injury / game-over spine was audited end to end (10-dimension
@@ -86,8 +103,13 @@ adversarial audit) and the real gaps closed:
    `docs/LEVEL_300_BALANCE_REPORT.md` once the current sweep completes; rerunnable any time via
    `COMPANION_BALANCE_EVIDENCE=1 dotnet test --filter FullyQualifiedName~ReleaseEvidence`.
 
-## Exactly one next slice
+## Release status
 
+**SMGP-1.0-alpha CUT (2026-07-18):** release commit `c8bed3e` (v1.0.0), tag
+`smgp-1.0-alpha` pushed, RC deployed to dist (16:56, boot-verified). Both former blockers
+closed: GUI round 6 shipped (`dfc6b9b`) and the Pit Wall Command Rail passed Mike's
+acceptance (four size/scale frames reviewed and approved). Suite 2,892 logic + 246 render
+green at cut; oracle 77/77.
 **Codex GUI round 6: bind the SMGP-300 surfaces (`docs/dev/codex-gui-smgp300-brief.md`), then the
 Pit Wall Command Rail acceptance pass (blocker 3).** When both are green, refresh this ledger and
 cut the alpha RC.

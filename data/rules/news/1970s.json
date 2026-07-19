@@ -1,5 +1,5 @@
 {
-  "$comment": "Generative news-article corpus for the 1970s (glamour-and-grit motorsport-weekly voice — warm, novelistic, present-tense print race reports, cigarette-livery money and jet-set danger, wings and ground-effect arriving late-decade), parsed by Companion.Core.News.NewsArticleBank. Keys under 'bodies' are 'journalPhase|cause'; each holds era-keyed body templates selected deterministically via the 'headlines' PCG32 stream. Bodies compose literal prose, fact tokens, and {pool:name} references. Fact tokens: {player} {team} {race} {year} {round} {position} {expected} {winner} {fieldSize} {champPosition} {champMove} {champLeader}.",
+  "$comment": "Generative news-article corpus for the 1970s (glamour-and-grit motorsport-weekly voice, warm, novelistic, present-tense print race reports, cigarette-livery money and jet-set danger, wings and ground-effect arriving late-decade), parsed by Companion.Core.News.NewsArticleBank. Keys under 'bodies' are 'journalPhase|cause'; each holds era-keyed body templates selected deterministically via the 'headlines' PCG32 stream. Bodies compose literal prose, fact tokens, and {pool:name} references. Fact tokens: {player} {team} {race} {year} {round} {position} {expected} {winner} {fieldSize} {champPosition} {champMove} {champLeader}.",
   "eras": [
     { "key": "1970s", "fromYear": 1970, "toYear": 1979 }
   ],
@@ -65,11 +65,11 @@
     "champLine": {
       "1970s": [
         "In the title chase {player} now stands {champPosition}, {champMove} on the campaign.",
-        "The championship ledger reads {player} {champPosition} — {champMove} as the season unfolds.",
+        "The championship ledger reads {player} {champPosition}, {champMove} as the season unfolds.",
         "That leaves {player} {champPosition} in the hunt for the crown, {champMove}, with {champLeader} the man to beat.",
         "{player} sits {champPosition} in the running for the title, {champMove}.",
         "The title table now shows {player} {champPosition}, {champMove}, with {champLeader} still setting the pace.",
-        "For the championship it means {player} {champPosition} — {champMove} — and the crown a little clearer in view.",
+        "For the championship it means {player} {champPosition}, {champMove}, and the crown a little clearer in view.",
         "So {player} climbs to {champPosition} in the reckoning for the title, {champMove}.",
         "The points ledger has {player} {champPosition} now, {champMove}, {champLeader} the standard by which all are judged."
       ],
@@ -171,15 +171,15 @@
       "1970s": [
         "{pool:dateline} {player} takes {race} for {team}, a victory built lap by imperious lap and driven home ahead of a field of {fieldSize}. The {year} win comes with {pool:sponsorLine}, and no one in the paddock argues its merit. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} There is a winner at {race}, and it is {player}. From flag to flag the {team} car is never truly headed, {pool:techNote}, and the grandstands rise as one at the finish. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Victory, glorious and complete, for {player} at {race}. Round {round} of {year} belongs to {team} outright — the sort of drive that sends photographers scrambling and sponsors reaching for their cheque-books. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} wins {race}, and does so in the grand manner — the {team} car out front where it belongs, {pool:techNote}, a field of {fieldSize} left to admire the view. Round {round} of {year} could not have gone sweeter. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Victory, glorious and complete, for {player} at {race}. Round {round} of {year} belongs to {team} outright, the sort of drive that sends photographers scrambling and sponsors reaching for their cheque-books. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} wins {race}, and does so in the grand manner, the {team} car out front where it belongs, {pool:techNote}, a field of {fieldSize} left to admire the view. Round {round} of {year} could not have gone sweeter. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} It is {player}'s day at {race}, start to finish, {pool:sponsorLine} and never a wheel wrong. {team} have their winner and the world its picture. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} A masterclass at {race}: {player} controls the thing from the front, eases the {team} machine home ahead of {fieldSize} rivals, and leaves no one in any doubt. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} conquers {race} for {team} in {year}, {pool:techNote} and a cool head where others lost theirs. The rostrum's top step was never seriously in question. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} A win to savour for {player} at {race} — commanding, complete, and dressed in {pool:sponsorLine}. The paddock tips its cap to {team}. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A win to savour for {player} at {race}, commanding, complete, and dressed in {pool:sponsorLine}. The paddock tips its cap to {team}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} leads every lap that matters at {race} and takes the flag for {team} in {year}, {pool:sponsorLine} and the {fieldSize}-strong field trailing in his wake. A victory as clean as they come. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} They came to {race} to watch the favourites and went home talking of {player}. The {team} car, {pool:techNote}, was simply too good on the day, and the top step was never in doubt. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} wins {race} the hard way and the handsome way both — a scrap early, then daylight, then the flag for {team}. Round {round} of {year} is his, and richly. {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} {player} wins {race} the hard way and the handsome way both, a scrap early, then daylight, then the flag for {team}. Round {round} of {year} is his, and richly. {pool:champLine} {pool:closeGood}"
       ],
       "default": [
         "{player} wins {race} for {team}, leading home a field of {fieldSize}. {pool:champLine} {pool:closeGood}",
@@ -195,10 +195,10 @@
         "{pool:dateline} A fine {position} for {player} at {race}, the {team} car {pool:techNote} and holding firm against all comers. Only {winner} finished ahead. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} Champagne for {player} at {race}: home {position}, {pool:sponsorLine}, and the crowd on its feet. {winner} took the honours, but the rostrum had room for {team}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} muscles the {team} machine onto the podium at {race}, {position} in a field of {fieldSize} and every place hard-earned. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} A podium's worth of work from {player} at {race} — {position} at the flag, {pool:expectationBeat}, and a place among the great and the good. {winner} led them home. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A podium's worth of work from {player} at {race}, {position} at the flag, {pool:expectationBeat}, and a place among the great and the good. {winner} led them home. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} The rostrum has room for {player} at {race}: home {position} for {team}, {pool:rivalLine}, but the champagne sprays just as cold from the lower step. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} takes {team} onto the podium at {race}, {position} in a field of {fieldSize} and every place of it earned the hard way. {pool:rivalLine}. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Champagne and flashbulbs for {player} at {race} — {position} at the flag, the {team} car {pool:techNote} to the very end. {winner} won the war; {team} won the afternoon's admiration. {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} Champagne and flashbulbs for {player} at {race}, {position} at the flag, the {team} car {pool:techNote} to the very end. {winner} won the war; {team} won the afternoon's admiration. {pool:champLine} {pool:closeGood}"
       ],
       "default": [
         "{player} finished {position} at {race} for {team}, behind {winner}. {pool:champLine} {pool:closeGood}",
@@ -216,7 +216,7 @@
         "{pool:dateline} {player} nurses the {team} car to {position} at {race} and a clutch of points for the trouble. A workmanlike day amid the money and the glamour. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} Not the glamour end of {race}, but a paying one: {player} home {position} for {team}, points in the bank and {pool:rivalLine}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} keeps his head and his tyres at {race} and is rewarded with {position} for {team}. The scorers' pens are busy; the champagne stays corked. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} A canny afternoon from {player} at {race} — {position} in a field of {fieldSize}, the {team} car brought home whole and the points ledger the fatter for it. {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} A canny afternoon from {player} at {race}, {position} in a field of {fieldSize}, the {team} car brought home whole and the points ledger the fatter for it. {pool:champLine} {pool:closeGood}"
       ],
       "default": [
         "{player} scored points at {race}, finishing {position} for {team}. {pool:champLine} {pool:closeGood}",
@@ -226,11 +226,11 @@
     "race.result|overperformed": {
       "1970s": [
         "{pool:dateline} They will talk of this one for weeks: {player} hauls the {team} machine to {position} at {race} {pool:expectationBeat}, {pool:techNote} and a right foot that would not be denied. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} The drive of the afternoon, by common consent, is {player}'s — {position} at {race} from a field of {fieldSize}, {pool:expectationBeat}, and the whole paddock knows it. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} The drive of the afternoon, by common consent, is {player}'s, {position} at {race} from a field of {fieldSize}, {pool:expectationBeat}, and the whole paddock knows it. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} Where on earth did that come from? {player} drags the {team} machine to {position} at {race} {pool:expectationBeat}, and the paddock can talk of little else. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} A giant-killing at {race}: {player} home {position} in a field of {fieldSize}, {pool:expectationBeat}, {pool:techNote} and sheer nerve doing the rest. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} makes a mockery of the form-book at {race}, {position} for {team} {pool:expectationBeat}. The stopwatch does not lie, and today it sang. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} They came to watch the favourites and stayed to cheer {player} — {position} at {race} {pool:expectationBeat}, an afternoon stolen clean from under the noses of the great. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} They came to watch the favourites and stayed to cheer {player}, {position} at {race} {pool:expectationBeat}, an afternoon stolen clean from under the noses of the great. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} The drive that stops the paddock in its tracks: {player}, {position} at {race}, {pool:sponsorLine}, {pool:expectationBeat}. {team} scarcely dared hope for this. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} Wring the last from a lesser car and this is what you get: {player} home {position} at {race} {pool:expectationBeat}, {pool:techNote} and a stopwatch left rubbing its eyes. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} turns the form-book to confetti at {race}, dragging the {team} machine to {position} in a field of {fieldSize} {pool:expectationBeat}. The paddock will dine out on this one. {pool:champLine} {pool:closeGood}",
@@ -263,14 +263,14 @@
       "1970s": [
         "{pool:dateline} Cruelty of the mechanical sort at {race}: the {team} car lets {player} down while running strong, no blame at all to the driver, from an afternoon that had promised {expected}. {winner} took the win. {pool:closeBad}",
         "{pool:dateline} Smoke, then silence, and {player} is out at {race} with the machine broken beneath him. The romance of the sport turns hard on days like these. {pool:closeBad}",
-        "{pool:dateline} The machinery breaks {player}'s heart at {race} — running well, going nowhere, and then nowhere at all. No fault of the driver's; the {team} car simply gave up the ghost with {expected} still in reach. {winner} won it. {pool:closeBad}",
+        "{pool:dateline} The machinery breaks {player}'s heart at {race}, running well, going nowhere, and then nowhere at all. No fault of the driver's; the {team} car simply gave up the ghost with {expected} still in reach. {winner} won it. {pool:closeBad}",
         "{pool:dateline} A wisp of oil smoke, a coasting car, and {player} is a spectator at {race}. The romance of the sport has teeth, and today they bit {team}. {pool:closeBad}",
         "{pool:dateline} {player} is out at {race}, the {team} machine broken beneath him while the leaders ran on. There is nothing to be said to a man let down by his car. {winner} led the field of {fieldSize} home. {pool:closeBad}",
         "{pool:dateline} Mechanical mutiny at {race}: the {team} car downs tools and leaves {player} stranded, an afternoon of promise reduced to a slow walk back to the pits. {pool:closeBad}",
-        "{pool:dateline} It ends in silence for {player} at {race} — no crash, no error, only a component that would not last the distance. {team} count the cost of a day that owed them {expected}. {pool:closeBad}",
+        "{pool:dateline} It ends in silence for {player} at {race}, no crash, no error, only a component that would not last the distance. {team} count the cost of a day that owed them {expected}. {pool:closeBad}",
         "{pool:dateline} The {team} engine cries enough at {race} and {player} coasts to a mournful halt, the money and the glamour worth nothing against a broken con-rod. {winner} took the spoils. {pool:closeBad}",
         "{pool:dateline} Heartbreak of the oily kind for {player} at {race}: running handsomely, then a plume of smoke, then the long walk back while {team} curse the fates. {expected} was there for the taking. {pool:closeBad}",
-        "{pool:dateline} {player} is betrayed by his own machine at {race} — the {team} car simply would not see the distance, and a promising afternoon dies at the roadside. {pool:closeBad}"
+        "{pool:dateline} {player} is betrayed by his own machine at {race}, the {team} car simply would not see the distance, and a promising afternoon dies at the roadside. {pool:closeBad}"
       ],
       "default": [
         "{player} retired from {race} with mechanical trouble. {pool:closeBad}",
@@ -279,15 +279,15 @@
     },
     "race.result|dnf-driver-error": {
       "1970s": [
-        "{pool:dateline} {player} goes off at {race} and is out on the spot — a moment's misjudgement that leaves {team} to tally the cost. {winner} led home a field of {fieldSize}. {pool:closeBad}",
+        "{pool:dateline} {player} goes off at {race} and is out on the spot, a moment's misjudgement that leaves {team} to tally the cost. {winner} led home a field of {fieldSize}. {pool:closeBad}",
         "{pool:dateline} A grand chance thrown away: {player} puts the {team} car into the scenery at {race}, out where {expected} had beckoned so warmly only laps before. {pool:closeBad}",
         "{pool:dateline} A half-second's greed and it is over: {player} runs out of road at {race}, the {team} car parked in the barriers and {expected} gone with it. {winner} took the flag. {pool:closeBad}",
         "{pool:dateline} {player} asks too much of the {team} machine at {race} and pays the price, off and out where a cooler head would have banked a result. {pool:closeBad}",
-        "{pool:dateline} The scenery claims {player} at {race} — a lapse, a lock-up, and a long walk home. {team} had dared to dream of {expected} only moments before. {winner} led the field of {fieldSize}. {pool:closeBad}",
+        "{pool:dateline} The scenery claims {player} at {race}, a lapse, a lock-up, and a long walk home. {team} had dared to dream of {expected} only moments before. {winner} led the field of {fieldSize}. {pool:closeBad}",
         "{pool:dateline} One corner too brave, and {player} is done at {race}. The {team} car will need the panel-beaters; the driver only a quiet word with himself. {pool:closeBad}",
-        "{pool:dateline} It unravels for {player} at {race} in the space of a heartbeat — a slide, a spin, the wall, and an afternoon thrown clean away for {team}. {pool:closeBad}",
-        "{pool:dateline} {player} overcooks it at {race} and the barriers do the rest — the {team} car parked and bent, {expected} squandered on a moment's greed. {winner} led the field of {fieldSize} home untroubled. {pool:closeBad}",
-        "{pool:dateline} A rush of blood, and {player} is a passenger into the scenery at {race}. No blaming the machine this time — the {team} car was hale, the error the driver's own. {pool:closeBad}",
+        "{pool:dateline} It unravels for {player} at {race} in the space of a heartbeat, a slide, a spin, the wall, and an afternoon thrown clean away for {team}. {pool:closeBad}",
+        "{pool:dateline} {player} overcooks it at {race} and the barriers do the rest, the {team} car parked and bent, {expected} squandered on a moment's greed. {winner} led the field of {fieldSize} home untroubled. {pool:closeBad}",
+        "{pool:dateline} A rush of blood, and {player} is a passenger into the scenery at {race}. No blaming the machine this time, the {team} car was hale, the error the driver's own. {pool:closeBad}",
         "{pool:dateline} {player} reaches for a gap that was never there at {race} and pays in full: off, out, and a long silent ride home for {team}. {pool:closeBad}"
       ],
       "default": [
@@ -301,11 +301,11 @@
         "{pool:dateline} No headlines for {player} at {race}, {position} at the flag and some way behind {winner}. An unremarkable day amid the glamour for {team}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} A steady, unglamorous shift for {player} at {race}, {position} in a field of {fieldSize} and the {team} car home in one piece. The miles count, even the quiet ones. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} runs in the great anonymous middle at {race}, {position} at the flag and some way behind {winner}. No headlines for {team}, but no dramas either. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Nothing for the scrapbook from {player} at {race} — {position}, a workmanlike afternoon, {pool:sponsorLine} the brightest thing about it. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Nothing for the scrapbook from {player} at {race}, {position}, a workmanlike afternoon, {pool:sponsorLine} the brightest thing about it. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} threads the {team} machine through the traffic to {position} at {race}, honest work in a field of {fieldSize}. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} A day of small margins and no glory for {player}, {position} at {race} for {team}. The paddock's eyes were elsewhere, and that is no bad thing. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} spends {race} in the anonymous scrum of the midfield and emerges {position}, the {team} car home and honest if never headline news. {pool:rivalLine}. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} No flashbulbs for {player} at {race} — {position} in a field of {fieldSize}, a plain day's graft while the glamour played out up ahead. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} No flashbulbs for {player} at {race}, {position} in a field of {fieldSize}, a plain day's graft while the glamour played out up ahead. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} A grey, dependable {race} for {player}: {position} for {team}, the sort of quiet Sunday a long season is mostly made of. {pool:champLine} {pool:closeGood}"
       ],
       "default": [
@@ -315,13 +315,13 @@
     },
     "season.digest|player-champion": {
       "1970s": [
-        "The season of {year} is run to its very last mile, and it is {player} who stands atop it all — champion of the world, the {team} name gilded now in the record book for as long as men keep such things. It has been a long and glorious summer of racing, of glamour and grease and money by the fistful, and every hard-won yard of it belonged, in the end, to this. {pool:seasonClose}",
+        "The season of {year} is run to its very last mile, and it is {player} who stands atop it all, champion of the world, the {team} name gilded now in the record book for as long as men keep such things. It has been a long and glorious summer of racing, of glamour and grease and money by the fistful, and every hard-won yard of it belonged, in the end, to this. {pool:seasonClose}",
         "Champions are not made in a single afternoon but forged across the whole long arc of a season, and the {year} crown, richly and unarguably, is {player}'s. The {team} motorhome will toast this one for years yet, the sponsors' colours never worn more proudly than they are tonight. {pool:seasonClose}",
-        "It is done, and it is {player}'s: the {year} World Championship, won not in a day but in a hundred small acts of nerve and cunning across a long and glittering season. The {team} garage will not sleep tonight, nor should it — crowns like this are the work of a lifetime, and this one is earned to the last drop. {pool:seasonClose}",
-        "When the history of {year} is written it will carry one name above all others, and that name is {player}. Champion of the world for {team}, and no argument to be had — the season bent, in the end, to a single unbending will. {pool:seasonClose}",
+        "It is done, and it is {player}'s: the {year} World Championship, won not in a day but in a hundred small acts of nerve and cunning across a long and glittering season. The {team} garage will not sleep tonight, nor should it, crowns like this are the work of a lifetime, and this one is earned to the last drop. {pool:seasonClose}",
+        "When the history of {year} is written it will carry one name above all others, and that name is {player}. Champion of the world for {team}, and no argument to be had, the season bent, in the end, to a single unbending will. {pool:seasonClose}",
         "{player} is champion, and the paddock knows a worthy one when it sees it. The {year} title goes to {team} on merit piled upon merit, a season of glamour and grease answered with a right foot that never once flinched. {pool:seasonClose}",
         "Raise the glasses high: {player} has taken the {year} crown, and the {team} name goes into the book with the immortals. It was a summer of money and danger and impossible speed, and it belonged, when all was counted, to the best of them. {pool:seasonClose}",
-        "The last flag of {year} has fallen, and {player} stands above every rival — world champion, the {team} colours worn tonight more proudly than any silk in the paddock. A long season's reward, and richly deserved. {pool:seasonClose}",
+        "The last flag of {year} has fallen, and {player} stands above every rival, world champion, the {team} colours worn tonight more proudly than any silk in the paddock. A long season's reward, and richly deserved. {pool:seasonClose}",
         "A whole summer of nerve and grease and money by the fistful has come down to this: {player}, champion of the world for {year}, the {team} name struck now into the record for as long as men keep such things. There were rivals aplenty and races enough to break a lesser heart, and he answered every last one. {pool:seasonClose}",
         "{player} is champion, and the paddock raises its glass without a grudge in it. The {year} crown goes to {team} at the end of a season run flat out from the opening flag to the final one, and no one who watched it unfold will call it anything but earned. {pool:seasonClose}"
       ],

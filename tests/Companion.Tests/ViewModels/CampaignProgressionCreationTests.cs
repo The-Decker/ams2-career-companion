@@ -632,7 +632,9 @@ public sealed class CampaignProgressionCreationTests : IDisposable
     {
         { null, typeof(InvalidOperationException) },
         { "unknown-mode", typeof(InvalidOperationException) },
-        { CareerExperienceModes.RacingPassport, typeof(InvalidOperationException) },
+        // racingPassport was REMOVED: it is a creatable mode now (the 2026-07-18 pure-racing
+        // decision). A Passport request carrying a v2 character is rejected as contradictory
+        // input instead, covered in RacingPassportTests.
     };
 
     [Theory]

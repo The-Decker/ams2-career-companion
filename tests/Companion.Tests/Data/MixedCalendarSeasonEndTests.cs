@@ -9,9 +9,9 @@ namespace Companion.Tests.Data;
 
 /// <summary>
 /// SeasonEndPipeline must resolve scoring over CHAMPIONSHIP rounds only (its rounds input
-/// already carries championship ordinals — the ChampionshipCalendar rule). A split-season
+/// already carries championship ordinals, the ChampionshipCalendar rule). A split-season
 /// best-N pins the fix hard: split segments must sum to the resolved round count, so
-/// resolving over the full mixed calendar does not just mis-score — it throws.
+/// resolving over the full mixed calendar does not just mis-score, it throws.
 /// </summary>
 public sealed class MixedCalendarSeasonEndTests
 {
@@ -19,7 +19,7 @@ public sealed class MixedCalendarSeasonEndTests
     private const string Utc = "2026-07-02T00:00:00Z";
 
     /// <summary>Calendar: R1 champ, R2 NON-champ Gold Cup, R3 + R4 champ (ordinals 1..3).
-    /// Split best-N: best 1 of ordinals 1–2 plus best 1 of ordinal 3 — sums to the THREE
+    /// Split best-N: best 1 of ordinals 1–2 plus best 1 of ordinal 3, sums to the THREE
     /// championship rounds, never to the four calendar rounds.</summary>
     private static SeasonPack Pack()
     {
@@ -166,7 +166,7 @@ public sealed class MixedCalendarSeasonEndTests
     private static void FoldWholeSeason(CareerDatabase db, long seasonId, SeasonPack pack)
     {
         Fold(db, seasonId, pack, 1, "driver.a", "driver.b", "driver.c", "driver.d");
-        // Gold Cup: a completely flipped result — must not touch the championship.
+        // Gold Cup: a completely flipped result, must not touch the championship.
         Fold(db, seasonId, pack, 2, "driver.d", "driver.c", "driver.b", "driver.a");
         Fold(db, seasonId, pack, 3, "driver.b", "driver.a", "driver.d", "driver.c");
         Fold(db, seasonId, pack, 4, "driver.a", "driver.d", "driver.b", "driver.c");
@@ -181,7 +181,7 @@ public sealed class MixedCalendarSeasonEndTests
         Assert.ThrowsAny<Exception>(
             () => pack.Season.PointsSystem.ResolveScoringDefinition(pack.Season.Rounds.Count));
         _ = pack.Season.PointsSystem.ResolveScoringDefinition(
-            pack.Season.Rounds.Count(r => r.Championship)); // the pipeline's resolution — must not throw
+            pack.Season.Rounds.Count(r => r.Championship)); // the pipeline's resolution, must not throw
     }
 
     [Fact]
@@ -208,7 +208,7 @@ public sealed class MixedCalendarSeasonEndTests
         var expectedChampion = expected.Drivers.Single(d => d.Position == 1);
         Assert.Equal("driver.a", expectedChampion.DriverId); // best-1+1: 9 + 9 = 18
 
-        // The journaled season.championship rows must agree with the engine — champion id,
+        // The journaled season.championship rows must agree with the engine, champion id,
         // counted points, and the Gold Cup winner (driver.d) not promoted by his flip win.
         var championshipRows = JournalStore.ReadSeason(db, seasonId)
             .Where(r => string.Equals(r.Phase, JournalPhases.Championship, StringComparison.Ordinal) &&

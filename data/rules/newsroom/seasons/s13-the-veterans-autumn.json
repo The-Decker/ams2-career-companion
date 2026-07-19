@@ -1,0 +1,102 @@
+{
+  "$comment": "Season dossier pack S13, The Veterans' Autumn (Safety Reckoning act). Season-scoped coverage of farewells: the old guard's last runs, legacy, and the era's spine. Voice: autumnal, grateful, unsentimental, incident copy always serious. Ids are stable rendezvous keys, never rename. Read-side only.",
+  "version": 1,
+  "templates": [
+    {
+      "id": "s13.season-started.the-autumn-term",
+      "event": "seasonStarted",
+      "eras": ["smgp"],
+      "seasons": [13],
+      "headline": "THE VETERANS' AUTUMN: the season of last laps begins",
+      "deck": "Sixteen rounds to say the long goodbye properly",
+      "summary": "Season thirteen opens as the veterans' autumn, the year the old guard runs its final seasons and the sport takes stock.",
+      "sections": {
+        "lead": "{pool:dateline} The entry list this year reads like a roll of honour, and the paddock knows it. The men who carried the sport through its fastest and most dangerous years are into the last laps of their careers, some by announcement, most by the quiet arithmetic of age. This is their autumn, and the season will be spent watching them properly while they are still here.",
+        "context": "Autumn in this paddock is not decline; it is definition. The veterans are the era's spine: they carry the memory of what the sport cost and the craft of what it became. The young men are fast. The old men are complete. {pool:swLadder}",
+        "close": "Sixteen rounds. Every one of them is somebody's last something. Watch closely."
+      }
+    },
+    {
+      "id": "s13.race-won.the-late-harvest",
+      "event": "raceWon",
+      "eras": ["smgp"],
+      "seasons": [13],
+      "headline": "{subject} wins[[?venue: at {venue}]], the late harvest of a long career",
+      "deck": "The old hands show the young ones once more",
+      "summary": "{subject} won[[?venue: at {venue}]][[?round: in round {round}]].",
+      "sections": {
+        "lead": "{pool:dateline} They say the young men are faster over one lap and the old men are faster over a career. Today {subject} cashed a career's worth of knowing in a single afternoon: the right tyres nursed, the right moment chosen, the flag taken. The veterans' autumn has its first harvest, and it is a rich one. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: The championship account stands at {ord:champPosition} for {subject}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s13.podium.the-long-look",
+      "event": "podiumFinish",
+      "eras": ["smgp"],
+      "seasons": [13],
+      "headline": "{subject} on the podium[[?venue: at {venue}]], and the long look at the crowd",
+      "deck": "A rostrum visited like an old friend",
+      "summary": "{subject} finished on the podium[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} There is a way a veteran stands on a podium in the autumn of a career: a little longer over the anthem, a little slower down the steps, one more look at the grandstand on the way out. {subject} earned today's visit the old way, and nobody in the pit lane begrudged a second of the staying. {pool:swCrowd}",
+        "stats": "{pool:rrStatLine} [[?champPosition: Championship: {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "s13.pole.undimmed",
+      "event": "polePosition",
+      "eras": ["smgp"],
+      "seasons": [13],
+      "headline": "POLE for {subject}[[?venue: at {venue}]], the old skill undimmed",
+      "deck": "The years take many things; this was not one of them",
+      "summary": "{subject} took pole position[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} Whatever the calendar says about {subject}, the stopwatch declined to agree today. Pole position[[?venue: at {venue}]], taken with a lap that had twenty years of craft in it and not one wasted metre. The young men watched the timing screens and learned something they already suspected. {pool:swBoard}",
+        "close": "The years are a fact. The lap is a louder one. Tomorrow starts with the lap."
+      }
+    },
+    {
+      "id": "s13.lead-taken.the-autumn-charge",
+      "event": "championshipLeadTaken",
+      "eras": ["smgp"],
+      "seasons": [13],
+      "headline": "{subject} leads the veterans' autumn, and the last charge is on",
+      "deck": "An old name on the top line, and the paddock stands",
+      "summary": "{subject} took the championship lead in season thirteen.",
+      "sections": {
+        "lead": "{pool:dateline} The top line of the board belongs to {subject} tonight, and the paddock's reaction told its own story: not surprise, but a kind of standing respect. One more championship charge in the autumn of a great career. However it ends from here, the year will be remembered for this. {pool:swBoard}",
+        "stats": "{pool:rrStatLine}",
+        "close": "The old guard does not get farewell gifts. It gets sixteen rounds, same as everyone, and takes its chances."
+      }
+    },
+    {
+      "id": "s13.retired-mechanical.old-friends",
+      "event": "retiredMechanical",
+      "eras": ["smgp"],
+      "seasons": [13],
+      "headline": "{subject} parks it[[?venue: at {venue}]], an old machine owed its honesty",
+      "deck": "The autumn asks straight answers of men and metal",
+      "summary": "{subject} retired with mechanical failure[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The car failed under {subject}[[?venue: at {venue}]], and the retirement was handled the way this season handles everything: without theatre. The driver unbuckled, patted the dashboard once, and walked back with the marshals. Machine and man have given this sport a great deal. Both are owed a straight report, and this is it. {pool:wrenchNote}",
+        "close": "The crew will say goodbye to the weekend properly: tools out, heads down, the car made right."
+      }
+    },
+    {
+      "id": "s13.retired-driver-error.the-autumn-standard",
+      "event": "retiredDriverError",
+      "eras": ["smgp"],
+      "seasons": [13],
+      "headline": "{subject} in the barriers[[?venue: at {venue}]], judged by the old standard",
+      "deck": "A veteran's mistake, reported without varnish",
+      "summary": "{subject} crashed out[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} {subject} crashed out[[?venue: at {venue}]], and the report will do the driver the courtesy of plainness: the corner was taken with more hope than grip, the barrier was met, and the driver climbed out unhurt. The veterans of this era set the standard the paddock now writes by, and that standard does not soften the sentence.",
+        "context": "The marshals and the medical crew did their work exactly as the era has taught them. The driver will face the debrief the way the old guard faces everything: directly. {pool:swCrowd}",
+        "close": "Autumn does not forgive mistakes. It does, however, respect the men honest enough to own them."
+      }
+    }
+  ]
+}

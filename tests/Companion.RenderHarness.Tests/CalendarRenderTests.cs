@@ -81,8 +81,8 @@ public sealed class CalendarRenderTests
             var vm = new CalendarViewModel(new CalendarSession());
             Assert.Equal(3, vm.Rounds.Count);
             Assert.True(vm.HasUnusedAlternates);
-            Assert.Equal("SAT OUT — injured", vm.Rounds[0].PlayerStatusLabel);
-            Assert.Equal("WILL MISS — injured", vm.Rounds[1].PlayerStatusLabel);
+            Assert.Equal("SAT OUT, injured", vm.Rounds[0].PlayerStatusLabel);
+            Assert.Equal("WILL MISS, injured", vm.Rounds[1].PlayerStatusLabel);
             Assert.True(vm.Rounds[0].HasPlayerStatus);
             Assert.True(vm.Rounds[1].HasPlayerStatus);
             Assert.False(vm.Rounds[2].HasPlayerStatus);
@@ -98,8 +98,8 @@ public sealed class CalendarRenderTests
 
             Assert.True(view.ActualWidth > 0);
             Assert.True(view.ActualHeight > 0);
-            Assert.True(CountText(view, "SAT OUT — injured") >= 1);
-            Assert.True(CountText(view, "WILL MISS — injured") >= 1);
+            Assert.True(CountText(view, "SAT OUT, injured") >= 1);
+            Assert.True(CountText(view, "WILL MISS, injured") >= 1);
         });
     }
 

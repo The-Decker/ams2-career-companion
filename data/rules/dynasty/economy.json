@@ -1,5 +1,5 @@
 {
-  "$comment": "Grand Prix Dynasty owner-economy balance tables (docs/dev/dynasty-tycoon-economy.md). Stylized game numbers, NOT historical financial claims. Base tables are 1960s-era units; every charge/credit scales by the season year's eraScaling index, so income and costs grow together across the timeline. All money values are exact rationals ('8000', '27/20'); strengthPerLevel is a rating-domain double, not money. schemaVersion is pinned into each career at creation — balance changes for NEW careers ride a new schema version, never a silent edit.",
+  "$comment": "Grand Prix Dynasty owner-economy balance tables (docs/dev/dynasty-tycoon-economy.md). Stylized game numbers, NOT historical financial claims. Base tables are 1960s-era units; every charge/credit scales by the season year's eraScaling index, so income and costs grow together across the timeline. All money values are exact rationals ('8000', '27/20'); strengthPerLevel is a rating-domain double, not money. schemaVersion is pinned into each career at creation, balance changes for NEW careers ride a new schema version, never a silent edit.",
   "schemaVersion": 1,
   "eraScaling": [
     { "fromYear": 1950, "toYear": 1969, "index": "1" },
